@@ -1,0 +1,72 @@
+---
+import type { Slide } from '../../lib/parser';
+import NodeRenderer from '../NodeRenderer.astro';
+
+interface Props {
+  slide: Slide;
+}
+
+const { slide } = Astro.props;
+---
+
+<div class="template-default">
+  {slide.heading && <h2 class="title">{slide.heading}</h2>}
+  <div class="body">
+    <NodeRenderer nodes={slide.body} />
+  </div>
+</div>
+
+<style>
+  .template-default {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 140px 140px 160px 140px;
+    box-sizing: border-box;
+  }
+  .title {
+    font-size: 112px;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+    color: #0a0a0a;
+    margin: 0 0 64px 0;
+    line-height: 1;
+  }
+  .body {
+    flex: 1;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1.55;
+    color: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .body :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .body :global(li) {
+    margin: 0.2em 0;
+    padding-left: 1.2em;
+    position: relative;
+  }
+  .body :global(li)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 0.5em;
+    height: 0.5em;
+    background: #4a4aff;
+    border-radius: 50%;
+  }
+  .body :global(p) {
+    margin: 0 0 0.4em 0;
+  }
+  .body :global(strong) {
+    font-weight: 800;
+  }
+</style>

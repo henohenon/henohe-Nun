@@ -1,0 +1,33 @@
+---
+import type { Slide } from '../../lib/parser';
+
+interface Props {
+  slide: Slide;
+}
+
+const { slide } = Astro.props;
+---
+
+<div class="template-big">
+  <div class="text">{slide.heading}</div>
+</div>
+
+<style>
+  .template-big {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px;
+    box-sizing: border-box;
+  }
+  .text {
+    font-size: 260px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: #0a0a0a;
+    text-align: center;
+    line-height: 0.95;
+  }
+</style>

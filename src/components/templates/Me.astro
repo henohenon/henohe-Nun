@@ -1,0 +1,76 @@
+---
+import type { Slide } from '../../lib/parser';
+
+interface Props {
+  slide: Slide;
+}
+
+const { slide } = Astro.props;
+---
+
+<div class="template-me">
+  <img class="henoheno-side" src="/images/henoheno.svg" alt="" />
+  <div class="content">
+    <h2 class="label">{slide.heading}</h2>
+    <div class="row">
+      {slide.icon && <img class="icon" src={slide.icon} alt="" />}
+      <ul class="lines">
+        {slide.bodyLines.map((line) => <li>{line}</li>)}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+  .template-me {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 140px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .henoheno-side {
+    position: absolute;
+    right: -200px;
+    bottom: -120px;
+    width: 1100px;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+  .content {
+    position: relative;
+    z-index: 1;
+  }
+  .label {
+    font-size: 112px;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+    color: #0a0a0a;
+    margin: 0 0 72px 0;
+    line-height: 1;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+  }
+  .icon {
+    width: 360px;
+    height: 360px;
+    object-fit: cover;
+    border-radius: 32px;
+    flex-shrink: 0;
+  }
+  .lines {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 48px;
+    line-height: 1.5;
+    color: #1a1a1a;
+  }
+  .lines li {
+    margin: 0.1em 0;
+  }
+</style>

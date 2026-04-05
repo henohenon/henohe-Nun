@@ -1,0 +1,50 @@
+---
+import type { Slide } from '../../lib/parser';
+import NodeRenderer from '../NodeRenderer.astro';
+
+interface Props {
+  slide: Slide;
+}
+
+const { slide } = Astro.props;
+---
+
+<div class="template-note">
+  <h2 class="title">{slide.heading}</h2>
+  <div class="body">
+    <NodeRenderer nodes={slide.body} />
+  </div>
+</div>
+
+<style>
+  .template-note {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 140px 140px 160px 140px;
+    box-sizing: border-box;
+  }
+  .title {
+    font-size: 112px;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+    color: #0a0a0a;
+    margin: 0;
+    line-height: 1;
+  }
+  .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 64px;
+    line-height: 1.4;
+    color: #1a1a1a;
+  }
+  .body :global(p) {
+    margin: 0.2em 0;
+  }
+</style>

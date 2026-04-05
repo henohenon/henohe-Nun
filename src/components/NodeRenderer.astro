@@ -1,0 +1,43 @@
+---
+import { marked } from 'marked';
+import type { Node } from '../lib/parser';
+import { attrsToStyle } from '../lib/parser';
+
+interface Props {
+  nodes: Node[];
+}
+
+const { nodes } = Astro.props;
+
+marked.setOptions({ gfm: true, breaks: false });
+---
+
+{nodes.map((node) => {
+  if (node.kind === 'markdown') {
+    const html = marked.parse(node.text) as string;
+    return <div class="md" set:html={html} />;
+  }
+  if (node.kind === 'row') {
+    const style = `display:flex;flex-direction:row;gap:24px;align-items:center;justify-content:center;${attrsToStyle(node.attrs)}`;
+    return (
+      <div style={style}>
+        <Astro.self nodes={node.children} />
+      </div>
+    );
+  }
+  if (node.kind === 'col') {
+    const style = `display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;${attrsToStyle(node.attrs)}`;
+    return (
+      <div style={style}>
+        <Astro.self nodes={node.children} />
+      </div>
+    );
+  }
+  if (node.kind === 'txt') {
+    return <span style={attrsToStyle(node.attrs)}>{node.text}</span>;
+  }
+  if (node.kind === 'img') {
+    return <img src={node.src} style={attrsToStyle(node.attrs)} />;
+  }
+  return null;
+})}
