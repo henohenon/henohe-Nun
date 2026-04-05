@@ -1,0 +1,106 @@
+---
+import { parseDeck } from '../lib/parser';
+import Slide from '../components/Slide.astro';
+// Load slides.md as raw text. HMR is wired by Vite.
+import slidesMd from '../../slides.md?raw';
+
+const deck = parseDeck(slidesMd);
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>へのへ Nun</title>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="canvas" id="canvas">
+        {deck.slides.map((slide) => (
+          <Slide
+            slide={slide}
+            fr={slide.fr ?? deck.globalFr}
+            fl={slide.fl ?? deck.globalFl}
+          />
+        ))}
+      </div>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('canvas')!;
+      const slides = Array.from(canvas.querySelectorAll<HTMLElement>('.slide'));
+      const total = slides.length;
+
+      function currentIndex(): number {
+        const hash = location.hash.replace('#', '');
+        const n = parseInt(hash, 10);
+        if (!Number.isFinite(n)) return 0;
+        return Math.max(0, Math.min(total - 1, n));
+      }
+
+      function show(i: number) {
+        slides.forEach((s, idx) => {
+          s.style.visibility = idx === i ? 'visible' : 'hidden';
+        });
+      }
+
+      function go(delta: number) {
+        const next = Math.max(0, Math.min(total - 1, currentIndex() + delta));
+        location.hash = String(next);
+      }
+
+      function resize() {
+        const stage = canvas.parentElement as HTMLElement;
+        const k = Math.min(stage.clientWidth / 1920, stage.clientHeight / 1080);
+        canvas.style.transform = `translate(-50%, -50%) scale(${k})`;
+      }
+
+      window.addEventListener('hashchange', () => show(currentIndex()));
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+          e.preventDefault();
+          go(1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          e.preventDefault();
+          go(-1);
+        } else if (e.key === 'Home') {
+          location.hash = '0';
+        } else if (e.key === 'End') {
+          location.hash = String(total - 1);
+        }
+      });
+      window.addEventListener('click', (e) => {
+        const x = e.clientX;
+        if (x < window.innerWidth / 2) go(-1);
+        else go(1);
+      });
+      window.addEventListener('resize', resize);
+
+      resize();
+      show(currentIndex());
+    </script>
+
+    <style is:global>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        height: 100%;
+        overflow: hidden;
+      }
+      .stage {
+        position: fixed;
+        inset: 0;
+        display: block;
+      }
+      .canvas {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 1920px;
+        height: 1080px;
+        transform-origin: center center;
+      }
+    </style>
+  </body>
+</html>
