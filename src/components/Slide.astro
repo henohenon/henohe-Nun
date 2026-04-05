@@ -1,5 +1,7 @@
 ---
-import type { Slide } from '../lib/parser';
+import { marked } from 'marked';
+import type { Slide, FooterText, Background } from '../lib/parser';
+import { attrsToStyle, bgSizeStyle } from '../lib/parser';
 import Title from './templates/Title.astro';
 import Me from './templates/Me.astro';
 import Default from './templates/Default.astro';
@@ -9,11 +11,17 @@ import Note from './templates/Note.astro';
 
 interface Props {
   slide: Slide;
-  fr?: string;
-  fl?: string;
+  fr?: FooterText;
+  fl?: FooterText;
 }
 
 const { slide, fr, fl } = Astro.props;
+
+const flHtml = fl?.text ? (marked.parseInline(fl.text) as string) : '';
+const frHtml = fr?.text ? (marked.parseInline(fr.text) as string) : '';
+const flStyle = fl ? attrsToStyle(fl.attrs) : '';
+const frStyle = fr ? attrsToStyle(fr.attrs) : '';
+const hasFooter = !!(flHtml || frHtml);
 
 const templateMap = {
   title: Title,
@@ -26,20 +34,51 @@ const templateMap = {
 
 const Template = templateMap[slide.template as keyof typeof templateMap] ?? Default;
 
-const bgStyle = slide.bg
-  ? `background-image:url('${slide.bg}');background-size:cover;background-position:center;`
-  : '';
+// f-bg is always effective as the footer-shaped mask. On title slides, if there's
+// no explicit bg, the f-bg image is additionally used as the regular bg.
+const effectiveFbg = slide.fbg;
+const effectiveBg = slide.bg ?? (slide.template === 'title' ? slide.fbg : undefined);
+
+// Strip w/h from the generic attrsToStyle call for bg layers — for background
+// layers w/h control the image size (via background-size) rather than the
+// element's width/height. bgSizeStyle() handles that part.
+function bgAttrStyle(bg: Background): string {
+  const { w: _w, h: _h, ...rest } = bg.attrs;
+  return `background-image:url('${bg.src}');${bgSizeStyle(bg.attrs)};${attrsToStyle(rest)}`;
+}
+
+const bgStyle = effectiveBg ? bgAttrStyle(effectiveBg) : '';
+
+// Footer-background: image overlay drawn on top of the (still-black) footer
+// line and text, clipped to the shapes of the line + the text glyphs.
+// Uses the same bgSizeStyle rules so the masked image stays aligned with a
+// matching <bg> layer.
+const fbgLayerStyle = effectiveFbg ? bgAttrStyle(effectiveFbg) : '';
+const hasFbg = !!effectiveFbg;
 ---
 
-<section class="slide" data-index={slide.index} style={bgStyle}>
+<section class="slide" data-index={slide.index}>
+  {effectiveBg && <div class="slide-bg" style={bgStyle} />}
   <div class="slide-inner">
     <Template slide={slide} />
   </div>
-  {(fl || fr) && (
+  {hasFooter && (
     <footer class="slide-footer">
-      <span class="fl">{fl ?? ''}</span>
-      <span class="fr">{fr ?? ''}</span>
+      <div class="footer-line" />
+      <div class="footer-row base">
+        <span class="fl" style={flStyle} set:html={flHtml} />
+        <span class="fr" style={frStyle} set:html={frHtml} />
+      </div>
     </footer>
+  )}
+  {hasFooter && hasFbg && (
+    <div class="slide-fbg-line" style={fbgLayerStyle} />
+  )}
+  {hasFooter && hasFbg && (
+    <div class="slide-fbg-text" style={fbgLayerStyle}>
+      <span class="fl" style={`${flStyle};color:transparent`} set:html={flHtml} />
+      <span class="fr" style={`${frStyle};color:transparent`} set:html={frHtml} />
+    </div>
   )}
 </section>
 
@@ -47,12 +86,17 @@ const bgStyle = slide.bg
   .slide {
     position: absolute;
     inset: 0;
-    width: 1920px;
-    height: 1080px;
     background-color: #ffffff;
     color: #0a0a0a;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-family: 'IBM Plex Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
     overflow: hidden;
+  }
+  .slide-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    pointer-events: none;
   }
   .slide-inner {
     position: absolute;
@@ -63,12 +107,77 @@ const bgStyle = slide.bg
     left: 0;
     right: 0;
     bottom: 0;
+    pointer-events: none;
+    font-size: clamp(21px, 2.7vmin, 63px);
+    font-weight: 700;
+    line-height: 1;
+    color: black;
+  }
+  .footer-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: clamp(16px, 1.2vmin, 28px);
+    background-color: black;
+    /* z-index auto — paints first (below the row) */
+  }
+  .footer-row {
     display: flex;
     justify-content: space-between;
-    padding: 40px 72px;
-    font-size: 32px;
-    font-weight: 700;
-    color: #0a0a0a;
+    align-items: flex-end;
+    /* Padding-bottom equals the footer-line height so flex-end lands above the line. */
+    padding: clamp(16px, 2.2vmin, 48px) clamp(24px, 4vmin, 88px) clamp(16px, 1.2vmin, 28px);
+    position: relative;
+    z-index: 1;
+  }
+  .footer-row .fl,
+  .footer-row .fr {
+    display: inline-block;
+    margin-bottom: clamp(-20px, calc(-0.9vmin + 4px), -6px);
+  }
+  /* f-bg layers: sized to the entire slide so the image samples at the same
+     scale/position as a regular <bg>. The line layer is clipped to the footer
+     line's rect; the text layer uses background-clip:text so the slide-sized
+     image shows through the footer text glyphs. */
+  .slide-fbg-line {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    clip-path: inset(calc(100% - clamp(16px, 1.2vmin, 28px)) 0 0 0);
     pointer-events: none;
+    z-index: 2;
+  }
+  .slide-fbg-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: clamp(16px, 2.2vmin, 48px) clamp(24px, 4vmin, 88px) clamp(16px, 1.2vmin, 28px);
+    font-size: clamp(21px, 2.7vmin, 63px);
+    font-weight: 700;
+    line-height: 1;
+    color: transparent;
+    background-size: cover;
+    background-position: center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .slide-fbg-text .fl,
+  .slide-fbg-text .fr {
+    display: inline-block;
+    margin-bottom: clamp(-20px, calc(-0.9vmin + 4px), -6px);
+  }
+  /* Footer bold: weight only, keep the black color (no theme color override).
+     System fonts top out around 700/900 so we use text-stroke to visibly thicken. */
+  .slide-footer :global(strong),
+  .slide-footer :global(b) {
+    color: inherit;
+    font-weight: 900;
+    -webkit-text-stroke: 0.02em currentColor;
   }
 </style>

@@ -12,21 +12,27 @@ export type Node =
   | { kind: 'txt'; attrs: Attrs; text: string }
   | { kind: 'img'; attrs: Attrs; src: string };
 
+export type FooterText = { text: string; attrs: Attrs };
+export type Background = { src: string; attrs: Attrs };
+
 export type Slide = {
   index: number;
   heading: string;
   template: string;
   icon?: string;
-  bg?: string;
-  fr?: string;
-  fl?: string;
+  bg?: Background;
+  fbg?: Background;
+  fr?: FooterText;
+  fl?: FooterText;
   body: Node[];
   bodyLines: string[]; // non-tag markdown lines, trimmed empties at edges
 };
 
 export type Deck = {
-  globalFr?: string;
-  globalFl?: string;
+  globalFr?: FooterText;
+  globalFl?: FooterText;
+  globalBg?: Background;
+  globalFbg?: Background;
   slides: Slide[];
 };
 
@@ -51,7 +57,7 @@ export function parseAttrs(s: string): Attrs {
 type LineKind =
   | { t: 'h1'; text: string }
   | { t: 'tmpl'; name: string }
-  | { t: 'meta'; key: 'fr' | 'fl' | 'icon' | 'bg'; value: string }
+  | { t: 'meta'; key: 'fr' | 'fl' | 'icon' | 'bg' | 'f-bg'; value: string; attrs: Attrs }
   | { t: 'open'; name: 'row' | 'col'; attrs: Attrs }
   | { t: 'close'; name: 'row' | 'col' }
   | { t: 'inline'; node: Node }
@@ -68,9 +74,13 @@ function classify(rawLine: string): LineKind {
   const tmpl = /^<>\s*(\w+)\s*$/.exec(line);
   if (tmpl) return { t: 'tmpl', name: tmpl[1] };
 
-  // <fr>/<fl>/<icon>/<bg>
-  const meta = /^<(fr|fl|icon|bg)>(.*)$/.exec(line);
-  if (meta) return { t: 'meta', key: meta[1] as any, value: meta[2].trim() };
+  // <fr>/<fl>/<icon>/<bg>/<f-bg>  (fr/fl/bg/f-bg also accept attrs)
+  const meta = /^<(fr|fl|icon|bg|f-bg)(\s[^>]*)?>(.*)$/.exec(line);
+  if (meta) {
+    const key = meta[1] as 'fr' | 'fl' | 'icon' | 'bg' | 'f-bg';
+    const attrs = key === 'icon' ? {} : parseAttrs(meta[2] ?? '');
+    return { t: 'meta', key, value: meta[3].trim(), attrs };
+  }
 
   // </row> </col>
   const close = /^<\/(row|col)>\s*$/.exec(line);
@@ -168,8 +178,10 @@ export function parseDeck(md: string): Deck {
     const k = classified[i];
     if (k.t === 'h1') break;
     if (k.t === 'meta') {
-      if (k.key === 'fr') deck.globalFr = k.value;
-      else if (k.key === 'fl') deck.globalFl = k.value;
+      if (k.key === 'fr') deck.globalFr = { text: k.value, attrs: k.attrs };
+      else if (k.key === 'fl') deck.globalFl = { text: k.value, attrs: k.attrs };
+      else if (k.key === 'bg') deck.globalBg = { src: rewriteAssetPath(k.value), attrs: k.attrs };
+      else if (k.key === 'f-bg') deck.globalFbg = { src: rewriteAssetPath(k.value), attrs: k.attrs };
     }
     // other preamble content is ignored
   }
@@ -194,9 +206,10 @@ export function parseDeck(md: string): Deck {
     // extract per-slide metadata and template, leave the rest for body parsing
     let template = 'default';
     let icon: string | undefined;
-    let bg: string | undefined;
-    let fr: string | undefined;
-    let fl: string | undefined;
+    let bg: Background | undefined;
+    let fbg: Background | undefined;
+    let fr: FooterText | undefined;
+    let fl: FooterText | undefined;
     const bodyInput: LineKind[] = [];
     const bodyLines: string[] = [];
 
@@ -211,9 +224,10 @@ export function parseDeck(md: string): Deck {
       }
       if (k.t === 'meta') {
         if (k.key === 'icon') icon = rewriteAssetPath(k.value);
-        else if (k.key === 'bg') bg = rewriteAssetPath(k.value);
-        else if (k.key === 'fr') fr = k.value;
-        else if (k.key === 'fl') fl = k.value;
+        else if (k.key === 'bg') bg = { src: rewriteAssetPath(k.value), attrs: k.attrs };
+        else if (k.key === 'f-bg') fbg = { src: rewriteAssetPath(k.value), attrs: k.attrs };
+        else if (k.key === 'fr') fr = { text: k.value, attrs: k.attrs };
+        else if (k.key === 'fl') fl = { text: k.value, attrs: k.attrs };
         continue;
       }
       bodyInput.push(k);
@@ -227,7 +241,8 @@ export function parseDeck(md: string): Deck {
       heading,
       template,
       icon,
-      bg,
+      bg: bg ?? deck.globalBg,
+      fbg: fbg ?? deck.globalFbg,
       fr,
       fl,
       body,
@@ -240,13 +255,15 @@ export function parseDeck(md: string): Deck {
 
 // --- style helper ----------------------------------------------------------
 
-const PX_KEYS = new Set(['w', 'h', 'l', 't', 'm', 'mt', 'mb', 'ml', 'mr', 'p', 'pt', 'pb', 'pl', 'pr', 'size']);
+const PX_KEYS = new Set(['w', 'h', 'l', 'r', 't', 'b', 'm', 'mt', 'mb', 'ml', 'mr', 'p', 'pt', 'pb', 'pl', 'pr', 'size']);
 
 const CSS_MAP: Record<string, string> = {
   w: 'width',
   h: 'height',
   l: 'left',
+  r: 'right',
   t: 'top',
+  b: 'bottom',
   m: 'margin',
   mt: 'margin-top',
   mb: 'margin-bottom',
@@ -259,22 +276,58 @@ const CSS_MAP: Record<string, string> = {
   pr: 'padding-right',
   size: 'font-size',
   color: 'color',
+  opacity: 'opacity',
 };
+
+// Align keywords (boolean flags): left/right/center.
+// Emit both text-align and align-self so they work in text blocks and flex items.
+const ALIGN_MAP: Record<string, { text: string; self: string }> = {
+  left: { text: 'left', self: 'flex-start' },
+  right: { text: 'right', self: 'flex-end' },
+  center: { text: 'center', self: 'center' },
+};
+
+// Background sizing rules (mirrors img sizing in NodeRenderer):
+//   w only  -> `${w} auto`   (w-based, aspect preserved via auto)
+//   h only  -> `auto ${h}`   (h-based, aspect preserved)
+//   both    -> `${w} ${h}`   (explicit; note: aspect not preserved if values
+//                             don't match the image's intrinsic ratio — CSS
+//                             background-size can't express "contain within
+//                             an arbitrary w×h box" without knowing the
+//                             image's intrinsic size)
+//   neither -> `cover`       (fill the slide, smaller slide dim wins)
+export function bgSizeStyle(attrs: Attrs): string {
+  const pxVal = (v: AttrValue): string =>
+    typeof v === 'string' ? (/^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v) : '';
+  const wv = attrs.w ? pxVal(attrs.w) : '';
+  const hv = attrs.h ? pxVal(attrs.h) : '';
+  const common = 'background-position:center;background-repeat:no-repeat';
+  if (wv && hv) return `background-size:${wv} ${hv};${common}`;
+  if (wv) return `background-size:${wv} auto;${common}`;
+  if (hv) return `background-size:auto ${hv};${common}`;
+  return 'background-size:cover;background-position:center';
+}
 
 export function attrsToStyle(attrs: Attrs): string {
   const parts: string[] = [];
-  let absolute = false;
   for (const [k, v] of Object.entries(attrs)) {
     if (k === 'src') continue;
-    if (k === 'b' && v) parts.push('font-weight:bold');
-    else if (k === 'i' && v) parts.push('font-style:italic');
+    // `b` is overloaded: `<... b>` (flag) = bold, `<... b=10>` = bottom offset.
+    if (k === 'b' && v === true) parts.push('font-weight:bold', 'color:var(--theme-color)');
+    else if (k === 'i' && v === true) parts.push('font-style:italic');
+    else if (k in ALIGN_MAP && v === true) {
+      const a = ALIGN_MAP[k];
+      parts.push(`text-align:${a.text}`, `align-self:${a.self}`);
+    }
+    else if (k === 'blur' && typeof v === 'string') {
+      const bv = /^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
+      parts.push(`filter:blur(${bv})`);
+    }
     else if (k in CSS_MAP && typeof v === 'string') {
       const cssKey = CSS_MAP[k];
       const cssVal = PX_KEYS.has(k) && /^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
       parts.push(`${cssKey}:${cssVal}`);
-      if (k === 'l' || k === 't') absolute = true;
     }
   }
-  if (absolute) parts.push('position:absolute');
   return parts.join(';');
 }

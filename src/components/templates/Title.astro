@@ -1,4 +1,5 @@
 ---
+import { marked } from 'marked';
 import type { Slide } from '../../lib/parser';
 
 interface Props {
@@ -6,13 +7,16 @@ interface Props {
 }
 
 const { slide } = Astro.props;
-const subtitle = slide.bodyLines[0] ?? '';
+const subtitleRaw = slide.bodyLines[0] ?? '';
+const subtitleHtml = subtitleRaw ? (marked.parseInline(subtitleRaw) as string) : '';
 ---
 
 <div class="template-title">
   <img class="henoheno" src="/images/henoheno.svg" alt="" />
-  <h1 class="title">{slide.heading}</h1>
-  {subtitle && <p class="subtitle">{subtitle}</p>}
+  <div class="text">
+    <h1 class="title">{slide.heading}</h1>
+    {subtitleHtml && <p class="subtitle" set:html={subtitleHtml} />}
+  </div>
 </div>
 
 <style>
@@ -20,36 +24,45 @@ const subtitle = slide.bodyLines[0] ?? '';
     position: relative;
     width: 100%;
     height: 100%;
-    background: #ffffff;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 0 6vw;
+    box-sizing: border-box;
   }
   .henoheno {
     position: absolute;
-    right: -80px;
-    bottom: -40px;
-    width: 1500px;
+    right: calc(min(91vw, 143vh) * -0.13);
+    bottom: calc(min(91vw, 143vh) * -0.75);
+    width: min(95vw, 150vh);
     height: auto;
     pointer-events: none;
   }
+  .text {
+    position: relative;
+    z-index: 1;
+    max-width: 60%;
+  }
   .title {
-    position: absolute;
-    left: 140px;
-    top: 480px;
     margin: 0;
-    font-size: 176px;
+    font-size: clamp(36px, 11vmin, 200px);
     font-weight: 900;
     letter-spacing: -0.03em;
-    color: #0a0a0a;
+    color: black;
     line-height: 1;
   }
   .subtitle {
-    position: absolute;
-    left: 148px;
-    top: 700px;
-    margin: 0;
-    font-size: 52px;
-    color: #6b6b6b;
-    font-weight: 400;
+    margin: clamp(12px, 2vmin, 32px) 0 0 0;
+    font-size: clamp(16px, 3.2vmin, 60px);
+    color: #3d3d3d;
+    font-weight: 600;
     letter-spacing: 0.02em;
+  }
+  /* Subtitle bold: weight only, keep grey color (no theme color override). */
+  .subtitle :global(strong),
+  .subtitle :global(b) {
+    color: inherit;
+    font-weight: 900;
+    -webkit-text-stroke: 0.035em currentColor;
   }
 </style>

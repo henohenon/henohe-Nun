@@ -1,9 +1,16 @@
 ---
-// Thx template: fixed "Thank you for listening" text, centered, smallish.
+// Thx template: centered closing message, driven by the slide heading (`# text`).
+import type { Slide } from '../../lib/parser';
+
+interface Props {
+  slide: Slide;
+}
+
+const { slide } = Astro.props;
 ---
 
 <div class="template-thx">
-  <div class="text">Thank you for listening</div>
+  <div class="text">{slide.heading}</div>
 </div>
 
 <style>
@@ -13,11 +20,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: clamp(24px, 6vmin, 180px);
+    box-sizing: border-box;
   }
   .text {
-    font-size: 88px;
+    font-size: clamp(22px, calc(4.1vmin + 4px), 88px);
     font-weight: 500;
-    color: #3a3a3a;
+    color: var(--theme-color);
     letter-spacing: 0.01em;
   }
 </style>

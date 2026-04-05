@@ -1,0 +1,146 @@
+---
+// Font preview page. Visit /fonts in dev to browse.
+// Each row shows one font family with sample text at multiple weights,
+// plus a line demonstrating **bold** emphasis against the base weight.
+
+type Font = {
+  name: string;
+  stack: string;
+  // If set, loaded from Google Fonts via the `google` url pieces below.
+  google?: string;
+};
+
+const fonts: Font[] = [
+  {
+    name: 'System (current default)',
+    stack: `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif`,
+  },
+  { name: 'Inter + Noto Sans JP', stack: `'Inter', 'Noto Sans JP', sans-serif`, google: 'Inter:wght@100..900&family=Noto+Sans+JP:wght@100..900' },
+  { name: 'Noto Sans JP', stack: `'Noto Sans JP', sans-serif`, google: 'Noto+Sans+JP:wght@100..900' },
+  { name: 'M PLUS 1p', stack: `'M PLUS 1p', sans-serif`, google: 'M+PLUS+1p:wght@100;300;400;500;700;800;900' },
+  { name: 'M PLUS Rounded 1c', stack: `'M PLUS Rounded 1c', sans-serif`, google: 'M+PLUS+Rounded+1c:wght@100;300;400;500;700;800;900' },
+  { name: 'Zen Kaku Gothic New', stack: `'Zen Kaku Gothic New', sans-serif`, google: 'Zen+Kaku+Gothic+New:wght@300;400;500;700;900' },
+  { name: 'Zen Maru Gothic', stack: `'Zen Maru Gothic', sans-serif`, google: 'Zen+Maru+Gothic:wght@300;400;500;700;900' },
+  { name: 'BIZ UDPGothic', stack: `'BIZ UDPGothic', sans-serif`, google: 'BIZ+UDPGothic:wght@400;700' },
+  { name: 'IBM Plex Sans JP', stack: `'IBM Plex Sans JP', sans-serif`, google: 'IBM+Plex+Sans+JP:wght@100;200;300;400;500;600;700' },
+  { name: 'Kosugi Maru', stack: `'Kosugi Maru', sans-serif`, google: 'Kosugi+Maru' },
+  { name: 'Sawarabi Gothic', stack: `'Sawarabi Gothic', sans-serif`, google: 'Sawarabi+Gothic' },
+  { name: 'Klee One', stack: `'Klee One', cursive`, google: 'Klee+One:wght@400;600' },
+  { name: 'Shippori Mincho (serif)', stack: `'Shippori Mincho', serif`, google: 'Shippori+Mincho:wght@400;500;600;700;800' },
+];
+
+const googleFamilies = fonts
+  .map((f) => f.google)
+  .filter((g): g is string => !!g)
+  .join('&family=');
+const googleHref = `https://fonts.googleapis.com/css2?family=${googleFamilies}&display=swap`;
+
+const weights = [300, 400, 500, 600, 700, 800, 900];
+const sampleJp = 'すらいどてんぷれーと・へのへのん';
+const sampleEn = 'The quick brown fox 0123';
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fonts · henohe-Nun</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={googleHref} />
+  </head>
+  <body>
+    <header class="page-head">
+      <h1>Font preview</h1>
+      <p>Each row shows a font family at multiple weights, and a line comparing base vs <strong>bold</strong>.</p>
+    </header>
+
+    <main class="grid">
+      {fonts.map((f) => (
+        <section class="card" style={`font-family:${f.stack};`}>
+          <div class="card-head">
+            <div class="name">{f.name}</div>
+            <div class="stack">{f.stack}</div>
+          </div>
+
+          <div class="weights">
+            {weights.map((w) => (
+              <div class="weight-row" style={`font-weight:${w};`}>
+                <span class="w-label">{w}</span>
+                <span class="w-sample">{sampleJp}　{sampleEn}</span>
+              </div>
+            ))}
+          </div>
+
+          <div class="bold-demo">
+            <div>ベース 400: すらいど<span style="font-weight:400">てんぷれーと</span></div>
+            <div>ベース 500: すらいど<b style="font-weight:800">てんぷれーと</b></div>
+            <div>ベース 600: すらいど<b style="font-weight:900">てんぷれーと</b></div>
+            <div>ベース 700: すらいど<b style="font-weight:900;-webkit-text-stroke:0.02em currentColor">てんぷれーと</b></div>
+          </div>
+        </section>
+      ))}
+    </main>
+
+    <style is:global>
+      :root {
+        color-scheme: light;
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #f6f6f7;
+        color: #111;
+      }
+      .page-head {
+        padding: 32px 40px 8px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      .page-head h1 { margin: 0 0 4px; font-size: 28px; }
+      .page-head p { margin: 0; color: #555; font-size: 14px; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+        gap: 16px;
+        padding: 24px 40px 80px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #e4e4e7;
+        border-radius: 10px;
+        padding: 20px 22px;
+      }
+      .card-head {
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #eceef1;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
+      }
+      .name { font-size: 15px; font-weight: 700; color: #111; }
+      .stack { font-size: 11px; color: #888; margin-top: 2px; word-break: break-all; }
+      .weights { display: flex; flex-direction: column; gap: 6px; }
+      .weight-row {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        font-size: 22px;
+        line-height: 1.25;
+      }
+      .w-label {
+        flex: 0 0 42px;
+        font-size: 11px;
+        color: #999;
+        font-weight: 400;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
+      }
+      .w-sample { flex: 1; }
+      .bold-demo {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid #eceef1;
+        font-size: 20px;
+        line-height: 1.5;
+      }
+    </style>
+  </body>
+</html>

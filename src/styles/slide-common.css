@@ -1,0 +1,53 @@
+/* Shared slide typography. Templates add layout-specific CSS on top. */
+
+.slide-title {
+  font-size: clamp(42px, 9.1vmin, 182px);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: var(--theme-color);
+  margin: 0;
+  line-height: 1;
+}
+
+.slide-body {
+  font-size: clamp(26px, 5vmin, 101px);
+  font-weight: 500;
+  line-height: 1.55;
+  color: #1a1a1a;
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+
+.slide-body ul {
+  list-style: none;
+  padding: 0 0 0 0.6em;
+  margin: 0;
+}
+.slide-body li {
+  margin: 0.2em 0;
+  padding-left: 0.8em;
+  position: relative;
+}
+.slide-body li::before {
+  content: '';
+  position: absolute;
+  left: -0.1em;
+  top: 0.65em;
+  width: 0.4em;
+  height: 0.4em;
+  background: currentColor;
+  border-radius: 50%;
+}
+.slide-body p {
+  margin: 0 0 0.4em 0;
+}
+.slide-body strong,
+.slide-body b {
+  font-weight: 700;
+  -webkit-text-stroke: 0.005em currentColor;
+}
+.slide-body img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}

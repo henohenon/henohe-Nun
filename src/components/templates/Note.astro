@@ -7,12 +7,23 @@ interface Props {
 }
 
 const { slide } = Astro.props;
+// Split body: non-markdown nodes (txt/img/row/col) centered in the middle,
+// plain markdown text pinned to the bottom.
+const centerNodes = slide.body.filter((n) => n.kind !== 'markdown');
+const bottomNodes = slide.body.filter((n) => n.kind === 'markdown');
 ---
 
 <div class="template-note">
-  <h2 class="title">{slide.heading}</h2>
-  <div class="body">
-    <NodeRenderer nodes={slide.body} />
+  <h2 class="slide-title">{slide.heading}</h2>
+  <div class="slide-body body">
+    <div class="body-center">
+      <NodeRenderer nodes={centerNodes} />
+    </div>
+    {bottomNodes.length > 0 && (
+      <div class="body-bottom">
+        <NodeRenderer nodes={bottomNodes} />
+      </div>
+    )}
   </div>
 </div>
 
@@ -22,29 +33,26 @@ const { slide } = Astro.props;
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 140px 140px 160px 140px;
+    padding: clamp(32px, 8vmin, 180px) clamp(32px, 8vmin, 180px) clamp(48px, 10vmin, 200px);
     box-sizing: border-box;
-  }
-  .title {
-    font-size: 112px;
-    font-weight: 900;
-    letter-spacing: -0.025em;
-    color: #0a0a0a;
-    margin: 0;
-    line-height: 1;
   }
   .body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .body-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    font-size: 64px;
-    line-height: 1.4;
-    color: #1a1a1a;
+    min-height: 0;
   }
-  .body :global(p) {
-    margin: 0.2em 0;
+  .body-bottom {
+    flex: 0 0 auto;
   }
 </style>

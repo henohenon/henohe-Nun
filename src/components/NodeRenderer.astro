@@ -37,7 +37,21 @@ marked.setOptions({ gfm: true, breaks: false });
     return <span style={attrsToStyle(node.attrs)}>{node.text}</span>;
   }
   if (node.kind === 'img') {
-    return <img src={node.src} style={attrsToStyle(node.attrs)} />;
+    // Sizing rules (aspect ratio always preserved):
+    //   w only  -> width=w, height auto
+    //   h only  -> height=h, width auto
+    //   w and h -> max-width/height caps, whichever is smaller wins (object-fit:contain)
+    //   neither -> falls through to CSS default (.slide-body img: fit container)
+    const { w, h, ...rest } = node.attrs;
+    const pxVal = (v: unknown) =>
+      typeof v === 'string' ? (/^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v) : undefined;
+    const wv = pxVal(w);
+    const hv = pxVal(h);
+    let sizeStyle = '';
+    if (wv && hv) sizeStyle = `max-width:${wv};max-height:${hv};width:auto;height:auto;object-fit:contain;`;
+    else if (wv) sizeStyle = `width:${wv};height:auto;`;
+    else if (hv) sizeStyle = `height:${hv};width:auto;`;
+    return <img src={node.src} style={`${sizeStyle}${attrsToStyle(rest)}`} />;
   }
   return null;
 })}
