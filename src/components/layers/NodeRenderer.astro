@@ -106,7 +106,7 @@ function extractFit(attrs: Attrs): { fit: string | null; rest: Attrs } {
   }
   if (node.kind === 'row') {
     const { fit, rest } = extractFit(node.attrs);
-    const style = `display:flex;flex-direction:row;gap:var(--slide-gap-row);align-items:center;justify-content:center;${attrsToStyle(rest)}`;
+    const style = `display:flex;flex-direction:row;gap:var(--slide-gap-row);align-items:center;justify-content:center;${attrsToStyle(rest, 'row')}`;
     return (
       <div style={style} {...(fit ? { 'data-fit': fit } : {})}>
         <Astro.self nodes={node.children} />
@@ -115,7 +115,7 @@ function extractFit(attrs: Attrs): { fit: string | null; rest: Attrs } {
   }
   if (node.kind === 'col') {
     const { fit, rest } = extractFit(node.attrs);
-    const style = `display:flex;flex-direction:column;gap:var(--slide-gap-col);align-items:center;justify-content:center;${attrsToStyle(rest)}`;
+    const style = `display:flex;flex-direction:column;gap:var(--slide-gap-col);align-items:center;justify-content:center;${attrsToStyle(rest, 'column')}`;
     return (
       <div style={style} {...(fit ? { 'data-fit': fit } : {})}>
         <Astro.self nodes={node.children} />

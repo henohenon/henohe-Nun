@@ -321,15 +321,22 @@ type LayoutAlign = {
   items?: string;
   self?: string;
 };
-const LAYOUT_ALIGN: Record<string, LayoutAlign> = {
-  top: { justify: 'flex-start' },
-  bottom: { justify: 'flex-end' },
-  left: { items: 'flex-start', self: 'flex-start' },
-  right: { items: 'flex-end', self: 'flex-end' },
-  vcenter: { justify: 'center' },
-  hcenter: { items: 'center', self: 'center' },
-  center: { justify: 'center', items: 'center', self: 'center' },
-};
+// Default mapping assumes flex-direction: column (main=vertical, cross=horizontal).
+// When flexDir is 'row', left/right map to justify (main axis) instead of items.
+function layoutAlign(key: string, flexDir?: 'row' | 'column'): LayoutAlign | undefined {
+  const isRow = flexDir === 'row';
+  const map: Record<string, LayoutAlign> = {
+    top: isRow ? { items: 'flex-start', self: 'flex-start' } : { justify: 'flex-start' },
+    bottom: isRow ? { items: 'flex-end', self: 'flex-end' } : { justify: 'flex-end' },
+    left: isRow ? { justify: 'flex-start' } : { items: 'flex-start', self: 'flex-start' },
+    right: isRow ? { justify: 'flex-end' } : { items: 'flex-end', self: 'flex-end' },
+    vcenter: isRow ? { items: 'center', self: 'center' } : { justify: 'center' },
+    hcenter: isRow ? { justify: 'center' } : { items: 'center', self: 'center' },
+    center: { justify: 'center', items: 'center', self: 'center' },
+  };
+  return map[key];
+}
+const LAYOUT_ALIGN_KEYS = new Set(['top', 'bottom', 'left', 'right', 'vcenter', 'hcenter', 'center']);
 
 // Text alignment keywords.
 const TEXT_ALIGN: Record<string, string> = {
@@ -406,18 +413,18 @@ export function imgAttrStyle(asset: AssetRef): string {
     .join(';');
 }
 
-export function attrsToStyle(attrs: Attrs): string {
+export function attrsToStyle(attrs: Attrs, flexDir?: 'row' | 'column'): string {
   const parts: string[] = [];
   for (const [k, v] of Object.entries(attrs)) {
     // `b` = bold flag.
     if (k === 'b' && v === true) parts.push('font-weight:bold', 'color:var(--theme-color)');
     else if (k === 'i' && v === true) parts.push('font-style:italic');
     // Layout align
-    else if (k in LAYOUT_ALIGN && v === true) {
-      const a = LAYOUT_ALIGN[k];
-      if (a.justify) parts.push(`justify-content:${a.justify}`);
-      if (a.items) parts.push(`align-items:${a.items}`);
-      if (a.self) parts.push(`align-self:${a.self}`);
+    else if (LAYOUT_ALIGN_KEYS.has(k) && v === true) {
+      const a = layoutAlign(k, flexDir);
+      if (a?.justify) parts.push(`justify-content:${a.justify}`);
+      if (a?.items) parts.push(`align-items:${a.items}`);
+      if (a?.self) parts.push(`align-self:${a.self}`);
     }
     // Text align
     else if (k in TEXT_ALIGN && v === true) {
