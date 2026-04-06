@@ -312,31 +312,21 @@ const CSS_MAP: Record<string, string> = {
   opacity: 'opacity',
 };
 
-// Layout align keywords (boolean flags) — flex justify/align.
-// Emits both container props (justify-content, align-items) and child prop
-// (align-self) so the same keyword works whether the element is a flex
-// container or a flex child.
-type LayoutAlign = {
-  justify?: string;
-  items?: string;
-  self?: string;
+// Placement keywords — direction-agnostic via place-content / align-items.
+// For flex containers (row/col): place-start/end/center control both axes.
+// left/right/top/bottom only set align-self (child positioning within its slot).
+const PLACEMENT: Record<string, string> = {
+  'place-start': 'place-content:start;align-items:start',
+  'place-end': 'place-content:end;align-items:end',
+  'place-center': 'place-content:center;align-items:center',
+  left: 'align-self:start',
+  right: 'align-self:end',
+  top: 'align-self:start',
+  bottom: 'align-self:end',
+  hcenter: 'align-self:center',
+  vcenter: 'align-self:center',
+  center: 'place-content:center;align-items:center;align-self:center',
 };
-// Default mapping assumes flex-direction: column (main=vertical, cross=horizontal).
-// When flexDir is 'row', left/right map to justify (main axis) instead of items.
-function layoutAlign(key: string, flexDir?: 'row' | 'column'): LayoutAlign | undefined {
-  const isRow = flexDir === 'row';
-  const map: Record<string, LayoutAlign> = {
-    top: isRow ? { items: 'flex-start', self: 'flex-start' } : { justify: 'flex-start' },
-    bottom: isRow ? { items: 'flex-end', self: 'flex-end' } : { justify: 'flex-end' },
-    left: isRow ? { justify: 'flex-start' } : { items: 'flex-start', self: 'flex-start' },
-    right: isRow ? { justify: 'flex-end' } : { items: 'flex-end', self: 'flex-end' },
-    vcenter: isRow ? { items: 'center', self: 'center' } : { justify: 'center' },
-    hcenter: isRow ? { justify: 'center' } : { items: 'center', self: 'center' },
-    center: { justify: 'center', items: 'center', self: 'center' },
-  };
-  return map[key];
-}
-const LAYOUT_ALIGN_KEYS = new Set(['top', 'bottom', 'left', 'right', 'vcenter', 'hcenter', 'center']);
 
 // Text alignment keywords.
 const TEXT_ALIGN: Record<string, string> = {
@@ -413,18 +403,15 @@ export function imgAttrStyle(asset: AssetRef): string {
     .join(';');
 }
 
-export function attrsToStyle(attrs: Attrs, flexDir?: 'row' | 'column'): string {
+export function attrsToStyle(attrs: Attrs): string {
   const parts: string[] = [];
   for (const [k, v] of Object.entries(attrs)) {
     // `b` = bold flag.
     if (k === 'b' && v === true) parts.push('font-weight:bold', 'color:var(--theme-color)');
     else if (k === 'i' && v === true) parts.push('font-style:italic');
-    // Layout align
-    else if (LAYOUT_ALIGN_KEYS.has(k) && v === true) {
-      const a = layoutAlign(k, flexDir);
-      if (a?.justify) parts.push(`justify-content:${a.justify}`);
-      if (a?.items) parts.push(`align-items:${a.items}`);
-      if (a?.self) parts.push(`align-self:${a.self}`);
+    // Placement
+    else if (k in PLACEMENT && v === true) {
+      parts.push(PLACEMENT[k]);
     }
     // Text align
     else if (k in TEXT_ALIGN && v === true) {
