@@ -19,5 +19,5 @@ const h = hasH ? '' : `height:${expand}`;
 <OptimizedImage
   class="slide-bg"
   asset={asset}
-  extraStyle={[`position:absolute;inset:${inset};pointer-events:none`, w, h].filter(Boolean).join(';')}
+  extraStyle={[`position:absolute;inset:${inset};pointer-events:none;object-fit:contain`, w, h].filter(Boolean).join(';')}
 />
