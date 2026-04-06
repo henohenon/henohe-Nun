@@ -1,11 +1,24 @@
 ---
 import { parseDeck } from '../lib/parser';
-import Slide from '../components/Slide.astro';
-import '../styles/slide-common.css';
-// Load slides.md as raw text. HMR is wired by Vite.
-import slidesMd from '../../slides.md?raw';
 
-const deck = parseDeck(slidesMd);
+const files = import.meta.glob('../../benben/*.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+const decks = Object.entries(files)
+  .map(([path, raw]) => {
+    const name = path.split('/').pop()!.replace(/\.md$/, '');
+    const deck = parseDeck(raw);
+    const titleSlide = deck.slides.find((s) => s.template === 'title') ?? deck.slides[0];
+    return {
+      name,
+      title: titleSlide?.heading ?? name,
+      date: deck.date ?? null,
+    };
+  })
+  .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
 ---
 
 <html lang="ja">
@@ -18,169 +31,104 @@ const deck = parseDeck(slidesMd);
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@100;200;300;400;500;600;700&display=swap" />
   </head>
   <body>
-    <div class="stage">
-      <div class="canvas" id="canvas">
-        {deck.slides.map((slide) => (
-          <Slide
-            slide={slide}
-            fr={slide.fr ?? deck.globalFr}
-            fl={slide.fl ?? deck.globalFl}
-          />
-        ))}
-      </div>
-    </div>
+    <main class="index">
+      <h1>へのへ Nun</h1>
+      {decks.length === 0 ? (
+        <p class="empty">No decks found in <code>benben/</code>.</p>
+      ) : (
+        <ul class="decks">
+          {decks.map((d) => (
+            <li>
+              <a href={`/${d.name}#0`}>
+                <div class="thumb">
+                  <img src={`/thumbs/${d.name}.webp`} alt={d.title} />
+                </div>
+                <div class="info">
+                  <span class="title">{d.title}</span>
+                  {d.date && <span class="date">{d.date}</span>}
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
 
-    <div class="hint" id="hint">
-      Press <kbd>Enter</kbd> to toggle fullscreen
-    </div>
-
-    <script>
-      const canvas = document.getElementById('canvas')!;
-      const slides = Array.from(canvas.querySelectorAll<HTMLElement>('.slide'));
-      const total = slides.length;
-      const hint = document.getElementById('hint')!;
-
-      let hintDismissed = false;
-      function dismissHint() {
-        if (hintDismissed) return;
-        hintDismissed = true;
-        hint.classList.add('hidden');
-      }
-      setTimeout(dismissHint, 4000);
-
-      function currentIndex(): number {
-        const hash = location.hash.replace('#', '');
-        const n = parseInt(hash, 10);
-        if (!Number.isFinite(n)) return 0;
-        return Math.max(0, Math.min(total - 1, n));
-      }
-
-      function show(i: number) {
-        slides.forEach((s, idx) => {
-          s.style.visibility = idx === i ? 'visible' : 'hidden';
-        });
-      }
-
-      function go(delta: number) {
-        const next = Math.max(0, Math.min(total - 1, currentIndex() + delta));
-        location.hash = String(next);
-      }
-
-      function resize() {
-        // no-op: layout is responsive now
-      }
-
-      function toggleFullscreen() {
-        if (document.fullscreenElement) {
-          document.exitFullscreen();
-        } else {
-          document.documentElement.requestFullscreen().catch(() => {});
-        }
-      }
-
-      document.addEventListener('fullscreenchange', () => {
-        document.body.classList.toggle('is-fullscreen', !!document.fullscreenElement);
-      });
-
-      window.addEventListener('hashchange', () => show(currentIndex()));
-      window.addEventListener('keydown', (e) => {
-        dismissHint();
-        const k = e.key.toLowerCase();
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || k === 'd' || k === 's') {
-          e.preventDefault();
-          go(1);
-        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || k === 'a' || k === 'w') {
-          e.preventDefault();
-          go(-1);
-        } else if (e.key === 'Home') {
-          location.hash = '0';
-        } else if (e.key === 'End') {
-          location.hash = String(total - 1);
-        } else if (e.key === 'Enter') {
-          e.preventDefault();
-          toggleFullscreen();
-        }
-      });
-      window.addEventListener('click', (e) => {
-        dismissHint();
-        const x = e.clientX;
-        if (x < window.innerWidth / 2) go(-1);
-        else go(1);
-      });
-
-      let wheelLock = 0;
-      window.addEventListener('wheel', (e) => {
-        const d = e.deltaY || e.deltaX;
-        if (Math.abs(d) < 10) return;
-        const now = Date.now();
-        if (now < wheelLock) return;
-        wheelLock = now + 400;
-        dismissHint();
-        go(d > 0 ? 1 : -1);
-      }, { passive: true });
-      window.addEventListener('resize', resize);
-
-      resize();
-      show(currentIndex());
-    </script>
-
-    <style is:global>
-      :root {
-        --theme-color: #5932FF;
-      }
-      /* All bold text inside slides uses the theme color. */
-      .slide strong,
-      .slide b,
-      .slide h1,
-      .slide h2,
-      .slide h3 {
-        color: var(--theme-color);
-      }
-      html, body {
+    <style>
+      :global(html), :global(body) {
         margin: 0;
         padding: 0;
         background: #ffffff;
-        height: 100%;
+        min-height: 100%;
+      }
+      .index {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 64px 32px;
+        font-family: 'IBM Plex Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+        color: #0a0a0a;
+      }
+      h1 {
+        font-size: 32px;
+        margin: 0 0 32px;
+      }
+      .decks {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .decks a {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        text-decoration: none;
+        color: inherit;
+        padding: 12px;
+        border-radius: 10px;
+        transition: background 0.15s;
+      }
+      .decks a:hover {
+        background: #f5f5f5;
+      }
+      .thumb {
+        width: 240px;
+        aspect-ratio: 1200 / 630;
         overflow: hidden;
+        border-radius: 6px;
+        border: 1px solid #e0e0e0;
+        flex-shrink: 0;
       }
-      body.is-fullscreen astro-dev-toolbar {
-        display: none !important;
+      .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
       }
-      .stage {
-        position: fixed;
-        inset: 0;
+      .info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
       }
-      .canvas {
-        position: absolute;
-        inset: 0;
+      .title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0a0a0a;
       }
-      .hint {
-        position: fixed;
-        left: 50%;
-        bottom: 40px;
-        transform: translateX(-50%);
-        padding: 12px 24px;
-        background: rgba(10, 10, 10, 0.82);
-        color: #fafafa;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        font-size: 15px;
-        border-radius: 999px;
-        pointer-events: none;
-        opacity: 1;
-        transition: opacity 0.4s ease;
-        z-index: 100;
+      .date {
+        font-size: 14px;
+        color: #888;
       }
-      .hint.hidden {
-        opacity: 0;
+      .empty {
+        color: #888;
       }
-      .hint kbd {
-        display: inline-block;
-        padding: 2px 8px;
-        margin: 0 2px;
-        background: rgba(255, 255, 255, 0.15);
+      code {
+        background: #f3f3f3;
+        padding: 2px 6px;
         border-radius: 4px;
-        font-family: inherit;
-        font-weight: 600;
       }
     </style>
   </body>
