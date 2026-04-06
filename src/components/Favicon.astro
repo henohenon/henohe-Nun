@@ -1,0 +1,15 @@
+---
+const base = import.meta.env.BASE_URL;
+const frames = [1, 2, 3, 4].map((i) => `${base}favicon/wave0${i}.png`);
+---
+
+<link rel="icon" href={`${base}favicon/favicon.ico`} id="favicon" />
+
+<script define:vars={{ frames }}>
+  let i = 0;
+  const link = document.getElementById('favicon');
+  setInterval(() => {
+    link.href = frames[i];
+    i = (i + 1) % frames.length;
+  }, 667);
+</script>

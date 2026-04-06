@@ -1,6 +1,7 @@
 ---
 import { parseDeck } from '../lib/parser';
 import Slide from '../components/Slide.astro';
+import Favicon from '../components/Favicon.astro';
 import '../styles/slide-common.css';
 
 // Load every `benben/*.md` as raw text at build time. Vite wires HMR so
@@ -36,6 +37,7 @@ const thumbUrl = new URL(`${base}thumbs/${deckName}.webp`, Astro.site).href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{deckName} — へのへ Nun</title>
+    <Favicon />
     <meta property="og:title" content={ogTitle} />
     <meta property="og:type" content="website" />
     <meta property="og:image" content={thumbUrl} />

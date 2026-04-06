@@ -74,26 +74,27 @@ function serveDist(port: number): { close: () => Promise<void> } {
       // Also try stripping the first path segment (Astro base prefix).
       // e.g. /henohe-Nun/_astro/foo.css → /_astro/foo.css
       const stripped = pathname.replace(/^\/[^/]+\//, '/');
-      const candidates = [
-        join(DIST_DIR, pathname),
-        join(DIST_DIR, pathname, 'index.html'),
-        join(DIST_DIR, pathname + '.html'),
-        join(DIST_DIR, stripped),
-        join(DIST_DIR, stripped, 'index.html'),
-      ];
-      for (const p of candidates) {
-        try {
-          const s = await stat(p);
-          if (s.isFile()) {
-            const data = await readFile(p);
-            res.writeHead(200, {
-              'Content-Type': MIME[extname(p).toLowerCase()] ?? 'application/octet-stream',
-              'Content-Length': data.length,
-            });
-            res.end(data);
-            return;
-          }
-        } catch {}
+      const paths = [pathname, stripped];
+      for (const p of paths) {
+        const candidates = [
+          join(DIST_DIR, p),
+          join(DIST_DIR, p, 'index.html'),
+          join(DIST_DIR, p + '.html'),
+        ];
+        for (const c of candidates) {
+          try {
+            const s = await stat(c);
+            if (s.isFile()) {
+              const data = await readFile(c);
+              res.writeHead(200, {
+                'Content-Type': MIME[extname(c).toLowerCase()] ?? 'application/octet-stream',
+                'Content-Length': data.length,
+              });
+              res.end(data);
+              return;
+            }
+          } catch {}
+        }
       }
       res.writeHead(404);
       res.end('404');
@@ -102,7 +103,7 @@ function serveDist(port: number): { close: () => Promise<void> } {
       res.end(String(e));
     }
   });
-  server.listen(port);
+  server.listen(port, '127.0.0.1');
   return {
     close: () =>
       new Promise<void>((resolve) => {
