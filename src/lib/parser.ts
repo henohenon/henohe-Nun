@@ -312,20 +312,22 @@ const CSS_MAP: Record<string, string> = {
   opacity: 'opacity',
 };
 
-// Placement keywords — direction-agnostic via place-content / align-items.
-// For flex containers (row/col): place-start/end/center control both axes.
-// left/right/top/bottom only set align-self (child positioning within its slot).
-const PLACEMENT: Record<string, string> = {
-  'place-start': 'place-content:start;align-items:start',
-  'place-end': 'place-content:end;align-items:end',
-  'place-center': 'place-content:center;align-items:center',
-  left: 'align-self:start',
-  right: 'align-self:end',
-  top: 'align-self:start',
-  bottom: 'align-self:end',
-  hcenter: 'align-self:center',
-  vcenter: 'align-self:center',
-  center: 'place-content:center;align-items:center;align-self:center',
+// Layout align keywords (boolean flags).
+// Uses place-self instead of align-self so positioning works in both
+// flex and grid contexts without caring about flex-direction.
+type LayoutAlign = {
+  justify?: string;
+  items?: string;
+  self?: string;
+};
+const LAYOUT_ALIGN: Record<string, LayoutAlign> = {
+  top: { justify: 'flex-start' },
+  bottom: { justify: 'flex-end' },
+  left: { items: 'flex-start', self: 'flex-start' },
+  right: { items: 'flex-end', self: 'flex-end' },
+  vcenter: { justify: 'center' },
+  hcenter: { items: 'center', self: 'center' },
+  center: { justify: 'center', items: 'center', self: 'center' },
 };
 
 // Text alignment keywords.
@@ -409,9 +411,12 @@ export function attrsToStyle(attrs: Attrs): string {
     // `b` = bold flag.
     if (k === 'b' && v === true) parts.push('font-weight:bold', 'color:var(--theme-color)');
     else if (k === 'i' && v === true) parts.push('font-style:italic');
-    // Placement
-    else if (k in PLACEMENT && v === true) {
-      parts.push(PLACEMENT[k]);
+    // Layout align
+    else if (k in LAYOUT_ALIGN && v === true) {
+      const a = LAYOUT_ALIGN[k];
+      if (a.justify) parts.push(`justify-content:${a.justify}`);
+      if (a.items) parts.push(`align-items:${a.items}`);
+      if (a.self) parts.push(`place-self:${a.self}`);
     }
     // Text align
     else if (k in TEXT_ALIGN && v === true) {
