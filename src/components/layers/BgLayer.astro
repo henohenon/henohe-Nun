@@ -20,8 +20,8 @@ const blurPx = asset.attrs.blur ? Number(asset.attrs.blur) : 0;
   .slide-bg {
     position: absolute;
     inset: calc(-1 * var(--blur-expand));
-    max-width: calc(100% + 2 * var(--blur-expand));
-    max-height: calc(100% + 2 * var(--blur-expand));
+    width: calc(100% + 2 * var(--blur-expand));
+    height: calc(100% + 2 * var(--blur-expand));
     pointer-events: none;
   }
 </style>
