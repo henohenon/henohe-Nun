@@ -22,10 +22,12 @@ import { existsSync, readdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 
-export const PORT = 4322;
+const PORT = 4322;
 export const WIDTH = 1920;
 export const HEIGHT = 1080;
-export const DIST_DIR = 'dist';
+const DIST_DIR = 'dist';
+// Must match astro.config.mjs `base`. Used by serveDist and openDeckPage.
+const BASE = '/henohe-Nun/';
 
 // --scale=N flag (deviceScaleFactor for screenshots, also used by pdf).
 // Defaults to 1. Use 2 for retina-quality PNGs (3840×2160).
@@ -71,10 +73,12 @@ function serveDist(port: number): { close: () => Promise<void> } {
     try {
       const url = new URL(req.url ?? '/', `http://localhost:${port}`);
       const pathname = decodeURIComponent(url.pathname);
-      // Also try stripping the first path segment (Astro base prefix).
+      // Strip the Astro base prefix so we can look up files in dist/.
       // e.g. /henohe-Nun/_astro/foo.css → /_astro/foo.css
-      const stripped = pathname.replace(/^\/[^/]+\//, '/');
-      const paths = [pathname, stripped];
+      const stripped = pathname.startsWith(BASE)
+        ? '/' + pathname.slice(BASE.length)
+        : pathname;
+      const paths = [stripped, pathname];
       for (const p of paths) {
         const candidates = [
           join(DIST_DIR, p),
@@ -114,7 +118,7 @@ function serveDist(port: number): { close: () => Promise<void> } {
 
 // --- deck enumeration ------------------------------------------------------
 
-export async function listDecks(): Promise<string[]> {
+async function listDecks(): Promise<string[]> {
   const files = await readdirAsync('benben');
   return files
     .filter((f) => f.endsWith('.md'))
@@ -230,7 +234,7 @@ export async function openDeckPage(
 ): Promise<{ ctx: BrowserContext; page: Page }> {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor });
   const page = await ctx.newPage();
-  await page.goto(`http://localhost:${PORT}/${deck}#0`, { waitUntil: 'load' });
+  await page.goto(`http://localhost:${PORT}${BASE}${deck}#0`, { waitUntil: 'load' });
   // Hide the fullscreen hint (it has a 4s fade-out timer, which is longer
   // than our screenshot cadence). The @media print block in [deck].astro
   // already handles this for PDF output.
@@ -246,8 +250,9 @@ export async function openDeckPage(
 export async function runExport(
   label: string,
   perDeck: (browser: Browser, deck: string) => Promise<void>,
+  opts?: { deckFilter?: string },
 ): Promise<void> {
-  const deckArg = process.argv.slice(2).find((a) => !a.startsWith('--'));
+  const deckArg = opts?.deckFilter ?? process.argv.slice(2).find((a) => !a.startsWith('--'));
 
   if (process.env.SKIP_BUILD) {
     console.log(`[${label}] skipping astro build (SKIP_BUILD)`);

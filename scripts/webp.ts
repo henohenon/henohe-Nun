@@ -11,17 +11,22 @@ const OGP_H = 630;
 const outArg = process.argv.find((a) => a.startsWith('--out='));
 const WEBP_DIR = outArg ? outArg.split('=')[1] : 'dist/.webp';
 
-await runExport('webp', async (browser, deck) => {
-  await mkdir(WEBP_DIR, { recursive: true });
+try {
+  await runExport('webp', async (browser, deck) => {
+    await mkdir(WEBP_DIR, { recursive: true });
 
-  const { ctx, page } = await openDeckPage(browser, deck, { width: OGP_W, height: OGP_H });
-  const png = await page.screenshot({ fullPage: false, type: 'png' });
-  await ctx.close();
+    const { ctx, page } = await openDeckPage(browser, deck, { width: OGP_W, height: OGP_H });
+    const png = await page.screenshot({ fullPage: false, type: 'png' });
+    await ctx.close();
 
-  const outPath = join(WEBP_DIR, `${deck}.webp`);
-  await sharp(png)
-    .webp({ quality: 85 })
-    .toFile(outPath);
+    const outPath = join(WEBP_DIR, `${deck}.webp`);
+    await sharp(png)
+      .webp({ quality: 85 })
+      .toFile(outPath);
 
-  console.log(`       → ${outPath}`);
-});
+    console.log(`       → ${outPath}`);
+  });
+} catch (e) {
+  console.error('[webp] fatal:', e);
+  process.exit(1);
+}
