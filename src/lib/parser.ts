@@ -1,5 +1,5 @@
 // Parser for henohe-Nun slide markdown.
-// Splits input into slides by H1, extracts custom tags, parses block tags (row/col/txt/img)
+// Splits input into slides by H1, extracts custom tags, parses block tags (row/col/<>)
 // into a tree, and collects per-slide + global metadata.
 
 export type AttrValue = string | true;
@@ -9,30 +9,30 @@ export type Node =
   | { kind: 'markdown'; text: string }
   | { kind: 'row'; attrs: Attrs; children: Node[] }
   | { kind: 'col'; attrs: Attrs; children: Node[] }
-  | { kind: 'txt'; attrs: Attrs; text: string }
-  | { kind: 'img'; attrs: Attrs; src: string };
+  | { kind: 'block'; attrs: Attrs; children: Node[] };
 
 export type FooterText = { text: string; attrs: Attrs };
-export type Background = { src: string; attrs: Attrs };
+export type AssetRef = { src: string; attrs: Attrs };
 
 export type Slide = {
   index: number;
   heading: string;
+  subheading?: string;
   template: string;
-  icon?: string;
-  bg?: Background;
-  fbg?: Background;
+  icon?: AssetRef;
+  bg?: AssetRef;
+  fbg?: AssetRef;
   fr?: FooterText;
   fl?: FooterText;
   body: Node[];
-  bodyLines: string[]; // non-tag markdown lines, trimmed empties at edges
 };
 
 export type Deck = {
+  date?: string;
   globalFr?: FooterText;
   globalFl?: FooterText;
-  globalBg?: Background;
-  globalFbg?: Background;
+  globalBg?: AssetRef;
+  globalFbg?: AssetRef;
   slides: Slide[];
 };
 
@@ -56,54 +56,59 @@ export function parseAttrs(s: string): Attrs {
 
 type LineKind =
   | { t: 'h1'; text: string }
+  | { t: 'h2'; text: string }
   | { t: 'tmpl'; name: string }
-  | { t: 'meta'; key: 'fr' | 'fl' | 'icon' | 'bg' | 'f-bg'; value: string; attrs: Attrs }
-  | { t: 'open'; name: 'row' | 'col'; attrs: Attrs }
-  | { t: 'close'; name: 'row' | 'col' }
-  | { t: 'inline'; node: Node }
+  | { t: 'meta'; key: 'fr' | 'fl' | 'icon' | 'bg' | 'f-bg' | 'date'; value: string; attrs: Attrs }
+  | { t: 'open'; name: 'row' | 'col' | 'block'; attrs: Attrs }
+  | { t: 'close'; name: 'row' | 'col' | 'block' }
+  | { t: 'inline-block'; attrs: Attrs; content: string }
   | { t: 'md'; raw: string };
 
 function classify(rawLine: string): LineKind {
   const line = rawLine.trim();
 
+  // H2 (must check before H1)
+  const h2 = /^##\s*(.*)$/.exec(line);
+  if (h2 && !line.startsWith('###')) return { t: 'h2', text: h2[1] };
+
   // H1
   const h1 = /^#\s*(.*)$/.exec(line);
-  if (h1 && !line.startsWith('##')) return { t: 'h1', text: h1[1] };
+  if (h1) return { t: 'h1', text: h1[1] };
 
-  // <>template
-  const tmpl = /^<>\s*(\w+)\s*$/.exec(line);
+  // @>template
+  const tmpl = /^@>\s*(\w+)\s*$/.exec(line);
   if (tmpl) return { t: 'tmpl', name: tmpl[1] };
 
-  // <fr>/<fl>/<icon>/<bg>/<f-bg>  (fr/fl/bg/f-bg also accept attrs)
-  const meta = /^<(fr|fl|icon|bg|f-bg)(\s[^>]*)?>(.*)$/.exec(line);
+  // @key attrs>value — meta tags
+  const meta = /^@(fr|fl|icon|bg|f-bg|date)(\s[^>]*)?>(.*)$/.exec(line);
   if (meta) {
-    const key = meta[1] as 'fr' | 'fl' | 'icon' | 'bg' | 'f-bg';
-    const attrs = key === 'icon' ? {} : parseAttrs(meta[2] ?? '');
-    return { t: 'meta', key, value: meta[3].trim(), attrs };
+    const key = meta[1] as 'fr' | 'fl' | 'icon' | 'bg' | 'f-bg' | 'date';
+    return { t: 'meta', key, value: meta[3].trim(), attrs: parseAttrs(meta[2] ?? '') };
   }
 
-  // </row> </col>
+  // </row> </col> </>
   const close = /^<\/(row|col)>\s*$/.exec(line);
   if (close) return { t: 'close', name: close[1] as 'row' | 'col' };
+  if (/^<\/>\s*$/.test(line)) return { t: 'close', name: 'block' };
 
   // <row ...> <col ...> (open, no content on same line)
   const open = /^<(row|col)(\s[^>]*)?>\s*$/.exec(line);
   if (open) return { t: 'open', name: open[1] as 'row' | 'col', attrs: parseAttrs(open[2] ?? '') };
 
-  // inline single-line <txt ...>...</txt>
-  const txt = /^<txt(\s[^>]*)?>(.*)<\/txt>\s*$/.exec(line);
-  if (txt) return { t: 'inline', node: { kind: 'txt', attrs: parseAttrs(txt[1] ?? ''), text: txt[2] } };
+  // <attrs>content</> — inline block (single-line open+content+close)
+  const inlineBlock = /^<([^>]*)>(.+)<\/>$/.exec(line);
+  if (inlineBlock) return { t: 'inline-block', attrs: parseAttrs(inlineBlock[1] ?? ''), content: inlineBlock[2] };
 
-  // inline single-line <img ...>path</img>
-  const img = /^<img(\s[^>]*)?>(.*)<\/img>\s*$/.exec(line);
-  if (img) return { t: 'inline', node: { kind: 'img', attrs: parseAttrs(img[1] ?? ''), src: rewriteAssetPath(img[2].trim()) } };
+  // <attrs> or <> — generic block open
+  const block = /^<([^>]*)>$/.exec(line);
+  if (block) return { t: 'open', name: 'block', attrs: parseAttrs(block[1] ?? '') };
 
   return { t: 'md', raw: rawLine };
 }
 
 export function rewriteAssetPath(p: string): string {
-  // `./images/foo.png` → `/images/foo.png` (Astro public/)
-  // `/images/foo.png` → unchanged
+  // `./images/foo.png` -> `/images/foo.png` (Astro public/)
+  // `/images/foo.png` -> unchanged
   if (p.startsWith('./')) return p.slice(1);
   return p;
 }
@@ -113,7 +118,7 @@ export function rewriteAssetPath(p: string): string {
 function parseBodyBlock(
   classified: LineKind[],
   startIdx: number,
-  stopAt: null | 'row' | 'col',
+  stopAt: null | 'row' | 'col' | 'block',
 ): { nodes: Node[]; next: number } {
   const nodes: Node[] = [];
   const mdBuffer: string[] = [];
@@ -122,7 +127,17 @@ function parseBodyBlock(
     // trim leading/trailing blank lines
     while (mdBuffer.length && mdBuffer[0].trim() === '') mdBuffer.shift();
     while (mdBuffer.length && mdBuffer[mdBuffer.length - 1].trim() === '') mdBuffer.pop();
-    if (mdBuffer.length) nodes.push({ kind: 'markdown', text: mdBuffer.join('\n') });
+    if (mdBuffer.length) {
+      // Strip common leading indent to prevent markdown code-block interpretation
+      const nonEmpty = mdBuffer.filter((l) => l.trim() !== '');
+      const minIndent = nonEmpty.length
+        ? Math.min(...nonEmpty.map((l) => l.match(/^(\s*)/)![1].length))
+        : 0;
+      const dedented = minIndent > 0
+        ? mdBuffer.map((l) => l.slice(minIndent))
+        : mdBuffer;
+      nodes.push({ kind: 'markdown', text: dedented.join('\n') });
+    }
     mdBuffer.length = 0;
   };
 
@@ -135,7 +150,7 @@ function parseBodyBlock(
         return { nodes, next: i + 1 };
       }
       // stray close — treat as md
-      mdBuffer.push(`</${k.name}>`);
+      mdBuffer.push(`</${k.name === 'block' ? '' : k.name}>`);
       i++;
       continue;
     }
@@ -146,9 +161,10 @@ function parseBodyBlock(
       i = next;
       continue;
     }
-    if (k.t === 'inline') {
+    if (k.t === 'inline-block') {
       flushMd();
-      nodes.push(k.node);
+      const childText: Node = { kind: 'markdown', text: k.content };
+      nodes.push({ kind: 'block', attrs: k.attrs, children: [childText] });
       i++;
       continue;
     }
@@ -178,7 +194,8 @@ export function parseDeck(md: string): Deck {
     const k = classified[i];
     if (k.t === 'h1') break;
     if (k.t === 'meta') {
-      if (k.key === 'fr') deck.globalFr = { text: k.value, attrs: k.attrs };
+      if (k.key === 'date') deck.date = k.value;
+      else if (k.key === 'fr') deck.globalFr = { text: k.value, attrs: k.attrs };
       else if (k.key === 'fl') deck.globalFl = { text: k.value, attrs: k.attrs };
       else if (k.key === 'bg') deck.globalBg = { src: rewriteAssetPath(k.value), attrs: k.attrs };
       else if (k.key === 'f-bg') deck.globalFbg = { src: rewriteAssetPath(k.value), attrs: k.attrs };
@@ -205,25 +222,29 @@ export function parseDeck(md: string): Deck {
 
     // extract per-slide metadata and template, leave the rest for body parsing
     let template = 'default';
-    let icon: string | undefined;
-    let bg: Background | undefined;
-    let fbg: Background | undefined;
+    let subheading: string | undefined;
+    let icon: AssetRef | undefined;
+    let bg: AssetRef | undefined;
+    let fbg: AssetRef | undefined;
     let fr: FooterText | undefined;
     let fl: FooterText | undefined;
     const bodyInput: LineKind[] = [];
-    const bodyLines: string[] = [];
 
     for (const k of slideLines) {
+      if (k.t === 'h2') {
+        subheading = k.text;
+        continue;
+      }
       if (k.t === 'tmpl') {
         template = k.name;
         if (!KNOWN_TEMPLATES.has(template)) {
-          console.warn(`[henohe-nun] unknown template <>${template}, falling back to default`);
+          console.warn(`[henohe-nun] unknown template @>${template}, falling back to default`);
           template = 'default';
         }
         continue;
       }
       if (k.t === 'meta') {
-        if (k.key === 'icon') icon = rewriteAssetPath(k.value);
+        if (k.key === 'icon') icon = { src: rewriteAssetPath(k.value), attrs: k.attrs };
         else if (k.key === 'bg') bg = { src: rewriteAssetPath(k.value), attrs: k.attrs };
         else if (k.key === 'f-bg') fbg = { src: rewriteAssetPath(k.value), attrs: k.attrs };
         else if (k.key === 'fr') fr = { text: k.value, attrs: k.attrs };
@@ -231,7 +252,6 @@ export function parseDeck(md: string): Deck {
         continue;
       }
       bodyInput.push(k);
-      if (k.t === 'md' && k.raw.trim() !== '') bodyLines.push(k.raw);
     }
 
     const { nodes: body } = parseBodyBlock(bodyInput, 0, null);
@@ -239,14 +259,14 @@ export function parseDeck(md: string): Deck {
     deck.slides.push({
       index: deck.slides.length,
       heading,
+      subheading,
       template,
       icon,
       bg: bg ?? deck.globalBg,
       fbg: fbg ?? deck.globalFbg,
-      fr,
-      fl,
+      fr: fr ?? deck.globalFr,
+      fl: fl ?? deck.globalFl,
       body,
-      bodyLines,
     });
   }
 
@@ -255,15 +275,20 @@ export function parseDeck(md: string): Deck {
 
 // --- style helper ----------------------------------------------------------
 
-const PX_KEYS = new Set(['w', 'h', 'l', 'r', 't', 'b', 'm', 'mt', 'mb', 'ml', 'mr', 'p', 'pt', 'pb', 'pl', 'pr', 'size']);
+const PX_KEYS = new Set(['w', 'h', 'x', 'y', 'm', 'mt', 'mb', 'ml', 'mr', 'p', 'pt', 'pb', 'pl', 'pr', 's']);
+
+// Append `px` when the value is a bare number; otherwise pass through (so `%`,
+// `vw`, `calc(...)` etc. Just Work). Returns '' for boolean/undefined input.
+export function pxUnit(v: AttrValue | undefined): string {
+  if (typeof v !== 'string') return '';
+  return /^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
+}
 
 const CSS_MAP: Record<string, string> = {
   w: 'width',
   h: 'height',
-  l: 'left',
-  r: 'right',
-  t: 'top',
-  b: 'bottom',
+  x: 'left',
+  y: 'top',
   m: 'margin',
   mt: 'margin-top',
   mb: 'margin-bottom',
@@ -274,58 +299,114 @@ const CSS_MAP: Record<string, string> = {
   pb: 'padding-bottom',
   pl: 'padding-left',
   pr: 'padding-right',
-  size: 'font-size',
+  s: 'font-size',
   color: 'color',
   opacity: 'opacity',
 };
 
-// Align keywords (boolean flags): left/right/center.
-// Emit both text-align and align-self so they work in text blocks and flex items.
-const ALIGN_MAP: Record<string, { text: string; self: string }> = {
-  left: { text: 'left', self: 'flex-start' },
-  right: { text: 'right', self: 'flex-end' },
-  center: { text: 'center', self: 'center' },
+// Layout align keywords (boolean flags) — flex justify/align.
+// Emits both container props (justify-content, align-items) and child prop
+// (align-self) so the same keyword works whether the element is a flex
+// container or a flex child.
+type LayoutAlign = {
+  justify?: string;
+  items?: string;
+  self?: string;
+};
+const LAYOUT_ALIGN: Record<string, LayoutAlign> = {
+  top:      { justify: 'flex-start' },
+  bottom:   { justify: 'flex-end' },
+  left:     { items: 'flex-start', self: 'flex-start' },
+  right:    { items: 'flex-end',   self: 'flex-end' },
+  vcenter:  { justify: 'center' },
+  hcenter:  { items: 'center',    self: 'center' },
+  center:   { justify: 'center',  items: 'center', self: 'center' },
 };
 
-// Background sizing rules (mirrors img sizing in NodeRenderer):
-//   w only  -> `${w} auto`   (w-based, aspect preserved via auto)
-//   h only  -> `auto ${h}`   (h-based, aspect preserved)
-//   both    -> `${w} ${h}`   (explicit; note: aspect not preserved if values
-//                             don't match the image's intrinsic ratio — CSS
-//                             background-size can't express "contain within
-//                             an arbitrary w×h box" without knowing the
-//                             image's intrinsic size)
-//   neither -> `cover`       (fill the slide, smaller slide dim wins)
-export function bgSizeStyle(attrs: Attrs): string {
-  const pxVal = (v: AttrValue): string =>
-    typeof v === 'string' ? (/^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v) : '';
-  const wv = attrs.w ? pxVal(attrs.w) : '';
-  const hv = attrs.h ? pxVal(attrs.h) : '';
-  const common = 'background-position:center;background-repeat:no-repeat';
-  if (wv && hv) return `background-size:${wv} ${hv};${common}`;
-  if (wv) return `background-size:${wv} auto;${common}`;
-  if (hv) return `background-size:auto ${hv};${common}`;
-  return 'background-size:cover;background-position:center';
+// Text alignment keywords.
+const TEXT_ALIGN: Record<string, string> = {
+  tl: 'left',
+  tr: 'right',
+  tc: 'center',
+};
+
+// --- <img> style helpers for AssetRef ---
+// Replaces the old background-image approach with object-fit/object-position.
+
+const IMG_POSITION_KEYS = new Set(['w', 'h', 'x', 'y', 'left', 'right', 'top', 'bottom', 'center', 'hcenter', 'vcenter']);
+
+export function imgFitStyle(attrs: Attrs): string {
+  const wv = pxUnit(attrs.w);
+  const hv = pxUnit(attrs.h);
+  if (wv || hv) return 'object-fit:none';
+  return 'object-fit:cover';
+}
+
+export function imgSizeStyle(attrs: Attrs): string {
+  const wv = pxUnit(attrs.w);
+  const hv = pxUnit(attrs.h);
+  if (wv && hv) return `width:${wv};height:${hv}`;
+  if (wv) return `width:${wv}`;
+  if (hv) return `height:${hv}`;
+  return '';
+}
+
+export function imgPositionStyle(attrs: Attrs): string {
+  const { x: xv, y: yv, left, right, center, hcenter, top, bottom, vcenter } = attrs;
+
+  let xPos: string;
+  if (left === true) xPos = 'left';
+  else if (right === true) xPos = 'right';
+  else if (center === true || hcenter === true) xPos = 'center';
+  else if (typeof xv === 'string') {
+    if (/%$/.test(xv)) xPos = `calc(50% + ${xv.slice(0, -1)}cqw)`;
+    else xPos = `calc(50% + ${pxUnit(xv)})`;
+  } else xPos = 'center';
+
+  let yPos: string;
+  if (top === true) yPos = 'top';
+  else if (bottom === true) yPos = 'bottom';
+  else if (center === true || vcenter === true) yPos = 'center';
+  else if (typeof yv === 'string') {
+    if (/%$/.test(yv)) yPos = `calc(50% + ${yv.slice(0, -1)}cqh)`;
+    else yPos = `calc(50% + ${pxUnit(yv)})`;
+  } else yPos = 'center';
+
+  return `object-position:${xPos} ${yPos}`;
+}
+
+export function imgAttrStyle(asset: AssetRef): string {
+  const rest: Attrs = {};
+  for (const [k, v] of Object.entries(asset.attrs)) {
+    if (!IMG_POSITION_KEYS.has(k)) rest[k] = v;
+  }
+  return [imgFitStyle(asset.attrs), imgSizeStyle(asset.attrs), imgPositionStyle(asset.attrs), attrsToStyle(rest)].filter(Boolean).join(';');
 }
 
 export function attrsToStyle(attrs: Attrs): string {
   const parts: string[] = [];
   for (const [k, v] of Object.entries(attrs)) {
     if (k === 'src') continue;
-    // `b` is overloaded: `<... b>` (flag) = bold, `<... b=10>` = bottom offset.
+    // `b` = bold flag.
     if (k === 'b' && v === true) parts.push('font-weight:bold', 'color:var(--theme-color)');
     else if (k === 'i' && v === true) parts.push('font-style:italic');
-    else if (k in ALIGN_MAP && v === true) {
-      const a = ALIGN_MAP[k];
-      parts.push(`text-align:${a.text}`, `align-self:${a.self}`);
+    // Layout align
+    else if (k in LAYOUT_ALIGN && v === true) {
+      const a = LAYOUT_ALIGN[k];
+      if (a.justify) parts.push(`justify-content:${a.justify}`);
+      if (a.items) parts.push(`align-items:${a.items}`);
+      if (a.self) parts.push(`align-self:${a.self}`);
+    }
+    // Text align
+    else if (k in TEXT_ALIGN && v === true) {
+      parts.push(`text-align:${TEXT_ALIGN[k]}`);
     }
     else if (k === 'blur' && typeof v === 'string') {
-      const bv = /^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
-      parts.push(`filter:blur(${bv})`);
+      parts.push(`filter:blur(${pxUnit(v)})`);
     }
     else if (k in CSS_MAP && typeof v === 'string') {
       const cssKey = CSS_MAP[k];
-      const cssVal = PX_KEYS.has(k) && /^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
+      const cssVal = PX_KEYS.has(k) ? pxUnit(v) : v;
       parts.push(`${cssKey}:${cssVal}`);
     }
   }

@@ -1,18 +1,19 @@
 ---
+import { Image } from 'astro:assets';
 import { marked } from 'marked';
 import type { Slide } from '../../lib/parser';
+import henoheno from '../../assets/images/henoheno.svg';
 
 interface Props {
   slide: Slide;
 }
 
 const { slide } = Astro.props;
-const subtitleRaw = slide.bodyLines[0] ?? '';
-const subtitleHtml = subtitleRaw ? (marked.parseInline(subtitleRaw) as string) : '';
+const subtitleHtml = slide.subheading ? (marked.parseInline(slide.subheading) as string) : '';
 ---
 
 <div class="template-title">
-  <img class="henoheno" src="/images/henoheno.svg" alt="" />
+  <Image class="henoheno" src={henoheno} alt="" />
   <div class="text">
     <h1 class="title">{slide.heading}</h1>
     {subtitleHtml && <p class="subtitle" set:html={subtitleHtml} />}
@@ -27,14 +28,14 @@ const subtitleHtml = subtitleRaw ? (marked.parseInline(subtitleRaw) as string) :
     overflow: hidden;
     display: flex;
     align-items: center;
-    padding: 0 6vw;
+    padding: 0 6cqw;
     box-sizing: border-box;
   }
   .henoheno {
     position: absolute;
-    right: calc(min(91vw, 143vh) * -0.13);
-    bottom: calc(min(91vw, 143vh) * -0.75);
-    width: min(95vw, 150vh);
+    right: calc(min(91cqw, 143cqh) * -0.13);
+    bottom: calc(min(91cqw, 143cqh) * -0.75);
+    width: min(95cqw, 150cqh);
     height: auto;
     pointer-events: none;
   }
@@ -45,15 +46,15 @@ const subtitleHtml = subtitleRaw ? (marked.parseInline(subtitleRaw) as string) :
   }
   .title {
     margin: 0;
-    font-size: clamp(36px, 11vmin, 200px);
+    font-size: clamp(36px, 11cqmin, 200px);
     font-weight: 900;
     letter-spacing: -0.03em;
     color: black;
     line-height: 1;
   }
   .subtitle {
-    margin: clamp(12px, 2vmin, 32px) 0 0 0;
-    font-size: clamp(16px, 3.2vmin, 60px);
+    margin: clamp(12px, 2cqmin, 32px) 0 0 0;
+    font-size: clamp(16px, 3.2cqmin, 60px);
     color: #3d3d3d;
     font-weight: 600;
     letter-spacing: 0.02em;

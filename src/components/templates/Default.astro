@@ -1,6 +1,6 @@
 ---
 import type { Slide } from '../../lib/parser';
-import NodeRenderer from '../NodeRenderer.astro';
+import NodeRenderer from '../layers/NodeRenderer.astro';
 
 interface Props {
   slide: Slide;
@@ -22,11 +22,11 @@ const { slide } = Astro.props;
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: clamp(32px, 8vmin, 180px) clamp(32px, 8vmin, 180px) clamp(48px, 10vmin, 200px);
+    padding: clamp(32px, 8cqmin, 180px) clamp(32px, 8cqmin, 180px) clamp(48px, 10cqmin, 200px);
     box-sizing: border-box;
   }
   .title {
-    margin-bottom: clamp(20px, 4vmin, 80px);
+    margin-bottom: 0;
   }
   .body {
     flex: 1;

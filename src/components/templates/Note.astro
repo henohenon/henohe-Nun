@@ -1,27 +1,25 @@
 ---
+import { marked } from 'marked';
 import type { Slide } from '../../lib/parser';
-import NodeRenderer from '../NodeRenderer.astro';
+import NodeRenderer from '../layers/NodeRenderer.astro';
 
 interface Props {
   slide: Slide;
 }
 
 const { slide } = Astro.props;
-// Split body: non-markdown nodes (txt/img/row/col) centered in the middle,
-// plain markdown text pinned to the bottom.
-const centerNodes = slide.body.filter((n) => n.kind !== 'markdown');
-const bottomNodes = slide.body.filter((n) => n.kind === 'markdown');
+const subHtml = slide.subheading ? (marked.parseInline(slide.subheading) as string) : '';
 ---
 
 <div class="template-note">
   <h2 class="slide-title">{slide.heading}</h2>
   <div class="slide-body body">
     <div class="body-center">
-      <NodeRenderer nodes={centerNodes} />
+      <NodeRenderer nodes={slide.body} />
     </div>
-    {bottomNodes.length > 0 && (
+    {subHtml && (
       <div class="body-bottom">
-        <NodeRenderer nodes={bottomNodes} />
+        <p set:html={subHtml} />
       </div>
     )}
   </div>
@@ -33,7 +31,7 @@ const bottomNodes = slide.body.filter((n) => n.kind === 'markdown');
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: clamp(32px, 8vmin, 180px) clamp(32px, 8vmin, 180px) clamp(48px, 10vmin, 200px);
+    padding: clamp(32px, 8cqmin, 180px) clamp(32px, 8cqmin, 180px) clamp(48px, 10cqmin, 200px);
     box-sizing: border-box;
   }
   .body {
@@ -43,6 +41,7 @@ const bottomNodes = slide.body.filter((n) => n.kind === 'markdown');
     align-items: stretch;
     text-align: center;
     line-height: 1.4;
+    min-height: 0;
   }
   .body-center {
     flex: 1;

@@ -1,0 +1,44 @@
+---
+import { Image } from 'astro:assets';
+import type { AssetRef } from '../../lib/parser';
+import { imgAttrStyle } from '../../lib/parser';
+import { resolveImage } from '../../lib/images';
+
+interface Props {
+  asset: AssetRef;
+}
+
+const { asset } = Astro.props;
+const style = imgAttrStyle(asset);
+const image = resolveImage(asset.src);
+const blurPx = asset.attrs.blur ? Number(asset.attrs.blur) : 0;
+---
+
+{image ? (
+  <Image
+    class="slide-bg"
+    src={image}
+    alt=""
+    widths={[1920]}
+    loading="eager"
+    style={`${style};--blur-expand:${blurPx}px`}
+  />
+) : (
+  <img
+    class="slide-bg"
+    src={asset.src}
+    alt=""
+    style={`${style};--blur-expand:${blurPx}px`}
+  />
+)}
+
+<style>
+  .slide-bg {
+    position: absolute;
+    inset: calc(-1 * var(--blur-expand));
+    max-width: calc(100% + 2 * var(--blur-expand));
+    max-height: calc(100% + 2 * var(--blur-expand));
+    object-fit: cover;
+    pointer-events: none;
+  }
+</style>

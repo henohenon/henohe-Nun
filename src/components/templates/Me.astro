@@ -1,21 +1,28 @@
 ---
+import { Image } from 'astro:assets';
 import type { Slide } from '../../lib/parser';
+import { attrsToStyle } from '../../lib/parser';
+import { resolveImage } from '../../lib/images';
+import NodeRenderer from '../layers/NodeRenderer.astro';
 
 interface Props {
   slide: Slide;
 }
 
 const { slide } = Astro.props;
+const iconStyle = slide.icon ? attrsToStyle(slide.icon.attrs) : '';
+const iconImage = slide.icon ? resolveImage(slide.icon.src) : undefined;
 ---
 
 <div class="template-me">
   <div class="left">
-    {slide.icon && <img class="icon" src={slide.icon} alt="" />}
+    {slide.icon && iconImage && <Image class="icon" src={iconImage} alt="" style={iconStyle} width={960} />}
+    {slide.icon && !iconImage && <img class="icon" src={slide.icon.src} style={iconStyle} alt="" />}
   </div>
   <div class="right">
-    <ul class="slide-body lines">
-      {slide.bodyLines.map((line) => <li>{line}</li>)}
-    </ul>
+    <div class="slide-body body">
+      <NodeRenderer nodes={slide.body} />
+    </div>
   </div>
   <h2 class="slide-title label">{slide.heading}</h2>
 </div>
@@ -35,9 +42,9 @@ const { slide } = Astro.props;
     /* Top padding reserves space for the absolute-positioned heading so the icon
        centers between the heading's bottom and the slide's bottom. */
     padding:
-      calc(clamp(32px, 8vmin, 180px) + clamp(42px, 9.1vmin, 182px))
-      clamp(40px, 7vmin, 140px)
-      clamp(32px, 8vmin, 180px);
+      calc(clamp(32px, 8cqmin, 180px) + clamp(42px, 9.1cqmin, 182px))
+      clamp(40px, 7cqmin, 140px)
+      clamp(32px, 8cqmin, 180px);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -47,15 +54,15 @@ const { slide } = Astro.props;
   /* Title is pulled out of the white left column so it can span full width. */
   .label {
     position: absolute;
-    top: clamp(32px, 8vmin, 180px);
-    left: clamp(32px, 8vmin, 180px);
-    right: clamp(32px, 8vmin, 180px);
+    top: clamp(32px, 8cqmin, 180px);
+    left: clamp(32px, 8cqmin, 180px);
+    right: clamp(32px, 8cqmin, 180px);
     margin: 0;
     z-index: 2;
   }
   .icon {
-    width: clamp(240px, 44vmin, 840px);
-    height: clamp(240px, 44vmin, 840px);
+    width: clamp(240px, 44cqmin, 840px);
+    height: clamp(240px, 44cqmin, 840px);
     object-fit: cover;
     flex-shrink: 0;
     /* Horizontally centered in the white column, vertically between title and footer. */
@@ -67,22 +74,17 @@ const { slide } = Astro.props;
     /* Top padding aligns text with where the body would start in other templates
        (template top padding + title height + title margin-bottom). */
     padding:
-      calc(clamp(32px, 8vmin, 180px) + clamp(42px, 9.1vmin, 182px) + clamp(20px, 4vmin, 80px))
-      clamp(32px, 8vmin, 180px)
-      clamp(48px, 10vmin, 200px);
+      calc(clamp(32px, 8cqmin, 180px) + clamp(42px, 9.1cqmin, 182px))
+      clamp(32px, 8cqmin, 180px)
+      clamp(48px, 10cqmin, 200px);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
   }
-  /* Me has a flat list (no bullets) — override the shared bullet style. */
-  .lines {
-    padding: 0;
-  }
-  .lines li {
-    margin: 0.1em 0;
-    padding-left: 0;
-  }
-  .lines li::before {
-    display: none;
+  .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 </style>

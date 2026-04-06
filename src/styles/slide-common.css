@@ -1,7 +1,9 @@
+@import 'highlight.js/styles/github.css';
+
 /* Shared slide typography. Templates add layout-specific CSS on top. */
 
 .slide-title {
-  font-size: clamp(42px, 9.1vmin, 182px);
+  font-size: clamp(42px, 9.1cqmin, 182px);
   font-weight: 900;
   letter-spacing: -0.025em;
   color: var(--theme-color);
@@ -10,10 +12,11 @@
 }
 
 .slide-body {
-  font-size: clamp(26px, 5vmin, 101px);
+  font-size: clamp(26px, 5cqmin, 101px);
   font-weight: 500;
   line-height: 1.55;
   color: #1a1a1a;
+  margin-top: clamp(20px, 4cqmin, 80px);
   padding: 0 5px;
   box-sizing: border-box;
 }
@@ -45,6 +48,89 @@
 .slide-body b {
   font-weight: 700;
   -webkit-text-stroke: 0.005em currentColor;
+}
+.slide-body .code-block {
+  display: inline-block;
+  align-self: flex-start;
+  text-align: left;
+  margin: 0.3em 0;
+  border-radius: 0.4em;
+  border: 1px solid #e1e4e8;
+  overflow: hidden;
+  background: #f6f8fa;
+}
+.slide-body .code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.15em 0.4em;
+  background: #e8ecf0;
+  border-bottom: 1px solid #e1e4e8;
+  font-size: 0.55em;
+  font-family: 'Consolas', 'Monaco', 'Menlo', monospace;
+}
+.slide-body .code-lang {
+  color: #666;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.slide-body .copy-btn {
+  background: transparent;
+  border: none;
+  border-radius: 0.2em;
+  cursor: pointer;
+  padding: 0.1em 0.3em;
+  color: #888;
+  font-family: inherit;
+  font-size: 1em;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.slide-body .code-block:hover .copy-btn {
+  opacity: 1;
+}
+.slide-body .copy-btn:hover {
+  background: rgba(0,0,0,0.08);
+  color: #333;
+}
+.slide-body .code-block pre {
+  margin: 0;
+  padding: 0.4em 0.6em;
+  border-radius: 0;
+  overflow: auto;
+  background: transparent;
+}
+.slide-body .code-block pre code {
+  font-size: 0.7em;
+  line-height: 1.4;
+  font-family: 'Consolas', 'Monaco', 'Menlo', monospace;
+  background: transparent;
+}
+.slide-body code {
+  font-family: 'Consolas', 'Monaco', 'Menlo', monospace;
+  font-size: 0.85em;
+  background: #f0f2f5;
+  padding: 0.1em 0.3em;
+  border-radius: 0.25em;
+  color: #d6336c;
+}
+.slide-body .code-block code {
+  font-size: 0.7em;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+}
+.slide-body blockquote {
+  margin: 0.3em 0;
+  padding: 0.2em 0 0.2em 0.6em;
+  border-left: 0.15em solid var(--theme-color);
+  color: #555;
+  font-style: italic;
+}
+.slide-body blockquote p {
+  margin: 0;
 }
 .slide-body img {
   max-width: 100%;
