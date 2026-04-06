@@ -8,20 +8,12 @@ interface Props {
 
 const { asset } = Astro.props;
 const blurPx = asset.attrs.blur ? Number(asset.attrs.blur) : 0;
+const expand = blurPx ? `calc(100% + ${2 * blurPx}px)` : '100%';
+const inset = blurPx ? `-${blurPx}px` : '0';
 ---
 
 <OptimizedImage
   class="slide-bg"
   asset={asset}
-  extraStyle={`--blur-expand:${blurPx}px`}
+  extraStyle={`position:absolute;inset:${inset};width:${expand};height:${expand};pointer-events:none`}
 />
-
-<style>
-  .slide-bg {
-    position: absolute;
-    inset: calc(-1 * var(--blur-expand));
-    width: calc(100% + 2 * var(--blur-expand));
-    height: calc(100% + 2 * var(--blur-expand));
-    pointer-events: none;
-  }
-</style>
