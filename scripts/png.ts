@@ -7,7 +7,7 @@
 
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { runExport, openDeckPage, WIDTH, HEIGHT, parseScale } from './_lib';
+import { HEIGHT, openDeckPage, parseScale, runExport, WIDTH } from './_lib';
 
 const scale = parseScale();
 
@@ -25,27 +25,33 @@ const pageFilter = pageArgs.length > 0 ? new Set(pageArgs) : null;
 if (scale !== 1) console.log(`[png] scale=${scale} → ${WIDTH * scale}×${HEIGHT * scale}`);
 
 try {
-  await runExport('png', async (browser, deck) => {
-    const deckDir = join(PNG_DIR, deck);
-    await mkdir(deckDir, { recursive: true });
+  await runExport(
+    'png',
+    async (browser, deck) => {
+      const deckDir = join(PNG_DIR, deck);
+      await mkdir(deckDir, { recursive: true });
 
-    const { ctx, page } = await openDeckPage(browser, deck, { width: WIDTH, height: HEIGHT }, scale);
-    const count = await page.evaluate(() => document.querySelectorAll('.slide').length);
-    const pad = String(Math.max(count - 1, 0)).length || 1;
+      const { ctx, page } = await openDeckPage(browser, deck, { width: WIDTH, height: HEIGHT }, scale);
+      const count = await page.evaluate(() => document.querySelectorAll('.slide').length);
+      const pad = String(Math.max(count - 1, 0)).length || 1;
 
-    const pages = pageFilter
-      ? [...pageFilter].filter((i) => i < count).sort((a, b) => a - b)
-      : Array.from({ length: count }, (_, i) => i);
+      const pages = pageFilter
+        ? [...pageFilter].filter((i) => i < count).sort((a, b) => a - b)
+        : Array.from({ length: count }, (_, i) => i);
 
-    for (const i of pages) {
-      await page.evaluate((n) => { location.hash = String(n); }, i);
-      await page.waitForTimeout(60);
-      const name = String(i).padStart(pad, '0') + '.png';
-      await page.screenshot({ path: join(deckDir, name), fullPage: false });
-      console.log(`       → dist/.png/${deck}/${name}`);
-    }
-    await ctx.close();
-  }, { deckFilter: deckArg });
+      for (const i of pages) {
+        await page.evaluate((n) => {
+          location.hash = String(n);
+        }, i);
+        await page.waitForTimeout(60);
+        const name = `${String(i).padStart(pad, '0')}.png`;
+        await page.screenshot({ path: join(deckDir, name), fullPage: false });
+        console.log(`       → dist/.png/${deck}/${name}`);
+      }
+      await ctx.close();
+    },
+    { deckFilter: deckArg },
+  );
 } catch (e) {
   console.error('[png] fatal:', e);
   process.exit(1);

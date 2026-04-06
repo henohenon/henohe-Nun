@@ -4,7 +4,7 @@
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import { runExport, openDeckPage } from './_lib';
+import { openDeckPage, runExport } from './_lib';
 
 const OGP_W = 1200;
 const OGP_H = 630;
@@ -20,9 +20,7 @@ try {
     await ctx.close();
 
     const outPath = join(WEBP_DIR, `${deck}.webp`);
-    await sharp(png)
-      .webp({ quality: 85 })
-      .toFile(outPath);
+    await sharp(png).webp({ quality: 85 }).toFile(outPath);
 
     console.log(`       → ${outPath}`);
   });

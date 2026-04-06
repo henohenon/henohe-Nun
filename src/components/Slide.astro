@@ -2,12 +2,12 @@
 import type { Slide } from '../lib/parser';
 import BgLayer from './layers/BgLayer.astro';
 import FooterLayer from './layers/FooterLayer.astro';
-import Title from './templates/Title.astro';
-import Me from './templates/Me.astro';
-import Default from './templates/Default.astro';
 import Big from './templates/Big.astro';
-import Thx from './templates/Thx.astro';
+import Default from './templates/Default.astro';
+import Me from './templates/Me.astro';
 import Note from './templates/Note.astro';
+import Thx from './templates/Thx.astro';
+import Title from './templates/Title.astro';
 
 interface Props {
   slide: Slide;
@@ -17,12 +17,8 @@ interface Props {
 const { slide, date } = Astro.props;
 
 // Title template: use deck-level date as fr, blank fl.
-const fr = slide.template === 'title' && date
-  ? { text: date, attrs: {} }
-  : slide.fr;
-const fl = slide.template === 'title' && date
-  ? undefined
-  : slide.fl;
+const fr = slide.template === 'title' && date ? { text: date, attrs: {} } : slide.fr;
+const fl = slide.template === 'title' && date ? undefined : slide.fl;
 
 // f-bg is always effective as the footer-shaped mask. On title slides, if there's
 // no explicit bg, the f-bg image is additionally used as the regular bg.

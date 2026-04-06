@@ -1,11 +1,11 @@
 // Generate PDFs from the current dist/.
 // Usage: tsx scripts/pdf.ts [deck]
 
-import { mkdir, rename, rm, stat } from 'node:fs/promises';
-import { join } from 'node:path';
-import { platform } from 'node:os';
 import { execSync } from 'node:child_process';
-import { runExport, openDeckPage, WIDTH, HEIGHT, parseScale, sh } from './_lib';
+import { mkdir, rename, rm, stat } from 'node:fs/promises';
+import { platform } from 'node:os';
+import { join } from 'node:path';
+import { HEIGHT, openDeckPage, parseScale, runExport, sh, WIDTH } from './_lib';
 
 const GS = platform() === 'win32' ? 'gswin64c' : 'gs';
 
@@ -41,13 +41,20 @@ try {
     const before = (await stat(pdfPath)).size;
     await rename(pdfPath, tmpPath);
     await sh(GS, [
-      '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.5', '-dPDFSETTINGS#/prepress',
-      '-dNOPAUSE', '-dBATCH', `-sOutputFile=${pdfPath}`, tmpPath,
+      '-sDEVICE=pdfwrite',
+      '-dCompatibilityLevel=1.5',
+      '-dPDFSETTINGS#/prepress',
+      '-dNOPAUSE',
+      '-dBATCH',
+      `-sOutputFile=${pdfPath}`,
+      tmpPath,
     ]);
     const after = (await stat(pdfPath)).size;
     const pct = ((1 - after / before) * 100).toFixed(0);
     await rm(tmpPath);
-    console.log(`       → dist/.pdf/${deck}.pdf  ${(before / 1e6).toFixed(1)}MB → ${(after / 1e6).toFixed(1)}MB (−${pct}%)`);
+    console.log(
+      `       → dist/.pdf/${deck}.pdf  ${(before / 1e6).toFixed(1)}MB → ${(after / 1e6).toFixed(1)}MB (−${pct}%)`,
+    );
     await ctx.close();
   });
 } catch (e) {

@@ -1,4 +1,4 @@
-@import 'highlight.js/styles/github.css';
+@import "highlight.js/styles/github.css";
 
 /* Shared slide typography. Templates add layout-specific CSS on top. */
 
@@ -32,7 +32,7 @@
   position: relative;
 }
 .slide-body li::before {
-  content: '';
+  content: "";
   position: absolute;
   left: -0.1em;
   top: 0.65em;
@@ -67,7 +67,7 @@
   background: #e8ecf0;
   border-bottom: 1px solid #e1e4e8;
   font-size: 0.55em;
-  font-family: 'Consolas', 'Monaco', 'Menlo', monospace;
+  font-family: "Consolas", "Monaco", "Menlo", monospace;
 }
 .slide-body .code-lang {
   color: #666;
@@ -91,7 +91,7 @@
   opacity: 1;
 }
 .slide-body .copy-btn:hover {
-  background: rgba(0,0,0,0.08);
+  background: rgba(0, 0, 0, 0.08);
   color: #333;
 }
 .slide-body .code-block pre {
@@ -101,19 +101,19 @@
   overflow: auto;
   background: transparent;
 }
-.slide-body .code-block pre code {
-  font-size: 0.7em;
-  line-height: 1.4;
-  font-family: 'Consolas', 'Monaco', 'Menlo', monospace;
-  background: transparent;
-}
 .slide-body code {
-  font-family: 'Consolas', 'Monaco', 'Menlo', monospace;
+  font-family: "Consolas", "Monaco", "Menlo", monospace;
   font-size: 0.85em;
   background: #f0f2f5;
   padding: 0.1em 0.3em;
   border-radius: 0.25em;
   color: #d6336c;
+}
+.slide-body .code-block pre code {
+  font-size: 0.7em;
+  line-height: 1.4;
+  font-family: "Consolas", "Monaco", "Menlo", monospace;
+  background: transparent;
 }
 .slide-body .code-block code {
   font-size: 0.7em;

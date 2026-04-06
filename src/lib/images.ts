@@ -3,10 +3,9 @@
 
 import type { ImageMetadata } from 'astro';
 
-const modules = import.meta.glob<{ default: ImageMetadata }>(
-  '../assets/images/**/*.{png,jpg,jpeg,svg,gif,webp,avif}',
-  { eager: true },
-);
+const modules = import.meta.glob<{ default: ImageMetadata }>('../assets/images/**/*.{png,jpg,jpeg,svg,gif,webp,avif}', {
+  eager: true,
+});
 
 // Build a lookup: `/images/foo.png` → ImageMetadata
 const imageMap = new Map<string, ImageMetadata>();

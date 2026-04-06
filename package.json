@@ -10,7 +10,10 @@
     "build:pdf": "tsx scripts/pdf.ts",
     "build:png": "tsx scripts/png.ts",
     "build:webp": "tsx scripts/webp.ts",
-    "build:thumbs": "tsx scripts/webp.ts --out=public/thumbs"
+    "build:thumbs": "tsx scripts/webp.ts --out=public/thumbs",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "astro check && tsc -p scripts/tsconfig.json --noEmit"
   },
   "dependencies": {
     "astro": "^4.16.18",
@@ -19,6 +22,9 @@
     "marked-highlight": "^2.2.3"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@biomejs/biome": "^2.4.10",
+    "@types/node": "^25.5.2",
     "playwright": "^1.59.1",
     "sharp": "^0.34.5",
     "tsx": "^4.21.0",

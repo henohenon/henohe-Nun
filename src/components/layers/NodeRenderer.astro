@@ -1,11 +1,11 @@
 ---
 import { getImage } from 'astro:assets';
+import hljs from 'highlight.js';
 import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
-import hljs from 'highlight.js';
-import type { Node, Attrs } from '../../lib/parser';
-import { attrsToStyle, rewriteAssetPath } from '../../lib/parser';
 import { resolveImage } from '../../lib/images';
+import type { Attrs, Node } from '../../lib/parser';
+import { attrsToStyle, rewriteAssetPath } from '../../lib/parser';
 
 interface Props {
   nodes: Node[];
@@ -61,35 +61,32 @@ const marked = new Marked(
 // - [path.png] → ![](optimized_path) (image embed)
 // - [url] → [url](url) (auto-link)
 function preprocessMd(text: string): string {
-  return text.replace(
-    /(?<!!)\[([^\]]+)\](?!\()/g,
-    (_, content: string) => {
-      const trimmed = content.trim();
-      if (IMAGE_EXT.test(trimmed)) {
-        const rewritten = rewriteAssetPath(trimmed);
-        const optimized = optimizedMap.get(rewritten) ?? rewritten;
-        return `![](${optimized})`;
-      }
-      if (/^https?:\/\//.test(trimmed)) {
-        return `[${trimmed}](${trimmed})`;
-      }
-      return `[${content}]`;
-    },
-  );
+  return text.replace(/(?<!!)\[([^\]]+)\](?!\()/g, (_, content: string) => {
+    const trimmed = content.trim();
+    if (IMAGE_EXT.test(trimmed)) {
+      const rewritten = rewriteAssetPath(trimmed);
+      const optimized = optimizedMap.get(rewritten) ?? rewritten;
+      return `![](${optimized})`;
+    }
+    if (/^https?:\/\//.test(trimmed)) {
+      return `[${trimmed}](${trimmed})`;
+    }
+    return `[${content}]`;
+  });
 }
 
 function addCodeChrome(html: string): string {
-  return html.replace(
-    /<pre><code class="hljs language-(\w+)">/g,
-    (_, lang) =>
-      `<div class="code-block"><div class="code-header"><span class="code-lang">${lang}</span><button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)">Copy</button></div><pre><code class="hljs language-${lang}">`,
-  ).replace(
-    /<pre><code class="hljs">/g,
-    '<div class="code-block"><div class="code-header"><span class="code-lang"></span><button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest(\'.code-block\').querySelector(\'code\').textContent)">Copy</button></div><pre><code class="hljs">',
-  ).replace(
-    /<\/code><\/pre>/g,
-    '</code></pre></div>',
-  );
+  return html
+    .replace(
+      /<pre><code class="hljs language-(\w+)">/g,
+      (_, lang) =>
+        `<div class="code-block"><div class="code-header"><span class="code-lang">${lang}</span><button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)">Copy</button></div><pre><code class="hljs language-${lang}">`,
+    )
+    .replace(
+      /<pre><code class="hljs">/g,
+      '<div class="code-block"><div class="code-header"><span class="code-lang"></span><button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest(\'.code-block\').querySelector(\'code\').textContent)">Copy</button></div><pre><code class="hljs">',
+    )
+    .replace(/<\/code><\/pre>/g, '</code></pre></div>');
 }
 
 function renderMd(text: string): string {

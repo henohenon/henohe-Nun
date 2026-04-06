@@ -14,13 +14,13 @@
 //     Bun fallback path and to keep one code path across OSes)
 //   - deck enumeration + per-deck iteration + teardown
 
-import { chromium, type Browser, type BrowserContext, type Page } from 'playwright';
 import { spawn } from 'node:child_process';
-import { createServer, type Server } from 'node:http';
-import { readFile, readdir as readdirAsync, rm as rmAsync, stat } from 'node:fs/promises';
 import { existsSync, readdirSync } from 'node:fs';
-import { extname, join } from 'node:path';
+import { readdir as readdirAsync, readFile, rm as rmAsync, stat } from 'node:fs/promises';
+import { createServer, type Server } from 'node:http';
 import { tmpdir } from 'node:os';
+import { extname, join } from 'node:path';
+import { type Browser, type BrowserContext, chromium, type Page } from 'playwright';
 
 const PORT = 4322;
 export const WIDTH = 1920;
@@ -75,16 +75,10 @@ function serveDist(port: number): { close: () => Promise<void> } {
       const pathname = decodeURIComponent(url.pathname);
       // Strip the Astro base prefix so we can look up files in dist/.
       // e.g. /henohe-Nun/_astro/foo.css → /_astro/foo.css
-      const stripped = pathname.startsWith(BASE)
-        ? '/' + pathname.slice(BASE.length)
-        : pathname;
+      const stripped = pathname.startsWith(BASE) ? `/${pathname.slice(BASE.length)}` : pathname;
       const paths = [stripped, pathname];
       for (const p of paths) {
-        const candidates = [
-          join(DIST_DIR, p),
-          join(DIST_DIR, p, 'index.html'),
-          join(DIST_DIR, p + '.html'),
-        ];
+        const candidates = [join(DIST_DIR, p), join(DIST_DIR, p, 'index.html'), join(DIST_DIR, `${p}.html`)];
         for (const c of candidates) {
           try {
             const s = await stat(c);
@@ -153,8 +147,8 @@ function findChromiumExecutable(): string {
         process.platform === 'win32'
           ? [join(base, v, 'chrome-win64', 'chrome.exe')]
           : process.platform === 'darwin'
-          ? [join(base, v, 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium')]
-          : [join(base, v, 'chrome-linux', 'chrome')];
+            ? [join(base, v, 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium')]
+            : [join(base, v, 'chrome-linux', 'chrome')];
       for (const c of candidates) if (existsSync(c)) return c;
     }
   }
@@ -208,7 +202,9 @@ async function launchChromium(): Promise<LaunchedChromium> {
     await new Promise((r) => setTimeout(r, 100));
   }
   if (port === 0) {
-    try { proc.kill(); } catch {}
+    try {
+      proc.kill();
+    } catch {}
     throw new Error('chromium did not write DevToolsActivePort');
   }
 
@@ -217,8 +213,12 @@ async function launchChromium(): Promise<LaunchedChromium> {
   return {
     browser,
     close: async () => {
-      try { await browser.close(); } catch {}
-      try { proc.kill(); } catch {}
+      try {
+        await browser.close();
+      } catch {}
+      try {
+        proc.kill();
+      } catch {}
       await rmAsync(userDataDir, { recursive: true, force: true }).catch(() => {});
     },
   };
@@ -239,7 +239,7 @@ export async function openDeckPage(
   // than our screenshot cadence). The @media print block in [deck].astro
   // already handles this for PDF output.
   await page.addStyleTag({ content: '.hint{display:none !important;} astro-dev-toolbar{display:none !important;}' });
-  await page.evaluate(() => (document as any).fonts?.ready);
+  await page.evaluate(() => document.fonts?.ready);
   // Let the hash handler + clamp()/vmin layout settle.
   await page.waitForTimeout(200);
   return { ctx, page };

@@ -130,12 +130,8 @@ function parseBodyBlock(
     if (mdBuffer.length) {
       // Strip common leading indent to prevent markdown code-block interpretation
       const nonEmpty = mdBuffer.filter((l) => l.trim() !== '');
-      const minIndent = nonEmpty.length
-        ? Math.min(...nonEmpty.map((l) => l.match(/^(\s*)/)![1].length))
-        : 0;
-      const dedented = minIndent > 0
-        ? mdBuffer.map((l) => l.slice(minIndent))
-        : mdBuffer;
+      const minIndent = nonEmpty.length ? Math.min(...nonEmpty.map((l) => l.match(/^(\s*)/)?.[1].length ?? 0)) : 0;
+      const dedented = minIndent > 0 ? mdBuffer.map((l) => l.slice(minIndent)) : mdBuffer;
       nodes.push({ kind: 'markdown', text: dedented.join('\n') });
     }
     mdBuffer.length = 0;
@@ -315,13 +311,13 @@ type LayoutAlign = {
   self?: string;
 };
 const LAYOUT_ALIGN: Record<string, LayoutAlign> = {
-  top:      { justify: 'flex-start' },
-  bottom:   { justify: 'flex-end' },
-  left:     { items: 'flex-start', self: 'flex-start' },
-  right:    { items: 'flex-end',   self: 'flex-end' },
-  vcenter:  { justify: 'center' },
-  hcenter:  { items: 'center',    self: 'center' },
-  center:   { justify: 'center',  items: 'center', self: 'center' },
+  top: { justify: 'flex-start' },
+  bottom: { justify: 'flex-end' },
+  left: { items: 'flex-start', self: 'flex-start' },
+  right: { items: 'flex-end', self: 'flex-end' },
+  vcenter: { justify: 'center' },
+  hcenter: { items: 'center', self: 'center' },
+  center: { justify: 'center', items: 'center', self: 'center' },
 };
 
 // Text alignment keywords.
@@ -334,7 +330,19 @@ const TEXT_ALIGN: Record<string, string> = {
 // --- <img> style helpers for AssetRef ---
 // Replaces the old background-image approach with object-fit/object-position.
 
-const IMG_POSITION_KEYS = new Set(['w', 'h', 'x', 'y', 'left', 'right', 'top', 'bottom', 'center', 'hcenter', 'vcenter']);
+const IMG_POSITION_KEYS = new Set([
+  'w',
+  'h',
+  'x',
+  'y',
+  'left',
+  'right',
+  'top',
+  'bottom',
+  'center',
+  'hcenter',
+  'vcenter',
+]);
 
 export function imgFitStyle(attrs: Attrs): string {
   const wv = pxUnit(attrs.w);
@@ -382,7 +390,9 @@ export function imgAttrStyle(asset: AssetRef): string {
     if (k === 'src') continue;
     if (!IMG_POSITION_KEYS.has(k)) rest[k] = v;
   }
-  return [imgFitStyle(asset.attrs), imgSizeStyle(asset.attrs), imgPositionStyle(asset.attrs), attrsToStyle(rest)].filter(Boolean).join(';');
+  return [imgFitStyle(asset.attrs), imgSizeStyle(asset.attrs), imgPositionStyle(asset.attrs), attrsToStyle(rest)]
+    .filter(Boolean)
+    .join(';');
 }
 
 export function attrsToStyle(attrs: Attrs): string {
@@ -401,11 +411,9 @@ export function attrsToStyle(attrs: Attrs): string {
     // Text align
     else if (k in TEXT_ALIGN && v === true) {
       parts.push(`text-align:${TEXT_ALIGN[k]}`);
-    }
-    else if (k === 'blur' && typeof v === 'string') {
+    } else if (k === 'blur' && typeof v === 'string') {
       parts.push(`filter:blur(${pxUnit(v)})`);
-    }
-    else if (k in CSS_MAP && typeof v === 'string') {
+    } else if (k in CSS_MAP && typeof v === 'string') {
       const cssKey = CSS_MAP[k];
       const cssVal = PX_KEYS.has(k) ? pxUnit(v) : v;
       parts.push(`${cssKey}:${cssVal}`);

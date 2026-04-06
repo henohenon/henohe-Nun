@@ -1,16 +1,14 @@
 ---
 import type { Slide } from '../../lib/parser';
-import OptimizedImage from '../OptimizedImage.astro';
 import NodeRenderer from '../layers/NodeRenderer.astro';
+import OptimizedImage from '../OptimizedImage.astro';
 
 interface Props {
   slide: Slide;
 }
 
 const { slide } = Astro.props;
-const iconAsset = slide.icon
-  ? { src: slide.icon.src, attrs: slide.icon.attrs }
-  : undefined;
+const iconAsset = slide.icon ? { src: slide.icon.src, attrs: slide.icon.attrs } : undefined;
 ---
 
 <div class="template-me">

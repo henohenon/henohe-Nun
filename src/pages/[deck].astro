@@ -1,7 +1,7 @@
 ---
-import { parseDeck } from '../lib/parser';
-import Slide from '../components/Slide.astro';
 import HeadMeta from '../components/HeadMeta.astro';
+import Slide from '../components/Slide.astro';
+import { parseDeck } from '../lib/parser';
 import '../styles/theme.css';
 import '../styles/slide-common.css';
 
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
     eager: true,
   }) as Record<string, string>;
   return Object.entries(files).map(([path, raw]) => {
-    const name = path.split('/').pop()!.replace(/\.md$/, '');
+    const name = path.split('/').pop()?.replace(/\.md$/, '');
     return { params: { deck: name }, props: { raw } };
   });
 }
