@@ -71,10 +71,15 @@ function serveDist(port: number): { close: () => Promise<void> } {
     try {
       const url = new URL(req.url ?? '/', `http://localhost:${port}`);
       const pathname = decodeURIComponent(url.pathname);
+      // Also try stripping the first path segment (Astro base prefix).
+      // e.g. /henohe-Nun/_astro/foo.css → /_astro/foo.css
+      const stripped = pathname.replace(/^\/[^/]+\//, '/');
       const candidates = [
         join(DIST_DIR, pathname),
         join(DIST_DIR, pathname, 'index.html'),
         join(DIST_DIR, pathname + '.html'),
+        join(DIST_DIR, stripped),
+        join(DIST_DIR, stripped, 'index.html'),
       ];
       for (const p of candidates) {
         try {

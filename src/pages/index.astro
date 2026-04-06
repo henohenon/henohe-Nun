@@ -19,6 +19,7 @@ const decks = Object.entries(files)
     };
   })
   .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
+const base = import.meta.env.BASE_URL;
 ---
 
 <html lang="ja">
@@ -39,9 +40,9 @@ const decks = Object.entries(files)
         <ul class="decks">
           {decks.map((d) => (
             <li>
-              <a href={`/${d.name}#0`}>
+              <a href={`${base}${d.name}#0`}>
                 <div class="thumb">
-                  <img src={`/thumbs/${d.name}.webp`} alt={d.title} />
+                  <img src={`${base}thumbs/${d.name}.webp`} alt={d.title} />
                 </div>
                 <div class="info">
                   <span class="title">{d.title}</span>
