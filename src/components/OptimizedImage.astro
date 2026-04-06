@@ -1,0 +1,35 @@
+---
+import { Image } from 'astro:assets';
+import type { AssetRef } from '../lib/parser';
+import { imgAttrStyle } from '../lib/parser';
+import { resolveImage } from '../lib/images';
+
+interface Props {
+  asset: AssetRef;
+  class?: string;
+  widths?: number[];
+  extraStyle?: string;
+}
+
+const { asset, class: className, widths = [1920], extraStyle = '' } = Astro.props;
+const style = [imgAttrStyle(asset), extraStyle].filter(Boolean).join(';');
+const image = resolveImage(asset.src);
+---
+
+{image ? (
+  <Image
+    class={className}
+    src={image}
+    alt=""
+    widths={widths}
+    loading="eager"
+    style={style}
+  />
+) : (
+  <img
+    class={className}
+    src={asset.src}
+    alt=""
+    style={style}
+  />
+)}

@@ -31,7 +31,7 @@ const subHtml = slide.subheading ? (marked.parseInline(slide.subheading) as stri
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: clamp(32px, 8cqmin, 180px) clamp(32px, 8cqmin, 180px) clamp(48px, 10cqmin, 200px);
+    padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
     box-sizing: border-box;
   }
   .body {

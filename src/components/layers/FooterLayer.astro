@@ -1,9 +1,7 @@
 ---
-import { Image } from 'astro:assets';
 import { marked } from 'marked';
 import type { FooterText, AssetRef } from '../../lib/parser';
-import { imgAttrStyle } from '../../lib/parser';
-import { resolveImage } from '../../lib/images';
+import OptimizedImage from '../OptimizedImage.astro';
 
 interface Props {
   fl?: FooterText;
@@ -32,8 +30,6 @@ const frSvg = htmlToSvgText(frHtml);
 const maskId = `footer-mask-${slideIndex}`;
 
 const hasFbg = hasFooter && !!fbg;
-const fbgImgStyle = hasFbg ? imgAttrStyle(fbg!) : '';
-const fbgImage = hasFbg ? resolveImage(fbg!.src) : undefined;
 const fbgBlurPx = fbg?.attrs.blur ? Number(fbg.attrs.blur) : 0;
 ---
 
@@ -55,22 +51,11 @@ const fbgBlurPx = fbg?.attrs.blur ? Number(fbg.attrs.blur) : 0;
     {frSvg && <text class="footer-svg-fr" fill="black" set:html={frSvg} />}
   </svg>
 )}
-{hasFbg && fbgImage && (
-  <Image
+{hasFbg && (
+  <OptimizedImage
     class="slide-fbg"
-    src={fbgImage}
-    alt=""
-    widths={[1920]}
-    loading="eager"
-    style={`${fbgImgStyle};--blur-expand:${fbgBlurPx}px;-webkit-mask:url(#${maskId});mask:url(#${maskId})`}
-  />
-)}
-{hasFbg && !fbgImage && (
-  <img
-    class="slide-fbg"
-    src={fbg!.src}
-    alt=""
-    style={`${fbgImgStyle};--blur-expand:${fbgBlurPx}px;-webkit-mask:url(#${maskId});mask:url(#${maskId})`}
+    asset={fbg!}
+    extraStyle={`--blur-expand:${fbgBlurPx}px;-webkit-mask:url(#${maskId});mask:url(#${maskId})`}
   />
 )}
 

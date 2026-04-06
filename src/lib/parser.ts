@@ -249,6 +249,7 @@ export function parseDeck(md: string): Deck {
         else if (k.key === 'f-bg') fbg = { src: rewriteAssetPath(k.value), attrs: k.attrs };
         else if (k.key === 'fr') fr = { text: k.value, attrs: k.attrs };
         else if (k.key === 'fl') fl = { text: k.value, attrs: k.attrs };
+        // `date` is deck-level only (preamble); ignore if used per-slide.
         continue;
       }
       bodyInput.push(k);
@@ -378,6 +379,7 @@ export function imgPositionStyle(attrs: Attrs): string {
 export function imgAttrStyle(asset: AssetRef): string {
   const rest: Attrs = {};
   for (const [k, v] of Object.entries(asset.attrs)) {
+    if (k === 'src') continue;
     if (!IMG_POSITION_KEYS.has(k)) rest[k] = v;
   }
   return [imgFitStyle(asset.attrs), imgSizeStyle(asset.attrs), imgPositionStyle(asset.attrs), attrsToStyle(rest)].filter(Boolean).join(';');
@@ -386,7 +388,6 @@ export function imgAttrStyle(asset: AssetRef): string {
 export function attrsToStyle(attrs: Attrs): string {
   const parts: string[] = [];
   for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'src') continue;
     // `b` = bold flag.
     if (k === 'b' && v === true) parts.push('font-weight:bold', 'color:var(--theme-color)');
     else if (k === 'i' && v === true) parts.push('font-style:italic');

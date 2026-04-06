@@ -1,8 +1,6 @@
 ---
-import { Image } from 'astro:assets';
 import type { Slide } from '../../lib/parser';
-import { attrsToStyle } from '../../lib/parser';
-import { resolveImage } from '../../lib/images';
+import OptimizedImage from '../OptimizedImage.astro';
 import NodeRenderer from '../layers/NodeRenderer.astro';
 
 interface Props {
@@ -10,14 +8,14 @@ interface Props {
 }
 
 const { slide } = Astro.props;
-const iconStyle = slide.icon ? attrsToStyle(slide.icon.attrs) : '';
-const iconImage = slide.icon ? resolveImage(slide.icon.src) : undefined;
+const iconAsset = slide.icon
+  ? { src: slide.icon.src, attrs: slide.icon.attrs }
+  : undefined;
 ---
 
 <div class="template-me">
   <div class="left">
-    {slide.icon && iconImage && <Image class="icon" src={iconImage} alt="" style={iconStyle} width={960} />}
-    {slide.icon && !iconImage && <img class="icon" src={slide.icon.src} style={iconStyle} alt="" />}
+    {iconAsset && <OptimizedImage class="icon" asset={iconAsset} widths={[960]} />}
   </div>
   <div class="right">
     <div class="slide-body body">
@@ -42,9 +40,9 @@ const iconImage = slide.icon ? resolveImage(slide.icon.src) : undefined;
     /* Top padding reserves space for the absolute-positioned heading so the icon
        centers between the heading's bottom and the slide's bottom. */
     padding:
-      calc(clamp(32px, 8cqmin, 180px) + clamp(42px, 9.1cqmin, 182px))
+      calc(var(--slide-pad-top) + var(--slide-title-size))
       clamp(40px, 7cqmin, 140px)
-      clamp(32px, 8cqmin, 180px);
+      var(--slide-pad-top);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -54,9 +52,9 @@ const iconImage = slide.icon ? resolveImage(slide.icon.src) : undefined;
   /* Title is pulled out of the white left column so it can span full width. */
   .label {
     position: absolute;
-    top: clamp(32px, 8cqmin, 180px);
-    left: clamp(32px, 8cqmin, 180px);
-    right: clamp(32px, 8cqmin, 180px);
+    top: var(--slide-pad-top);
+    left: var(--slide-pad-x);
+    right: var(--slide-pad-x);
     margin: 0;
     z-index: 2;
   }
@@ -74,9 +72,9 @@ const iconImage = slide.icon ? resolveImage(slide.icon.src) : undefined;
     /* Top padding aligns text with where the body would start in other templates
        (template top padding + title height + title margin-bottom). */
     padding:
-      calc(clamp(32px, 8cqmin, 180px) + clamp(42px, 9.1cqmin, 182px))
-      clamp(32px, 8cqmin, 180px)
-      clamp(48px, 10cqmin, 200px);
+      calc(var(--slide-pad-top) + var(--slide-title-size))
+      var(--slide-pad-x)
+      var(--slide-pad-bottom);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;

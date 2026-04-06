@@ -3,7 +3,7 @@
 /* Shared slide typography. Templates add layout-specific CSS on top. */
 
 .slide-title {
-  font-size: clamp(42px, 9.1cqmin, 182px);
+  font-size: var(--slide-title-size);
   font-weight: 900;
   letter-spacing: -0.025em;
   color: var(--theme-color);
