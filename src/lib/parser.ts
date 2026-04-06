@@ -180,7 +180,18 @@ function parseBodyBlock(
 
 export function parseDeck(md: string): Deck {
   const lines = md.replace(/\r\n/g, '\n').split('\n');
-  const classified = lines.map(classify);
+
+  // Classify lines, but treat code-fenced regions as raw markdown
+  // so that `# heading`, `@tag`, `<row>` etc. inside ``` blocks
+  // are not interpreted as slide syntax.
+  const classified: LineKind[] = [];
+  let inFence = false;
+  for (const line of lines) {
+    const isFenceBoundary = /^\s*```/.test(line);
+    if (isFenceBoundary) inFence = !inFence;
+    // Fence boundaries themselves and everything inside → raw markdown
+    classified.push(inFence || isFenceBoundary ? { t: 'md', raw: line } : classify(line));
+  }
 
   const deck: Deck = { slides: [] };
 
