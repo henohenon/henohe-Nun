@@ -1,9 +1,11 @@
 ---
-import HeadMeta from '../components/HeadMeta.astro';
-import Slide from '../components/Slide.astro';
+import HeadMeta from '../components/head/HeadMeta.astro';
+import CursorDot from '../components/slide/CursorDot.astro';
+import Slide from '../components/slide/Slide.astro';
 import { parseDeck } from '../lib/parser';
 import '../styles/theme.css';
 import '../styles/slide-common.css';
+import '../styles/deck.css';
 
 // Load every `benben/*.md` as raw text at build time. Vite wires HMR so
 // editing any deck file hot-reloads the matching route. (`benben` = the
@@ -50,11 +52,11 @@ const thumbUrl = new URL(`${base}thumbs/${deckName}.webp`, Astro.site).href;
   <body>
     <div class="stage">
       <div class="canvas" id="canvas">
-        {deck.slides.map((slide) => <Slide slide={slide} date={deck.date} />)}
+        {deck.slides.map((slide) => <Slide slide={slide} />)}
       </div>
     </div>
 
-    <div class="cursor-dot" id="cursor-dot"></div>
+    <CursorDot />
 
     <div class="hint" id="hint">
       Press <kbd>Enter</kbd> to toggle fullscreen
@@ -107,25 +109,6 @@ const thumbUrl = new URL(`${base}thumbs/${deckName}.webp`, Astro.site).href;
         }
       }
 
-      const dot = document.getElementById('cursor-dot')!;
-      let dotTimer = 0;
-
-      document.addEventListener('fullscreenchange', () => {
-        const fs = !!document.fullscreenElement;
-        document.body.classList.toggle('is-fullscreen', fs);
-        dot.style.opacity = fs ? '1' : '0';
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        dot.style.left = `${e.clientX}px`;
-        dot.style.top = `${e.clientY}px`;
-        if (document.fullscreenElement) {
-          dot.style.opacity = '1';
-          clearTimeout(dotTimer);
-          dotTimer = window.setTimeout(() => { dot.style.opacity = '0'; }, 5000);
-        }
-      });
-
       window.addEventListener('hashchange', () => show(currentIndex()));
       window.addEventListener('keydown', (e) => {
         dismissHint();
@@ -147,6 +130,7 @@ const thumbUrl = new URL(`${base}thumbs/${deckName}.webp`, Astro.site).href;
       });
       window.addEventListener('click', (e) => {
         if (!document.fullscreenElement) return;
+        if ((e.target as HTMLElement).closest('a')) return;
         dismissHint();
         const x = e.clientX;
         if (x < window.innerWidth / 2) go(-1);
@@ -183,138 +167,23 @@ const thumbUrl = new URL(`${base}thumbs/${deckName}.webp`, Astro.site).href;
       const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
       if (isTouch) hint.classList.add('hidden');
 
-      // Auto-fit: elements with data-fit get zoom to fit within .slide-body.
-      slides.forEach((s) => (s.style.visibility = 'visible'));
-      document.querySelectorAll<HTMLElement>('[data-fit]').forEach((el) => {
-        const parent = el.parentElement;
-        if (!parent) return;
-        const origOverflow = parent.style.overflow;
-        parent.style.overflow = 'hidden';
-        const availH = parent.clientHeight;
-        const availW = parent.clientWidth;
-        parent.style.overflow = origOverflow;
-        const eh = el.scrollHeight;
-        const ew = el.scrollWidth;
-        const mode = el.dataset.fit;
-        let scale = 1;
-        if (mode === 'v' && eh > availH) scale = availH / eh;
-        else if (mode === 'h' && ew > availW) scale = availW / ew;
-        else if (mode === 'both') {
-          const sx = ew > availW ? availW / ew : 1;
-          const sy = eh > availH ? availH / eh : 1;
-          scale = Math.min(sx, sy);
-        }
-        if (scale < 1) el.style.zoom = String(Math.max(scale, 0.2));
+      // Auto-fit: shrink slide-body via zoom when content overflows.
+      // Temporarily show each slide for measurement, then restore visibility.
+      slides.forEach((s) => {
+        const prev = s.style.visibility;
+        s.style.visibility = 'visible';
+        s.querySelectorAll<HTMLElement>('.slide-body').forEach((body) => {
+          const sx = body.scrollWidth > body.clientWidth ? body.clientWidth / body.scrollWidth : 1;
+          const sy = body.scrollHeight > body.clientHeight ? body.clientHeight / body.scrollHeight : 1;
+          const scale = Math.min(sx, sy);
+          if (scale < 1) {
+            body.style.zoom = String(Math.max(scale, 0.2));
+          }
+        });
+        s.style.visibility = prev;
       });
       show(currentIndex());
     </script>
 
-    <style is:global>
-      ::view-transition-old(root),
-      ::view-transition-new(root) {
-        animation-duration: 0.1s;
-      }
-      /* All bold text inside slides uses the theme color. */
-      .slide strong,
-      .slide b,
-      .slide h1,
-      .slide h2,
-      .slide h3 {
-        color: var(--theme-color);
-      }
-      html, body {
-        margin: 0;
-        padding: 0;
-        background: #ffffff;
-        height: 100%;
-        overflow: hidden;
-      }
-      body.is-fullscreen astro-dev-toolbar {
-        display: none !important;
-      }
-      .stage {
-        position: fixed;
-        inset: 0;
-      }
-      .canvas {
-        position: absolute;
-        inset: 0;
-      }
-      .hint {
-        position: fixed;
-        left: 50%;
-        bottom: 40px;
-        transform: translateX(-50%);
-        padding: 12px 24px;
-        background: rgba(10, 10, 10, 0.82);
-        color: #fafafa;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        font-size: 15px;
-        border-radius: 999px;
-        pointer-events: none;
-        opacity: 1;
-        transition: opacity 0.4s ease;
-        z-index: 100;
-      }
-      .hint.hidden {
-        opacity: 0;
-      }
-      body.is-fullscreen {
-        cursor: none;
-      }
-      .cursor-dot {
-        position: fixed;
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: var(--theme-color);
-        opacity: 0;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        z-index: 99;
-        transition: left 0.08s ease-out, top 0.08s ease-out, opacity 0.3s ease;
-      }
-      .hint kbd {
-        display: inline-block;
-        padding: 2px 8px;
-        margin: 0 2px;
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 4px;
-        font-family: inherit;
-        font-weight: 600;
-      }
-
-      /* PDF export: Playwright's page.pdf() uses print media. Unstack the
-         visibility-toggled slides into one page each at a fixed 1920x1080
-         box so cqmin/cqw/cqh-based clamp()s resolve identically to screen. */
-      @media print {
-        @page {
-          size: 1920px 1080px;
-          margin: 0;
-        }
-        html, body {
-          overflow: visible !important;
-          height: auto !important;
-          background: #fff !important;
-        }
-        .hint { display: none !important; }
-        .stage, .canvas {
-          position: static !important;
-          inset: auto !important;
-        }
-        .slide {
-          position: relative !important;
-          visibility: visible !important;
-          width: 1920px !important;
-          height: 1080px !important;
-          break-after: page;
-          page-break-after: always;
-        }
-        .slide:last-child {
-          break-after: auto;
-          page-break-after: auto;
-        }
-      }
-    </style>
   </body>
 </html>

@@ -1,21 +1,21 @@
 ---
-import { marked } from 'marked';
-import type { Slide } from '../../lib/parser';
-import NodeRenderer from '../layers/NodeRenderer.astro';
+import { renderInline } from '../../lib/markdown';
+import type { Slide } from '../../lib/types';
+import NodeRenderer from '../slide/NodeRenderer.astro';
 
 interface Props {
   slide: Slide;
 }
 
 const { slide } = Astro.props;
-const subHtml = slide.subheading ? (marked.parseInline(slide.subheading) as string) : '';
+const subHtml = slide.subheading ? renderInline(slide.subheading) : '';
 ---
 
 <div class="template-note">
   <h2 class="slide-title">{slide.heading}</h2>
   <div class="slide-body body">
     <div class="body-center">
-      <NodeRenderer nodes={slide.body} />
+      <NodeRenderer body={slide.body} />
     </div>
     {subHtml && (
       <div class="body-bottom">

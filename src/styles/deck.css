@@ -1,0 +1,119 @@
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.1s;
+}
+
+/* All bold text inside slides uses the theme color. */
+.slide strong,
+.slide b,
+.slide h1,
+.slide h2,
+.slide h3 {
+  color: var(--theme-color);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  height: 100%;
+  overflow: hidden;
+}
+body.is-fullscreen astro-dev-toolbar {
+  display: none !important;
+}
+
+.stage {
+  position: fixed;
+  inset: 0;
+}
+.canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.hint {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background: rgba(10, 10, 10, 0.82);
+  color: #fafafa;
+  font-family: var(--font-body);
+  font-size: 15px;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  z-index: 100;
+}
+.hint.hidden {
+  opacity: 0;
+}
+.hint kbd {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 0 2px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  font-family: inherit;
+  font-weight: 600;
+}
+
+body.is-fullscreen {
+  cursor: none;
+}
+.cursor-dot {
+  position: fixed;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: var(--theme-color);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 99;
+  transition:
+    left 0.08s ease-out,
+    top 0.08s ease-out,
+    opacity 0.3s ease;
+}
+
+/* PDF export: Playwright's page.pdf() uses print media. Unstack the
+   visibility-toggled slides into one page each at a fixed 1920x1080
+   box so cqmin/cqw/cqh-based clamp()s resolve identically to screen. */
+@media print {
+  @page {
+    size: 1920px 1080px;
+    margin: 0;
+  }
+  html,
+  body {
+    overflow: visible !important;
+    height: auto !important;
+    background: #fff !important;
+  }
+  .hint,
+  .cursor-dot {
+    display: none !important;
+  }
+  .stage,
+  .canvas {
+    position: static !important;
+    inset: auto !important;
+  }
+  .slide {
+    position: relative !important;
+    visibility: visible !important;
+    width: 1920px !important;
+    height: 1080px !important;
+    break-after: page;
+    page-break-after: always;
+  }
+  .slide:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

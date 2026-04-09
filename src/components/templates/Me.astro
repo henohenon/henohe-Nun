@@ -1,23 +1,23 @@
 ---
-import type { Slide } from '../../lib/parser';
-import NodeRenderer from '../layers/NodeRenderer.astro';
-import OptimizedImage from '../OptimizedImage.astro';
+import { attrsToStyle } from '../../lib/style';
+import type { Slide } from '../../lib/types';
+import NodeRenderer from '../slide/NodeRenderer.astro';
+import OptimizedImage from '../slide/OptimizedImage.astro';
 
 interface Props {
   slide: Slide;
 }
 
 const { slide } = Astro.props;
-const iconAsset = slide.icon ? { src: slide.icon.src, attrs: slide.icon.attrs } : undefined;
 ---
 
 <div class="template-me">
   <div class="left">
-    {iconAsset && <OptimizedImage class="icon" asset={iconAsset} widths={[960]} />}
+    {slide.icon && <OptimizedImage class="icon" asset={slide.icon} extraStyle={attrsToStyle(slide.icon.attrs)} widths={[960]} />}
   </div>
   <div class="right">
     <div class="slide-body body">
-      <NodeRenderer nodes={slide.body} />
+      <NodeRenderer body={slide.body} />
     </div>
   </div>
   <h2 class="slide-title label">{slide.heading}</h2>
@@ -37,6 +37,7 @@ const iconAsset = slide.icon ? { src: slide.icon.src, attrs: slide.icon.attrs } 
     background: #ffffff;
     /* Top padding reserves space for the absolute-positioned heading so the icon
        centers between the heading's bottom and the slide's bottom. */
+    max-width: 30%;
     padding:
       calc(var(--slide-pad-top) + var(--slide-title-size))
       clamp(40px, 7cqmin, 140px)
@@ -59,9 +60,7 @@ const iconAsset = slide.icon ? { src: slide.icon.src, attrs: slide.icon.attrs } 
   .icon {
     width: clamp(240px, 44cqmin, 840px);
     height: clamp(240px, 44cqmin, 840px);
-    object-fit: cover;
     flex-shrink: 0;
-    /* Horizontally centered in the white column, vertically between title and footer. */
     align-self: center;
     margin: auto 0;
   }

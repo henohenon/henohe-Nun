@@ -1,0 +1,71 @@
+---
+import type { Slide } from '../../lib/types';
+import Big from '../templates/Big.astro';
+import Default from '../templates/Default.astro';
+import Me from '../templates/Me.astro';
+import Note from '../templates/Note.astro';
+import Small from '../templates/Small.astro';
+import Title from '../templates/Title.astro';
+import BgLayer from './BgLayer.astro';
+import FooterLayer from './FooterLayer.astro';
+
+interface Props {
+  slide: Slide;
+}
+
+const { slide } = Astro.props;
+
+// fbg is always effective as the footer-shaped mask. On title slides, if there's
+// no explicit bg, the fbg image is additionally used as the regular bg.
+const effectiveFbg = slide.fbg;
+const effectiveBg = slide.bg ?? (slide.template === 'title' ? slide.fbg : undefined);
+
+const templateMap = {
+  title: Title,
+  me: Me,
+  default: Default,
+  big: Big,
+  small: Small,
+  note: Note,
+} as const;
+const Template = templateMap[slide.template] ?? Default;
+---
+
+<section
+  class="slide"
+  data-index={slide.index}
+>
+  {effectiveBg && <BgLayer asset={effectiveBg} />}
+
+  <div class="slide-inner">
+    <Template slide={slide} />
+  </div>
+
+  <FooterLayer fl={slide.fl} fr={slide.fr} fbg={effectiveFbg} slideIndex={slide.index} />
+</section>
+
+<style>
+  .slide {
+    position: absolute;
+    inset: 0;
+    container-type: size;
+    background-color: #ffffff;
+    color: #0a0a0a;
+    font-family: var(--font-body);
+    overflow: hidden;
+    /* Layout spacing (shared across templates) */
+    --slide-pad-x: clamp(32px, 8cqmin, 180px);
+    --slide-pad-top: clamp(32px, 8cqmin, 180px);
+    --slide-pad-bottom: clamp(48px, 10cqmin, 200px);
+    --slide-title-size: clamp(42px, 9.1cqmin, 182px);
+    /* Footer */
+    --footer-line-height: clamp(16px, 1.2cqmin, 28px);
+    --footer-font-size: clamp(21px, 2.7cqmin, 63px);
+    --footer-pad-x: clamp(24px, 4cqmin, 88px);
+    --footer-text-nudge: clamp(-22px, calc(-1cqmin - 2px), -8px);
+  }
+  .slide-inner {
+    position: absolute;
+    inset: 0;
+  }
+</style>

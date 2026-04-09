@@ -1,6 +1,6 @@
 ---
-// Thx template: centered closing message, driven by the slide heading (`# text`).
-import type { Slide } from '../../lib/parser';
+// Small template: centered small text, driven by the slide heading (`# text`).
+import type { Slide } from '../../lib/types';
 
 interface Props {
   slide: Slide;
@@ -9,12 +9,12 @@ interface Props {
 const { slide } = Astro.props;
 ---
 
-<div class="template-thx">
-  <div class="text">{slide.heading}</div>
+<div class="template-small">
+  <h2 class="text">{slide.heading}</h2>
 </div>
 
 <style>
-  .template-thx {
+  .template-small {
     width: 100%;
     height: 100%;
     display: flex;

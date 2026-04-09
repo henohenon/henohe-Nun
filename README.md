@@ -3,7 +3,9 @@
 Markdown でスライドを書いて HTML / PDF / PNG で出力する、俺俺プレゼンツール。
 Astro ベースの SSG で、`benben/` 以下の `.md` ファイルがそれぞれ 1 デッキになる。
 
-**デモ**: https://henohenon.github.io/henohe-Nun/
+名前はうめき声とエジプトの神様から
+
+![img.png](img.png)
 
 ## セットアップ
 
@@ -41,7 +43,7 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 @date>2025/02/07
 @fr>フッター右
 @fl>フッター左
-@f-bg opacity=0.5 blur=10>./images/bg.png
+@fbg opacity=0.5 blur=10>./images/bg.png
 
 # スライドタイトル
 @>title
@@ -58,7 +60,7 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 @bg opacity=0.5>./images/bg.png
 
 #
-@>thx
+@>small
 ```
 
 ### プリアンブル（先頭 `#` より前）
@@ -71,7 +73,7 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 | `@fr>テキスト` | フッター右（全スライド共通） |
 | `@fl>テキスト` | フッター左（全スライド共通） |
 | `@bg [attrs]>パス` | 背景画像（全スライド共通） |
-| `@f-bg [attrs]>パス` | フッター背景/マスク画像（全スライド共通） |
+| `@fbg [attrs]>パス` | フッター背景/マスク画像（全スライド共通） |
 
 フッターテキストには markdown インライン記法が使える: `@fl>すら~~いど~~**てんぷれーと**`
 
@@ -85,7 +87,7 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 | `## サブ見出し` | サブタイトル（title, note で使用） |
 | `@icon>パス` | アイコン画像 (me 用) |
 | `@bg [attrs]>パス` | 背景画像（そのスライドだけ） |
-| `@f-bg [attrs]>パス` | フッター背景（そのスライドだけ） |
+| `@fbg [attrs]>パス` | フッター背景（そのスライドだけ） |
 | `@fr>テキスト` | フッター右（そのスライドだけ上書き） |
 | `@fl>テキスト` | フッター左（そのスライドだけ上書き） |
 
@@ -98,7 +100,7 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 | `default` | 汎用（省略時） | `# 見出し`, 本文 |
 | `big` | でかい一言 | `# テキスト` のみ |
 | `note` | 注釈/特殊 | `# 見出し`, `## サブ`, 本文 |
-| `thx` | 締め | 固定表示、何も要らない |
+| `small` | 締め・小文字 | 固定表示、何も要らない |
 
 ### レイアウトノード
 
@@ -117,17 +119,17 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 </row>
 ```
 
-| タグ | 説明 |
-|-----|------|
+| タグ                       | 説明 |
+|--------------------------|------|
 | `<row [attrs]>...</row>` | 横並び（flex row） |
 | `<col [attrs]>...</col>` | 縦並び（flex column） |
-| `<attrs>...</>` | インラインブロック（短縮形） |
+| `<[attrs]>...</>`        | インラインブロック（短縮形） |
 
 **画像埋め込み**: `[./images/foo.png]` と書くだけ（`![]()` は不要）。
 
 ### 属性リファレンス
 
-レイアウトノード、`@bg`、`@f-bg` 等に付与できる。数値は px 基準 (1920x1080)。
+レイアウトノード、`@bg`、`@fbg` 等に付与できる。数値は px 基準 (1920x1080)。
 
 **サイズ・位置**
 | 属性 | CSS |
@@ -152,7 +154,7 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 | `top`, `bottom`, `vcenter` | 垂直配置 |
 | `fit` / `hfit` / `vfit` | コンテナにフィット |
 
-**画像 (`@bg`, `@f-bg`)**
+**画像 (`@bg`, `@fbg`)**
 | 属性 | 効果 |
 |-----|------|
 | `opacity=0.5` | 透明度 |
@@ -178,7 +180,7 @@ src/
   assets/images/     画像アセット
   lib/               パーサー, 画像解決
   components/
-    templates/       Title, Me, Default, Big, Thx, Note
+    templates/       Title, Me, Default, Big, Small, Note
     layers/          BgLayer, FooterLayer, NodeRenderer
   pages/             Astro ルーティング
   styles/            共通 CSS, テーマ

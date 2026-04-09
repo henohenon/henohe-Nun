@@ -1,5 +1,5 @@
 ---
-import type { Slide } from '../../lib/parser';
+import type { Slide } from '../../lib/types';
 
 interface Props {
   slide: Slide;
@@ -9,7 +9,7 @@ const { slide } = Astro.props;
 ---
 
 <div class="template-big">
-  <div class="text">{slide.heading}</div>
+  <h2 class="text">{slide.heading}</h2>
 </div>
 
 <style>

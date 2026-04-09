@@ -1,0 +1,31 @@
+---
+import { attrsToStyle } from '../../lib/style';
+import type { AssetRef } from '../../lib/types';
+import OptimizedImage from './OptimizedImage.astro';
+
+interface Props {
+  asset: AssetRef;
+  extraStyle?: string;
+}
+
+const { asset, extraStyle } = Astro.props;
+const attrs = asset.attrs;
+const imgStyle = [attrsToStyle(attrs), attrs.w ? 'max-width:none' : '', attrs.h ? 'max-height:none' : '']
+  .filter(Boolean)
+  .join(';');
+---
+<div class="bg-wrapper" style={extraStyle}>
+  <OptimizedImage asset={asset} extraStyle={imgStyle} />
+</div>
+
+<style>
+  .bg-wrapper {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .bg-wrapper :global(.image-base) {
+    position: absolute;
+  }
+</style>
+

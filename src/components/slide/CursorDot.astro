@@ -1,0 +1,22 @@
+<div class="cursor-dot" id="cursor-dot"></div>
+
+<script>
+  const dot = document.getElementById('cursor-dot')!;
+  let dotTimer = 0;
+
+  document.addEventListener('fullscreenchange', () => {
+    const fs = !!document.fullscreenElement;
+    document.body.classList.toggle('is-fullscreen', fs);
+    dot.style.opacity = fs ? '1' : '0';
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    dot.style.left = `${e.clientX}px`;
+    dot.style.top = `${e.clientY}px`;
+    if (document.fullscreenElement) {
+      dot.style.opacity = '1';
+      clearTimeout(dotTimer);
+      dotTimer = window.setTimeout(() => { dot.style.opacity = '0'; }, 5000);
+    }
+  });
+</script>

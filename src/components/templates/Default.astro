@@ -1,6 +1,6 @@
 ---
-import type { Slide } from '../../lib/parser';
-import NodeRenderer from '../layers/NodeRenderer.astro';
+import type { Slide } from '../../lib/types';
+import NodeRenderer from '../slide/NodeRenderer.astro';
 
 interface Props {
   slide: Slide;
@@ -12,7 +12,7 @@ const { slide } = Astro.props;
 <div class="template-default">
   {slide.heading && <h2 class="slide-title title">{slide.heading}</h2>}
   <div class="slide-body body">
-    <NodeRenderer nodes={slide.body} />
+    <NodeRenderer body={slide.body} />
   </div>
 </div>
 

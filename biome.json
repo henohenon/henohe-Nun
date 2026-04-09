@@ -40,6 +40,16 @@
           }
         }
       }
+    },
+    {
+      "includes": ["src/styles/deck.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          }
+        }
+      }
     }
   ]
 }

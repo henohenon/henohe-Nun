@@ -1,15 +1,15 @@
 ---
 import { Image } from 'astro:assets';
-import { marked } from 'marked';
 import henoheno from '../../assets/images/henoheno.svg';
-import type { Slide } from '../../lib/parser';
+import { renderInline } from '../../lib/markdown';
+import type { Slide } from '../../lib/types';
 
 interface Props {
   slide: Slide;
 }
 
 const { slide } = Astro.props;
-const subtitleHtml = slide.subheading ? (marked.parseInline(slide.subheading) as string) : '';
+const subtitleHtml = slide.subheading ? renderInline(slide.subheading) : '';
 ---
 
 <div class="template-title">

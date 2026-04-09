@@ -1,7 +1,7 @@
 ---
-import { marked } from 'marked';
-import type { AssetRef, FooterText } from '../../lib/parser';
-import OptimizedImage from '../OptimizedImage.astro';
+import { renderInline } from '../../lib/markdown';
+import type { AssetRef, FooterText } from '../../lib/types';
+import BgLayer from './BgLayer.astro';
 
 interface Props {
   fl?: FooterText;
@@ -12,51 +12,44 @@ interface Props {
 
 const { fl, fr, fbg, slideIndex } = Astro.props;
 
-const flHtml = fl?.text ? (marked.parseInline(fl.text) as string) : '';
-const frHtml = fr?.text ? (marked.parseInline(fr.text) as string) : '';
+const flHtml = fl?.text ? renderInline(fl.text) : '';
+const frHtml = fr?.text ? renderInline(fr.text) : '';
 const hasFooter = !!(flHtml || frHtml);
 
 function htmlToSvgText(html: string): string {
   return html
     .replace(/<strong>(.*?)<\/strong>/g, '<tspan font-weight="900">$1</tspan>')
     .replace(/<b>(.*?)<\/b>/g, '<tspan font-weight="900">$1</tspan>')
-    .replace(/<del>(.*?)<\/del>/g, '<tspan text-decoration="line-through">$1</tspan>')
+    .replace(/<del>(.*?)<\/del>/g, '<tspan style="text-decoration:line-through">$1</tspan>')
     .replace(/<em>(.*?)<\/em>/g, '<tspan font-style="italic">$1</tspan>')
     .replace(/<[^>]+>/g, '');
 }
 
 const flSvg = htmlToSvgText(flHtml);
 const frSvg = htmlToSvgText(frHtml);
-const maskId = `footer-mask-${slideIndex}`;
 
+const maskId = hasFooter ? `footer-mask-${slideIndex}` : undefined;
 const hasFbg = hasFooter && !!fbg;
-const fbgBlurPx = fbg?.attrs.blur ? Number(fbg.attrs.blur) : 0;
 ---
 
 {hasFooter && (
   <svg class="slide-footer-svg" xmlns="http://www.w3.org/2000/svg">
-    {hasFbg && (
-      <defs>
-        <mask id={maskId}>
-          <g style={fbgBlurPx > 0 ? `transform:translate(${fbgBlurPx}px,${fbgBlurPx}px)` : undefined}>
-            <rect class="footer-svg-line" fill="white" />
-            {flSvg && <text class="footer-svg-fl" fill="white" set:html={flSvg} />}
-            {frSvg && <text class="footer-svg-fr" fill="white" set:html={frSvg} />}
-          </g>
-        </mask>
-      </defs>
-    )}
+    <defs>
+      <mask id={maskId}>
+        <g>
+          <rect class="footer-svg-line" fill="white" />
+          {flSvg && <text class="footer-svg-fl" fill="white" set:html={flSvg} />}
+          {frSvg && <text class="footer-svg-fr" fill="white" set:html={frSvg} />}
+        </g>
+      </mask>
+    </defs>
     <rect class="footer-svg-line" fill="black" />
     {flSvg && <text class="footer-svg-fl" fill="black" set:html={flSvg} />}
     {frSvg && <text class="footer-svg-fr" fill="black" set:html={frSvg} />}
   </svg>
 )}
 {hasFbg && (
-  <OptimizedImage
-    class="slide-fbg"
-    asset={fbg!}
-    extraStyle={`--blur-expand:${fbgBlurPx}px;-webkit-mask:url(#${maskId});mask:url(#${maskId})`}
-  />
+  <BgLayer asset={fbg!} extraStyle={`z-index:2;pointer-events:none;mask:url(#${maskId})`} />
 )}
 
 <style>
@@ -75,7 +68,7 @@ const fbgBlurPx = fbg?.attrs.blur ? Number(fbg.attrs.blur) : 0;
   }
   .footer-svg-fl,
   .footer-svg-fr {
-    font-family: 'IBM Plex Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-family: var(--font-body);
     font-size: var(--footer-font-size);
     font-weight: 700;
     dominant-baseline: text-after-edge;
@@ -87,14 +80,5 @@ const fbgBlurPx = fbg?.attrs.blur ? Number(fbg.attrs.blur) : 0;
   .footer-svg-fr {
     text-anchor: end;
     transform: translate(calc(100cqw - var(--footer-pad-x)), calc(100cqh - var(--footer-line-height) - var(--footer-text-nudge)));
-  }
-  .slide-fbg {
-    position: absolute;
-    inset: calc(-1 * var(--blur-expand));
-    max-width: calc(100% + 2 * var(--blur-expand));
-    max-height: calc(100% + 2 * var(--blur-expand));
-    object-fit: cover;
-    pointer-events: none;
-    z-index: 2;
   }
 </style>
