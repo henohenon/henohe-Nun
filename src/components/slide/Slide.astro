@@ -1,10 +1,11 @@
 ---
-import { parseBody, parseFrame, parseNote, parseTitle } from '../../lib/parser';
+import { parseBody, parseFrame, parseNote, parseRow, parseTitle } from '../../lib/parser';
 import type { GlobalMeta, SlideSource } from '../../lib/types';
 import Big from '../templates/Big.astro';
 import Default from '../templates/Default.astro';
 import Me from '../templates/Me.astro';
 import Note from '../templates/Note.astro';
+import Row from '../templates/Row.astro';
 import Small from '../templates/Small.astro';
 import Title from '../templates/Title.astro';
 import BgLayer from './BgLayer.astro';
@@ -47,6 +48,7 @@ const effectiveBg = bg ?? (source.template === 'title' ? fbg : undefined);
     {source.template === 'big' && <Big heading={frame.heading} />}
     {source.template === 'small' && <Small heading={frame.heading} />}
     {source.template === 'note' && <Note heading={frame.heading} {...parseNote(frame)} />}
+    {source.template === 'row' && <Row heading={frame.heading} {...parseRow(frame)} />}
   </div>
 
   <FooterLayer fl={fl} fr={fr} fbg={fbg} slideIndex={index} />

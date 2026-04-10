@@ -33,6 +33,7 @@ const KNOWN_TEMPLATES = new Set<TemplateName>([
   'big',
   'small',
   'note',
+  'row',
 ] satisfies TemplateName[]);
 
 // --- attribute parser ------------------------------------------------------
@@ -239,4 +240,40 @@ export function parseBody(frame: SlideFrame): { body: string } {
 export function parseNote(frame: SlideFrame): { body: string; caption?: string } {
   const { text, rest } = takeFirstH2(frame.bodyLines);
   return { body: joinTrimmed(stripH2(rest)), caption: text };
+}
+
+// Row: every H2 opens a new horizontal block. The H2 text becomes the block's
+// title; an empty `## ` still produces a block (title-less). Content before
+// the first H2 becomes a leading title-less block, but only if non-empty —
+// otherwise a deck that opens directly with `## ` gets a clean first block.
+export type RowBlock = { title?: string; body: string };
+export function parseRow(frame: SlideFrame): { blocks: RowBlock[]; gap?: string } {
+  const blocks: RowBlock[] = [];
+  const fence = createFenceTracker();
+  let title: string | undefined;
+  let buf: string[] = [];
+  let started = false; // true once the current block was opened by an H2
+
+  const flush = () => {
+    const body = joinTrimmed(buf);
+    if (started || body) blocks.push({ title, body });
+    title = undefined;
+    buf = [];
+    started = false;
+  };
+
+  for (const line of frame.bodyLines) {
+    const { inFence, isBoundary } = fence(line);
+    if (!inFence && !isBoundary && isH2Line(line)) {
+      flush();
+      const m = H2_RE.exec(line.trim());
+      title = m?.[1].trim() || undefined;
+      started = true;
+      continue;
+    }
+    buf.push(line);
+  }
+  flush();
+
+  return { blocks, gap: frame.gap };
 }

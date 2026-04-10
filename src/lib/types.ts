@@ -4,7 +4,7 @@ export type Attrs = Record<string, AttrValue>;
 export type FooterText = { text: string; attrs: Attrs };
 export type AssetRef = { src: string; attrs: Attrs };
 
-export type TemplateName = 'title' | 'me' | 'default' | 'big' | 'small' | 'note';
+export type TemplateName = 'title' | 'me' | 'default' | 'big' | 'small' | 'note' | 'row';
 
 // Deck-wide meta extracted from the preamble (lines before the first H1).
 export type GlobalMeta = {
