@@ -1,16 +1,14 @@
 ---
 // Small template: centered small text, driven by the slide heading (`# text`).
-import type { Slide } from '../../lib/types';
-
 interface Props {
-  slide: Slide;
+  heading: string;
 }
 
-const { slide } = Astro.props;
+const { heading } = Astro.props;
 ---
 
 <div class="template-small">
-  <h2 class="text">{slide.heading}</h2>
+  <h2 class="text">{heading}</h2>
 </div>
 
 <style>

@@ -1,25 +1,26 @@
 ---
 import { renderInline } from '../../lib/markdown';
-import type { Slide } from '../../lib/types';
 import Markup from '../slide/Markup.astro';
 
 interface Props {
-  slide: Slide;
+  heading: string;
+  body: string;
+  caption?: string;
 }
 
-const { slide } = Astro.props;
-const subHtml = slide.subheading ? renderInline(slide.subheading) : '';
+const { heading, body, caption } = Astro.props;
+const captionHtml = caption ? renderInline(caption) : '';
 ---
 
 <div class="template-note">
-  <h2 class="slide-title">{slide.heading}</h2>
+  <h2 class="slide-title">{heading}</h2>
   <div class="slide-body body">
     <div class="body-center">
-      <Markup body={slide.body} />
+      <Markup body={body} />
     </div>
-    {subHtml && (
+    {captionHtml && (
       <div class="body-bottom">
-        <p set:html={subHtml} />
+        <p set:html={captionHtml} />
       </div>
     )}
   </div>

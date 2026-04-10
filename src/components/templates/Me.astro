@@ -2,45 +2,47 @@
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { attrsToStyle } from '../../lib/style';
-import type { Slide } from '../../lib/types';
+import type { AssetRef } from '../../lib/types';
 import Markup from '../slide/Markup.astro';
 
 interface Props {
-  slide: Slide;
+  heading: string;
+  body: string;
+  icon?: AssetRef;
 }
 
-const { slide } = Astro.props;
+const { heading, body, icon } = Astro.props;
 
 let iconUrl: string | undefined;
-if (slide.icon) {
+if (icon) {
   const astroImages = import.meta.glob<{ default: ImageMetadata }>(
     '/src/assets/images/**/*.{png,jpg,jpeg,svg,gif,webp,avif}',
     { eager: true },
   );
-  const matched = astroImages[`/src/assets/images${slide.icon.src}`];
+  const matched = astroImages[`/src/assets/images${icon.src}`];
   if (matched) {
     const optimized = await getImage({ src: matched.default, width: 960 });
     iconUrl = optimized.src;
   } else {
-    iconUrl = slide.icon.src;
+    iconUrl = icon.src;
   }
 }
 
-const iconStyle = slide.icon
-  ? [`background-image:url(${iconUrl})`, 'background-repeat:no-repeat', attrsToStyle(slide.icon.attrs)].join(';')
+const iconStyle = icon
+  ? [`background-image:url(${iconUrl})`, 'background-repeat:no-repeat', attrsToStyle(icon.attrs)].join(';')
   : '';
 ---
 
 <div class="template-me">
   <div class="left">
-    {slide.icon && <div class="icon" style={iconStyle} />}
+    {icon && <div class="icon" style={iconStyle} />}
   </div>
   <div class="right">
     <div class="slide-body body">
-      <Markup body={slide.body} />
+      <Markup body={body} />
     </div>
   </div>
-  <h2 class="slide-title label">{slide.heading}</h2>
+  <h2 class="slide-title label">{heading}</h2>
 </div>
 
 <style>

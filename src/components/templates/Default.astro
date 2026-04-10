@@ -1,18 +1,18 @@
 ---
-import type { Slide } from '../../lib/types';
 import Markup from '../slide/Markup.astro';
 
 interface Props {
-  slide: Slide;
+  heading: string;
+  body: string;
 }
 
-const { slide } = Astro.props;
+const { heading, body } = Astro.props;
 ---
 
 <div class="template-default">
-  {slide.heading && <h2 class="slide-title title">{slide.heading}</h2>}
+  {heading && <h2 class="slide-title title">{heading}</h2>}
   <div class="slide-body body">
-    <Markup body={slide.body} />
+    <Markup body={body} />
   </div>
 </div>
 

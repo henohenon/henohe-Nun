@@ -2,7 +2,7 @@
 import HeadMeta from '../components/head/HeadMeta.astro';
 import CursorDot from '../components/slide/CursorDot.astro';
 import Slide from '../components/slide/Slide.astro';
-import { parseDeck } from '../lib/parser';
+import { parseDeck, parseFrame, parseTitle } from '../lib/parser';
 import 'virtual:uno.css';
 import '../styles/theme.css';
 import '../styles/slide-common.css';
@@ -30,10 +30,10 @@ interface Props {
 const { raw } = Astro.props;
 const { deck: deckName } = Astro.params;
 const deck = parseDeck(raw);
-const titleSlide = deck.slides.find((s) => s.template === 'title') ?? deck.slides[0];
-const ogTitle = titleSlide?.heading ?? deckName;
-const subtitle = titleSlide?.subheading ?? '';
-const ogDesc = [subtitle && `${subtitle} by へのへのん`, deck.date].filter(Boolean).join(' ');
+const titleSource = deck.slides.find((s) => s.template === 'title') ?? deck.slides[0];
+const ogTitle = titleSource?.heading ?? deckName;
+const subtitle = titleSource ? (parseTitle(parseFrame(titleSource, 0)).subtitle ?? '') : '';
+const ogDesc = [subtitle && `${subtitle} by へのへのん`, deck.globalMeta.date].filter(Boolean).join(' ');
 const base = import.meta.env.BASE_URL;
 const ogUrl = new URL(`${base}${deckName}`, Astro.site).href;
 const thumbUrl = new URL(`${base}thumbs/${deckName}.webp`, Astro.site).href;
@@ -53,7 +53,7 @@ const thumbUrl = new URL(`${base}thumbs/${deckName}.webp`, Astro.site).href;
   <body>
     <div class="stage">
       <div class="canvas" id="canvas">
-        {deck.slides.map((slide) => <Slide slide={slide} />)}
+        {deck.slides.map((source, i) => <Slide source={source} index={i} globalMeta={deck.globalMeta} />)}
       </div>
     </div>
 

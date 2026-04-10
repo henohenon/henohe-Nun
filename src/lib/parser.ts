@@ -1,19 +1,39 @@
-// Parser for henohe-Nun slide markdown.
-// Splits input into slides by H1, extracts custom meta tags (@bg, @fr, etc.),
-// and collects per-slide + global metadata. Body text (including HTML) is kept
-// as a raw markdown string rendered by marked at display time.
+// Deck parser, split into stages:
+//
+//   Stage 1 — parseDeck(md): splits the markdown into slide sources, each
+//     carrying just the template name, heading, and raw content chunk. Also
+//     extracts deck-wide preamble meta.
+//
+//   Stage 2 — parseFrame(source, i): for a single slide, pulls common meta
+//     (@bg, @fr, @gap, ...) out of content into dedicated fields and leaves
+//     the remainder as `bodyLines`.
+//
+//   Stage 3 — parseTitle / parseBody / parseNote / ... : template-specific
+//     interpretation of `bodyLines` into the exact props each template
+//     component needs. Called by Slide.astro after dispatching on template.
+//
+// Stages 2 and 3 are called from Slide.astro so that template-specific
+// parsing sits right next to the rendering logic instead of leaking into a
+// monolithic parseDeck.
 
 import { createFenceTracker } from './markdown';
-import type { AssetRef, Attrs, Deck, FooterText, Slide } from './types';
+import type {
+  Attrs,
+  DeckSource,
+  GlobalMeta,
+  SlideFrame,
+  SlideSource,
+  TemplateName,
+} from './types';
 
-const KNOWN_TEMPLATES = new Set<string>([
+const KNOWN_TEMPLATES = new Set<TemplateName>([
   'title',
   'me',
   'default',
   'big',
   'small',
   'note',
-] satisfies Slide['template'][]);
+] satisfies TemplateName[]);
 
 // --- attribute parser ------------------------------------------------------
 
@@ -29,140 +49,194 @@ export function parseAttrs(s: string): Attrs {
   return attrs;
 }
 
-// --- line classification ---------------------------------------------------
+// --- Stage 1: deck → global meta + slide sources ----------------------------
 
-type LineKind =
-  | { t: 'h1'; text: string }
-  | { t: 'h2'; text: string }
-  | { t: 'tmpl'; name: string }
-  | { t: 'meta'; key: 'fr' | 'fl' | 'icon' | 'bg' | 'fbg' | 'date'; value: string; attrs: Attrs }
-  | { t: 'md'; raw: string };
+const H1_RE = /^#\s+(.*)$/;
+const PREAMBLE_META_RE = /^@(fr|fl|bg|fbg|date)(\s[^>]*)?>(.*)$/;
+const TEMPLATE_RE = /^@>\s*(\w+)\s*$/;
 
-function classify(rawLine: string): LineKind {
-  const line = rawLine.trim();
+export function parseDeck(md: string): DeckSource {
+  const lines = md.replace(/\r\n/g, '\n').split('\n');
+  const fence = createFenceTracker();
 
-  // H2 (must check before H1)
-  const h2 = /^##\s*(.*)$/.exec(line);
-  if (h2 && !line.startsWith('###')) return { t: 'h2', text: h2[1] };
+  const globalMeta: GlobalMeta = {};
+  const slides: SlideSource[] = [];
 
-  // H1
-  const h1 = /^#\s*(.*)$/.exec(line);
-  if (h1) return { t: 'h1', text: h1[1] };
+  type Draft = { heading: string; template: TemplateName; lines: string[] };
+  let current: Draft | null = null;
 
-  // @>template
-  const tmpl = /^@>\s*(\w+)\s*$/.exec(line);
-  if (tmpl) return { t: 'tmpl', name: tmpl[1] };
+  const commit = () => {
+    if (!current) return;
+    slides.push({
+      template: current.template,
+      heading: current.heading,
+      content: current.lines.join('\n'),
+    });
+    current = null;
+  };
 
-  // @key attrs>value — meta tags
-  const meta = /^@(fr|fl|icon|bg|fbg|date)(\s[^>]*)?>(.*)$/.exec(line);
-  if (meta) {
-    const key = meta[1] as 'fr' | 'fl' | 'icon' | 'bg' | 'fbg' | 'date';
-    return { t: 'meta', key, value: meta[3].trim(), attrs: parseAttrs(meta[2] ?? '') };
+  for (const raw of lines) {
+    const { inFence, isBoundary } = fence(raw);
+    if (inFence || isBoundary) {
+      current?.lines.push(raw);
+      continue;
+    }
+
+    const trimmed = raw.trim();
+
+    // H1 (slide boundary). Guard against H2+ matching via startsWith('##').
+    if (!trimmed.startsWith('##')) {
+      const h1 = H1_RE.exec(trimmed);
+      if (h1) {
+        commit();
+        current = { heading: h1[1], template: 'default', lines: [] };
+        continue;
+      }
+    }
+
+    if (!current) {
+      // Preamble — collect deck-wide meta.
+      const meta = PREAMBLE_META_RE.exec(trimmed);
+      if (meta) {
+        const key = meta[1] as 'fr' | 'fl' | 'bg' | 'fbg' | 'date';
+        const value = meta[3].trim();
+        const attrs = parseAttrs(meta[2] ?? '');
+        if (key === 'date') globalMeta.date = value;
+        else if (key === 'fr') globalMeta.fr = { text: value, attrs };
+        else if (key === 'fl') globalMeta.fl = { text: value, attrs };
+        else if (key === 'bg') globalMeta.bg = { src: value, attrs };
+        else if (key === 'fbg') globalMeta.fbg = { src: value, attrs };
+      }
+      continue;
+    }
+
+    // @>template — consumed here so Stage 2 doesn't see it.
+    const tmpl = TEMPLATE_RE.exec(trimmed);
+    if (tmpl) {
+      const name = tmpl[1];
+      if (KNOWN_TEMPLATES.has(name as TemplateName)) {
+        current.template = name as TemplateName;
+      } else {
+        console.warn(`[henohe-nun] unknown template @>${name}, falling back to default`);
+      }
+      continue;
+    }
+
+    current.lines.push(raw);
   }
+  commit();
 
-  return { t: 'md', raw: rawLine };
+  return { globalMeta, slides };
 }
 
-// --- main parser -----------------------------------------------------------
+// --- Stage 2: source → frame (common meta extracted) ------------------------
 
-export function parseDeck(md: string): Deck {
-  const lines = md.replace(/\r\n/g, '\n').split('\n');
+const FRAME_META_RE = /^@(icon|bg|fbg|fr|fl|gap)(\s[^>]*)?>(.*)$/;
 
-  const classified: LineKind[] = [];
+export function parseFrame(source: SlideSource, index: number): SlideFrame {
+  const frame: SlideFrame = {
+    index,
+    heading: source.heading,
+    template: source.template,
+    bodyLines: [],
+  };
+
+  const fence = createFenceTracker();
+  for (const line of source.content.split('\n')) {
+    const { inFence, isBoundary } = fence(line);
+    if (inFence || isBoundary) {
+      frame.bodyLines.push(line);
+      continue;
+    }
+
+    const meta = FRAME_META_RE.exec(line.trim());
+    if (meta) {
+      const key = meta[1] as 'icon' | 'bg' | 'fbg' | 'fr' | 'fl' | 'gap';
+      const value = meta[3].trim();
+      const attrs = parseAttrs(meta[2] ?? '');
+      if (key === 'icon') frame.icon = { src: value, attrs };
+      else if (key === 'bg') frame.bg = { src: value, attrs };
+      else if (key === 'fbg') frame.fbg = { src: value, attrs };
+      else if (key === 'fr') frame.fr = { text: value, attrs };
+      else if (key === 'fl') frame.fl = { text: value, attrs };
+      else if (key === 'gap') frame.gap = value;
+      continue;
+    }
+
+    frame.bodyLines.push(line);
+  }
+
+  return frame;
+}
+
+// --- Stage 3: per-template body interpretation ------------------------------
+
+// H2 matcher that ignores H3+ (### and deeper) and code fences.
+const H2_RE = /^##\s*(.*)$/;
+
+function isH2Line(line: string): boolean {
+  const t = line.trim();
+  return t.startsWith('## ') || t === '##' || (t.startsWith('##') && !t.startsWith('###'));
+}
+
+// Find the first H2 text (if any) and return the remaining lines with it
+// removed. H2s inside code fences are ignored.
+function takeFirstH2(lines: string[]): { text?: string; rest: string[] } {
+  const rest: string[] = [];
+  let text: string | undefined;
   const fence = createFenceTracker();
   for (const line of lines) {
     const { inFence, isBoundary } = fence(line);
-    classified.push(inFence || isBoundary ? { t: 'md', raw: line } : classify(line));
-  }
-
-  const deck: Deck = { slides: [] };
-
-  // preamble: lines before first h1
-  let i = 0;
-  for (; i < classified.length; i++) {
-    const k = classified[i];
-    if (k.t === 'h1') break;
-    if (k.t === 'meta') {
-      if (k.key === 'date') deck.date = k.value;
-      else if (k.key === 'fr') deck.globalFr = { text: k.value, attrs: k.attrs };
-      else if (k.key === 'fl') deck.globalFl = { text: k.value, attrs: k.attrs };
-      else if (k.key === 'bg') deck.globalBg = { src: k.value, attrs: k.attrs };
-      else if (k.key === 'fbg') deck.globalFbg = { src: k.value, attrs: k.attrs };
-    }
-  }
-
-  // slides
-  while (i < classified.length) {
-    const head = classified[i];
-    if (head.t !== 'h1') {
-      i++;
+    if (!inFence && !isBoundary && text === undefined && isH2Line(line)) {
+      const m = H2_RE.exec(line.trim());
+      text = m?.[1].trim() || undefined;
       continue;
     }
-    const heading = head.text;
-    i++;
-
-    const slideLines: LineKind[] = [];
-    while (i < classified.length && classified[i].t !== 'h1') {
-      slideLines.push(classified[i]);
-      i++;
-    }
-
-    let template: Slide['template'] = 'default';
-    let subheading: string | undefined;
-    let icon: AssetRef | undefined;
-    let bg: AssetRef | undefined;
-    let fbg: AssetRef | undefined;
-    let fr: FooterText | undefined;
-    let fl: FooterText | undefined;
-    const bodyLines: string[] = [];
-
-    for (const k of slideLines) {
-      if (k.t === 'h2') {
-        subheading = k.text;
-        continue;
-      }
-      if (k.t === 'tmpl') {
-        if (KNOWN_TEMPLATES.has(k.name)) {
-          template = k.name as Slide['template'];
-        } else {
-          console.warn(`[henohe-nun] unknown template @>${k.name}, falling back to default`);
-        }
-        if (template === 'title') {
-          if (deck.date) fr = { text: deck.date, attrs: {} };
-          fl = { text: '', attrs: {} };
-        }
-        continue;
-      }
-      if (k.t === 'meta') {
-        if (k.key === 'icon') icon = { src: k.value, attrs: k.attrs };
-        else if (k.key === 'bg') bg = { src: k.value, attrs: k.attrs };
-        else if (k.key === 'fbg') fbg = { src: k.value, attrs: k.attrs };
-        else if (k.key === 'fr') fr = { text: k.value, attrs: k.attrs };
-        else if (k.key === 'fl') fl = { text: k.value, attrs: k.attrs };
-        continue;
-      }
-      if (k.t === 'md') {
-        bodyLines.push(k.raw);
-      }
-    }
-
-    // Trim leading/trailing blank lines from body
-    while (bodyLines.length && bodyLines[0].trim() === '') bodyLines.shift();
-    while (bodyLines.length && bodyLines[bodyLines.length - 1].trim() === '') bodyLines.pop();
-
-    deck.slides.push({
-      index: deck.slides.length,
-      heading,
-      subheading,
-      template,
-      icon,
-      bg: bg ?? deck.globalBg,
-      fbg: fbg ?? deck.globalFbg,
-      fr: fr ?? deck.globalFr,
-      fl: fl ?? deck.globalFl,
-      body: bodyLines.join('\n'),
-    });
+    rest.push(line);
   }
+  return { text, rest };
+}
 
-  return deck;
+// Drop every H2 line (not inside fences). Used by templates that don't expose
+// a subtitle/caption — currently default / me / big / small / note (for the
+// post-caption body).
+function stripH2(lines: string[]): string[] {
+  const out: string[] = [];
+  const fence = createFenceTracker();
+  for (const line of lines) {
+    const { inFence, isBoundary } = fence(line);
+    if (inFence || isBoundary) {
+      out.push(line);
+      continue;
+    }
+    if (isH2Line(line)) continue;
+    out.push(line);
+  }
+  return out;
+}
+
+function joinTrimmed(lines: string[]): string {
+  const copy = [...lines];
+  while (copy.length && copy[0].trim() === '') copy.shift();
+  while (copy.length && copy[copy.length - 1].trim() === '') copy.pop();
+  return copy.join('\n');
+}
+
+// Title / Me: first H2 becomes the subtitle; body is ignored.
+export function parseTitle(frame: SlideFrame): { subtitle?: string } {
+  const { text } = takeFirstH2(frame.bodyLines);
+  return { subtitle: text };
+}
+
+// Default / Me / Big / Small: join everything as a single markdown body,
+// stripping H2 lines (they have no meaning for these templates).
+export function parseBody(frame: SlideFrame): { body: string } {
+  return { body: joinTrimmed(stripH2(frame.bodyLines)) };
+}
+
+// Note: first H2 becomes a caption shown below the centered body. Remaining
+// H2s are ignored (same policy as parseBody).
+export function parseNote(frame: SlideFrame): { body: string; caption?: string } {
+  const { text, rest } = takeFirstH2(frame.bodyLines);
+  return { body: joinTrimmed(stripH2(rest)), caption: text };
 }

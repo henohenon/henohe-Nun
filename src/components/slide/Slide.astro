@@ -1,5 +1,6 @@
 ---
-import type { Slide } from '../../lib/types';
+import { parseBody, parseFrame, parseNote, parseTitle } from '../../lib/parser';
+import type { GlobalMeta, SlideSource } from '../../lib/types';
 import Big from '../templates/Big.astro';
 import Default from '../templates/Default.astro';
 import Me from '../templates/Me.astro';
@@ -10,38 +11,45 @@ import BgLayer from './BgLayer.astro';
 import FooterLayer from './FooterLayer.astro';
 
 interface Props {
-  slide: Slide;
+  source: SlideSource;
+  index: number;
+  globalMeta: GlobalMeta;
 }
 
-const { slide } = Astro.props;
+const { source, index, globalMeta } = Astro.props;
+const frame = parseFrame(source, index);
 
-// fbg is always effective as the footer-shaped mask. On title slides, if there's
-// no explicit bg, the fbg image is additionally used as the regular bg.
-const effectiveFbg = slide.fbg;
-const effectiveBg = slide.bg ?? (slide.template === 'title' ? slide.fbg : undefined);
+// Inherit per-slide fields from globalMeta when not set locally.
+const bg = frame.bg ?? globalMeta.bg;
+const fbg = frame.fbg ?? globalMeta.fbg;
+let fr = frame.fr ?? globalMeta.fr;
+let fl = frame.fl ?? globalMeta.fl;
 
-const templateMap = {
-  title: Title,
-  me: Me,
-  default: Default,
-  big: Big,
-  small: Small,
-  note: Note,
-} as const;
-const Template = templateMap[slide.template] ?? Default;
+// Title template: date auto-fills the footer-right; footer-left is forced
+// empty so it doesn't inherit from globalFl.
+if (source.template === 'title') {
+  if (!frame.fr && globalMeta.date) fr = { text: globalMeta.date, attrs: {} };
+  if (!frame.fl) fl = { text: '', attrs: {} };
+}
+
+// On title slides with no explicit bg, fall back to the fbg image so the
+// footer mask and the hero background reuse the same asset.
+const effectiveBg = bg ?? (source.template === 'title' ? fbg : undefined);
 ---
 
-<section
-  class="slide"
-  data-index={slide.index}
->
+<section class="slide" data-index={index}>
   {effectiveBg && <BgLayer asset={effectiveBg} />}
 
   <div class="slide-inner">
-    <Template slide={slide} />
+    {source.template === 'title' && <Title heading={frame.heading} {...parseTitle(frame)} />}
+    {source.template === 'me' && <Me heading={frame.heading} icon={frame.icon} {...parseBody(frame)} />}
+    {source.template === 'default' && <Default heading={frame.heading} {...parseBody(frame)} />}
+    {source.template === 'big' && <Big heading={frame.heading} />}
+    {source.template === 'small' && <Small heading={frame.heading} />}
+    {source.template === 'note' && <Note heading={frame.heading} {...parseNote(frame)} />}
   </div>
 
-  <FooterLayer fl={slide.fl} fr={slide.fr} fbg={effectiveFbg} slideIndex={slide.index} />
+  <FooterLayer fl={fl} fr={fr} fbg={fbg} slideIndex={index} />
 </section>
 
 <style>
