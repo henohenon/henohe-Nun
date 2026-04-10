@@ -20,18 +20,15 @@ const { slide } = Astro.props;
   .template-default {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto 1fr;
     padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
     box-sizing: border-box;
   }
-  .title {
-    margin-bottom: 0;
-  }
   .body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-auto-rows: min-content;
+    align-content: start;
     min-height: 0;
   }
 </style>

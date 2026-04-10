@@ -58,7 +58,6 @@
 }
 .slide-body .code-block {
   display: inline-block;
-  align-self: flex-start;
   text-align: left;
   margin: 0.3em 0;
   border-radius: 0.4em;
@@ -67,8 +66,8 @@
   background: var(--body-bg);
 }
 .slide-body .code-header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
   padding: 0.15em 0.4em;
   background: color-mix(in srgb, var(--body-bg) 80%, #888);
@@ -176,42 +175,4 @@
 .slide-body th {
   background: var(--body-bg);
   font-weight: 700;
-}
-
-/* Layout utility classes for HTML-in-markdown */
-.slide-body .row {
-  display: grid;
-  grid-auto-flow: row;
-}
-.slide-body .col {
-  display: grid;
-  grid-auto-flow: column;
-}
-.slide-body .center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.slide-body .left {
-  display: flex;
-  justify-content: start;
-}
-
-.slide-body .right {
-  display: flex;
-  justify-content: end;
-}
-
-.slide-body .top {
-  display: flex;
-  align-items: start;
-}
-
-.slide-body .bottom {
-  display: flex;
-  align-items: end;
-}
-.slide-body .gap {
-  gap: 0.5em;
 }
