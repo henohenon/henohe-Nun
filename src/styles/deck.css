@@ -32,6 +32,10 @@ body.is-fullscreen astro-dev-toolbar {
   position: absolute;
   inset: 0;
 }
+/* Hide all slides by default; script reveals the active one. */
+.slide {
+  visibility: hidden;
+}
 
 .hint {
   position: fixed;
