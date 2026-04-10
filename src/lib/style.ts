@@ -1,120 +1,82 @@
 import type { Attrs, AttrValue } from './types';
 
-const PX_KEYS = new Set(['w', 'h', 'x', 'y', 'm', 'mt', 'mb', 'ml', 'mr', 'p', 'pt', 'pb', 'pl', 'pr', 's']);
-
 function pxUnit(v: AttrValue | undefined): string {
   if (typeof v !== 'string') return '';
   return /^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
 }
 
-const CSS_MAP: Record<string, string> = {
-  w: 'width',
-  h: 'height',
-  m: 'margin',
-  mt: 'margin-top',
-  mb: 'margin-bottom',
-  ml: 'margin-left',
-  mr: 'margin-right',
-  p: 'padding',
-  pt: 'padding-top',
-  pb: 'padding-bottom',
-  pl: 'padding-left',
-  pr: 'padding-right',
-  align: 'align-items',
-  justify: 'justify-content',
-  s: 'font-size',
-  c: 'color',
-  o: 'opacity',
-  bc: 'background-color',
+// keyword → [y%, x%]
+const POSITION_KEYWORDS: Record<string, [string | undefined, string | undefined]> = {
+  top: ['0%', undefined],
+  bottom: ['100%', undefined],
+  left: [undefined, '0%'],
+  right: [undefined, '100%'],
+  center: ['50%', '50%'],
 };
 
-const COLOR_KEYS = new Set([
-  'white',
-  'black',
-  'red',
-  'green',
-  'blue',
-  'yellow',
-  'cyan',
-  'magenta',
-  'gray',
-  'lightgray',
-]);
+function buildFilters(attrs: Attrs): string[] {
+  const filters: string[] = [];
+  let colorize: string | undefined;
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'mono' && v === true) filters.push('grayscale(1)');
+    else if (k === 'bin' && v === true) filters.push('grayscale(1)', 'contrast(9999)');
+    else if (k === 'sepia' && v === true) filters.push('sepia(1)');
+    else if (k === 'invert' && v === true) filters.push('invert(1)');
+    else if (k === 'blur' && typeof v === 'string') filters.push(`blur(${pxUnit(v)})`);
+    else if (k === 'bright' && typeof v === 'string') filters.push(`brightness(${v})`);
+    else if (k === 'contrast' && typeof v === 'string') filters.push(`contrast(${v})`);
+    else if (k === 'saturate' && typeof v === 'string') filters.push(`saturate(${v})`);
+    else if (k === 'hue' && typeof v === 'string') filters.push(`hue-rotate(${v})`);
+    else if (k === 'shadow' && typeof v === 'string') filters.push(`drop-shadow(0 0 ${pxUnit(v)} rgba(0,0,0,0.5))`);
+    else if (k === 'c' && typeof v === 'string') colorize = v;
+  }
+  if (colorize) {
+    filters.push('grayscale(1)', 'sepia(1)', `hue-rotate(${colorize})`);
+  }
+  return filters;
+}
 
-const LAYOUT_PLACE: Record<string, [string | undefined, string | undefined]> = {
-  top: ['start', undefined],
-  bottom: ['end', undefined],
-  left: [undefined, 'start'],
-  right: [undefined, 'end'],
-  center: ['center', 'center'],
-};
+/** Combine a base position (from keyword) with an offset (from x/y) via calc(). */
+function posCalc(base: string, offset: string | undefined): string {
+  if (!offset) return base;
+  return `calc(${base} + ${offset})`;
+}
 
-const TEXT_ALIGN: Record<string, string> = {
-  tl: 'left',
-  tr: 'right',
-  tc: 'center',
-};
-
+/**
+ * Convert image attrs to CSS for background-image containers.
+ */
 export function attrsToStyle(attrs: Attrs): string {
   const parts: string[] = [];
-  const filters: string[] = [];
-  let layoutVert: string | undefined;
-  let layoutHoriz: string | undefined;
-  let tx: string | undefined;
-  let ty: string | undefined;
+  let baseX: string | undefined;
+  let baseY: string | undefined;
+  let offsetX: string | undefined;
+  let offsetY: string | undefined;
+  let sizeW: string | undefined;
+  let sizeH: string | undefined;
+  let useCover = false;
   for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'x' && typeof v === 'string') {
-      tx = pxUnit(v);
-      continue;
-    }
-    if (k === 'y' && typeof v === 'string') {
-      ty = pxUnit(v);
-      continue;
-    }
-    if (k === 'b' && v === true) parts.push('font-weight:bold', 'color:var(--theme-color)');
-    else if (k === 'i' && v === true) parts.push('font-style:italic');
-    else if (COLOR_KEYS.has(k) && v === true) parts.push(`color:${k}`);
-    else if (k in LAYOUT_PLACE && v === true) {
-      const l = LAYOUT_PLACE[k];
-      layoutVert = l[0] ?? layoutVert;
-      layoutHoriz = l[1] ?? layoutHoriz;
-    } else if (k in TEXT_ALIGN && v === true) {
-      parts.push(`text-align:${TEXT_ALIGN[k]}`);
-    } else if (k === 'blur' && typeof v === 'string') {
-      filters.push(`blur(${pxUnit(v)})`);
-    } else if (k === 'mono' && v === true) {
-      filters.push('grayscale(1)');
-    } else if (k === 'bin' && v === true) {
-      filters.push('grayscale(1)', 'contrast(9999)');
-    } else if (k === 'sepia' && v === true) {
-      filters.push('sepia(1)');
-    } else if (k === 'invert' && v === true) {
-      filters.push('invert(1)');
-    } else if (k === 'bright' && typeof v === 'string') {
-      filters.push(`brightness(${v})`);
-    } else if (k === 'contrast' && typeof v === 'string') {
-      filters.push(`contrast(${v})`);
-    } else if (k === 'saturate' && typeof v === 'string') {
-      filters.push(`saturate(${v})`);
-    } else if (k === 'hue' && typeof v === 'string') {
-      filters.push(`hue-rotate(${v})`);
-    } else if (k === 'round' && typeof v === 'string') {
-      parts.push(`border-radius:${pxUnit(v)}`);
-      parts.push('overflow:hidden');
-    } else if (k in CSS_MAP && typeof v === 'string') {
-      const cssKey = CSS_MAP[k];
-      const cssVal = PX_KEYS.has(k) ? pxUnit(v) : v;
-      parts.push(`${cssKey}:${cssVal}`);
+    if (k === 'w' && typeof v === 'string') sizeW = pxUnit(v);
+    else if (k === 'h' && typeof v === 'string') sizeH = pxUnit(v);
+    else if (k === 'x' && typeof v === 'string') offsetX = pxUnit(v);
+    else if (k === 'y' && typeof v === 'string') offsetY = pxUnit(v);
+    else if (k === 'o' && typeof v === 'string') parts.push(`opacity:${v}`);
+    else if (k === 'cover' && v === true) useCover = true;
+    else if (k === 'rot' && typeof v === 'string') parts.push(`rotate:${v}`);
+    else if (k === 'flip' && v === true) parts.push('scale:-1 1');
+    else if (k === 'round' && typeof v === 'string') {
+      parts.push(`border-radius:${pxUnit(v)}`, 'overflow:hidden');
+    } else if (k in POSITION_KEYWORDS && v === true) {
+      const p = POSITION_KEYWORDS[k];
+      if (p[0]) baseY = p[0];
+      if (p[1]) baseX = p[1];
     }
   }
+  const size = sizeW || sizeH ? `${sizeW ?? 'auto'} ${sizeH ?? 'auto'}` : useCover ? 'cover' : 'contain';
+  parts.push(`background-size:${size}`);
+  const finalX = posCalc(baseX ?? '50%', offsetX);
+  const finalY = posCalc(baseY ?? '50%', offsetY);
+  parts.push(`background-position:${finalX} ${finalY}`);
+  const filters = buildFilters(attrs);
   if (filters.length) parts.push(`filter:${filters.join(' ')}`);
-  if (tx !== undefined || ty !== undefined) {
-    parts.push(`translate:${tx ?? '0'} ${ty ?? '0'}`);
-  }
-  if (layoutVert || layoutHoriz) {
-    const h = layoutHoriz ?? 'center';
-    const v = layoutVert ?? 'center';
-    parts.push(`place-self:${v} ${h}`);
-  }
   return parts.join(';');
 }

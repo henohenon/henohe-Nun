@@ -16,7 +16,7 @@ const KNOWN_TEMPLATES = new Set<string>([
 
 // --- attribute parser ------------------------------------------------------
 
-function parseAttrs(s: string): Attrs {
+export function parseAttrs(s: string): Attrs {
   const attrs: Attrs = {};
   const re = /([a-zA-Z_][\w-]*)(?:=(?:"([^"]*)"|'([^']*)'|([^\s"'>]+)))?/g;
   let m: RegExpExecArray | null;

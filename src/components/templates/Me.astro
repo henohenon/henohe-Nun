@@ -1,19 +1,39 @@
 ---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import { attrsToStyle } from '../../lib/style';
 import type { Slide } from '../../lib/types';
 import NodeRenderer from '../slide/NodeRenderer.astro';
-import OptimizedImage from '../slide/OptimizedImage.astro';
 
 interface Props {
   slide: Slide;
 }
 
 const { slide } = Astro.props;
+
+let iconUrl: string | undefined;
+if (slide.icon) {
+  const astroImages = import.meta.glob<{ default: ImageMetadata }>(
+    '/src/assets/images/**/*.{png,jpg,jpeg,svg,gif,webp,avif}',
+    { eager: true },
+  );
+  const matched = astroImages[`/src/assets/images${slide.icon.src}`];
+  if (matched) {
+    const optimized = await getImage({ src: matched.default, width: 960 });
+    iconUrl = optimized.src;
+  } else {
+    iconUrl = slide.icon.src;
+  }
+}
+
+const iconStyle = slide.icon
+  ? [`background-image:url(${iconUrl})`, 'background-repeat:no-repeat', attrsToStyle(slide.icon.attrs)].join(';')
+  : '';
 ---
 
 <div class="template-me">
   <div class="left">
-    {slide.icon && <OptimizedImage class="icon" asset={slide.icon} extraStyle={attrsToStyle(slide.icon.attrs)} widths={[960]} />}
+    {slide.icon && <div class="icon" style={iconStyle} />}
   </div>
   <div class="right">
     <div class="slide-body body">
@@ -28,27 +48,20 @@ const { slide } = Astro.props;
     position: relative;
     width: 100%;
     height: 100%;
-    display: flex;
+    display: grid;
+    grid-template-columns: clamp(240px, 30%, 70cqh) 1fr;
     overflow: hidden;
   }
   .left {
-    /* Sized by the icon + horizontal padding, not a fixed percentage. */
-    flex: 0 0 auto;
     background: #ffffff;
-    /* Top padding reserves space for the absolute-positioned heading so the icon
-       centers between the heading's bottom and the slide's bottom. */
-    max-width: 30%;
     padding:
       calc(var(--slide-pad-top) + var(--slide-title-size))
       clamp(40px, 7cqmin, 140px)
       var(--slide-pad-top);
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-content: center;
   }
-  /* Title is pulled out of the white left column so it can span full width. */
   .label {
     position: absolute;
     top: var(--slide-pad-top);
@@ -58,28 +71,46 @@ const { slide } = Astro.props;
     z-index: 2;
   }
   .icon {
-    width: clamp(240px, 44cqmin, 840px);
-    height: clamp(240px, 44cqmin, 840px);
-    flex-shrink: 0;
-    align-self: center;
-    margin: auto 0;
+    width: clamp(160px, 20cqw, 400px);
+    height: clamp(160px, 20cqw, 400px);
   }
   .right {
-    flex: 1;
-    /* Top padding aligns text with where the body would start in other templates
-       (template top padding + title height + title margin-bottom). */
     padding:
       calc(var(--slide-pad-top) + var(--slide-title-size))
       var(--slide-pad-x)
       var(--slide-pad-bottom);
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-auto-rows: min-content;
+    align-content: start;
   }
   .body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-auto-rows: min-content;
+    align-content: start;
     min-height: 0;
+  }
+  /* Portrait: stack vertically */
+  @container (orientation: portrait) {
+    .template-me {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+    .left {
+      padding:
+        calc(var(--slide-pad-top) + var(--slide-title-size) * 2)
+        var(--slide-pad-x)
+        0;
+    }
+    .icon {
+      width: clamp(120px, 30cqw, 300px);
+      height: clamp(80px, 25cqh, 200px);
+    }
+    .right {
+      padding:
+        0
+        var(--slide-pad-x)
+        var(--slide-pad-bottom);
+    }
   }
 </style>

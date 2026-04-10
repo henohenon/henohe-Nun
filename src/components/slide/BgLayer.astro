@@ -1,7 +1,8 @@
 ---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import { attrsToStyle } from '../../lib/style';
 import type { AssetRef } from '../../lib/types';
-import OptimizedImage from './OptimizedImage.astro';
 
 interface Props {
   asset: AssetRef;
@@ -9,23 +10,35 @@ interface Props {
 }
 
 const { asset, extraStyle } = Astro.props;
-const attrs = asset.attrs;
-const imgStyle = [attrsToStyle(attrs), attrs.w ? 'max-width:none' : '', attrs.h ? 'max-height:none' : '']
+
+const astroImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/images/**/*.{png,jpg,jpeg,svg,gif,webp,avif}',
+  { eager: true },
+);
+const matched = astroImages[`/src/assets/images${asset.src}`];
+let bgUrl: string;
+if (matched) {
+  const optimized = await getImage({ src: matched.default, width: 1920 });
+  bgUrl = optimized.src;
+} else {
+  bgUrl = asset.src;
+}
+
+const bgStyle = [
+  `background-image:url(${bgUrl})`,
+  'background-repeat:no-repeat',
+  attrsToStyle(asset.attrs),
+  extraStyle ?? '',
+]
   .filter(Boolean)
   .join(';');
 ---
-<div class="bg-wrapper" style={extraStyle}>
-  <OptimizedImage asset={asset} extraStyle={imgStyle} />
-</div>
+
+<div class="bg-layer" style={bgStyle} />
 
 <style>
-  .bg-wrapper {
+  .bg-layer {
     position: absolute;
     inset: 0;
-    overflow: hidden;
-  }
-  .bg-wrapper :global(.image-base) {
-    position: absolute;
   }
 </style>
-
