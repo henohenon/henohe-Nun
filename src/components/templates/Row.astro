@@ -6,18 +6,30 @@ interface Props {
   heading: string;
   blocks: RowBlock[];
   gap?: string;
+  align?: string;
 }
 
-const { heading, blocks, gap } = Astro.props;
+const { heading, blocks, gap, align } = Astro.props;
+
+// Map friendly names to CSS `justify-content` values. Defaults to `start`
+// (left-aligned) so content reads from the left edge. Pass any raw CSS value
+// to override (e.g. `center`, `space-between`, `end`).
+const ALIGN_ALIAS: Record<string, string> = {
+  left: 'start',
+  right: 'end',
+};
+const justify = align ? (ALIGN_ALIAS[align] ?? align) : 'start';
+
+const blocksStyle = [`justify-content:${justify}`, gap && `gap:${gap}`].filter(Boolean).join(';');
 
 // Render each block's markdown in parallel so any async work (OGP fetches,
 // image optimization) inside one block doesn't stall the others.
 const rendered = await Promise.all(blocks.map((b) => renderMarkup(b.body)));
 ---
 
-<div class="template-row">
+<div class="template-shell">
   {heading && <h2 class="slide-title">{heading}</h2>}
-  <div class="slide-body blocks" style={gap ? `gap:${gap}` : undefined}>
+  <div class="slide-body blocks" style={blocksStyle}>
     {blocks.map((block, i) => (
       <div class="row-block">
         {block.title && <h3 class="row-block-title">{block.title}</h3>}
@@ -28,20 +40,11 @@ const rendered = await Promise.all(blocks.map((b) => renderMarkup(b.body)));
 </div>
 
 <style>
-  .template-row {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
-    box-sizing: border-box;
-  }
   .blocks {
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: minmax(0, auto);
     gap: clamp(24px, 4cqmin, 96px);
-    justify-content: center;
     align-items: start;
     min-height: 0;
     overflow: hidden;

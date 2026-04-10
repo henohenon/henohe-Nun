@@ -17,14 +17,7 @@
 // monolithic parseDeck.
 
 import { createFenceTracker } from './markdown';
-import type {
-  Attrs,
-  DeckSource,
-  GlobalMeta,
-  SlideFrame,
-  SlideSource,
-  TemplateName,
-} from './types';
+import type { Attrs, DeckSource, GlobalMeta, SlideFrame, SlideSource, TemplateName } from './types';
 
 const KNOWN_TEMPLATES = new Set<TemplateName>([
   'title',
@@ -132,7 +125,7 @@ export function parseDeck(md: string): DeckSource {
 
 // --- Stage 2: source → frame (common meta extracted) ------------------------
 
-const FRAME_META_RE = /^@(icon|bg|fbg|fr|fl|gap)(\s[^>]*)?>(.*)$/;
+const FRAME_META_RE = /^@(icon|bg|fbg|fr|fl)(\s[^>]*)?>(.*)$/;
 
 export function parseFrame(source: SlideSource, index: number): SlideFrame {
   const frame: SlideFrame = {
@@ -152,7 +145,7 @@ export function parseFrame(source: SlideSource, index: number): SlideFrame {
 
     const meta = FRAME_META_RE.exec(line.trim());
     if (meta) {
-      const key = meta[1] as 'icon' | 'bg' | 'fbg' | 'fr' | 'fl' | 'gap';
+      const key = meta[1] as 'icon' | 'bg' | 'fbg' | 'fr' | 'fl';
       const value = meta[3].trim();
       const attrs = parseAttrs(meta[2] ?? '');
       if (key === 'icon') frame.icon = { src: value, attrs };
@@ -160,7 +153,6 @@ export function parseFrame(source: SlideSource, index: number): SlideFrame {
       else if (key === 'fbg') frame.fbg = { src: value, attrs };
       else if (key === 'fr') frame.fr = { text: value, attrs };
       else if (key === 'fl') frame.fl = { text: value, attrs };
-      else if (key === 'gap') frame.gap = value;
       continue;
     }
 
@@ -180,100 +172,91 @@ function isH2Line(line: string): boolean {
   return t.startsWith('## ') || t === '##' || (t.startsWith('##') && !t.startsWith('###'));
 }
 
-// Find the first H2 text (if any) and return the remaining lines with it
-// removed. H2s inside code fences are ignored.
-function takeFirstH2(lines: string[]): { text?: string; rest: string[] } {
-  const rest: string[] = [];
-  let text: string | undefined;
+// Split lines into segments at every H2 (ignoring fenced code). The first
+// segment is always pre-H2 content (`started: false`); subsequent segments
+// are opened by an H2 (`started: true`) and carry that H2's text as `title`.
+// H2 lines themselves are not included in any segment's `lines`.
+type H2Segment = { title?: string; started: boolean; lines: string[] };
+function splitByH2(lines: string[]): H2Segment[] {
+  const segs: H2Segment[] = [{ started: false, lines: [] }];
   const fence = createFenceTracker();
   for (const line of lines) {
     const { inFence, isBoundary } = fence(line);
-    if (!inFence && !isBoundary && text === undefined && isH2Line(line)) {
+    if (!inFence && !isBoundary && isH2Line(line)) {
       const m = H2_RE.exec(line.trim());
-      text = m?.[1].trim() || undefined;
+      segs.push({ title: m?.[1].trim() || undefined, started: true, lines: [] });
       continue;
     }
-    rest.push(line);
+    segs[segs.length - 1].lines.push(line);
   }
-  return { text, rest };
-}
-
-// Drop every H2 line (not inside fences). Used by templates that don't expose
-// a subtitle/caption — currently default / me / big / small / note (for the
-// post-caption body).
-function stripH2(lines: string[]): string[] {
-  const out: string[] = [];
-  const fence = createFenceTracker();
-  for (const line of lines) {
-    const { inFence, isBoundary } = fence(line);
-    if (inFence || isBoundary) {
-      out.push(line);
-      continue;
-    }
-    if (isH2Line(line)) continue;
-    out.push(line);
-  }
-  return out;
+  return segs;
 }
 
 function joinTrimmed(lines: string[]): string {
-  const copy = [...lines];
-  while (copy.length && copy[0].trim() === '') copy.shift();
-  while (copy.length && copy[copy.length - 1].trim() === '') copy.pop();
-  return copy.join('\n');
+  let start = 0;
+  let end = lines.length;
+  while (start < end && lines[start].trim() === '') start++;
+  while (end > start && lines[end - 1].trim() === '') end--;
+  return lines.slice(start, end).join('\n');
 }
 
 // Title / Me: first H2 becomes the subtitle; body is ignored.
 export function parseTitle(frame: SlideFrame): { subtitle?: string } {
-  const { text } = takeFirstH2(frame.bodyLines);
-  return { subtitle: text };
+  return { subtitle: splitByH2(frame.bodyLines)[1]?.title };
 }
 
 // Default / Me / Big / Small: join everything as a single markdown body,
 // stripping H2 lines (they have no meaning for these templates).
 export function parseBody(frame: SlideFrame): { body: string } {
-  return { body: joinTrimmed(stripH2(frame.bodyLines)) };
+  const lines = splitByH2(frame.bodyLines).flatMap((s) => s.lines);
+  return { body: joinTrimmed(lines) };
 }
 
 // Note: first H2 becomes a caption shown below the centered body. Remaining
 // H2s are ignored (same policy as parseBody).
 export function parseNote(frame: SlideFrame): { body: string; caption?: string } {
-  const { text, rest } = takeFirstH2(frame.bodyLines);
-  return { body: joinTrimmed(stripH2(rest)), caption: text };
+  const segs = splitByH2(frame.bodyLines);
+  const caption = segs[1]?.title;
+  const lines = segs.flatMap((s) => s.lines);
+  return { body: joinTrimmed(lines), caption };
 }
 
 // Row: every H2 opens a new horizontal block. The H2 text becomes the block's
 // title; an empty `## ` still produces a block (title-less). Content before
 // the first H2 becomes a leading title-less block, but only if non-empty —
 // otherwise a deck that opens directly with `## ` gets a clean first block.
+// `@gap` / `@align` are row-local meta extracted from `bodyLines` here so
+// they don't leak into the shared SlideFrame type.
+const ROW_META_RE = /^@(gap|align)(\s[^>]*)?>(.*)$/;
 export type RowBlock = { title?: string; body: string };
-export function parseRow(frame: SlideFrame): { blocks: RowBlock[]; gap?: string } {
-  const blocks: RowBlock[] = [];
+export function parseRow(frame: SlideFrame): {
+  blocks: RowBlock[];
+  gap?: string;
+  align?: string;
+} {
+  let gap: string | undefined;
+  let align: string | undefined;
+  const content: string[] = [];
   const fence = createFenceTracker();
-  let title: string | undefined;
-  let buf: string[] = [];
-  let started = false; // true once the current block was opened by an H2
-
-  const flush = () => {
-    const body = joinTrimmed(buf);
-    if (started || body) blocks.push({ title, body });
-    title = undefined;
-    buf = [];
-    started = false;
-  };
-
   for (const line of frame.bodyLines) {
     const { inFence, isBoundary } = fence(line);
-    if (!inFence && !isBoundary && isH2Line(line)) {
-      flush();
-      const m = H2_RE.exec(line.trim());
-      title = m?.[1].trim() || undefined;
-      started = true;
-      continue;
+    if (!inFence && !isBoundary) {
+      const m = ROW_META_RE.exec(line.trim());
+      if (m) {
+        const value = m[3].trim();
+        if (m[1] === 'gap') gap = value;
+        else align = value;
+        continue;
+      }
     }
-    buf.push(line);
+    content.push(line);
   }
-  flush();
 
-  return { blocks, gap: frame.gap };
+  const blocks: RowBlock[] = [];
+  for (const seg of splitByH2(content)) {
+    const body = joinTrimmed(seg.lines);
+    if (seg.started || body) blocks.push({ title: seg.title, body });
+  }
+
+  return { blocks, gap, align };
 }

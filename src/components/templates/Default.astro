@@ -9,22 +9,14 @@ interface Props {
 const { heading, body } = Astro.props;
 ---
 
-<div class="template-default">
-  {heading && <h2 class="slide-title title">{heading}</h2>}
+<div class="template-shell">
+  {heading && <h2 class="slide-title">{heading}</h2>}
   <div class="slide-body body">
     <Markup body={body} />
   </div>
 </div>
 
 <style>
-  .template-default {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
-    box-sizing: border-box;
-  }
   .body {
     display: grid;
     grid-auto-rows: min-content;

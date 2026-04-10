@@ -27,8 +27,8 @@ export async function fetchOgp(url: string): Promise<OgpData | null> {
 
     const title = get('title') || html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() || url;
 
-    const imageWidth = parseInt(get('image:width'));
-    const imageHeight = parseInt(get('image:height'));
+    const imageWidth = parseInt(get('image:width'), 10);
+    const imageHeight = parseInt(get('image:height'), 10);
 
     return {
       title,
@@ -49,7 +49,9 @@ function esc(s: string): string {
 
 export function ogpToHtml(ogp: OgpData, vertical: boolean): string {
   const cls = vertical ? 'link-card link-card-v' : 'link-card';
-  const imgHtml = ogp.image ? `<div class="link-card-img" style="background-image:url(${esc(ogp.image)}); ${!vertical && ogp.imageSize ? `width: ${252 / ogp.imageSize.height * ogp.imageSize.width}px;` : ''}"></div>` : '';
+  const imgHtml = ogp.image
+    ? `<div class="link-card-img" style="background-image:url(${esc(ogp.image)}); ${!vertical && ogp.imageSize ? `width: ${(252 / ogp.imageSize.height) * ogp.imageSize.width}px;` : ''}"></div>`
+    : '';
   const siteLabel = ogp.siteName || new URL(ogp.url).hostname;
   return [
     `<div class="${cls}">`,

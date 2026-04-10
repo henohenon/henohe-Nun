@@ -43,6 +43,5 @@ export type SlideFrame = {
   fbg?: AssetRef;
   fr?: FooterText;
   fl?: FooterText;
-  gap?: string;
   bodyLines: string[];
 };
