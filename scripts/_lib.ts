@@ -234,7 +234,19 @@ export async function openDeckPage(
 ): Promise<{ ctx: BrowserContext; page: Page }> {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor });
   const page = await ctx.newPage();
-  await page.goto(`http://localhost:${PORT}${BASE}${deck}#0`, { waitUntil: 'load' });
+  // Disable View Transitions before the page scripts run. The hash-based
+  // slide navigation uses `document.startViewTransition` for a cross-fade;
+  // during PNG capture the fade leaves the previous slide faintly visible
+  // on top of the current one.
+  await page.addInitScript(() => {
+    // biome-ignore lint/suspicious/noExplicitAny: runtime override
+    (document as any).startViewTransition = undefined;
+  });
+  // Use 127.0.0.1 explicitly (not `localhost`). On Windows, `localhost`
+  // resolves to ::1 first, but our static server binds only to 127.0.0.1.
+  // If another process (e.g. a leftover `astro dev` server) holds ::1:PORT,
+  // Playwright would silently hit that instead of our dist/ server.
+  await page.goto(`http://127.0.0.1:${PORT}${BASE}${deck}#0`, { waitUntil: 'load' });
   // Hide the fullscreen hint (it has a 4s fade-out timer, which is longer
   // than our screenshot cadence). The @media print block in [deck].astro
   // already handles this for PDF output.
