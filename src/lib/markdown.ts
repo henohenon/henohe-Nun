@@ -35,23 +35,8 @@ const marked = new Marked(
   },
 );
 
-const IMAGE_EXT = /\.(png|jpe?g|svg|gif|webp|avif)$/i;
-
-function preprocessMd(text: string): string {
-  return text.replace(/(?<!!)\[([^\]]+)\](?!\()/g, (_, content: string) => {
-    const trimmed = content.trim();
-    if (IMAGE_EXT.test(trimmed)) {
-      return `![](${trimmed})`;
-    }
-    if (/^https?:\/\//.test(trimmed)) {
-      return `[${trimmed}](${trimmed})`;
-    }
-    return `[${content}]`;
-  });
-}
-
 export function renderMarkdown(text: string): string {
-  const result = marked.parse(preprocessMd(text));
+  const result = marked.parse(text);
   if (typeof result !== 'string') throw new Error('marked returned a Promise — expected synchronous parse');
   return result;
 }
@@ -60,4 +45,29 @@ export function renderInline(text: string): string {
   const result = marked.parseInline(text);
   if (typeof result !== 'string') throw new Error('marked returned a Promise — expected synchronous parseInline');
   return result;
+}
+
+// Stateful code-fence tracker shared by parser.ts and markup.ts. Call the
+// returned function once per line in order; it reports whether the line is
+// inside a fenced code block and whether it is itself a fence boundary
+// (opening or closing ``` / ~~~). Callers should skip directive/meta
+// processing for lines where `inFence || isBoundary`.
+export function createFenceTracker(): (line: string) => { inFence: boolean; isBoundary: boolean } {
+  let marker = '';
+  return (line: string) => {
+    const m = /^\s*(`{3,}|~{3,})/.exec(line);
+    const wasInside = marker !== '';
+    if (m) {
+      const found = m[1];
+      if (!wasInside) {
+        marker = found;
+        return { inFence: false, isBoundary: true };
+      }
+      if (found[0] === marker[0] && found.length >= marker.length) {
+        marker = '';
+        return { inFence: true, isBoundary: true };
+      }
+    }
+    return { inFence: wasInside, isBoundary: false };
+  };
 }

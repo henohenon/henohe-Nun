@@ -3,6 +3,7 @@
 // and collects per-slide + global metadata. Body text (including HTML) is kept
 // as a raw markdown string rendered by marked at display time.
 
+import { createFenceTracker } from './markdown';
 import type { AssetRef, Attrs, Deck, FooterText, Slide } from './types';
 
 const KNOWN_TEMPLATES = new Set<string>([
@@ -68,11 +69,10 @@ export function parseDeck(md: string): Deck {
   const lines = md.replace(/\r\n/g, '\n').split('\n');
 
   const classified: LineKind[] = [];
-  let inFence = false;
+  const fence = createFenceTracker();
   for (const line of lines) {
-    const isFenceBoundary = /^\s*(?:```|~~~)/.test(line);
-    if (isFenceBoundary) inFence = !inFence;
-    classified.push(inFence || isFenceBoundary ? { t: 'md', raw: line } : classify(line));
+    const { inFence, isBoundary } = fence(line);
+    classified.push(inFence || isBoundary ? { t: 'md', raw: line } : classify(line));
   }
 
   const deck: Deck = { slides: [] };

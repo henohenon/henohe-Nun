@@ -1,0 +1,105 @@
+// Slide markup processor: takes a raw body string, resolves custom directives
+// (@img, @link, [path] brackets) and pipes the result through the markdown
+// renderer. Runs at Astro build time (async for getImage / fetchOgp).
+//
+// Separated from Markup.astro so directive handling is plain TS and the
+// component becomes a thin `<Fragment set:html={...} />` wrapper.
+
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { createFenceTracker, renderMarkdown } from './markdown';
+import { fetchOgp, ogpToHtml } from './ogp';
+import { parseAttrs } from './parser';
+import { attrsToStyle } from './style';
+
+const astroImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/images/**/*.{png,jpg,jpeg,svg,gif,webp,avif}',
+  { eager: true },
+);
+
+// Resolve an image path against /src/assets/images and run it through
+// astro:assets for optimization. Falls back to the raw src if unmatched
+// (e.g. external URL or /public asset).
+export async function resolveImageUrl(src: string, width = 1920): Promise<string> {
+  const matched = astroImages[`/src/assets/images${src}`];
+  if (matched) {
+    const optimized = await getImage({ src: matched.default, width });
+    return optimized.src;
+  }
+  return src;
+}
+
+const IMAGE_EXT = /\.(png|jpe?g|svg|gif|webp|avif)$/i;
+const IMG_RE = /^@img(\s[^>]*)?>(.+)$/;
+const LINK_RE = /^@link(\s[^>]*)?>(.+)$/;
+// [content] that isn't a markdown link [label](url) or image ![label](url)
+const BRACKET_RE = /(?<!!)\[([^\]]+)\](?!\()/g;
+
+// --- directive handlers ----------------------------------------------------
+
+async function handleImg(match: RegExpExecArray): Promise<string> {
+  const attrs = parseAttrs(match[1] ?? '');
+  const src = match[2].trim();
+  const url = await resolveImageUrl(src);
+  const style = [
+    `background-image:url(${url})`,
+    'background-repeat:no-repeat',
+    'width:100%',
+    'min-height:200px',
+    attrsToStyle(attrs),
+  ].join(';');
+  return `<div style="${style}"></div>`;
+}
+
+async function handleLink(match: RegExpExecArray): Promise<string> {
+  const attrs = parseAttrs(match[1] ?? '');
+  const url = match[2].trim();
+  const ogp = await fetchOgp(url);
+  if (ogp) return ogpToHtml(ogp, attrs.v === true);
+  return `<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
+}
+
+// [./foo.png] → ![](/optimized-url) and [https://...] → [url](url) autolink
+async function expandBrackets(line: string): Promise<string> {
+  let out = line;
+  for (const m of line.matchAll(BRACKET_RE)) {
+    const content = m[1].trim();
+    if (IMAGE_EXT.test(content)) {
+      const url = await resolveImageUrl(content);
+      out = out.replace(m[0], `![](${url})`);
+    } else if (/^https?:\/\//.test(content)) {
+      out = out.replace(m[0], `[${content}](${content})`);
+    }
+  }
+  return out;
+}
+
+// --- public entry ----------------------------------------------------------
+
+export async function renderMarkup(body: string): Promise<string> {
+  if (!body) return '';
+
+  const fence = createFenceTracker();
+  const out: string[] = [];
+  for (const line of body.split('\n')) {
+    const { inFence, isBoundary } = fence(line);
+    if (inFence || isBoundary) {
+      out.push(line);
+      continue;
+    }
+    const trimmed = line.trim();
+    const imgMatch = IMG_RE.exec(trimmed);
+    if (imgMatch) {
+      out.push(await handleImg(imgMatch));
+      continue;
+    }
+    const linkMatch = LINK_RE.exec(trimmed);
+    if (linkMatch) {
+      out.push(await handleLink(linkMatch));
+      continue;
+    }
+    out.push(await expandBrackets(line));
+  }
+
+  return renderMarkdown(out.join('\n'));
+}

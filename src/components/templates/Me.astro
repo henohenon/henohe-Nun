@@ -3,7 +3,7 @@ import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { attrsToStyle } from '../../lib/style';
 import type { Slide } from '../../lib/types';
-import NodeRenderer from '../slide/NodeRenderer.astro';
+import Markup from '../slide/Markup.astro';
 
 interface Props {
   slide: Slide;
@@ -37,7 +37,7 @@ const iconStyle = slide.icon
   </div>
   <div class="right">
     <div class="slide-body body">
-      <NodeRenderer body={slide.body} />
+      <Markup body={slide.body} />
     </div>
   </div>
   <h2 class="slide-title label">{slide.heading}</h2>

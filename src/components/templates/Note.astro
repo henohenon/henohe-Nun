@@ -1,7 +1,7 @@
 ---
 import { renderInline } from '../../lib/markdown';
 import type { Slide } from '../../lib/types';
-import NodeRenderer from '../slide/NodeRenderer.astro';
+import Markup from '../slide/Markup.astro';
 
 interface Props {
   slide: Slide;
@@ -15,7 +15,7 @@ const subHtml = slide.subheading ? renderInline(slide.subheading) : '';
   <h2 class="slide-title">{slide.heading}</h2>
   <div class="slide-body body">
     <div class="body-center">
-      <NodeRenderer body={slide.body} />
+      <Markup body={slide.body} />
     </div>
     {subHtml && (
       <div class="body-bottom">
