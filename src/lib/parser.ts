@@ -48,7 +48,7 @@ export function parseAttrs(s: string): Attrs {
 const H1_RE = /^#\s+(.*)$/;
 const PREAMBLE_META_RE = /^@(fr|fl|bg|fbg|date)(\s[^>]*)?>(.*)$/;
 const TEMPLATE_RE = /^@>\s*(\w+)\s*$/;
-const COLOR_META_RE = /^@c\s+([a-zA-Z][\w-]*)>(.*)$/;
+const VAR_META_RE = /^@var\s+([a-zA-Z][\w-]*)>(.*)$/;
 const THEME_META_RE = /^@theme>(.*)$/;
 
 export function parseDeck(md: string): DeckSource {
@@ -104,9 +104,9 @@ export function parseDeck(md: string): DeckSource {
         else if (key === 'fbg') globalMeta.fbg = { src: value, attrs };
         continue;
       }
-      const color = COLOR_META_RE.exec(trimmed);
-      if (color) {
-        (globalMeta.colors ??= {})[color[1]] = color[2].trim();
+      const v = VAR_META_RE.exec(trimmed);
+      if (v) {
+        (globalMeta.vars ??= {})[v[1]] = v[2].trim();
         continue;
       }
       const theme = THEME_META_RE.exec(trimmed);
@@ -168,9 +168,9 @@ export function parseFrame(source: SlideSource, index: number): SlideFrame {
       else if (key === 'fl') frame.fl = { text: value, attrs };
       continue;
     }
-    const color = COLOR_META_RE.exec(trimmed);
-    if (color) {
-      (frame.colors ??= {})[color[1]] = color[2].trim();
+    const v = VAR_META_RE.exec(trimmed);
+    if (v) {
+      (frame.vars ??= {})[v[1]] = v[2].trim();
       continue;
     }
     const theme = THEME_META_RE.exec(trimmed);

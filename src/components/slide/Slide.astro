@@ -37,16 +37,16 @@ if (source.template === 'title') {
 // footer mask and the hero background reuse the same asset.
 const effectiveBg = bg ?? (source.template === 'title' ? fbg : undefined);
 
-// Merge deck-wide + per-slide color overrides into inline CSS custom properties.
+// Merge deck-wide + per-slide CSS custom property overrides.
 // Per-slide entries take precedence over deck-wide ones.
-const mergedColors = { ...globalMeta.colors, ...frame.colors };
-const colorStyle = Object.entries(mergedColors)
+const mergedVars = { ...globalMeta.vars, ...frame.vars };
+const varStyle = Object.entries(mergedVars)
   .map(([k, v]) => `--${k}:${v}`)
   .join(';');
 const theme = frame.theme ?? globalMeta.theme;
 ---
 
-<section class="slide" data-index={index} data-theme={theme} style={colorStyle || undefined}>
+<section class="slide" data-index={index} data-theme={theme} style={varStyle || undefined}>
   {effectiveBg && <BgLayer asset={effectiveBg} />}
 
   <div class="slide-inner">

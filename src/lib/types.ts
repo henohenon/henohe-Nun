@@ -14,7 +14,7 @@ export type GlobalMeta = {
   bg?: AssetRef;
   fbg?: AssetRef;
   theme?: string;
-  colors?: Record<string, string>;
+  vars?: Record<string, string>;
 };
 
 // Stage 1 output — one entry per slide. `content` is everything between the
@@ -46,6 +46,6 @@ export type SlideFrame = {
   fr?: FooterText;
   fl?: FooterText;
   theme?: string;
-  colors?: Record<string, string>;
+  vars?: Record<string, string>;
   bodyLines: string[];
 };
