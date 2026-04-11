@@ -7,3 +7,4 @@ dist
 .idea/
 public/thumbs/
 benben/private/*
+src/assets/**/private/*
