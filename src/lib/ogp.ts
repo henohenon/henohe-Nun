@@ -76,7 +76,6 @@ function esc(s: string): string {
  */
 function imgClass(ogp: OgpData): 'wide' | 'tall' {
   if (ogp.imageWidth && ogp.imageHeight) {
-    console.log(ogp.imageWidth, ogp.imageHeight);
     return ogp.imageWidth / ogp.imageHeight >= 0.9 ? 'wide' : 'tall';
   }
   return 'wide';
