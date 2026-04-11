@@ -22,3 +22,14 @@
     "Meiryo", sans-serif;
   --font-mono: "Consolas", "Monaco", "Menlo", monospace;
 }
+
+/* Theme preset: dark. Only the core 5 tokens flip — derived tokens
+   automatically recompute via color-mix(). Scoped so it works on either
+   :root (deck-wide via @theme>dark in preamble) or .slide (per-slide). */
+:root[data-theme='dark'],
+.slide[data-theme='dark'] {
+  --base: #0f0f10;
+  --main: #e6e6e6;
+  --sub: #888888;
+  --strong: #ffffff;
+}

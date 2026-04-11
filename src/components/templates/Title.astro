@@ -1,6 +1,5 @@
 ---
-import { Image } from 'astro:assets';
-import henoheno from '../../assets/images/henoheno.svg';
+import henohenoRaw from '../../assets/images/henoheno.svg?raw';
 import { renderInline } from '../../lib/markdown';
 
 interface Props {
@@ -13,7 +12,7 @@ const subtitleHtml = subtitle ? renderInline(subtitle) : '';
 ---
 
 <div class="template-title">
-  <Image class="henoheno" src={henoheno} alt="" />
+  <div class="henoheno" set:html={henohenoRaw} />
   <div class="text">
     <h1 class="title">{heading}</h1>
     {subtitleHtml && <p class="subtitle" set:html={subtitleHtml} />}
@@ -38,6 +37,12 @@ const subtitleHtml = subtitle ? renderInline(subtitle) : '';
     width: min(95cqw, 150cqh);
     height: auto;
     pointer-events: none;
+    color: var(--brand);
+  }
+  .henoheno :global(svg) {
+    width: 100%;
+    height: auto;
+    display: block;
   }
   .text {
     position: relative;

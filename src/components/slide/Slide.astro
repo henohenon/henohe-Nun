@@ -36,9 +36,17 @@ if (source.template === 'title') {
 // On title slides with no explicit bg, fall back to the fbg image so the
 // footer mask and the hero background reuse the same asset.
 const effectiveBg = bg ?? (source.template === 'title' ? fbg : undefined);
+
+// Merge deck-wide + per-slide color overrides into inline CSS custom properties.
+// Per-slide entries take precedence over deck-wide ones.
+const mergedColors = { ...globalMeta.colors, ...frame.colors };
+const colorStyle = Object.entries(mergedColors)
+  .map(([k, v]) => `--${k}:${v}`)
+  .join(';');
+const theme = frame.theme ?? globalMeta.theme;
 ---
 
-<section class="slide" data-index={index}>
+<section class="slide" data-index={index} data-theme={theme} style={colorStyle || undefined}>
   {effectiveBg && <BgLayer asset={effectiveBg} />}
 
   <div class="slide-inner">
