@@ -75,10 +75,32 @@ const thumbUrl = new URL(`${base}thumbs/${name}.webp`, Astro.site).href;
         return Math.max(0, Math.min(total - 1, n));
       }
 
+      function adjustZoom(body: HTMLElement, children: HTMLElement[], iteration: number, currentZoom: number): void {
+        const maxIterations = 10;
+        if (iteration >= maxIterations) return;
+
+        const csx = Math.max(...children.map(c => c.offsetLeft + c.offsetWidth - body.offsetLeft), 0);
+        const csy = Math.max(...children.map(c => c.offsetTop + c.offsetHeight - body.offsetTop), 0);
+        const sx = body.offsetWidth / csx;
+        const sy = body.offsetHeight / csy;
+        const scale = Math.min(sx, sy);
+        if (scale >= 1 && currentZoom >= 1) return;
+        const newZoom = Math.max(currentZoom * scale, 0.075);
+        body.style.zoom = String(newZoom);
+        adjustZoom(body, children, iteration + 1, newZoom);
+      }
+
       function show(i: number) {
         const apply = () => {
           slides.forEach((s, idx) => {
             s.style.visibility = idx === i ? 'visible' : 'hidden';
+          });
+          // Auto-fit: shrink slide-body via zoom when content overflows.
+          const currentSlide = slides[i];
+          currentSlide.querySelectorAll<HTMLElement>('.slide-body').forEach((body) => {
+            const children = Array.from(body.children) as HTMLElement[];
+            if (children.length === 0) return;
+            adjustZoom(body, children, 0, 1);
           });
         };
         if (document.startViewTransition) {
@@ -151,21 +173,22 @@ const thumbUrl = new URL(`${base}thumbs/${name}.webp`, Astro.site).href;
         go(dx < 0 ? 1 : -1);
       });
 
-      // Auto-fit: shrink slide-body via zoom when content overflows.
-      // Temporarily show each slide for measurement, then restore visibility.
-      slides.forEach((s) => {
-        const prev = s.style.visibility;
-        s.style.visibility = 'visible';
-        s.querySelectorAll<HTMLElement>('.slide-body').forEach((body) => {
-          const sx = body.scrollWidth > body.clientWidth ? body.clientWidth / body.scrollWidth : 1;
-          const sy = body.scrollHeight > body.clientHeight ? body.clientHeight / body.scrollHeight : 1;
-          const scale = Math.min(sx, sy);
-          if (scale < 1) {
-            body.style.zoom = String(Math.max(scale, 0.1));
-          }
-        });
-        s.style.visibility = prev;
+      // Adjust zoom on window resize.
+      let resizeTimeout: number;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = window.setTimeout(() => {
+          const i = currentIndex();
+          const currentSlide = slides[i];
+          currentSlide.querySelectorAll<HTMLElement>('.slide-body').forEach((body) => {
+            const children = Array.from(body.children) as HTMLElement[];
+            if (children.length === 0) return;
+            body.style.zoom = '';
+            adjustZoom(body, children, 0, 1);
+          });
+        }, 150);
       });
+
       show(currentIndex());
     </script>
 
