@@ -161,7 +161,7 @@ const thumbUrl = new URL(`${base}thumbs/${name}.webp`, Astro.site).href;
           const sy = body.scrollHeight > body.clientHeight ? body.clientHeight / body.scrollHeight : 1;
           const scale = Math.min(sx, sy);
           if (scale < 1) {
-            body.style.zoom = String(Math.max(scale, 0.2));
+            body.style.zoom = String(Math.max(scale, 0.1));
           }
         });
         s.style.visibility = prev;
