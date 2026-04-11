@@ -9,7 +9,21 @@ export interface OgpData {
   url: string;
 }
 
-export async function fetchOgp(url: string): Promise<OgpData | null> {
+// In-process cache. Dev SSR re-renders on every request, so without this
+// every reload re-fetches every @link target — 10 fetches × ~400ms each
+// dominates the page render time. We cache resolved values forever (the
+// dev server lifetime) and dedupe in-flight requests by storing the promise.
+const ogpCache = new Map<string, Promise<OgpData | null>>();
+
+export function fetchOgp(url: string): Promise<OgpData | null> {
+  const cached = ogpCache.get(url);
+  if (cached) return cached;
+  const promise = fetchOgpUncached(url);
+  ogpCache.set(url, promise);
+  return promise;
+}
+
+async function fetchOgpUncached(url: string): Promise<OgpData | null> {
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; bot/1.0)' }, // 'bot' だと弾くサイトがある
