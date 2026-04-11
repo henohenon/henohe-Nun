@@ -81,12 +81,36 @@ export async function renderMarkup(body: string): Promise<string> {
 
   const fence = createFenceTracker();
   const out: string[] = [];
+  // Track consecutive blank lines (outside fences) so a run of N blanks can
+  // be collapsed into a single `<div class="blank-spacer">` whose height is
+  // driven by a `--blanks` custom property. One blank still behaves as a
+  // normal paragraph break; 2+ blanks emit a spacer sized by (N-1).
+  let blankRun = 0;
+  const flushBlankRun = () => {
+    if (blankRun >= 2) {
+      // Surround the HTML block with blank lines so marked treats it as a
+      // standalone block and doesn't fold it into an adjacent paragraph.
+      out.push('');
+      out.push(`<div class="blank-spacer" style="--blanks:${blankRun - 1}"></div>`);
+      out.push('');
+    } else if (blankRun === 1) {
+      out.push('');
+    }
+    blankRun = 0;
+  };
+
   for (const line of body.split('\n')) {
     const { inFence, isBoundary } = fence(line);
     if (inFence || isBoundary) {
+      flushBlankRun();
       out.push(line);
       continue;
     }
+    if (line.trim() === '') {
+      blankRun++;
+      continue;
+    }
+    flushBlankRun();
     const trimmed = line.trim();
     const imgMatch = IMG_RE.exec(trimmed);
     if (imgMatch) {
@@ -100,6 +124,7 @@ export async function renderMarkup(body: string): Promise<string> {
     }
     out.push(await expandBrackets(line));
   }
+  flushBlankRun();
 
   return renderMarkdown(out.join('\n'));
 }

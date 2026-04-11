@@ -73,6 +73,12 @@
 .slide-body p {
   margin: 0 0 0.4em 0;
 }
+/* Blank-line spacer: emitted by markup.ts when author leaves 2+ blank lines
+   in a row. `--blanks` is the extra blank count (N-1); one blank already
+   contributes the standard paragraph gap. */
+.slide-body .blank-spacer {
+  height: calc(var(--blanks, 1) * 0.5em);
+}
 .slide-body strong,
 .slide-body b {
   font-weight: 700;
