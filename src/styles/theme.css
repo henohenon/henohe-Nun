@@ -1,20 +1,20 @@
 :root {
   /* Core palette — the only tokens to tune for theming. */
-  --base:   #ffffff;  /* primary surface / background */
-  --main:   #1a1a1a;  /* primary text (softened for reading) */
-  --sub:    #888888;  /* muted text / secondary */
-  --strong: #000000;  /* max-contrast chrome (title, footer line) */
-  --brand:  #5932ff;  /* brand accent */
+  --base: #ffffff; /* primary surface / background */
+  --main: #1a1a1a; /* primary text (softened for reading) */
+  --sub: #888888; /* muted text / secondary */
+  --strong: #000000; /* max-contrast chrome (title, footer line) */
+  --brand: #5932ff; /* brand accent */
 
   /* Derived (via color-mix). Don't edit directly. */
-  --muted:         color-mix(in srgb, var(--base) 94%, var(--main));  /* muted surface (code-header, th, page canvas) */
-  --fg-mid:        color-mix(in srgb, var(--main) 50%, var(--sub));   /* secondary text (blockquote, subtitle, description) */
-  --border:        color-mix(in srgb, var(--base) 70%, var(--sub));   /* dividers (table, hr, code-block) */
-  --overlay:       color-mix(in srgb, var(--main) 10%, transparent);  /* hover wash for small controls (copy-btn etc.) */
-  --shadow:        color-mix(in srgb, var(--main) 50%, transparent);  /* drop-shadow filter */
+  --muted: color-mix(in srgb, var(--base) 94%, var(--main)); /* muted surface (code-header, th, page canvas) */
+  --fg-mid: color-mix(in srgb, var(--main) 50%, var(--sub)); /* secondary text (blockquote, subtitle, description) */
+  --border: color-mix(in srgb, var(--base) 70%, var(--sub)); /* dividers (table, hr, code-block) */
+  --overlay: color-mix(in srgb, var(--main) 10%, transparent); /* hover wash for small controls (copy-btn etc.) */
+  --shadow: color-mix(in srgb, var(--main) 50%, transparent); /* drop-shadow filter */
 
   /* Exceptions --------------------------------------------------------- */
-  --code-accent: #d6336c;  /* inline code highlight */
+  --code-accent: #d6336c; /* inline code highlight */
 
   /* Typography --------------------------------------------------------- */
   --font-body:
@@ -28,13 +28,13 @@
    mix percentage that's invisible on white becomes a glaring lift on
    near-black. Scoped so it works on either :root (deck-wide via
    @theme>dark in preamble) or .slide (per-slide). */
-:root[data-theme='dark'],
-.slide[data-theme='dark'] {
+:root[data-theme="dark"],
+.slide[data-theme="dark"] {
   --base: #0f0f10;
   --main: #e6e6e6;
   --sub: #888888;
   --strong: #ffffff;
-  --muted:   color-mix(in srgb, var(--base) 97%, var(--main));
-  --border:  color-mix(in srgb, var(--base) 82%, var(--sub));
+  --muted: color-mix(in srgb, var(--base) 97%, var(--main));
+  --border: color-mix(in srgb, var(--base) 82%, var(--sub));
   --overlay: color-mix(in srgb, var(--main) 5%, transparent);
 }

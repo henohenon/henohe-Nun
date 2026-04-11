@@ -9,10 +9,10 @@ function escapeHtml(s: string): string {
 //   [diff_]<lang>[:filename][#L<start>[-L<end>]]
 // Examples: `js`, `diff_js`, `js:sample.js`, `js:sample.js#L10-L20`, `diff_ts#L42`.
 type CodeLang = {
-  base: string;          // highlight.js language id; '' means no explicit lang
-  isDiff: boolean;       // render `+`/`-` lines with diff background
-  filename?: string;     // shown in the header instead of the lang label
-  startLine?: number;    // first displayed line number (enables line numbering)
+  base: string; // highlight.js language id; '' means no explicit lang
+  isDiff: boolean; // render `+`/`-` lines with diff background
+  filename?: string; // shown in the header instead of the lang label
+  startLine?: number; // first displayed line number (enables line numbering)
 };
 
 function parseCodeLang(raw: string): CodeLang {
@@ -124,12 +124,8 @@ const marked = new Marked(
           // gutter to the widest number, so there's no digit math anywhere.
           const lines = isDiff
             ? diffLines(text, base)
-            : splitHighlightedLines(highlightCode(text, base)).map(
-                (l) => `<span class="ln-body">${l}</span>`,
-              );
-          body = lines
-            .map((l, i) => `<span class="ln">${startLine + i}</span>${l}`)
-            .join('');
+            : splitHighlightedLines(highlightCode(text, base)).map((l) => `<span class="ln-body">${l}</span>`);
+          body = lines.map((l, i) => `<span class="ln">${startLine + i}</span>${l}`).join('');
           preClass = ' class="line-numbers"';
         } else if (isDiff) {
           // No gutter — block-display `.diff-line` spans stack directly.

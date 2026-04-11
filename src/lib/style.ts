@@ -27,8 +27,7 @@ function buildFilters(attrs: Attrs): string[] {
     else if (k === 'contrast' && typeof v === 'string') filters.push(`contrast(${v})`);
     else if (k === 'saturate' && typeof v === 'string') filters.push(`saturate(${v})`);
     else if (k === 'hue' && typeof v === 'string') filters.push(`hue-rotate(${v})`);
-    else if (k === 'shadow' && typeof v === 'string')
-      filters.push(`drop-shadow(0 0 ${pxUnit(v)} var(--shadow))`);
+    else if (k === 'shadow' && typeof v === 'string') filters.push(`drop-shadow(0 0 ${pxUnit(v)} var(--shadow))`);
     else if (k === 'c' && typeof v === 'string') colorize = v;
   }
   if (colorize) {
