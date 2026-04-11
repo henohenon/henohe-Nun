@@ -29,8 +29,7 @@
   font-weight: 500;
   line-height: 1.55;
   color: var(--main);
-  margin-top: clamp(20px, 4cqmin, 80px);
-  padding: 0 5px;
+  padding: clamp(20px, 4cqmin, 80px) 5px 0;
   box-sizing: border-box;
 }
 
