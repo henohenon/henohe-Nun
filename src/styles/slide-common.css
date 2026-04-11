@@ -203,8 +203,9 @@
   background: var(--base);
 }
 .slide-body .link-card:hover {
-  /* Stacked: overlay on top of base so the card stays opaque on any slide bg. */
-  background: var(--overlay), var(--base);
+  /* `--muted` is a lifted-surface token tuned per theme, so the hover delta
+     stays perceptible on both light and dark without a custom mix. */
+  background: var(--muted);
 }
 .slide-body .link-card-body {
   display: grid;
