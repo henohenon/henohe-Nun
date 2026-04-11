@@ -112,12 +112,24 @@ function serveDist(port: number): { close: () => Promise<void> } {
 
 // --- deck enumeration ------------------------------------------------------
 
+// Recursively walks benben/ and returns each deck's path relative to it
+// (without the .md extension), e.g. `tour`, `private/portfolio`. That's
+// both the CLI identifier and the URL slug under BASE.
 async function listDecks(): Promise<string[]> {
-  const files = await readdirAsync('benben');
-  return files
-    .filter((f) => f.endsWith('.md'))
-    .map((f) => f.replace(/\.md$/, ''))
-    .sort();
+  const out: string[] = [];
+  async function walk(dir: string, prefix: string): Promise<void> {
+    const entries = await readdirAsync(dir, { withFileTypes: true });
+    for (const e of entries) {
+      if (e.isDirectory()) {
+        await walk(join(dir, e.name), prefix ? `${prefix}/${e.name}` : e.name);
+      } else if (e.isFile() && e.name.endsWith('.md')) {
+        const leaf = e.name.replace(/\.md$/, '');
+        out.push(prefix ? `${prefix}/${leaf}` : leaf);
+      }
+    }
+  }
+  await walk('benben', '');
+  return out.sort();
 }
 
 // --- chromium launcher -----------------------------------------------------

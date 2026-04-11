@@ -3,7 +3,7 @@ import HeadMeta from '../components/head/HeadMeta.astro';
 import { parseDeck } from '../lib/parser';
 import '../styles/theme.css';
 
-const files = import.meta.glob('../../benben/*.md', {
+const files = import.meta.glob('../../benben/**/*.md', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -11,7 +11,10 @@ const files = import.meta.glob('../../benben/*.md', {
 
 const decks = Object.entries(files)
   .map(([path, raw]) => {
-    const name = path.split('/').pop()?.replace(/\.md$/, '');
+    const name = path
+      .replace(/\\/g, '/')
+      .replace(/^.*\/benben\//, '')
+      .replace(/\.md$/, '');
     const deck = parseDeck(raw);
     const titleSource = deck.slides.find((s) => s.template === 'title') ?? deck.slides[0];
     return {

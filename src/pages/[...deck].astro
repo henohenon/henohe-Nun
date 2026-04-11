@@ -3,46 +3,50 @@ import HeadMeta from '../components/head/HeadMeta.astro';
 import CursorDot from '../components/slide/CursorDot.astro';
 import Slide from '../components/slide/Slide.astro';
 import { parseDeck, parseFrame, parseTitle } from '../lib/parser';
+import type { DeckSource } from '../lib/types';
 import 'virtual:uno.css';
 import '../styles/theme.css';
 import '../styles/slide-common.css';
 import '../styles/deck.css';
 
-// Load every `benben/*.md` as raw text at build time. Vite wires HMR so
-// editing any deck file hot-reloads the matching route. (`benben` = the
-// primordial mound that rose from Nun — i.e. what the Nun renderer draws from.)
+// Load every `benben/**/*.md` as raw text at build time. Vite wires HMR so
+// editing any deck file hot-reloads the matching route. Nested directories
+// are allowed: `benben/sub/foo.md` → `/sub/foo`. (`benben` = the primordial
+// mound that rose from Nun — i.e. what the Nun renderer draws from.)
 export async function getStaticPaths() {
-  const files = import.meta.glob('../../benben/*.md', {
+  const files = import.meta.glob('../../benben/**/*.md', {
     query: '?raw',
     import: 'default',
     eager: true,
   }) as Record<string, string>;
   return Object.entries(files).map(([path, raw]) => {
-    const name = path.split('/').pop()?.replace(/\.md$/, '');
-    return { params: { deck: name }, props: { raw } };
+    const name = path
+      .replace(/\\/g, '/')
+      .replace(/^.*\/benben\//, '')
+      .replace(/\.md$/, '');
+    return { params: { deck: name }, props: { parsed: parseDeck(raw) } };
   });
 }
 
 interface Props {
-  raw: string;
+  parsed: DeckSource;
 }
 
-const { raw } = Astro.props;
-const { deck: deckName } = Astro.params;
-const deck = parseDeck(raw);
+const { parsed: deck } = Astro.props;
+const { deck: name } = Astro.params;
 const titleSource = deck.slides.find((s) => s.template === 'title') ?? deck.slides[0];
-const ogTitle = titleSource?.heading ?? deckName;
+const ogTitle = titleSource?.heading ?? name;
 const subtitle = titleSource ? (parseTitle(parseFrame(titleSource, 0)).subtitle ?? '') : '';
 const ogDesc = [subtitle && `${subtitle} by へのへのん`, deck.globalMeta.date].filter(Boolean).join(' ');
 const base = import.meta.env.BASE_URL;
-const ogUrl = new URL(`${base}${deckName}`, Astro.site).href;
-const thumbUrl = new URL(`${base}thumbs/${deckName}.webp`, Astro.site).href;
+const ogUrl = new URL(`${base}${name}`, Astro.site).href;
+const thumbUrl = new URL(`${base}thumbs/${name}.webp`, Astro.site).href;
 ---
 
 <html lang="ja">
   <head>
     <HeadMeta
-      title={`${deckName} — へのへ Nun`}
+      title={`${ogTitle} — へのへ Nun`}
       description={ogDesc}
       ogTitle={ogTitle}
       ogImage={thumbUrl}

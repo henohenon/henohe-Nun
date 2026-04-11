@@ -4,7 +4,7 @@
 import { execSync } from 'node:child_process';
 import { mkdir, rename, rm, stat } from 'node:fs/promises';
 import { platform } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { HEIGHT, openDeckPage, parseScale, runExport, sh, WIDTH } from './_lib';
 
 const GS = platform() === 'win32' ? 'gswin64c' : 'gs';
@@ -27,8 +27,9 @@ try {
   await runExport('pdf', async (browser, deck) => {
     // PDF is vector-based; deviceScaleFactor is not needed. Pass scale only to page.pdf().
     const { ctx, page } = await openDeckPage(browser, deck, { width: WIDTH, height: HEIGHT });
-    await mkdir(PDF_DIR, { recursive: true });
+    // Nested decks (`sub/foo`) need their parent dir created too.
     const pdfPath = join(PDF_DIR, `${deck}.pdf`);
+    await mkdir(dirname(pdfPath), { recursive: true });
     await page.pdf({
       path: pdfPath,
       width: `${WIDTH}px`,
@@ -37,7 +38,7 @@ try {
       preferCSSPageSize: true,
       scale,
     });
-    const tmpPath = join(PDF_DIR, `${deck}_raw.pdf`);
+    const tmpPath = `${pdfPath}.raw`;
     const before = (await stat(pdfPath)).size;
     await rename(pdfPath, tmpPath);
     await sh(GS, [
@@ -52,9 +53,7 @@ try {
     const after = (await stat(pdfPath)).size;
     const pct = ((1 - after / before) * 100).toFixed(0);
     await rm(tmpPath);
-    console.log(
-      `       → dist/.pdf/${deck}.pdf  ${(before / 1e6).toFixed(1)}MB → ${(after / 1e6).toFixed(1)}MB (−${pct}%)`,
-    );
+    console.log(`       → ${pdfPath}  ${(before / 1e6).toFixed(1)}MB → ${(after / 1e6).toFixed(1)}MB (−${pct}%)`);
     await ctx.close();
   });
 } catch (e) {

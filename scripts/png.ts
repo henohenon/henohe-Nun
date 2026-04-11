@@ -46,7 +46,7 @@ try {
         await page.waitForTimeout(60);
         const name = `${String(i).padStart(pad, '0')}.png`;
         await page.screenshot({ path: join(deckDir, name), fullPage: false });
-        console.log(`       → dist/.png/${deck}/${name}`);
+        console.log(`       → ${join(deckDir, name)}`);
       }
       await ctx.close();
     },
