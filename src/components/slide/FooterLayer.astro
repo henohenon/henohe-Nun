@@ -43,9 +43,9 @@ const hasFbg = hasFooter && !!fbg;
         </g>
       </mask>
     </defs>
-    <rect class="footer-svg-line" fill="black" />
-    {flSvg && <text class="footer-svg-fl" fill="black" set:html={flSvg} />}
-    {frSvg && <text class="footer-svg-fr" fill="black" set:html={frSvg} />}
+    <rect class="footer-svg-line" />
+    {flSvg && <text class="footer-svg-fl" set:html={flSvg} />}
+    {frSvg && <text class="footer-svg-fr" set:html={frSvg} />}
   </svg>
 )}
 {hasFbg && (
@@ -59,6 +59,13 @@ const hasFbg = hasFooter && !!fbg;
     pointer-events: none;
     overflow: visible;
     z-index: 1;
+  }
+  /* The `>` combinator is required: CSS `fill` beats the fill="white" presentation
+     attribute, so a descendant selector would recolor the mask children and break the mask. */
+  .slide-footer-svg > .footer-svg-line,
+  .slide-footer-svg > .footer-svg-fl,
+  .slide-footer-svg > .footer-svg-fr {
+    fill: var(--strong);
   }
   .footer-svg-line {
     x: -1px;

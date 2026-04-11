@@ -9,14 +9,14 @@
 .slide h1,
 .slide h2,
 .slide h3 {
-  color: var(--theme-color);
+  color: var(--brand);
 }
 
 html,
 body {
   margin: 0;
   padding: 0;
-  background: #ffffff;
+  background: var(--base);
   height: 100%;
   overflow: hidden;
 }
@@ -37,35 +37,6 @@ body.is-fullscreen astro-dev-toolbar {
   visibility: hidden;
 }
 
-.hint {
-  position: fixed;
-  left: 50%;
-  bottom: 40px;
-  transform: translateX(-50%);
-  padding: 12px 24px;
-  background: rgba(10, 10, 10, 0.82);
-  color: #fafafa;
-  font-family: var(--font-body);
-  font-size: 15px;
-  border-radius: 999px;
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 0.4s ease;
-  z-index: 100;
-}
-.hint.hidden {
-  opacity: 0;
-}
-.hint kbd {
-  display: inline-block;
-  padding: 2px 8px;
-  margin: 0 2px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-  font-family: inherit;
-  font-weight: 600;
-}
-
 body.is-fullscreen {
   cursor: none;
 }
@@ -74,7 +45,7 @@ body.is-fullscreen {
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: var(--theme-color);
+  background: var(--brand);
   opacity: 0;
   pointer-events: none;
   transform: translate(-50%, -50%);
@@ -97,9 +68,8 @@ body.is-fullscreen {
   body {
     overflow: visible !important;
     height: auto !important;
-    background: #fff !important;
+    background: var(--base) !important;
   }
-  .hint,
   .cursor-dot {
     display: none !important;
   }
