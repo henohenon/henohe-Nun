@@ -33,17 +33,27 @@
   box-sizing: border-box;
 }
 
+.slide-body ul,
+.slide-body ol {
+  margin: 0;
+}
 .slide-body ul {
   list-style: none;
   padding: 0 0 0 0.6em;
-  margin: 0;
+}
+.slide-body ol {
+  /* Explicit: UnoCSS (presetWind4) preflight resets list-style on ol/ul. */
+  list-style: decimal;
+  padding: 0 0 0 1.6em;
 }
 .slide-body li {
   margin: 0.2em 0;
+}
+.slide-body ul > li {
   padding-left: 0.8em;
   position: relative;
 }
-.slide-body li::before {
+.slide-body ul > li::before {
   content: "";
   position: absolute;
   left: -0.1em;
