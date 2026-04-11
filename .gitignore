@@ -6,4 +6,4 @@ dist
 .claude/
 .idea/
 public/thumbs/
-benben/private
+benben/private/*
