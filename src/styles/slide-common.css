@@ -153,7 +153,7 @@
 .slide-body .code-block .diff-line {
   display: block;
   margin: 0 -0.6em;
-  padding: 0 0.6em;
+  padding-left: 0.75rem;
 }
 .slide-body .code-block .diff-line.diff-add {
   background: color-mix(in srgb, #2ea043 18%, transparent);
@@ -161,26 +161,25 @@
 .slide-body .code-block .diff-line.diff-del {
   background: color-mix(in srgb, #f85149 18%, transparent);
 }
-/* Line numbers: opted in via `#L<start>` in the fence lang. Numbers come from
-   a CSS counter so they stay out of the copy-button's textContent. */
-.slide-body .code-block pre.line-numbers {
-  counter-reset: ln var(--ln-start);
-  padding-left: 3.2em;
+/* Line numbers: opted in via `#L<start>` in the fence lang. The `<code>`
+   becomes a 2-column grid so the gutter auto-sizes to the widest number —
+   no digit math needed. The copy button reads `code.dataset.source` so
+   the displayed numbers stay out of the clipboard. */
+.slide-body .code-block pre.line-numbers code {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.6em;
 }
-.slide-body .code-block pre.line-numbers .line {
-  display: block;
-  position: relative;
-}
-.slide-body .code-block pre.line-numbers .line::before {
-  counter-increment: ln;
-  content: counter(ln);
-  position: absolute;
-  left: -2.6em;
-  width: 2em;
+.slide-body .code-block .ln {
   text-align: right;
   color: var(--sub);
   opacity: 0.6;
   user-select: none;
+}
+/* In line-numbered diffs, the row background must not bleed under the
+   gutter cell, so drop the pre-padding-canceling side margins here. */
+.slide-body .code-block pre.line-numbers .diff-line {
+  margin: 0;
 }
 .slide-body blockquote {
   margin: 0.3em 0;

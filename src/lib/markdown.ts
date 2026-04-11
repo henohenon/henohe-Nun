@@ -117,34 +117,38 @@ const marked = new Marked(
         const label = filename || base || '';
 
         let body: string;
-        if (isDiff || startLine !== undefined) {
-          // Per-line HTML. Diff mode splits the raw source (to read `+`/`-`
-          // markers); plain line-number mode splits already-highlighted HTML
-          // and preserves hljs span nesting across line breaks.
+        let preClass = '';
+        if (startLine !== undefined) {
+          // Line-number mode: render `<code>` as a 2-column grid (`auto 1fr`)
+          // with an `.ln` cell and a body cell per line. Grid auto-sizes the
+          // gutter to the widest number, so there's no digit math anywhere.
           const lines = isDiff
             ? diffLines(text, base)
-            : splitHighlightedLines(highlightCode(text, base));
-          const wrapped =
-            startLine !== undefined ? lines.map((l) => `<span class="line">${l}</span>`) : lines;
-          // Block spans must not have `\n` between them inside `<pre>`, or
-          // the preserved whitespace renders as a blank line on top of the
-          // block break.
-          body = wrapped.join('');
+            : splitHighlightedLines(highlightCode(text, base)).map(
+                (l) => `<span class="ln-body">${l}</span>`,
+              );
+          body = lines
+            .map((l, i) => `<span class="ln">${startLine + i}</span>${l}`)
+            .join('');
+          preClass = ' class="line-numbers"';
+        } else if (isDiff) {
+          // No gutter — block-display `.diff-line` spans stack directly.
+          body = diffLines(text, base).join('');
         } else {
           body = highlightCode(text, base);
         }
 
-        // CSS counter-reset uses `start - 1` so the first increment lands on start.
-        const preAttrs =
-          startLine !== undefined ? ` class="line-numbers" style="--ln-start:${startLine - 1}"` : '';
+        // Raw source goes on a data attribute so the copy button doesn't
+        // have to navigate around line-number cells or diff markers.
+        const source = escapeHtml(text);
 
         return [
           '<div class="code-block">',
           '<div class="code-header">',
           `<span class="code-lang">${escapeHtml(label)}</span>`,
-          `<button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)">Copy</button>`,
+          `<button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').dataset.source)">Copy</button>`,
           '</div>',
-          `<pre${preAttrs}><code>${body}</code></pre>`,
+          `<pre${preClass}><code data-source="${source}">${body}</code></pre>`,
           '</div>',
         ].join('');
       },
