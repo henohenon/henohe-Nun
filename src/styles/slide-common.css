@@ -1,4 +1,5 @@
 @import "./code-block.css";
+@import "./link-card.css";
 
 /* Shared slide typography. Templates add layout-specific CSS on top. */
 
@@ -127,74 +128,4 @@
 .slide-body th {
   background: var(--body-bg);
   font-weight: 700;
-}
-
-/* Link embed card */
-.slide-body .link-card {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  height: 252px;
-  text-decoration: none;
-  color: inherit;
-  border: 1px solid var(--border);
-  border-radius: 0.4em;
-  overflow: hidden;
-  font-size: 0.75em;
-  line-height: 1.4;
-  background: var(--base);
-}
-.slide-body .link-card:hover {
-  /* `--muted` is a lifted-surface token tuned per theme, so the hover delta
-     stays perceptible on both light and dark without a custom mix. */
-  background: var(--muted);
-}
-.slide-body .link-card-body {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding: 0.5em 0.6em;
-  gap: 0.15em;
-  overflow: hidden;
-  min-width: 0;
-}
-.slide-body .link-card-title {
-  font-weight: 700;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.slide-body .link-card-desc {
-  color: var(--fg-mid);
-  font-size: 0.85em;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.slide-body .link-card-site {
-  color: var(--sub);
-  font-size: 0.8em;
-}
-.slide-body .link-card-img {
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.slide-body .link-card a {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-/* Vertical layout */
-.slide-body .link-card-v {
-  grid-template-columns: none;
-  grid-template-rows: 315px auto;
-  width: 600px;
-  height: auto;
-}
-.slide-body .link-card-img {
-  order: -1;
-  border-left: none;
 }

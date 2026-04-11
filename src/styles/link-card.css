@@ -1,0 +1,122 @@
+/* Link embed card rendered by the `@link` directive. Split from
+   `slide-common.css` to keep the card's multi-variant layout (horizontal
+   + vertical) and its image/title/desc/site slots self-contained. */
+
+/* ─── Horizontal (default) ─────────────────────────────────────────────────
+   Layout: [body (1fr)] [thumb (fixed)]
+   font-size drives all em-based sizing so clamp here scales everything. */
+
+.slide-body .link-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  height: clamp(102px, 14vw, 150px);
+  font-size: clamp(16px, 2vw, 22px);
+  line-height: 1.4;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--border);
+  border-radius: 0.4em;
+  overflow: hidden;
+  background: var(--base);
+}
+.slide-body .link-card:hover {
+  background: var(--muted);
+}
+
+/* ─── Body ──────────────────────────────────────────────────────────────── */
+
+.slide-body .link-card-body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 0.6em 0.75em;
+  gap: 0.2em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.slide-body .link-card-title {
+  font-weight: 700;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.slide-body .link-card-desc {
+  color: var(--fg-mid);
+  font-size: 0.85em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: calc(1.4em * 2);
+}
+.slide-body .link-card-site {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  color: var(--sub);
+  font-size: 0.8em;
+}
+
+/* ─── Favicon ───────────────────────────────────────────────────────────── */
+
+.slide-body .link-card-favicon {
+  width: 1em;
+  height: 1em;
+  border-radius: 2px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* ─── Thumbnail ─────────────────────────────────────────────────────────── */
+
+.slide-body .link-card-img {
+  background: var(--muted);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slide-body .link-card-img img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ─── Overlay link ──────────────────────────────────────────────────────── */
+
+.slide-body .link-card > a {
+  position: absolute;
+  inset: 0;
+}
+
+/* ─── Vertical layout ───────────────────────────────────────────────────── */
+
+.slide-body .link-card-v {
+  grid-template-columns: none;
+  grid-template-rows: clamp(120px, 20vw, 200px) auto;
+  max-width: clamp(240px, 38vw, 380px);
+  height: auto;
+  font-size: clamp(16px, 2vw, 22px);
+}
+/* thumb goes on top */
+.slide-body .link-card-v .link-card-img {
+  order: -1;
+}
+/* 縦版では横長はcontain、それ以外はcover（横版と同じ戦略） */
+.slide-body .link-card-v .link-card-img.wide img {
+  object-fit: cover;
+}
+.slide-body .link-card-v .link-card-img.tall img {
+  object-fit: contain;
+}
+
+.slide-body .link-card-v .link-card-title {
+  -webkit-line-clamp: 2;
+}
+.slide-body .link-card-v .link-card-desc {
+  -webkit-line-clamp: 3;
+  max-height: calc(1.4em * 3);
+  min-height: 0;
+}
