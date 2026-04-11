@@ -148,6 +148,40 @@
   border-radius: 0;
   color: inherit;
 }
+/* Diff code blocks: `diff_<lang>` fences. Each line is wrapped so added/
+   removed rows get a tinted background while retaining syntax highlighting. */
+.slide-body .code-block .diff-line {
+  display: block;
+  margin: 0 -0.6em;
+  padding: 0 0.6em;
+}
+.slide-body .code-block .diff-line.diff-add {
+  background: color-mix(in srgb, #2ea043 18%, transparent);
+}
+.slide-body .code-block .diff-line.diff-del {
+  background: color-mix(in srgb, #f85149 18%, transparent);
+}
+/* Line numbers: opted in via `#L<start>` in the fence lang. Numbers come from
+   a CSS counter so they stay out of the copy-button's textContent. */
+.slide-body .code-block pre.line-numbers {
+  counter-reset: ln var(--ln-start);
+  padding-left: 3.2em;
+}
+.slide-body .code-block pre.line-numbers .line {
+  display: block;
+  position: relative;
+}
+.slide-body .code-block pre.line-numbers .line::before {
+  counter-increment: ln;
+  content: counter(ln);
+  position: absolute;
+  left: -2.6em;
+  width: 2em;
+  text-align: right;
+  color: var(--sub);
+  opacity: 0.6;
+  user-select: none;
+}
 .slide-body blockquote {
   margin: 0.3em 0;
   padding: 0.2em 0 0.2em 0.6em;
