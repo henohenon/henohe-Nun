@@ -83,6 +83,9 @@
   margin: 0.3em 0;
   border-radius: 0.4em;
   border: 1px solid var(--border);
+  /* Fill the body area so it doesn't show the slide background through
+     the (transparent) <pre>. The header keeps its own `--body-bg` tint. */
+  background: var(--base);
   overflow: hidden;
 }
 .slide-body .code-header {
@@ -156,10 +159,10 @@
   padding-left: 0.75rem;
 }
 .slide-body .code-block .diff-line.diff-add {
-  background: color-mix(in srgb, #2ea043 18%, transparent);
+  background: var(--diff-add);
 }
 .slide-body .code-block .diff-line.diff-del {
-  background: color-mix(in srgb, #f85149 18%, transparent);
+  background: var(--diff-del);
 }
 /* Line numbers: opted in via `#L<start>` in the fence lang. The `<code>`
    becomes a 2-column grid so the gutter auto-sizes to the widest number —
@@ -209,6 +212,9 @@
   line-height: 1.4;
   border: 1px solid var(--border);
   border-radius: 0.4em;
+  /* Fill body cells so the slide background doesn't bleed through — th
+     rows override this with `--body-bg` for the header tint. */
+  background: var(--base);
   overflow: hidden;
 }
 .slide-body th,
