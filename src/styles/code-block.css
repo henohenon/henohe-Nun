@@ -1,0 +1,114 @@
+@import "highlight.js/styles/github.css";
+
+/* Fenced code blocks and inline `code` spans inside `.slide-body`.
+   Split from `slide-common.css` because the surface area is large
+   (header chrome, copy button, diff rows, line-number gutter) and
+   all of it is conceptually one component. */
+
+.slide-body .code-block {
+  display: inline-block;
+  text-align: left;
+  margin: 0.3em 0;
+  border-radius: 0.4em;
+  border: 1px solid var(--border);
+  /* Fill the body area so it doesn't show the slide background through
+     the (transparent) <pre>. The header keeps its own `--body-bg` tint. */
+  background: var(--base);
+  overflow: hidden;
+}
+.slide-body .code-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 0.15em 0.4em;
+  background: var(--body-bg);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.55em;
+  font-family: var(--font-mono);
+}
+.slide-body .code-lang {
+  color: var(--fg-mid);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.slide-body .copy-btn {
+  background: transparent;
+  border: none;
+  border-radius: 0.2em;
+  cursor: pointer;
+  padding: 0.1em 0.3em;
+  color: var(--sub);
+  font-family: inherit;
+  font-size: 1em;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.slide-body .code-block:hover .copy-btn {
+  opacity: 1;
+}
+.slide-body .copy-btn:hover {
+  background: var(--overlay);
+}
+.slide-body .code-block pre {
+  margin: 0;
+  padding: 0.4em 0.6em;
+  border-radius: 0;
+  background: transparent;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.slide-body code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--body-bg);
+  padding: 0.1em 0.3em;
+  border-radius: 0.25em;
+  color: var(--code-accent);
+}
+.slide-body .code-block pre code {
+  font-size: 0.7em;
+  line-height: 1.4;
+  font-family: var(--font-mono);
+  background: transparent;
+}
+.slide-body .code-block code {
+  font-size: 0.7em;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+}
+/* Diff code blocks: `diff_<lang>` fences. Each line is wrapped so added/
+   removed rows get a tinted background while retaining syntax highlighting. */
+.slide-body .code-block .diff-line {
+  display: block;
+  margin: 0 -0.6em;
+  padding-left: 0.75rem;
+}
+.slide-body .code-block .diff-line.diff-add {
+  background: var(--diff-add);
+}
+.slide-body .code-block .diff-line.diff-del {
+  background: var(--diff-del);
+}
+/* Line numbers: opted in via `#L<start>` in the fence lang. The `<code>`
+   becomes a 2-column grid so the gutter auto-sizes to the widest number —
+   no digit math needed. The copy button reads `code.dataset.source` so
+   the displayed numbers stay out of the clipboard. */
+.slide-body .code-block pre.line-numbers code {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.6em;
+}
+.slide-body .code-block .ln {
+  text-align: right;
+  color: var(--sub);
+  opacity: 0.6;
+  user-select: none;
+}
+/* In line-numbered diffs, the row background must not bleed under the
+   gutter cell, so drop the pre-padding-canceling side margins here. */
+.slide-body .code-block pre.line-numbers .diff-line {
+  margin: 0;
+}
