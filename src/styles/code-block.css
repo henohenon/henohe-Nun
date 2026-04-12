@@ -26,11 +26,14 @@
   font-size: 0.55em;
   font-family: var(--font-mono);
 }
-.slide-body .code-lang {
+.slide-body .code-lang,
+.slide-body .code-filename {
   color: var(--fg-mid);
   font-weight: 600;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+.slide-body .code-lang {
+  text-transform: uppercase;
 }
 .slide-body .copy-btn {
   background: transparent;
@@ -84,7 +87,6 @@
 .slide-body .code-block .diff-line {
   display: block;
   margin: 0 -0.6em;
-  padding-left: 0.75rem;
 }
 .slide-body .code-block .diff-line.diff-add {
   background: var(--diff-add);

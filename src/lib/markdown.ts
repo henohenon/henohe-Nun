@@ -114,6 +114,9 @@ const marked = new Marked(
     renderer: {
       code({ text, lang }) {
         const { base, isDiff, filename, startLine } = parseCodeLang(lang ?? '');
+        // Filenames keep their original casing; bare lang labels get an
+        // uppercase transform via `.code-lang`.
+        const labelClass = filename ? 'code-filename' : 'code-lang';
         const label = filename || base || '';
 
         let body: string;
@@ -141,7 +144,7 @@ const marked = new Marked(
         return [
           '<div class="code-block">',
           '<div class="code-header">',
-          `<span class="code-lang">${escapeHtml(label)}</span>`,
+          `<span class="${labelClass}">${escapeHtml(label)}</span>`,
           `<button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').dataset.source)">Copy</button>`,
           '</div>',
           `<pre${preClass}><code data-source="${source}">${body}</code></pre>`,
