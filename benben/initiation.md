@@ -227,47 +227,66 @@ auto clamp(T val, T lo, T hi) {
 
 </div>
 
-# Image Options
+# Custom Syntax
 @>big
 
-# @fr>, @fl>
-`@fr>` right footer, `@fl>` left footer
-Inline markdown supported
+# Utility Tag
+| Tag                   | Description           |
+|-----------------------|-----------------------|
+| `@>[template]`        | Set template          |
+| `@bg [attrs]>path`    | Slide background      |
+| `@fbg [attrs]>path`   | Footer background     |
+| `@fr>[text]`          | Footer right          |
+| `@fl>[text]`          | Footer left           |
+| `@theme>[name]`       | Override theme        |
+| `@var [name]>[value]` | Override CSS variable |
 
-```md
-@fr>2025/02/07
-@fl>henohe **Nun**
-```
+| Variable        | Default               | Description           |
+|-----------------|-----------------------|-----------------------|
+| `--base`        | `#ffffff`             | Background            |
+| `--main`        | `#1a1a1a`             | Primary text          |
+| `--sub`         | `#888888`             | Muted text            |
+| `--strong`      | `#000000`             | High-contrast chrome  |
+| `--brand`       | `#5932ff`             | Accent color          |
+| `--code-accent` | `#d6336c`             | Inline code highlight |
+| `--font-body`   | IBM Plex Sans JP, ... | Body font             |
+| `--font-mono`   | Consolas, ...         | Mono font             |
 
-# @bg>, @fbg>
+# Original Tag
+`@link>[url]`, `@img [attrs]>path`, `@img [attrs]>[alt](url)`
 
-`@bg>` slide background
-`@fbg>` footer background (masked)
-
-```md
-@bg mono blur=5 bright=0.3>/photo.png
-@fbg o=0.3 sepia>/texture.png
-```
-
-# Image Attributes
+# Img Attributes
 
 <div class="grid grid-flow-col gap-2">
 <div>
 
-position / size
+layout (bg div only)
 | attr | effect |
 |------|--------|
 | `w` | width |
 | `h` | height |
-| `x` | translateX |
-| `y` | translateY |
-| `o` | opacity |
-| `round` | border-radius |
+| `x` | offset X |
+| `y` | offset Y |
+| `cover` | cover (default: contain) |
+| `top` `bottom` | vertical align |
+| `left` `right` | horizontal align |
+| `center` | center |
 
 </div>
 <div>
 
-filters
+appearance (both)
+| attr | effect |
+|------|--------|
+| `o` | opacity |
+| `round` | border-radius |
+| `rot=Ndeg` | rotate |
+| `flip` | horizontal flip |
+
+</div>
+<div>
+
+filters (both)
 | attr | effect |
 |------|--------|
 | `mono` | grayscale |
@@ -279,36 +298,23 @@ filters
 | `contrast=N` | contrast |
 | `saturate=N` | saturation |
 | `hue=Ndeg` | hue rotate |
-
-</div>
-<div>
-
-transform / misc
-| attr | effect |
-|------|--------|
-| `cover` | cover (default: contain) |
-| `rot=Ndeg` | rotate |
-| `flip` | horizontal flip |
 | `shadow=N` | drop-shadow |
 | `c=Ndeg` | color tint |
-| `top` `bottom` | vertical align |
-| `left` `right` | horizontal align |
-| `center` | center |
 
 </div>
 </div>
 
 # @img Directive
 
-`@img` embeds a styled image `<div>` in body
+`@img` embeds an image. Two forms:
 
 ```md
-@img cover>/photo.png
-@img mono blur=3 o=0.5>/photo.png
+@img cover>/photo.png              background-image div
+@img mono o=0.5>![alt text](/p.png) <img> tag with alt
 ```
 
 @img>/henohe-Nun.png
-@img mono blur=3 o=0.5>/photo.png
+@img mono blur=3 o=0.5>/henohe-Nun.png
 
 
 <div class="grid grid-flow-col gap-2">
@@ -326,6 +332,17 @@ transform / misc
 
 # Templates
 @>big
+
+# Overview
+| Template | Description |
+|----------|-------------|
+| `default` | Heading + body |
+| `title` | Title slide |
+| `big` | Large centered text |
+| `small` | Small centered text |
+| `note` | Centered body + subtitle |
+| `me` | Profile / intro |
+| `row` | Horizontal blocks |
 
 # @>default
 Heading + body text
