@@ -10,7 +10,7 @@
     "build:pdf": "tsx scripts/pdf.ts",
     "build:png": "tsx scripts/png.ts",
     "build:webp": "tsx scripts/webp.ts",
-    "build:thumbs": "tsx scripts/webp.ts --out=public/thumbs",
+    "build:thumbs": "tsx scripts/webp.ts --thumb --out=public/thumbs",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "astro check && tsc -p scripts/tsconfig.json --noEmit"

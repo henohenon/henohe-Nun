@@ -24,8 +24,8 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 | `bun run build` | SSG ビルド → `dist/` |
 | `bun run build:pdf [deck]` | PDF 出力 → `dist/.pdf/` |
 | `bun run build:png [deck] [pages...]` | スライド PNG 出力 → `dist/.png/` |
-| `bun run build:webp [deck]` | OGP 用 WebP (1200x630) → `dist/.webp/` |
-| `bun run build:thumbs` | サムネイル生成 → `public/thumbs/` |
+| `bun run build:webp [deck] [pages...]` | スライド WebP 出力 → `dist/.webp/` |
+| `bun run build:thumbs` | OGP サムネイル (1200x630, 1 枚目のみ) → `public/thumbs/` |
 | `bun run lint` | Biome lint/format チェック |
 | `bun run lint:fix` | 自動修正 |
 | `bun run typecheck` | Astro + scripts 型チェック |
