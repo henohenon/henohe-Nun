@@ -73,6 +73,44 @@
 .slide-body p {
   margin: 0;
 }
+/* In-body headings. `slide-title` (the H1-derived template title) keeps its
+   own oversized treatment; these cover the markdown H2/H3/... that `default`
+   / `me` slides pass straight through. Sizes are em-based so they scale with
+   the body's container-query font-size. */
+.slide-body h2,
+.slide-body h3,
+.slide-body h4,
+.slide-body h5,
+.slide-body h6 {
+  color: var(--brand);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0.6em 0 0.15em;
+}
+.slide-body h2:first-child,
+.slide-body h3:first-child,
+.slide-body h4:first-child,
+.slide-body h5:first-child,
+.slide-body h6:first-child {
+  margin-top: 0;
+}
+.slide-body h2 {
+  font-size: 1.6em;
+}
+.slide-body h3 {
+  font-size: 1.25em;
+  font-weight: 700;
+}
+.slide-body h4 {
+  font-size: 1.05em;
+  font-weight: 700;
+}
+.slide-body h5,
+.slide-body h6 {
+  font-size: 1em;
+  font-weight: 700;
+}
 /* Blank-line spacer: emitted by markup.ts when author leaves 2+ blank lines
    in a row. `--blanks` is the extra blank count (N-1); one blank already
    contributes the standard paragraph gap. */

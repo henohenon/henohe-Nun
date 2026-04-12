@@ -228,11 +228,12 @@ export function parseTitle(frame: SlideFrame): { subtitle?: string } {
   return { subtitle: splitByH2(frame.bodyLines)[1]?.title };
 }
 
-// Default / Me / Big / Small: join everything as a single markdown body,
-// stripping H2 lines (they have no meaning for these templates).
+// Default / Me: join everything as a single markdown body. Unlike
+// title/note/row — which give H2 a template-specific meaning (subtitle /
+// caption / block boundary) — these templates pass H2 / H3 / ... straight
+// through to the markdown renderer as ordinary headings.
 export function parseBody(frame: SlideFrame): { body: string } {
-  const lines = splitByH2(frame.bodyLines).flatMap((s) => s.lines);
-  return { body: joinTrimmed(lines) };
+  return { body: joinTrimmed(frame.bodyLines) };
 }
 
 // Note: first H2 becomes a caption shown below the centered body. Remaining
