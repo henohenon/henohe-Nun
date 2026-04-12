@@ -71,7 +71,7 @@
   text-decoration-color: var(--sub);
 }
 .slide-body p {
-  margin: 0 0 0.4em 0;
+  margin: 0;
 }
 /* Blank-line spacer: emitted by markup.ts when author leaves 2+ blank lines
    in a row. `--blanks` is the extra blank count (N-1); one blank already
