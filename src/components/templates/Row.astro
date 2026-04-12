@@ -32,7 +32,7 @@ const rendered = await Promise.all(blocks.map((b) => renderMarkup(b.body)));
   <div class="slide-body blocks" style={blocksStyle}>
     {blocks.map((block, i) => (
       <div class="row-block">
-        {block.title && <h3 class="row-block-title">{block.title}</h3>}
+        {block.title && <h2>{block.title}</h2>}
         <Fragment set:html={rendered[i]} />
       </div>
     ))}
@@ -54,13 +54,5 @@ const rendered = await Promise.all(blocks.map((b) => renderMarkup(b.body)));
     align-content: start;
     min-width: 0;
     min-height: 0;
-  }
-  .row-block-title {
-    font-size: clamp(40px, 6.84cqmin, 144px);
-    font-weight: 700;
-    color: var(--brand);
-    letter-spacing: -0.02em;
-    margin: 0 0 0.35em 0;
-    line-height: 1.2;
   }
 </style>
