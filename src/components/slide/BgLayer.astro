@@ -1,7 +1,7 @@
 ---
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { attrsToStyle } from '../../lib/style';
+import { attrsToBackground, attrsToCommon } from '../../lib/style';
 import type { AssetRef } from '../../lib/types';
 
 interface Props {
@@ -27,7 +27,8 @@ if (matched) {
 const bgStyle = [
   `background-image:url(${bgUrl})`,
   'background-repeat:no-repeat',
-  attrsToStyle(asset.attrs),
+  attrsToCommon(asset.attrs),
+  attrsToBackground(asset.attrs),
   extraStyle ?? '',
 ]
   .filter(Boolean)

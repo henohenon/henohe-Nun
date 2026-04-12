@@ -10,7 +10,7 @@ import type { ImageMetadata } from 'astro';
 import { createFenceTracker, renderMarkdown } from './markdown';
 import { fetchOgp, ogpToHtml } from './ogp';
 import { parseAttrs } from './parser';
-import { attrsToStyle } from './style';
+import { attrsToCommon, attrsToObject } from './style';
 
 const astroImages = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/images/**/*.{png,jpg,jpeg,svg,gif,webp,avif}',
@@ -29,8 +29,8 @@ export async function resolveImageUrl(src: string, width = 1920): Promise<string
   return src;
 }
 
-const IMAGE_EXT = /\.(png|jpe?g|svg|gif|webp|avif)$/i;
 const IMG_RE = /^@img(\s[^>]*)?>(.+)$/;
+const IMG_ALT_RE = /^!\[([^\]]*)\]\((.+)\)$/;
 const LINK_RE = /^@link(\s[^>]*)?>(.+)$/;
 // [content] that isn't a markdown link [label](url) or image ![label](url)
 const BRACKET_RE = /(?<!!)\[([^\]]+)\](?!\()/g;
@@ -40,15 +40,14 @@ const BRACKET_RE = /(?<!!)\[([^\]]+)\](?!\()/g;
 async function handleImg(match: RegExpExecArray): Promise<string> {
   const attrs = parseAttrs(match[1] ?? '');
   const src = match[2].trim();
-  const url = await resolveImageUrl(src);
-  const style = [
-    `background-image:url(${url})`,
-    'background-repeat:no-repeat',
-    'width:100%',
-    'min-height:200px',
-    attrsToStyle(attrs),
-  ].join(';');
-  return `<div style="${style}"></div>`;
+
+  // @img>![alt](path) → <img> with alt text
+  const altMatch = IMG_ALT_RE.exec(src);
+  const alt = altMatch ? altMatch[1] : '';
+  const imgPath = altMatch ? altMatch[2].trim() : src;
+  const url = await resolveImageUrl(imgPath);
+  const style = [attrsToCommon(attrs), attrsToObject(attrs)].filter(Boolean).join(';');
+  return `<img src="${url}" alt="${alt}"${style ? ` style="${style}"` : ''} />`;
 }
 
 async function handleLink(match: RegExpExecArray): Promise<string> {
@@ -59,15 +58,12 @@ async function handleLink(match: RegExpExecArray): Promise<string> {
   return `<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
 }
 
-// [./foo.png] → ![](/optimized-url) and [https://...] → [url](url) autolink
+// [https://...] → [url](url) autolink
 async function expandBrackets(line: string): Promise<string> {
   let out = line;
   for (const m of line.matchAll(BRACKET_RE)) {
     const content = m[1].trim();
-    if (IMAGE_EXT.test(content)) {
-      const url = await resolveImageUrl(content);
-      out = out.replace(m[0], `![](${url})`);
-    } else if (/^https?:\/\//.test(content)) {
+    if (/^https?:\/\//.test(content)) {
       out = out.replace(m[0], `[${content}](${content})`);
     }
   }

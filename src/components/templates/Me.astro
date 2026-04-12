@@ -1,7 +1,7 @@
 ---
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { attrsToStyle } from '../../lib/style';
+import { attrsToCommon, attrsToObject } from '../../lib/style';
 import type { AssetRef } from '../../lib/types';
 import Markup from '../slide/Markup.astro';
 
@@ -28,15 +28,13 @@ if (icon) {
   }
 }
 
-const iconStyle = icon
-  ? [`background-image:url(${iconUrl})`, 'background-repeat:no-repeat', attrsToStyle(icon.attrs)].join(';')
-  : '';
+const iconStyle = icon ? [attrsToCommon(icon.attrs), attrsToObject(icon.attrs)].filter(Boolean).join(';') : '';
 ---
 
 <div class="template-me">
   <div class="slide-body">
     <div class="left">
-      {icon && <div class="icon" style={iconStyle} />}
+      {icon && <img class="icon" src={iconUrl} alt={heading} style={iconStyle} />}
     </div>
     <div class="right">
       <Markup body={body} />
