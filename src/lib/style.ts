@@ -42,41 +42,75 @@ function posCalc(base: string, offset: string | undefined): string {
   return `calc(${base} + ${offset})`;
 }
 
-/**
- * Convert image attrs to CSS for background-image containers.
- */
-export function attrsToStyle(attrs: Attrs): string {
+/** Common appearance: opacity, round, rotate, flip, filters. */
+export function attrsToCommon(attrs: Attrs): string {
   const parts: string[] = [];
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'o' && typeof v === 'string') parts.push(`opacity:${v}`);
+    else if (k === 'rot' && typeof v === 'string') parts.push(`rotate:${v}`);
+    else if (k === 'flip' && v === true) parts.push('scale:-1 1');
+    else if (k === 'round' && typeof v === 'string') {
+      parts.push(`border-radius:${pxUnit(v)}`, 'overflow:hidden');
+    }
+  }
+  const filters = buildFilters(attrs);
+  if (filters.length) parts.push(`filter:${filters.join(' ')}`);
+  return parts.join(';');
+}
+
+/** Parse position keywords and x/y offsets from attrs. */
+function parsePosition(attrs: Attrs) {
   let baseX: string | undefined;
   let baseY: string | undefined;
   let offsetX: string | undefined;
   let offsetY: string | undefined;
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'x' && typeof v === 'string') offsetX = pxUnit(v);
+    else if (k === 'y' && typeof v === 'string') offsetY = pxUnit(v);
+    else if (k in POSITION_KEYWORDS && v === true) {
+      const p = POSITION_KEYWORDS[k];
+      if (p[0]) baseY = p[0];
+      if (p[1]) baseX = p[1];
+    }
+  }
+  const finalX = posCalc(baseX ?? '50%', offsetX);
+  const finalY = posCalc(baseY ?? '50%', offsetY);
+  return { finalX, finalY };
+}
+
+/** Background-image positioning: background-size + background-position. */
+export function attrsToBackground(attrs: Attrs): string {
+  const parts: string[] = [];
   let sizeW: string | undefined;
   let sizeH: string | undefined;
   let useCover = false;
   for (const [k, v] of Object.entries(attrs)) {
     if (k === 'w' && typeof v === 'string') sizeW = pxUnit(v);
     else if (k === 'h' && typeof v === 'string') sizeH = pxUnit(v);
-    else if (k === 'x' && typeof v === 'string') offsetX = pxUnit(v);
-    else if (k === 'y' && typeof v === 'string') offsetY = pxUnit(v);
-    else if (k === 'o' && typeof v === 'string') parts.push(`opacity:${v}`);
     else if (k === 'cover' && v === true) useCover = true;
-    else if (k === 'rot' && typeof v === 'string') parts.push(`rotate:${v}`);
-    else if (k === 'flip' && v === true) parts.push('scale:-1 1');
-    else if (k === 'round' && typeof v === 'string') {
-      parts.push(`border-radius:${pxUnit(v)}`, 'overflow:hidden');
-    } else if (k in POSITION_KEYWORDS && v === true) {
-      const p = POSITION_KEYWORDS[k];
-      if (p[0]) baseY = p[0];
-      if (p[1]) baseX = p[1];
-    }
   }
   const size = sizeW || sizeH ? `${sizeW ?? 'auto'} ${sizeH ?? 'auto'}` : useCover ? 'cover' : 'contain';
   parts.push(`background-size:${size}`);
-  const finalX = posCalc(baseX ?? '50%', offsetX);
-  const finalY = posCalc(baseY ?? '50%', offsetY);
+  const { finalX, finalY } = parsePosition(attrs);
   parts.push(`background-position:${finalX} ${finalY}`);
-  const filters = buildFilters(attrs);
-  if (filters.length) parts.push(`filter:${filters.join(' ')}`);
+  return parts.join(';');
+}
+
+/** <img> element positioning: object-fit/position + width/height. */
+export function attrsToObject(attrs: Attrs): string {
+  const parts: string[] = [];
+  let sizeW: string | undefined;
+  let sizeH: string | undefined;
+  let useCover = false;
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'w' && typeof v === 'string') sizeW = pxUnit(v);
+    else if (k === 'h' && typeof v === 'string') sizeH = pxUnit(v);
+    else if (k === 'cover' && v === true) useCover = true;
+  }
+  if (sizeW) parts.push(`width:${sizeW}`);
+  if (sizeH) parts.push(`height:${sizeH}`);
+  parts.push(`object-fit:${useCover ? 'cover' : 'contain'}`);
+  const { finalX, finalY } = parsePosition(attrs);
+  parts.push(`object-position:${finalX} ${finalY}`);
   return parts.join(';');
 }
