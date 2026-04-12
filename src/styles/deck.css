@@ -34,7 +34,7 @@ body.is-fullscreen astro-dev-toolbar {
 }
 /* Hide all slides by default; script reveals the active one. */
 .slide {
-  visibility: hidden;
+  display: none;
 }
 
 body.is-fullscreen {
@@ -57,7 +57,7 @@ body.is-fullscreen {
 }
 
 /* PDF export: Playwright's page.pdf() uses print media. Unstack the
-   visibility-toggled slides into one page each at a fixed 1920x1080
+   display-toggled slides into one page each at a fixed 1920x1080
    box so cqmin/cqw/cqh-based clamp()s resolve identically to screen. */
 @media print {
   @page {
@@ -79,8 +79,8 @@ body.is-fullscreen {
     inset: auto !important;
   }
   .slide {
+    display: block !important;
     position: relative !important;
-    visibility: visible !important;
     width: 1920px !important;
     height: 1080px !important;
     break-after: page;

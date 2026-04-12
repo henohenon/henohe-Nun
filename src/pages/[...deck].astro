@@ -85,7 +85,7 @@ const thumbUrl = new URL(`${base}thumbs/${name}.webp`, Astro.site).href;
         const sy = body.offsetHeight / csy;
         const scale = Math.min(sx, sy);
         if (scale >= 1 && currentZoom >= 1) return;
-        const newZoom = Math.max(currentZoom * scale, 0.075);
+        const newZoom = currentZoom * scale;
         body.style.zoom = String(newZoom);
         adjustZoom(body, children, iteration + 1, newZoom);
       }
@@ -102,7 +102,7 @@ const thumbUrl = new URL(`${base}thumbs/${name}.webp`, Astro.site).href;
       function show(i: number) {
         const apply = () => {
           slides.forEach((s, idx) => {
-            s.style.visibility = idx === i ? 'visible' : 'hidden';
+            s.style.display = idx === i ? 'block' : 'none';
           });
           fitSlide(slides[i]);
         };
@@ -186,10 +186,15 @@ const thumbUrl = new URL(`${base}thumbs/${name}.webp`, Astro.site).href;
         }, 150);
       });
 
-      // PDF export reveals every slide via `@media print`, so fit them all
-      // just before printing. Interactive nav only pays for the current
-      // slide via show() / resize.
-      window.addEventListener('beforeprint', () => slides.forEach(fitSlide));
+      // PDF/PNG export: print CSS forces `display: block !important` on
+      // every slide, but beforeprint fires before those styles apply.
+      // Show all slides for measurement, fit them, then let print CSS
+      // take over. afterprint restores the single-slide view.
+      window.addEventListener('beforeprint', () => {
+        slides.forEach(s => { s.style.display = 'block'; });
+        slides.forEach(fitSlide);
+      });
+      window.addEventListener('afterprint', () => show(currentIndex()));
 
       show(currentIndex());
     </script>
