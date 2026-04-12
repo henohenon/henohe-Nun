@@ -71,15 +71,17 @@ const theme = frame.theme ?? globalMeta.theme;
     color: var(--main);
     font-family: var(--font-body);
     overflow: hidden;
-    /* Layout spacing (shared across templates) */
-    --slide-pad-x: clamp(32px, 8cqmin, 180px);
-    --slide-pad-top: clamp(32px, 8cqmin, 180px);
-    --slide-pad-bottom: clamp(48px, 10cqmin, 200px);
-    --slide-title-size: clamp(42px, 9.1cqmin, 182px);
+    /* Typography scale (cqmin-based, floors set for cqmin ≈ 280) */
+    --text-body: clamp(14px, 5cqmin, 100px);
+    --slide-title-size: clamp(20px, 9.1cqmin, 180px);
+    /* Layout spacing */
+    --slide-pad-x: clamp(16px, 8cqmin, 180px);
+    --slide-pad-top: clamp(16px, 8cqmin, 180px);
+    --slide-pad-bottom: clamp(16px, 10cqmin, 200px);
     /* Footer */
-    --footer-line-height: clamp(16px, 1.2cqmin, 28px);
-    --footer-font-size: clamp(21px, 2.7cqmin, 63px);
-    --footer-pad-x: clamp(24px, 4cqmin, 88px);
+    --footer-line-height: clamp(4px, 1.2cqmin, 25px);
+    --footer-font-size: clamp(8px, 2.7cqmin, 55px);
+    --footer-pad-x: clamp(8px, 4cqmin, 80px);
     --footer-text-nudge: clamp(-22px, calc(-1cqmin - 2px), -8px);
   }
   .slide-inner {

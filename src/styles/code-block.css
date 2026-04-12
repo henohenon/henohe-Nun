@@ -63,7 +63,7 @@
 }
 .slide-body code {
   font-family: var(--font-mono);
-  font-size: 0.85em;
+  font-size: clamp(12px, 4.25cqmin, 85px);
   background: var(--body-bg);
   padding: 0.1em 0.3em;
   border-radius: 0.25em;

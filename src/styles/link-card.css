@@ -10,8 +10,8 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr auto;
-  height: clamp(102px, 14vw, 150px);
-  font-size: clamp(16px, 2vw, 22px);
+  height: clamp(52px, 14cqmin, 150px);
+  font-size: clamp(10px, 2cqmin, 22px);
   line-height: 1.4;
   text-decoration: none;
   color: inherit;
@@ -93,10 +93,10 @@
 
 .slide-body .link-card-v {
   grid-template-columns: none;
-  grid-template-rows: clamp(120px, 20vw, 200px) auto;
-  max-width: clamp(240px, 38vw, 380px);
+  grid-template-rows: clamp(60px, 20cqmin, 200px) auto;
+  max-width: clamp(120px, 38cqmin, 380px);
   height: auto;
-  font-size: clamp(16px, 2vw, 22px);
+  font-size: clamp(10px, 2cqmin, 22px);
 }
 /* thumb goes on top */
 .slide-body .link-card-v .link-card-img {

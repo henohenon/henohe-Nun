@@ -54,14 +54,14 @@ const iconStyle = icon
   }
   .slide-body {
     display: grid;
-    grid-template-columns: clamp(240px, 30%, 70cqh) 1fr;
+    grid-template-columns: clamp(80px, 30%, 70cqh) 1fr;
     height: 100%;
   }
   .left {
     background: var(--base);
     padding:
       calc(var(--slide-pad-top) + var(--slide-title-size))
-      clamp(40px, 7cqmin, 140px)
+      clamp(16px, 7cqmin, 140px)
       var(--slide-pad-top);
     box-sizing: border-box;
     display: grid;
@@ -76,8 +76,8 @@ const iconStyle = icon
     z-index: 2;
   }
   .icon {
-    width: clamp(160px, 20cqw, 400px);
-    height: clamp(160px, 20cqw, 400px);
+    width: clamp(60px, 20cqw, 400px);
+    height: clamp(60px, 20cqw, 400px);
   }
   .right {
     padding:
@@ -102,8 +102,8 @@ const iconStyle = icon
         0;
     }
     .icon {
-      width: clamp(120px, 30cqw, 300px);
-      height: clamp(80px, 25cqh, 200px);
+      width: clamp(40px, 30cqw, 300px);
+      height: clamp(30px, 25cqh, 200px);
     }
     .right {
       padding:
