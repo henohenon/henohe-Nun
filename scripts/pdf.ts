@@ -31,7 +31,9 @@ const compress = !noCompressFlag && hasGhostscript();
 if (noCompressFlag) {
   console.log('[pdf] --no-compress: skipping Ghostscript pass');
 } else if (!compress) {
-  console.warn(`[pdf] Ghostscript (${GS}) not found — writing uncompressed PDFs. Install it for the prepress compression pass.`);
+  console.warn(
+    `[pdf] Ghostscript (${GS}) not found — writing uncompressed PDFs. Install it for the prepress compression pass.`,
+  );
 }
 
 const scale = parseScale();

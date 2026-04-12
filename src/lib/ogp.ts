@@ -107,7 +107,7 @@ export function ogpToHtml(ogp: OgpData, vertical: boolean): string {
     : '';
 
   const faviconHtml = ogp.favicon
-    ? `<img class="link-card-favicon" src="${esc(ogp.favicon)}" alt=""` + ` onerror="this.style.display='none'">`
+    ? `<img class="link-card-favicon" src="${esc(ogp.favicon)}" alt="" onerror="this.style.display='none'">`
     : '';
 
   const descHtml = ogp.description ? `<div class="link-card-desc">${esc(ogp.description)}</div>` : '<div></div>'; // grid row を埋めるための空div
