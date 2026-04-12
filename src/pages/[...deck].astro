@@ -90,18 +90,21 @@ const thumbUrl = new URL(`${base}thumbs/${name}.webp`, Astro.site).href;
         adjustZoom(body, children, iteration + 1, newZoom);
       }
 
+      function fitSlide(slide: HTMLElement) {
+        slide.querySelectorAll<HTMLElement>('.slide-body').forEach((body) => {
+          const children = Array.from(body.children) as HTMLElement[];
+          if (children.length === 0) return;
+          body.style.zoom = '';
+          adjustZoom(body, children, 0, 1);
+        });
+      }
+
       function show(i: number) {
         const apply = () => {
           slides.forEach((s, idx) => {
             s.style.visibility = idx === i ? 'visible' : 'hidden';
           });
-          // Auto-fit: shrink slide-body via zoom when content overflows.
-          const currentSlide = slides[i];
-          currentSlide.querySelectorAll<HTMLElement>('.slide-body').forEach((body) => {
-            const children = Array.from(body.children) as HTMLElement[];
-            if (children.length === 0) return;
-            adjustZoom(body, children, 0, 1);
-          });
+          fitSlide(slides[i]);
         };
         if (document.startViewTransition) {
           document.startViewTransition(apply);
@@ -173,21 +176,20 @@ const thumbUrl = new URL(`${base}thumbs/${name}.webp`, Astro.site).href;
         go(dx < 0 ? 1 : -1);
       });
 
-      // Adjust zoom on window resize.
+      // Adjust zoom on window resize (current slide only; others get
+      // re-fit lazily when navigated to via show()).
       let resizeTimeout: number;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = window.setTimeout(() => {
-          const i = currentIndex();
-          const currentSlide = slides[i];
-          currentSlide.querySelectorAll<HTMLElement>('.slide-body').forEach((body) => {
-            const children = Array.from(body.children) as HTMLElement[];
-            if (children.length === 0) return;
-            body.style.zoom = '';
-            adjustZoom(body, children, 0, 1);
-          });
+          fitSlide(slides[currentIndex()]);
         }, 150);
       });
+
+      // PDF export reveals every slide via `@media print`, so fit them all
+      // just before printing. Interactive nav only pays for the current
+      // slide via show() / resize.
+      window.addEventListener('beforeprint', () => slides.forEach(fitSlide));
 
       show(currentIndex());
     </script>
