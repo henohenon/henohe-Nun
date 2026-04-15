@@ -1,34 +1,31 @@
 {
   "name": "henohe-nun",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "build:pdf": "tsx scripts/pdf.ts",
     "build:png": "tsx scripts/png.ts",
     "build:webp": "tsx scripts/webp.ts",
     "build:thumbs": "tsx scripts/webp.ts --thumb --out=public/thumbs",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "typecheck": "astro check && tsc -p scripts/tsconfig.json --noEmit"
+    "typecheck": "tsc --noEmit && tsc -p scripts/tsconfig.json --noEmit"
   },
   "dependencies": {
-    "astro": "^4.16.18",
     "highlight.js": "^11.11.1",
     "marked": "^14.1.3"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.8",
     "@biomejs/biome": "^2.4.10",
     "@types/node": "^25.5.2",
-    "@unocss/astro": "^66.6.8",
     "playwright": "^1.59.1",
     "sharp": "^0.34.5",
     "tsx": "^4.21.0",
     "typescript": "^5.6.3",
-    "unocss": "^66.6.8"
+    "unocss": "^66.6.8",
+    "vite": "^6.3.2"
   }
 }

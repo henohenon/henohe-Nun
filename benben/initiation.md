@@ -1,14 +1,14 @@
-@date>2026/04/10
-@fr>へのへ Nun
-@fbg o=0.3 y=10vh right bottom>/henohe-Nun.png
+---
+date: 2026/04/10
+---
+へのへ Nun~fr
+![](/henohe-Nun.png)~fbg
 
 # Initiation
-@>title
+🌊title
 ## へのへ Nun
 
 # Index
-@>row
-@gap>2rem
 - [About](#2)
 - Usage
   - Run
@@ -20,30 +20,22 @@
   - HTML & UnoCSS
 ##
 - Custom Syntax
-  - Utility Tag
-  - Original Tag
-  - Img Attributes
+  - Overview
 - Templates
   - Overview
   - ...
 # へのへ Nun
-@>me
-@icon mono>/henohe-Nun.webp
-@fl>About
+🌊me
+About~fl
 [へのへのん](https://github.com/henohenon/)'s md2slide project.
 - Markdown→HTML/PDF/PNG Export
 - Web-based Live Preview
 - Responsive Rendering
 
-@img>![fde](/henohe-Nun.png)
-
-
-
-
-@link>https://github.com/henohenon/henohe-Nun
+[https://github.com/henohenon/henohe-Nun]
 
 # Usage
-@>big
+🌊big
 
 # Run
 ## Setup
@@ -63,20 +55,19 @@ need [ghostscript](https://ghostscript.com/releases/index.html) for compression 
 | `bun run build:thumbs`                 | OGP thumbnails (1200x630, first slide webp) → `public/thumbs/` |
 | `bun run lint`                         | Biome lint/format check                                        |
 | `bun run lint:fix`                     | Auto-fix                                                       |
-| `bun run typecheck`                    | Type check (Astro + scripts)                                   |
+| `bun run typecheck`                    | Type check                                                     |
 
 # File Paths
-Slide deck mds → `benben/`, images → `src/assets/images/` (or anywhere in `src/assets/`)
+Slide deck mds → `benben/`, images → `public/images/`
 ```md
 project-root/
 ├── benben/
 │   ├── my-talk.md        → /my-talk
 │   └── private/
 │       └── foo.md        → /private/foo
-└── src/
-  └── assets/
-    └── images/
-      └── photo.png       → /images/photo.png
+└── public/
+  └── images/
+    └── photo.png       → /images/photo.png
 ```
 
 # Navigation
@@ -88,11 +79,10 @@ project-root/
 | `Home` / `End` | First / Last |
 
 # Basic Syntax
-@>big
+🌊big
 
 # Markdown
-@>row
-@gap>5rem
+🌊row
 
 ## Preview
 ### heading
@@ -107,8 +97,7 @@ project-root/
 | 1 | 2 |
 ---
 ## Source
-@>row
-@gap>5rem
+🌊row
 ```md
 ## Preview
 ### heading
@@ -125,8 +114,7 @@ project-root/
 ```
 
 # Code Block
-@>row
-@gap>5rem
+🌊row
 ## Preview
 basic
 ```ts
@@ -197,8 +185,7 @@ auto clamp(T val, T lo, T hi) {
 </div>
 
 # HTML & UnoCSS
-@>row
-@gap>5rem
+🌊row
 ## Preview
 <div id="game" class="relative w-full h-screen bg-slate-900 overflow-hidden font-mono">
   <div class="absolute bottom-0 w-full h-16 bg-slate-800"></div>
@@ -209,7 +196,6 @@ auto clamp(T val, T lo, T hi) {
   <div id="msg" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-400 text-2xl">PRESS JUMP TO START</div>
 </div>
 <script>let y=0,vy=0,x=0,score=0,running=false,speed=4,jumping=false;const player=document.getElementById('player'),obs=document.getElementById('obs'),scoreEl=document.getElementById('score'),msg=document.getElementById('msg'),game=document.getElementById('game');window.jump=function(){if(!running){running=true;x=0;score=0;speed=4+Math.random()*3;msg.textContent='';loop();return;}if(!jumping){jumping=true;vy=16;}};function loop(){if(jumping){vy-=0.8;y+=vy;if(y<=0){y=0;vy=0;jumping=false;}}player.style.bottom=(64+y)+'px';x+=speed;const w=game.offsetWidth;if(x>w+40){x=0;score++;scoreEl.textContent=score;speed=4+Math.random()*3;}obs.style.right=x+'px';const obsLeft=w-x;const px=64,py=64+y,pw=48,ph=48;const ox=obsLeft,oy=64,ow=40,oh=80;if(px<ox+ow&&px+pw>ox&&py<oy+oh&&py+ph>oy){running=false;msg.textContent='GAME OVER - SCORE: '+score;return;}requestAnimationFrame(loop);}</script>
-(Create .astro template is better.)
 
 
 ## Source
@@ -223,24 +209,23 @@ auto clamp(T val, T lo, T hi) {
   <div id="msg" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-400 text-2xl">PRESS JUMP TO START</div>
 </div>
 <script>...</script>
-(Create .astro template is better.)
 ```
 
 
 # Custom Syntax
-@>big
+🌊big
 
-# Utility Tag
-| Tag                   | Description           |
-|-----------------------|-----------------------|
-| `@>[template]`        | Set template          |
-| `@bg [attrs]>path`    | Slide background      |
-| `@fbg [attrs]>path`   | Footer background     |
-| `@fr>[text]`          | Footer right          |
-| `@fl>[text]`          | Footer left           |
-| `@theme>[name]`       | Override theme        |
-| `@var [name]>[value]` | Override CSS variable |
-
+# Syntax Overview
+| Syntax | Description |
+|--------|-------------|
+| `.class` | Add class to scope |
+| `$var: value` | Override CSS variable |
+| `text~fr` | Send value to footer-right |
+| `text~fl` | Send value to footer-left |
+| `![](path)~bg` | Slide background |
+| `![](path)~fbg` | Footer background |
+| `🌊template` | Set template |
+| `---`frontmatter`---` | Deck-wide metadata |
 
 # Templates
 | Template  | Description |
@@ -266,85 +251,78 @@ Heading + body text
 
 # Note
 ## Body centered + subtitle below
-@>note
+🌊note
 ````md
 # Note
 ## Body centered + subtitle below
-@>note
+🌊note
 ```md
 ...
 ```
 ````
 
 # Me
-@>me
-@icon>/icon.png
-@bg>/images/tgs.png
+🌊me
 Profile template
-- `@icon>` icon on the left
 - Body on the right
 - Background only right
 
 ````md
 # Name
-@>me
-@icon round=50%>/icon.png
+🌊me
 Bio text
 ````
 
-# @>title
+# Title
 Title slide.
-`@date` auto-fills `fr`. `@fbg` doubles as `@bg`.
+`date` in frontmatter auto-fills `fr`. `fbg` doubles as `bg`.
 
 ````md
-@date>2025/02/07
-@fbg o=0.3>/henohe-Nun.png
+---
+date: 2025/02/07
+---
+![](/henohe-Nun.png)~fbg
 ...
 # Title
 ## Subtitle
-@>title
+🌊title
 ````
 
 # Title Sample
 ## Subtitle
-@>title
+🌊title
 
-# @>big
+# Big
 Large centered text
 
 ```md
 # Big Text
-@>big
+🌊big
 ```
 
-# @>big Sample
-@>big
+# Big Sample
+🌊big
 
-# @>small
+# Small
 Small centered text
 
 ```md
 # Small Text
-@>small
+🌊small
 ```
 
-# @>small Sample
-@>small
+# Small Sample
+🌊small
 
-# @>row
-@>row
+# Row
+🌊row
 
 ## Syntax
 `## ` splits blocks horizontally.
-`@gap>` controls spacing.
-`@align>` controls horizontal alignment
-(`left` / `center` / `right`, default `left`).
 
 ```md
 # Heading
-@>row
-@gap>4em
-@align>center
+🌊row
 
 ## Block A
 - item
@@ -357,10 +335,8 @@ Small centered text
 - H3 titles per block
 - Pre-H2 content becomes a title-less leading block
 
-# @>row Sample
-@>row
-@gap>3em
-@align>center
+# Row Sample
+🌊row
 
 ## Pros
 - Clean syntax
@@ -373,13 +349,12 @@ Small centered text
 - Fixed block order
 
 
-# @fr, @fl>, @theme>
+# Footer & Theme
 
-# @bg>, @fbg>
+# Background
 
 
-
-# @var>
+# CSS Variables
 | Variable        | Default               | Description           |
 |-----------------|-----------------------|-----------------------|
 | `--base`        | `#ffffff`             | Background            |
@@ -391,87 +366,9 @@ Small centered text
 | `--font-body`   | IBM Plex Sans JP, ... | Body font             |
 | `--font-mono`   | Consolas, ...         | Mono font             |
 
-# Original Tag
-`@link>[url]`, `@img [attrs]>path`, `@img [attrs]>[alt](url)`
-
-# Img Attributes
-
-<div class="grid grid-flow-col gap-2">
-<div>
-
-layout (bg div only)
-| attr | effect |
-|------|--------|
-| `w` | width |
-| `h` | height |
-| `x` | offset X |
-| `y` | offset Y |
-| `cover` | cover (default: contain) |
-| `top` `bottom` | vertical align |
-| `left` `right` | horizontal align |
-| `center` | center |
-
-</div>
-<div>
-
-appearance (both)
-| attr | effect |
-|------|--------|
-| `o` | opacity |
-| `round` | border-radius |
-| `rot=Ndeg` | rotate |
-| `flip` | horizontal flip |
-
-</div>
-<div>
-
-filters (both)
-| attr | effect |
-|------|--------|
-| `mono` | grayscale |
-| `sepia` | sepia tone |
-| `bin` | black & white |
-| `invert` | invert colors |
-| `blur=N` | blur |
-| `bright=N` | brightness |
-| `contrast=N` | contrast |
-| `saturate=N` | saturation |
-| `hue=Ndeg` | hue rotate |
-| `shadow=N` | drop-shadow |
-| `c=Ndeg` | color tint |
-
-</div>
-</div>
-
-# @img Directive
-
-`@img` embeds an image. Two forms:
-
-```md
-@img cover>/photo.png              background-image div
-@img mono o=0.5>![alt text](/p.png) <img> tag with alt
-```
-
-@img>/henohe-Nun.png
-@img mono blur=3 o=0.5>/henohe-Nun.png
-
-
-<div class="grid grid-flow-col gap-2">
-
-@img cover>/henohe-Nun.png
-
-@img mono c=200deg>/henohe-Nun.png
-
-</div>
-
-# @link Directive
-**horizontal**
-
-# **vertical**
-
 # Templates
-@>big
+🌊big
 
 
 # FIN.
-@>small
+🌊small

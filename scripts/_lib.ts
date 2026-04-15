@@ -282,7 +282,7 @@ export async function runExport(
     console.log(`[${label}] skipping astro build (SKIP_BUILD)`);
   } else {
     console.log(`[${label}] building...`);
-    await sh('bunx', ['astro', 'build']);
+    await sh('bunx', ['vite', 'build']);
   }
 
   console.log(`[${label}] serving ${DIST_DIR}/ on :${PORT}`);
