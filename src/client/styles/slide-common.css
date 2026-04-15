@@ -174,3 +174,201 @@
   background: var(--body-bg);
   font-weight: 700;
 }
+
+/* ===== Template: default ===== */
+.template-shell > .body {
+  display: grid;
+  grid-auto-rows: min-content;
+  align-content: start;
+  min-height: 0;
+}
+
+/* ===== Template: title / hero ===== */
+.template-title {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  padding: 0 6cqw;
+  box-sizing: border-box;
+}
+.template-title .henoheno {
+  position: absolute;
+  right: calc(min(91cqw, 143cqh) * -0.13);
+  bottom: calc(min(91cqw, 143cqh) * -0.75);
+  width: min(95cqw, 150cqh);
+  height: auto;
+  pointer-events: none;
+  color: var(--brand);
+}
+.template-title .henoheno svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.template-title .text {
+  position: relative;
+  z-index: 1;
+  max-width: 60%;
+}
+.template-title .title {
+  margin: 0;
+  font-size: clamp(18px, 11cqmin, 200px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--strong);
+  line-height: 1;
+}
+.template-title .subtitle {
+  margin: clamp(6px, 2cqmin, 32px) 0 0 0;
+  font-size: clamp(10px, 3.2cqmin, 60px);
+  color: var(--fg-mid);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.template-title .subtitle strong,
+.template-title .subtitle b {
+  color: inherit;
+  font-weight: 900;
+  -webkit-text-stroke: 0.035em currentColor;
+}
+
+/* ===== Template: big ===== */
+.template-big {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  padding: clamp(12px, 6cqmin, 120px);
+  box-sizing: border-box;
+}
+.template-big .text {
+  font-size: clamp(24px, 16cqmin, 320px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--brand);
+  text-align: center;
+  line-height: 0.95;
+}
+
+/* ===== Template: small ===== */
+.template-small {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  padding: clamp(12px, 6cqmin, 120px);
+  box-sizing: border-box;
+}
+.template-small .text {
+  font-size: clamp(12px, calc(4.1cqmin + 4px), 88px);
+  font-weight: 500;
+  color: var(--brand);
+  letter-spacing: 0.01em;
+}
+
+/* ===== Template: me ===== */
+.template-me {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.template-me .slide-body {
+  display: grid;
+  grid-template-columns: clamp(80px, 30%, 70cqh) 1fr;
+  height: 100%;
+}
+.template-me .left {
+  background: var(--base);
+  padding:
+    calc(var(--slide-pad-top) + var(--slide-title-size))
+    clamp(16px, 7cqmin, 140px)
+    var(--slide-pad-top);
+  box-sizing: border-box;
+  display: grid;
+  place-content: center;
+}
+.template-me .label {
+  position: absolute;
+  top: var(--slide-pad-top);
+  left: var(--slide-pad-x);
+  right: var(--slide-pad-x);
+  margin: 0;
+  z-index: 2;
+}
+.template-me .icon {
+  width: clamp(60px, 20cqw, 400px);
+  height: clamp(60px, 20cqw, 400px);
+}
+.template-me .right {
+  padding:
+    calc(var(--slide-pad-top) + var(--slide-title-size))
+    var(--slide-pad-x)
+    var(--slide-pad-bottom);
+  box-sizing: border-box;
+  display: grid;
+  grid-auto-rows: min-content;
+  align-content: start;
+}
+@container (orientation: portrait) {
+  .template-me .slide-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .template-me .left {
+    padding:
+      calc(var(--slide-pad-top) + var(--slide-title-size) * 2)
+      var(--slide-pad-x)
+      0;
+  }
+  .template-me .icon {
+    width: clamp(40px, 30cqw, 300px);
+    height: clamp(30px, 25cqh, 200px);
+  }
+  .template-me .right {
+    padding:
+      0
+      var(--slide-pad-x)
+      var(--slide-pad-bottom);
+  }
+}
+
+/* ===== Template: note ===== */
+.template-shell > .body.body {
+  /* note template reuses .body class — more specific selector for note layout */
+}
+.template-shell .body-center {
+  display: grid;
+  grid-auto-rows: min-content;
+  justify-items: center;
+  align-content: center;
+  min-height: 0;
+}
+/* Note body: centered content with optional caption at bottom */
+.template-shell > .slide-body.body:has(.body-center) {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  text-align: center;
+  line-height: 1.4;
+  min-height: 0;
+}
+
+/* ===== Template: row ===== */
+.template-shell > .blocks {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, auto);
+  gap: clamp(12px, 4cqmin, 80px);
+  align-items: start;
+  min-height: 0;
+}
+.row-block {
+  display: grid;
+  grid-auto-rows: min-content;
+  align-content: start;
+  min-width: 0;
+  min-height: 0;
+}
