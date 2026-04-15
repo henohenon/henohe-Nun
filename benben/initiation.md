@@ -35,6 +35,9 @@
 - Web-based Live Preview
 - Responsive Rendering
 
+@img>![fde](/henohe-Nun.png)
+
+
 
 
 @link>https://github.com/henohenon/henohe-Nun
@@ -210,8 +213,6 @@ auto clamp(T val, T lo, T hi) {
 
 
 ## Source
-<div class="w-full h-screen">
-
 ```md
 <div id="game" class="relative w-full h-screen bg-slate-900 overflow-hidden font-mono">
   <div class="absolute bottom-0 w-full h-16 bg-slate-800"></div>
@@ -225,7 +226,6 @@ auto clamp(T val, T lo, T hi) {
 (Create .astro template is better.)
 ```
 
-</div>
 
 # Custom Syntax
 @>big
@@ -241,6 +241,145 @@ auto clamp(T val, T lo, T hi) {
 | `@theme>[name]`       | Override theme        |
 | `@var [name]>[value]` | Override CSS variable |
 
+
+# Templates
+| Template  | Description |
+|-----------|-------------|
+| `default` | Heading + body |
+| `title`   | Title slide |
+| `big`     | Large centered text |
+| `small`   | Small centered text |
+| `note`    | Centered body + subtitle |
+| `me`      | Profile / intro |
+| `row`     | Horizontal blocks |
+
+# Default
+Heading + body text
+
+````md
+# Default
+Heading + body text
+```md
+...
+```
+````
+
+# Note
+## Body centered + subtitle below
+@>note
+````md
+# Note
+## Body centered + subtitle below
+@>note
+```md
+...
+```
+````
+
+# Me
+@>me
+@icon>/icon.png
+@bg>/images/tgs.png
+Profile template
+- `@icon>` icon on the left
+- Body on the right
+- Background only right
+
+````md
+# Name
+@>me
+@icon round=50%>/icon.png
+Bio text
+````
+
+# @>title
+Title slide.
+`@date` auto-fills `fr`. `@fbg` doubles as `@bg`.
+
+````md
+@date>2025/02/07
+@fbg o=0.3>/henohe-Nun.png
+...
+# Title
+## Subtitle
+@>title
+````
+
+# Title Sample
+## Subtitle
+@>title
+
+# @>big
+Large centered text
+
+```md
+# Big Text
+@>big
+```
+
+# @>big Sample
+@>big
+
+# @>small
+Small centered text
+
+```md
+# Small Text
+@>small
+```
+
+# @>small Sample
+@>small
+
+# @>row
+@>row
+
+## Syntax
+`## ` splits blocks horizontally.
+`@gap>` controls spacing.
+`@align>` controls horizontal alignment
+(`left` / `center` / `right`, default `left`).
+
+```md
+# Heading
+@>row
+@gap>4em
+@align>center
+
+## Block A
+- item
+## Block B
+- item
+```
+
+## Notes
+- Content-driven widths
+- H3 titles per block
+- Pre-H2 content becomes a title-less leading block
+
+# @>row Sample
+@>row
+@gap>3em
+@align>center
+
+## Pros
+- Clean syntax
+- No HTML needed
+- Works with any markdown
+
+## Cons
+- Only horizontal
+- No nested rows
+- Fixed block order
+
+
+# @fr, @fl>, @theme>
+
+# @bg>, @fbg>
+
+
+
+# @var>
 | Variable        | Default               | Description           |
 |-----------------|-----------------------|-----------------------|
 | `--base`        | `#ffffff`             | Background            |
@@ -332,130 +471,6 @@ filters (both)
 
 # Templates
 @>big
-
-# Overview
-| Template | Description |
-|----------|-------------|
-| `default` | Heading + body |
-| `title` | Title slide |
-| `big` | Large centered text |
-| `small` | Small centered text |
-| `note` | Centered body + subtitle |
-| `me` | Profile / intro |
-| `row` | Horizontal blocks |
-
-# @>default
-Heading + body text
-
-```md
-# Heading
-Body content here.
-```
-
-# @>note
-## Body centered + subtitle below
-@>note
-
-````md
-# Heading
-## Subtitle (shown below)
-@>note
-Body content (centered)
-````
-
-# @>me
-@>me
-@icon round=50%>/icon.png
-Profile template
-- `@icon>` icon on the left
-- Body on the right
-
-````md
-# Name
-@>me
-@icon round=50%>/icon.png
-Bio text
-````
-
-# @>title
-Title slide.
-`@date` auto-fills `fr`. `@fbg` doubles as `@bg`.
-
-````md
-@date>2025/02/07
-@fbg o=0.3>/henohe-Nun.png
-...
-# Title
-## Subtitle
-@>title
-````
-
-# Title Sample
-## Subtitle
-@>title
-
-# @>big
-Large centered text
-
-```md
-# Big Text
-@>big
-```
-
-# @>big Sample
-@>big
-
-# @>small
-Small centered text
-
-```md
-# Small Text
-@>small
-```
-
-# @>small Sample
-@>small
-
-# @>row
-@>row
-
-## Syntax
-`## ` splits blocks horizontally.
-`@gap>` controls spacing.
-`@align>` controls horizontal alignment
-(`left` / `center` / `right`, default `left`).
-
-```md
-# Heading
-@>row
-@gap>4em
-@align>center
-
-## Block A
-- item
-## Block B
-- item
-```
-
-## Notes
-- Content-driven widths
-- H3 titles per block
-- Pre-H2 content becomes a title-less leading block
-
-# @>row Sample
-@>row
-@gap>3em
-@align>center
-
-## Pros
-- Clean syntax
-- No HTML needed
-- Works with any markdown
-
-## Cons
-- Only horizontal
-- No nested rows
-- Fixed block order
 
 
 # FIN.
