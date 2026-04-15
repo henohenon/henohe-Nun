@@ -2,11 +2,11 @@
 // Imported as <script type="module"> in deck pages.
 
 import 'virtual:uno.css';
-import '../styles/theme.css';
-import '../styles/slide-common.css';
-import '../styles/code-block.css';
-import '../styles/link-card.css';
-import '../styles/deck.css';
+import './styles/theme.css';
+import './styles/slide-common.css';
+import './styles/code-block.css';
+import './styles/link-card.css';
+import './styles/deck.css';
 
 // --- cursor dot ---
 

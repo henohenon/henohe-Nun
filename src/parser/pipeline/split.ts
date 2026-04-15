@@ -1,6 +1,6 @@
 // Split: frontmatter extraction + split by H1 + root .class $var extraction
 
-import { createFenceTracker } from '../markdown';
+import { createFenceTracker } from '../markdown/fence';
 
 export type RawSlide = {
   heading: string;

@@ -1,0 +1,55 @@
+import type { FC } from 'hono/jsx';
+import { raw } from 'hono/html';
+
+export type HeadProps = {
+  title: string;
+  description?: string;
+  ogTitle?: string;
+  ogImage?: string;
+  ogUrl?: string;
+  base: string;
+};
+
+export const HeadMeta: FC<HeadProps> = ({ title, description, ogTitle, ogImage, ogUrl, base }) => {
+  const frames = [1, 2, 3, 4].map((i) => `'${base}favicon/wave0${i}.png'`).join(',');
+  const faviconScript = `let _fi=0;const _ff=[${frames}],_fl=document.getElementById('favicon');setInterval(()=>{_fl.href=_ff[_fi];_fi=(_fi+1)%_ff.length},667);`;
+
+  return (
+    <>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>{title}</title>
+      <link rel="icon" href={`${base}favicon/favicon.ico`} id="favicon" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@100;200;300;400;500;600;700&display=swap"
+      />
+      {description && <meta name="description" content={description} />}
+      {ogTitle && (
+        <>
+          <meta property="og:title" content={ogTitle} />
+          <meta property="og:type" content="website" />
+          <meta property="og:site_name" content="へのへ Nun" />
+          <meta property="og:locale" content="ja_JP" />
+          {description && <meta property="og:description" content={description} />}
+          {ogUrl && <meta property="og:url" content={ogUrl} />}
+          {ogImage && (
+            <>
+              <meta property="og:image" content={ogImage} />
+              <meta property="og:image:width" content="1200" />
+              <meta property="og:image:height" content="630" />
+            </>
+          )}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:site" content="@henohenon_8282" />
+          <meta name="twitter:title" content={ogTitle} />
+          {description && <meta name="twitter:description" content={description} />}
+          {ogImage && <meta name="twitter:image" content={ogImage} />}
+        </>
+      )}
+      <script>{raw(faviconScript)}</script>
+    </>
+  );
+};

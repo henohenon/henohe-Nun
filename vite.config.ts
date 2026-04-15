@@ -1,6 +1,7 @@
+import devServer from '@hono/vite-dev-server';
 import UnoCSS from 'unocss/vite';
 import { defineConfig } from 'vite';
-import nunPlugin from './src/vite-plugin-nun';
+import { ssgPlugin } from './src/render/ssg';
 
 const BASE = '/henohe-Nun/';
 const SITE = 'https://henohenon.github.io';
@@ -9,11 +10,15 @@ export default defineConfig({
   base: BASE,
   plugins: [
     UnoCSS(),
-    nunPlugin({
-      base: BASE,
-      site: SITE,
-      benbenDir: 'benben',
+    devServer({
+      entry: 'src/app.ts',
+      exclude: [
+        /^\/@.+$/, // Vite internals
+        /^\/src\/client\/.+$/, // Client entry points (handled by Vite)
+        /\.\w+$/, // Files with extensions (static assets)
+      ],
     }),
+    ssgPlugin({ base: BASE, site: SITE, benbenDir: 'benben' }),
   ],
   build: {
     rollupOptions: {

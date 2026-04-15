@@ -32,7 +32,7 @@ About~fl
 - Web-based Live Preview
 - Responsive Rendering
 
-[https://github.com/henohenon/henohe-Nun]
+[GitHub](https://github.com/henohenon/henohe-Nun)~card
 
 # Usage
 🌊big

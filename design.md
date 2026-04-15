@@ -51,8 +51,8 @@ $accent: #ff0000
 テキスト~fl
 ![](/path.png)~bg
 ![](/path.png)~fbg.grayscale.blur-sm.opacity-30
-![](/path.png)~vc
-![](/path.png)~hc
+[alt](url)~card
+[alt](url)~card.horiz
 ```
 
 ### テンプレート
