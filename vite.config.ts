@@ -1,7 +1,7 @@
 import devServer from '@hono/vite-dev-server';
 import UnoCSS from 'unocss/vite';
 import { defineConfig } from 'vite';
-import { ssgPlugin } from './src/render/ssg';
+import { ssgPlugin } from './src/ssg';
 
 const BASE = '/henohe-Nun/';
 const SITE = 'https://henohenon.github.io';
@@ -13,9 +13,8 @@ export default defineConfig({
     devServer({
       entry: 'src/app.ts',
       exclude: [
-        /^\/@.+$/, // Vite internals
-        /^\/src\/client\/.+$/, // Client entry points (handled by Vite)
-        /\.\w+$/, // Files with extensions (static assets)
+        /\/@.+$/, // Vite internals (@vite/client, @fs, etc.)
+        /\.\w+$/, // Files with extensions (static assets, client .ts)
       ],
     }),
     ssgPlugin({ base: BASE, site: SITE, benbenDir: 'benben' }),
