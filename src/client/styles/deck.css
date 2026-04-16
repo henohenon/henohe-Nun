@@ -14,30 +14,22 @@
 
 html,
 body {
-  margin: 0;
-  padding: 0;
+  @apply m-0 p-0 h-full overflow-hidden;
   background: var(--base);
-  height: 100%;
-  overflow: hidden;
 }
 .stage {
-  position: fixed;
-  inset: 0;
+  @apply fixed inset-0;
 }
 .canvas {
-  position: absolute;
-  inset: 0;
+  @apply absolute inset-0;
 }
 /* Hide all slides by default; script reveals the active one. */
 .slide {
-  display: none;
-  position: absolute;
-  inset: 0;
+  @apply hidden absolute inset-0 overflow-hidden;
   container-type: size;
   background-color: var(--base);
   color: var(--main);
   font-family: var(--font-body);
-  overflow: hidden;
   /* Typography scale (cqmin-based, floors set for cqmin ≈ 280) */
   --text-body: clamp(14px, 5cqmin, 100px);
   --slide-title-size: clamp(20px, 9.1cqmin, 180px);
@@ -52,21 +44,15 @@ body {
   --footer-text-nudge: clamp(-22px, calc(-1cqmin - 2px), -8px);
 }
 .slide-inner {
-  position: absolute;
-  inset: 0;
+  @apply absolute inset-0;
 }
 .bg-layer {
-  position: absolute;
-  inset: 0;
+  @apply absolute inset-0;
 }
 
 /* Footer SVG */
 .slide-footer-svg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: visible;
-  z-index: 1;
+  @apply absolute inset-0 pointer-events-none overflow-visible z-1;
 }
 .slide-footer-svg > .footer-svg-line,
 .slide-footer-svg > .footer-svg-fl,
@@ -81,9 +67,9 @@ body {
 }
 .footer-svg-fl,
 .footer-svg-fr {
+  @apply font-bold;
   font-family: var(--font-body);
   font-size: var(--footer-font-size);
-  font-weight: 700;
   dominant-baseline: text-after-edge;
 }
 .footer-svg-fl {
@@ -96,18 +82,14 @@ body {
 }
 
 body.is-fullscreen {
-  cursor: none;
+  @apply cursor-none;
 }
 .cursor-dot {
-  position: fixed;
+  @apply fixed rounded-full opacity-0 pointer-events-none z-99;
   width: 45px;
   height: 45px;
-  border-radius: 50%;
   background: var(--brand);
-  opacity: 0;
-  pointer-events: none;
   transform: translate(-50%, -50%);
-  z-index: 99;
   transition:
     left 0.08s ease-out,
     top 0.08s ease-out,

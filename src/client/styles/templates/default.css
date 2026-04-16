@@ -1,0 +1,4 @@
+.template-shell > .body {
+  @apply grid content-start min-h-0;
+  grid-auto-rows: min-content;
+}

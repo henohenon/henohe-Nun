@@ -1,0 +1,10 @@
+.template-shell .body-center {
+  @apply grid content-center justify-items-center min-h-0;
+  grid-auto-rows: min-content;
+}
+/* Note body: centered content with optional caption at bottom */
+.template-shell > .slide-body.body:has(.body-center) {
+  @apply grid text-center min-h-0;
+  grid-template-rows: 1fr auto;
+  line-height: 1.4;
+}
