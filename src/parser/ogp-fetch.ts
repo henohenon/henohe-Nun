@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import ogs from 'open-graph-scraper';
 
 export interface OgpData {
   title: string;
@@ -80,56 +81,25 @@ export async function fetchOgpBatch(urls: string[]): Promise<Map<string, OgpData
 
 // --- fetch implementation ---
 
-async function fetchOgpUncached(url: string): Promise<OgpData | null> {
+async function fetchOgpUncached(targetUrl: string): Promise<OgpData | null> {
   try {
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; bot/1.0)' },
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) return null;
-    const html = await res.text();
-    const base = new URL(url);
+    const { result } = await ogs({ url: targetUrl, timeout: 5000 });
+    if (!result.success) return null;
 
-    const getMeta = (property: string): string => {
-      const metaRe = /<meta([^>]+)>/gi;
-      let m: RegExpExecArray | null;
-      while ((m = metaRe.exec(html)) !== null) {
-        const attrs = m[1];
-        const prop =
-          /property=["']([^"']*)["']/i.exec(attrs)?.[1] ?? /name=["']([^"']*)["']/i.exec(attrs)?.[1] ?? '';
-        if (prop.toLowerCase() !== `og:${property}`) continue;
-        const content = /content=["']([^"']*)["']/i.exec(attrs)?.[1];
-        if (content !== undefined) return content;
-      }
-      return '';
-    };
-
-    const getFavicon = (): string | null => {
-      const linkRe = /<link([^>]+)>/gi;
-      let m: RegExpExecArray | null;
-      while ((m = linkRe.exec(html)) !== null) {
-        const attrs = m[1];
-        if (!/rel=["'][^"']*icon[^"']*["']/i.test(attrs)) continue;
-        const href = /href=["']([^"']*)["']/i.exec(attrs)?.[1];
-        if (!href) continue;
-        try {
-          return new URL(href, base).href;
-        } catch {}
-      }
-      return new URL('/favicon.ico', base).href;
-    };
-
-    const title = getMeta('title') || /<title[^>]*>([^<]*)<\/title>/i.exec(html)?.[1]?.trim() || url;
+    const image = result.ogImage?.[0];
+    const favicon = result.favicon
+      ? new URL(result.favicon, targetUrl).href
+      : new URL('/favicon.ico', targetUrl).href;
 
     return {
-      title,
-      description: getMeta('description'),
-      image: getMeta('image'),
-      imageWidth: Number.parseInt(getMeta('image:width'), 10) || undefined,
-      imageHeight: Number.parseInt(getMeta('image:height'), 10) || undefined,
-      favicon: getFavicon(),
-      siteName: getMeta('site_name'),
-      url,
+      title: result.ogTitle || result.dcTitle || targetUrl,
+      description: result.ogDescription || '',
+      image: image?.url || '',
+      imageWidth: image?.width ? Number(image.width) : undefined,
+      imageHeight: image?.height ? Number(image.height) : undefined,
+      favicon,
+      siteName: result.ogSiteName || '',
+      url: result.ogUrl || targetUrl,
     };
   } catch {
     return null;

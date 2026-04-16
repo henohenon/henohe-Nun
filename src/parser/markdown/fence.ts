@@ -18,3 +18,14 @@ export function createFenceTracker(): (line: string) => { inFence: boolean; isBo
     return { inFence: wasInside, isBoundary: false };
   };
 }
+
+export type TaggedLine = { raw: string; trimmed: string; fenced: boolean };
+
+/** Iterate lines with fence-awareness. Fenced lines (including boundaries) are tagged. */
+export function* taggedLines(lines: string[]): Generator<TaggedLine> {
+  const fence = createFenceTracker();
+  for (const raw of lines) {
+    const { inFence, isBoundary } = fence(raw);
+    yield { raw, trimmed: raw.trim(), fenced: inFence || isBoundary };
+  }
+}

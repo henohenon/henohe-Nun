@@ -1,24 +1,20 @@
-// Split: frontmatter extraction + split by H1 + root .class $var extraction
+// Split: frontmatter extraction + split by H1 + root .class/$var extraction
 
-import { createFenceTracker } from '../markdown/fence';
+import { taggedLines } from '../markdown/fence';
+import { CLASS_RE, H1_RE, VAR_RE, parseClasses } from '../syntax';
 
 export type RawSlide = {
   heading: string;
   lines: string[];
 };
 
-export type Stage1Result = {
+export type SplitResult = {
   frontmatter: Record<string, string>;
   classes: string[];
   vars: Record<string, string>;
   rawSlides: RawSlide[];
 };
 
-const H1_RE = /^#\s+(.*)$/;
-const CLASS_RE = /^(\.[a-zA-Z][\w-]*(?:\.[a-zA-Z][\w-]*)*)$/;
-const VAR_RE = /^\$([a-zA-Z][\w-]*):\s*(.+)$/;
-
-/** Parse simple YAML-like frontmatter (key: value lines) */
 function parseFrontmatter(block: string): Record<string, string> {
   const result: Record<string, string> = {};
   for (const line of block.split('\n')) {
@@ -28,58 +24,44 @@ function parseFrontmatter(block: string): Record<string, string> {
   return result;
 }
 
-export function splitDeck(md: string): Stage1Result {
-  const text = md.replace(/\r\n/g, '\n');
-  const lines = text.split('\n');
-  const fence = createFenceTracker();
+export function splitDeck(md: string): SplitResult {
+  const lines = md.replace(/\r\n/g, '\n').split('\n');
 
   let frontmatter: Record<string, string> = {};
-  const classes: string[] = [];
-  const vars: Record<string, string> = {};
-  const rawSlides: RawSlide[] = [];
+  let startIdx = 0;
 
-  let current: RawSlide | null = null;
-  let lineIdx = 0;
-
-  // Extract frontmatter if present
   if (lines[0]?.trim() === '---') {
     const end = lines.indexOf('---', 1);
     if (end > 0) {
       frontmatter = parseFrontmatter(lines.slice(1, end).join('\n'));
-      lineIdx = end + 1;
+      startIdx = end + 1;
     }
   }
 
-  const commit = () => {
-    if (current) rawSlides.push(current);
-    current = null;
-  };
+  const classes: string[] = [];
+  const vars: Record<string, string> = {};
+  const rawSlides: RawSlide[] = [];
+  let current: RawSlide | null = null;
 
-  for (; lineIdx < lines.length; lineIdx++) {
-    const raw = lines[lineIdx];
-    const { inFence, isBoundary } = fence(raw);
-    if (inFence || isBoundary) {
+  for (const { raw, trimmed, fenced } of taggedLines(lines.slice(startIdx))) {
+    if (fenced) {
       current?.lines.push(raw);
       continue;
     }
 
-    const trimmed = raw.trim();
-
-    // H1 = slide boundary (but not H2+)
     if (!trimmed.startsWith('##')) {
       const h1 = H1_RE.exec(trimmed);
       if (h1) {
-        commit();
+        if (current) rawSlides.push(current);
         current = { heading: h1[1], lines: [] };
         continue;
       }
     }
 
-    // Before first slide = root scope
     if (!current) {
       const cm = CLASS_RE.exec(trimmed);
       if (cm) {
-        classes.push(...cm[1].split('.').filter(Boolean));
+        classes.push(...parseClasses(cm[1]));
         continue;
       }
       const vm = VAR_RE.exec(trimmed);
@@ -87,12 +69,12 @@ export function splitDeck(md: string): Stage1Result {
         vars[vm[1]] = vm[2].trim();
         continue;
       }
-      continue; // skip unknown root lines
+      continue;
     }
 
     current.lines.push(raw);
   }
-  commit();
+  if (current) rawSlides.push(current);
 
   return { frontmatter, classes, vars, rawSlides };
 }

@@ -1,14 +1,16 @@
 // Deck parser: MD string -> structured Deck data
 
+import type { MarkdownRenderers } from './markdown';
 import { fetchOgpBatch } from './ogp-fetch';
 import { extractMeta } from './pipeline/meta';
 import { renderSections } from './pipeline/render';
 import { splitDeck } from './pipeline/split';
 import type { Deck, Slide } from './types';
 
+export type { MarkdownRenderers } from './markdown';
 export type { Deck, Slide } from './types';
 
-export async function parseDeck(md: string): Promise<Deck> {
+export async function parseDeck(md: string, renderers: MarkdownRenderers): Promise<Deck> {
   const s1 = splitDeck(md);
   const metaSlides = extractMeta(s1.rawSlides);
 
@@ -17,7 +19,7 @@ export async function parseDeck(md: string): Promise<Deck> {
   const ogpMap = await fetchOgpBatch(allCardUrls);
 
   const slides: Slide[] = metaSlides.map((ms, i) => {
-    const sections = renderSections(ms.rawSections, ogpMap);
+    const sections = renderSections(ms.rawSections, ogpMap, renderers);
     const { tildeBuffers } = ms;
 
     const isTitle = ms.template === 'title' || ms.template === 'hero';

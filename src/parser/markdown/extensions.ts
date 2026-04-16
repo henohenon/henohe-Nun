@@ -1,7 +1,8 @@
 import type { TokenizerAndRendererExtension } from 'marked';
 import type { OgpData } from '../ogp-fetch';
-import { ogpToHtml } from './link-card';
 import { escapeHtml } from './code';
+
+export type OgpRenderer = (ogp: OgpData, vertical: boolean) => string;
 
 /** Block extension: 3+ consecutive blank lines → spacer div */
 export function spacerExtension(): TokenizerAndRendererExtension {
@@ -24,7 +25,10 @@ export function spacerExtension(): TokenizerAndRendererExtension {
 }
 
 /** Block extension: [alt](url)~card or [alt](url)~card.v → OGP link card */
-export function linkCardExtension(ogpMap: Map<string, OgpData | null>): TokenizerAndRendererExtension {
+export function linkCardExtension(
+  ogpMap: Map<string, OgpData | null>,
+  renderOgp: OgpRenderer,
+): TokenizerAndRendererExtension {
   return {
     name: 'linkCard',
     level: 'block',
@@ -45,7 +49,7 @@ export function linkCardExtension(ogpMap: Map<string, OgpData | null>): Tokenize
     renderer(token) {
       const { url, vertical } = token as unknown as { url: string; vertical: boolean };
       const ogp = ogpMap.get(url);
-      if (ogp) return ogpToHtml(ogp, vertical);
+      if (ogp) return renderOgp(ogp, vertical);
       return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(url)}</a>\n`;
     },
   };
