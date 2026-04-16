@@ -1,10 +1,8 @@
-// Vite plugin: generate static HTML pages at build time
+// Vite plugin: generate static HTML pages at build time via Hono app
 
 import type { Plugin } from 'vite';
-import { deckPage } from './pages/deck';
-import { indexPage } from './pages/index';
-import { notFoundPage } from './pages/not-found';
-import { listDecks, readDeckMd } from './decks';
+import { createApp } from './app';
+import { listDecks } from './render/decks';
 
 export interface SsgOptions {
   base: string;
@@ -20,7 +18,7 @@ export function ssgPlugin(options: SsgOptions): Plugin {
     apply: 'build',
 
     async generateBundle(_opts, bundle) {
-      // Find built JS and CSS assets from the bundle
+      // Resolve built JS and CSS asset paths from the bundle
       let deckJs = '';
       let deckCss = '';
       for (const [fileName, chunk] of Object.entries(bundle)) {
@@ -32,37 +30,32 @@ export function ssgPlugin(options: SsgOptions): Plugin {
         }
       }
 
-      const shellOpts = {
+      const app = createApp({
         base,
         site,
-        deckScript: deckJs || undefined,
-        indexScript: undefined,
-        cssLinks: deckCss ? [deckCss] : [],
-      };
+        assets: {
+          deckScript: deckJs || undefined,
+          cssLinks: deckCss ? [deckCss] : [],
+        },
+      });
 
-      const indexShellOpts = {
-        ...shellOpts,
-        deckScript: undefined,
+      const origin = 'http://localhost';
+
+      // Helper: fetch a route from the app and return HTML string
+      const fetchHtml = async (path: string) => {
+        const res = await app.fetch(new Request(`${origin}${base}${path}`));
+        return res.text();
       };
 
       // Generate deck pages
       const deckNames = listDecks(benbenDir);
       for (const deckName of deckNames) {
-        const md = readDeckMd(benbenDir, deckName);
-        if (!md) continue;
-        const html = await deckPage(md, deckName, shellOpts);
+        const html = await fetchHtml(deckName);
         this.emitFile({ type: 'asset', fileName: `${deckName}/index.html`, source: html });
       }
 
       // Generate index page
-      const decks = deckNames
-        .map((name) => {
-          const md = readDeckMd(benbenDir, name);
-          return md ? { name, md } : null;
-        })
-        .filter(Boolean) as { name: string; md: string }[];
-      const indexHtml = indexPage(decks, indexShellOpts);
-
+      const indexHtml = await fetchHtml('');
       if (bundle['index.html']) {
         (bundle['index.html'] as { source: string }).source = indexHtml;
       } else {
@@ -70,7 +63,8 @@ export function ssgPlugin(options: SsgOptions): Plugin {
       }
 
       // 404 page
-      this.emitFile({ type: 'asset', fileName: '404.html', source: notFoundPage(indexShellOpts) });
+      const notFoundHtml = await fetchHtml('404');
+      this.emitFile({ type: 'asset', fileName: '404.html', source: notFoundHtml });
     },
   };
 }

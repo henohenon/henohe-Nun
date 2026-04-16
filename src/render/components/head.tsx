@@ -1,5 +1,4 @@
 import type { FC } from 'hono/jsx';
-import { raw } from 'hono/html';
 
 export type HeadProps = {
   title: string;
@@ -11,9 +10,6 @@ export type HeadProps = {
 };
 
 export const HeadMeta: FC<HeadProps> = ({ title, description, ogTitle, ogImage, ogUrl, base }) => {
-  const frames = [1, 2, 3, 4].map((i) => `'${base}favicon/wave0${i}.png'`).join(',');
-  const faviconScript = `let _fi=0;const _ff=[${frames}],_fl=document.getElementById('favicon');setInterval(()=>{_fl.href=_ff[_fi];_fi=(_fi+1)%_ff.length},667);`;
-
   return (
     <>
       <meta charset="utf-8" />
@@ -49,7 +45,6 @@ export const HeadMeta: FC<HeadProps> = ({ title, description, ogTitle, ogImage, 
           {ogImage && <meta name="twitter:image" content={ogImage} />}
         </>
       )}
-      <script>{raw(faviconScript)}</script>
     </>
   );
 };

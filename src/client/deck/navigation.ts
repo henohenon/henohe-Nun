@@ -1,38 +1,3 @@
-// Deck viewer: navigation, zoom-fit, cursor dot, fullscreen
-// Imported as <script type="module"> in deck pages.
-
-import 'virtual:uno.css';
-import './styles/theme.css';
-import './styles/slide-common.css';
-import './styles/code-block.css';
-import './styles/link-card.css';
-import './styles/deck.css';
-
-// --- cursor dot ---
-
-const dot = document.getElementById('cursor-dot')!;
-let dotTimer = 0;
-
-document.addEventListener('fullscreenchange', () => {
-  const fs = !!document.fullscreenElement;
-  document.body.classList.toggle('is-fullscreen', fs);
-  dot.style.opacity = fs ? '1' : '0';
-});
-
-window.addEventListener('mousemove', (e) => {
-  dot.style.left = `${e.clientX}px`;
-  dot.style.top = `${e.clientY}px`;
-  if (document.fullscreenElement) {
-    dot.style.opacity = '1';
-    clearTimeout(dotTimer);
-    dotTimer = window.setTimeout(() => {
-      dot.style.opacity = '0';
-    }, 5000);
-  }
-});
-
-// --- navigation ---
-
 const canvas = document.getElementById('canvas')!;
 const slides = Array.from(canvas.querySelectorAll<HTMLElement>('.slide'));
 const total = slides.length;

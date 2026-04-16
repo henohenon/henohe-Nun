@@ -3,7 +3,9 @@ import { raw } from 'hono/html';
 import { renderInline } from '../../parser/markdown';
 import { parseDeck } from '../../parser/index';
 import type { Slide } from '../../parser/types';
+import { codeToHtml } from '../components/code-block';
 import { HeadMeta, type HeadProps } from '../components/head';
+import { ogpToHtml } from '../components/link-card';
 import { SlideWrapper } from '../components/parts';
 import { templates } from '../components/templates';
 import type { PageOptions } from '../types';
@@ -39,7 +41,7 @@ const SlideRenderer: FC<{ slide: Slide }> = ({ slide }) => {
 };
 
 export async function deckPage(md: string, deckName: string, opts: PageOptions): Promise<string> {
-  const deck = await parseDeck(md);
+  const deck = await parseDeck(md, { renderOgp: ogpToHtml, renderCode: codeToHtml });
 
   const titleSlide = deck.slides.find((s) => s.template === 'title' || s.template === 'hero') ?? deck.slides[0];
   const ogTitle = titleSlide?.heading ?? deckName;
