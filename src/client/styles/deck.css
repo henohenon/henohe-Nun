@@ -17,12 +17,6 @@ body {
   @apply m-0 p-0 h-full overflow-hidden;
   background: var(--base);
 }
-.stage {
-  @apply fixed inset-0;
-}
-.canvas {
-  @apply absolute inset-0;
-}
 /* Hide all slides by default; script reveals the active one. */
 .slide {
   @apply hidden absolute inset-0 overflow-hidden;
@@ -30,55 +24,19 @@ body {
   background-color: var(--base);
   color: var(--main);
   font-family: var(--font-body);
-  /* Typography scale (cqmin-based, floors set for cqmin ≈ 280) */
-  --text-body: clamp(14px, 5cqmin, 100px);
-  --slide-title-size: clamp(20px, 9.1cqmin, 180px);
-  /* Layout spacing */
-  --slide-pad-x: clamp(16px, 8cqmin, 180px);
-  --slide-pad-top: clamp(16px, 8cqmin, 180px);
-  --slide-pad-bottom: clamp(16px, 10cqmin, 200px);
-  /* Footer */
-  --footer-line-height: clamp(4px, 1.2cqmin, 25px);
-  --footer-font-size: clamp(8px, 2.7cqmin, 55px);
-  --footer-pad-x: clamp(8px, 4cqmin, 80px);
-  --footer-text-nudge: clamp(-22px, calc(-1cqmin - 2px), -8px);
 }
-.slide-inner {
+.slide-content {
   @apply absolute inset-0;
 }
 .bg-layer {
   @apply absolute inset-0;
 }
 
-/* Footer SVG */
-.slide-footer-svg {
-  @apply absolute inset-0 pointer-events-none overflow-visible z-1;
-}
-.slide-footer-svg > .footer-svg-line,
-.slide-footer-svg > .footer-svg-fl,
-.slide-footer-svg > .footer-svg-fr {
-  fill: var(--strong);
-}
-.footer-svg-line {
-  x: -1px;
-  width: calc(100cqw + 2px);
-  y: calc(100cqh - var(--footer-line-height) - 1px);
-  height: calc(var(--footer-line-height) + 3px);
-}
-.footer-svg-fl,
-.footer-svg-fr {
-  @apply font-bold;
-  font-family: var(--font-body);
-  font-size: var(--footer-font-size);
-  dominant-baseline: text-after-edge;
-}
-.footer-svg-fl {
-  text-anchor: start;
-  transform: translate(var(--footer-pad-x), calc(100cqh - var(--footer-line-height) - var(--footer-text-nudge)));
-}
-.footer-svg-fr {
-  text-anchor: end;
-  transform: translate(calc(100cqw - var(--footer-pad-x)), calc(100cqh - var(--footer-line-height) - var(--footer-text-nudge)));
+.slide-title {
+  @apply font-black m-0 leading-none;
+  font-size: var(--slide-title-size);
+  letter-spacing: -0.025em;
+  color: var(--brand);
 }
 
 body.is-fullscreen {
@@ -94,40 +52,4 @@ body.is-fullscreen {
     left 0.08s ease-out,
     top 0.08s ease-out,
     opacity 0.3s ease;
-}
-
-/* PDF export: Playwright's page.pdf() uses print media. Unstack the
-   display-toggled slides into one page each at a fixed 1920x1080
-   box so cqmin/cqw/cqh-based clamp()s resolve identically to screen. */
-@media print {
-  @page {
-    size: 1920px 1080px;
-    margin: 0;
-  }
-  html,
-  body {
-    overflow: visible !important;
-    height: auto !important;
-    background: var(--base) !important;
-  }
-  .cursor-dot {
-    display: none !important;
-  }
-  .stage,
-  .canvas {
-    position: static !important;
-    inset: auto !important;
-  }
-  .slide {
-    display: block !important;
-    position: relative !important;
-    width: 1920px !important;
-    height: 1080px !important;
-    break-after: page;
-    page-break-after: always;
-  }
-  .slide:last-child {
-    break-after: auto;
-    page-break-after: auto;
-  }
 }

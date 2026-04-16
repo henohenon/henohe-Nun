@@ -1,0 +1,29 @@
+/* Print media overrides: injected via page.addStyleTag() during export.
+   Not bundled in the client — only used by Playwright-based export scripts.
+   Unstacks display-toggled slides into one page each at a fixed 1920x1080
+   box so cqmin/cqw/cqh-based clamp()s resolve identically to screen. */
+@page {
+  size: 1920px 1080px;
+  margin: 0;
+}
+html,
+body {
+  overflow: visible !important;
+  height: auto !important;
+  background: var(--base) !important;
+}
+.cursor-dot {
+  display: none !important;
+}
+.slide {
+  display: block !important;
+  position: relative !important;
+  width: 1920px !important;
+  height: 1080px !important;
+  break-after: page;
+  page-break-after: always;
+}
+.slide:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}

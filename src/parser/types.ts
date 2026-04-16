@@ -19,8 +19,8 @@ export type Slide = {
   bgOptions: string[];
   fbg?: string;
   fbgOptions: string[];
-  fr?: string;
-  fl?: string;
+  fr: string;
+  fl: string;
 };
 
 /** Parsed deck data */

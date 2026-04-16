@@ -1,21 +1,3 @@
-/* Shared slide typography and layout primitives.
-   Templates add layout-specific CSS on top. */
-
-/* Standard title-over-body template chrome. Used by templates that lay out
-   a `<h2 class="slide-title">` above a `.slide-body` (default/note/row). */
-.template-shell {
-  @apply w-full h-full grid box-border;
-  grid-template-rows: auto 1fr;
-  padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
-}
-
-.slide-title {
-  @apply font-black m-0 leading-none;
-  font-size: var(--slide-title-size);
-  letter-spacing: -0.025em;
-  color: var(--brand);
-}
-
 .slide-body {
   @apply font-medium box-border;
   --body-bg: var(--muted);
@@ -64,9 +46,9 @@
 .slide-body p {
   @apply m-0;
 }
-/* In-body headings. `slide-title` (the H1-derived template title) keeps its
-   own oversized treatment; these cover the markdown H2/H3/... that `default`
-   / `me` slides pass straight through. */
+/* In-body headings. `slide-title` (h1) keeps its own oversized treatment;
+   these cover the markdown H2/H3/... that `default` / `me` slides pass
+   straight through. */
 .slide-body h2,
 .slide-body h3,
 .slide-body h4,
@@ -130,33 +112,4 @@
   @apply border-none;
   border-top: 0.06em solid var(--border);
   margin: 0.6em 0;
-}
-.slide-body table {
-  @apply overflow-hidden;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin: 0.3em 0;
-  font-size: clamp(11px, 4cqmin, 80px);
-  line-height: 1.4;
-  border: 1px solid var(--border);
-  border-radius: 0.4em;
-  background: var(--base);
-}
-.slide-body th,
-.slide-body td {
-  @apply text-left;
-  border-bottom: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  padding: 0.3em 0.6em;
-}
-.slide-body th:last-child,
-.slide-body td:last-child {
-  @apply border-r-none;
-}
-.slide-body tr:last-child td {
-  @apply border-b-none;
-}
-.slide-body th {
-  @apply font-bold;
-  background: var(--body-bg);
 }

@@ -19,7 +19,7 @@ const HenohenoScript: FC<{ base: string }> = ({ base }) => (
 );
 
 const SlideRenderer: FC<{ slide: Slide }> = ({ slide }) => {
-  const Template = templates[slide.template] ?? templates.default;
+  const entry = templates[slide.template] ?? templates.default;
   const isTitle = slide.template === 'title' || slide.template === 'hero';
   const bg = slide.bg ?? (isTitle ? slide.fbg : undefined);
 
@@ -28,6 +28,7 @@ const SlideRenderer: FC<{ slide: Slide }> = ({ slide }) => {
       index={slide.index}
       classes={slide.classes}
       vars={slide.vars}
+      templateClass={entry.css}
       bg={bg}
       bgOptions={slide.bgOptions}
       fr={slide.fr}
@@ -35,7 +36,7 @@ const SlideRenderer: FC<{ slide: Slide }> = ({ slide }) => {
       fbg={slide.fbg}
       fbgOptions={slide.fbgOptions}
     >
-      <Template heading={slide.heading} sections={slide.sections} />
+      <entry.render heading={slide.heading} sections={slide.sections} />
     </SlideWrapper>
   );
 };
@@ -66,13 +67,9 @@ export async function deckPage(md: string, deckName: string, opts: PageOptions):
         {opts.cssLinks?.map((href) => <link rel="stylesheet" href={href} />)}
       </head>
       <body>
-        <div class="stage">
-          <div class="canvas" id="canvas">
-            {deck.slides.map((slide) => (
-              <SlideRenderer slide={slide} />
-            ))}
-          </div>
-        </div>
+        {deck.slides.map((slide) => (
+          <SlideRenderer slide={slide} />
+        ))}
         <div class="cursor-dot" id="cursor-dot" />
         <HenohenoScript base={opts.base} />
         {opts.deckScript && <script type="module" src={opts.deckScript} />}

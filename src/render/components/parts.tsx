@@ -19,18 +19,14 @@ function htmlToSvgText(html: string): string {
 }
 
 export const FooterLayer: FC<{
-  fr?: string;
-  fl?: string;
+  fr: string;
+  fl: string;
   fbg?: string;
   fbgOptions: string[];
   slideIndex: number;
 }> = ({ fr, fl, fbg, fbgOptions, slideIndex }) => {
-  const flHtml = fl ? renderInline(fl) : '';
-  const frHtml = fr ? renderInline(fr) : '';
-  if (!flHtml && !frHtml) return <></>;
-
-  const flSvg = htmlToSvgText(flHtml);
-  const frSvg = htmlToSvgText(frHtml);
+  const flSvg = fl ? htmlToSvgText(renderInline(fl)) : '';
+  const frSvg = fr ? htmlToSvgText(renderInline(fr)) : '';
   const maskId = `footer-mask-${slideIndex}`;
 
   return (
@@ -63,10 +59,11 @@ type SlideWrapperProps = PropsWithChildren<{
   index: number;
   classes: string[];
   vars: Record<string, string>;
+  templateClass: string;
   bg?: string;
   bgOptions: string[];
-  fr?: string;
-  fl?: string;
+  fr: string;
+  fl: string;
   fbg?: string;
   fbgOptions: string[];
 }>;
@@ -76,6 +73,7 @@ export const SlideWrapper: FC<SlideWrapperProps> = ({
   index,
   classes,
   vars,
+  templateClass,
   bg,
   bgOptions,
   fr,
@@ -90,7 +88,7 @@ export const SlideWrapper: FC<SlideWrapperProps> = ({
   return (
     <section class={['slide', ...classes].join(' ')} data-index={String(index)} style={varStyle || undefined}>
       {bg && <BgLayer src={bg} options={bgOptions} />}
-      <div class="slide-inner">{children}</div>
+      <div class={['slide-content', templateClass].join(' ')}>{children}</div>
       <FooterLayer fr={fr} fl={fl} fbg={fbg} fbgOptions={fbgOptions} slideIndex={index} />
     </section>
   );

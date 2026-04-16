@@ -3,9 +3,11 @@
 
 import 'virtual:uno.css';
 import '../styles/theme.css';
-import '../styles/common.css';
+import '../styles/components/typography.css';
 import '../styles/components/code-block.css';
 import '../styles/components/link-card.css';
+import '../styles/components/footer.css';
+import '../styles/components/table.css';
 import '../styles/templates/default.css';
 import '../styles/templates/title.css';
 import '../styles/templates/big.css';

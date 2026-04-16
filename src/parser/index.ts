@@ -23,12 +23,9 @@ export async function parseDeck(md: string, renderers: MarkdownRenderers): Promi
     const { tildeBuffers } = ms;
 
     const isTitle = ms.template === 'title' || ms.template === 'hero';
-    let fr = tildeBuffers.fr;
-    let fl = tildeBuffers.fl;
-    if (isTitle) {
-      if (!fr && s1.frontmatter.date) fr = s1.frontmatter.date;
-      if (!fl) fl = '';
-    }
+    let fr = tildeBuffers.fr ?? s1.fr ?? '';
+    let fl = tildeBuffers.fl ?? s1.fl ?? '';
+    if (isTitle && !fr && s1.frontmatter.date) fr = s1.frontmatter.date;
 
     return {
       index: i,
@@ -41,8 +38,8 @@ export async function parseDeck(md: string, renderers: MarkdownRenderers): Promi
       bgOptions: tildeBuffers.bgOptions,
       fbg: tildeBuffers.fbg,
       fbgOptions: tildeBuffers.fbgOptions,
-      fr: fr ?? undefined,
-      fl: fl ?? undefined,
+      fr,
+      fl,
     };
   });
 

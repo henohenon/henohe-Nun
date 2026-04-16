@@ -1,7 +1,7 @@
 // Split: frontmatter extraction + split by H1 + root .class/$var extraction
 
 import { taggedLines } from '../markdown/fence';
-import { CLASS_RE, H1_RE, VAR_RE, parseClasses } from '../syntax';
+import { CLASS_RE, H1_RE, TILDE_RE, VAR_RE, parseClasses, parseTildeOptions } from '../syntax';
 
 export type RawSlide = {
   heading: string;
@@ -12,6 +12,8 @@ export type SplitResult = {
   frontmatter: Record<string, string>;
   classes: string[];
   vars: Record<string, string>;
+  fr?: string;
+  fl?: string;
   rawSlides: RawSlide[];
 };
 
@@ -40,6 +42,8 @@ export function splitDeck(md: string): SplitResult {
 
   const classes: string[] = [];
   const vars: Record<string, string> = {};
+  let fr: string | undefined;
+  let fl: string | undefined;
   const rawSlides: RawSlide[] = [];
   let current: RawSlide | null = null;
 
@@ -69,6 +73,14 @@ export function splitDeck(md: string): SplitResult {
         vars[vm[1]] = vm[2].trim();
         continue;
       }
+      const tm = TILDE_RE.exec(trimmed);
+      if (tm) {
+        const value = tm[1].trim();
+        const { key } = parseTildeOptions(tm[2]);
+        if (key === 'fr') fr = value;
+        else if (key === 'fl') fl = value;
+        continue;
+      }
       continue;
     }
 
@@ -76,5 +88,5 @@ export function splitDeck(md: string): SplitResult {
   }
   if (current) rawSlides.push(current);
 
-  return { frontmatter, classes, vars, rawSlides };
+  return { frontmatter, classes, vars, fr, fl, rawSlides };
 }

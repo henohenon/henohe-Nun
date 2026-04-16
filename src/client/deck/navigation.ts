@@ -1,5 +1,4 @@
-const canvas = document.getElementById('canvas')!;
-const slides = Array.from(canvas.querySelectorAll<HTMLElement>('.slide'));
+const slides = Array.from(document.querySelectorAll<HTMLElement>('.slide'));
 const total = slides.length;
 
 function currentIndex(): number {

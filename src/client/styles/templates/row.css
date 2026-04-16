@@ -1,4 +1,9 @@
-.template-shell > .blocks {
+.template-row {
+  @apply w-full h-full grid box-border;
+  grid-template-rows: auto 1fr;
+  padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
+}
+.template-row > .blocks {
   @apply grid items-start min-h-0;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, auto);
