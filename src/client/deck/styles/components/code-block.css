@@ -1,0 +1,111 @@
+@import "highlight.js/styles/github.css";
+
+.code-block {
+  @apply inline-block text-left overflow-hidden;
+  margin: 0.3em 0;
+  border-radius: 0.4em;
+  border: 1px solid var(--border);
+  background: var(--base);
+
+  & .code-header {
+    @apply grid items-center;
+    grid-template-columns: 1fr auto;
+    padding: 0.15em 0.4em;
+    background: var(--body-bg);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.55em;
+    font-family: var(--font-mono);
+
+    & .code-lang,
+    & .code-filename {
+      @apply font-semibold;
+      color: var(--fg-mid);
+      letter-spacing: 0.05em;
+    }
+
+    & .code-lang {
+      @apply uppercase;
+    }
+  }
+
+  & .copy-btn {
+    @apply bg-transparent border-none cursor-pointer opacity-0;
+    border-radius: 0.2em;
+    padding: 0.1em 0.3em;
+    color: var(--sub);
+    font-family: inherit;
+    font-size: 1em;
+    transition: opacity 0.15s;
+
+    &:hover {
+      background: var(--overlay);
+    }
+  }
+
+  &:hover .copy-btn {
+    @apply opacity-100;
+  }
+
+  & pre {
+    @apply m-0 rounded-none bg-transparent whitespace-pre-wrap break-all;
+    padding: 0.4em 0.6em;
+
+    & code {
+      @apply bg-transparent;
+      font-size: 0.7em;
+      line-height: 1.4;
+      font-family: var(--font-mono);
+    }
+
+    /* Line numbers: opted in via `#L<start>` in the fence lang. The `<code>`
+       becomes a 2-column grid so the gutter auto-sizes to the widest number —
+       no digit math needed. The copy button reads `code.dataset.source` so
+       the displayed numbers stay out of the clipboard. */
+    &.line-numbers code {
+      @apply grid;
+      grid-template-columns: auto 1fr;
+      column-gap: 0.6em;
+    }
+
+    /* In line-numbered diffs, the row background must not bleed under the
+       gutter cell, so drop the pre-padding-canceling side margins here. */
+    &.line-numbers .diff-line {
+      @apply m-0;
+    }
+  }
+
+  & code {
+    @apply bg-transparent p-0 rounded-none;
+    font-size: 0.7em;
+    color: inherit;
+  }
+
+  & .ln {
+    @apply text-right select-none;
+    color: var(--sub);
+    opacity: 0.6;
+  }
+
+  /* Diff code blocks: `diff_<lang>` fences. Each line is wrapped so added/
+     removed rows get a tinted background while retaining syntax highlighting. */
+  & .diff-line {
+    @apply block;
+    margin: 0 -0.6em;
+
+    &.diff-add {
+      background: var(--diff-add);
+    }
+    &.diff-del {
+      background: var(--diff-del);
+    }
+  }
+}
+
+.slide code {
+  font-family: var(--font-mono);
+  font-size: clamp(12px, 4.25cqmin, 85px);
+  background: var(--body-bg);
+  padding: 0.1em 0.3em;
+  border-radius: 0.25em;
+  color: var(--code-accent);
+}

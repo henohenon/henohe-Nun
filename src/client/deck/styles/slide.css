@@ -1,0 +1,185 @@
+.slide {
+  @apply hidden absolute inset-0 overflow-hidden;
+  container-type: size;
+  background-color: var(--base);
+  color: var(--main);
+  font-family: var(--font-body);
+
+  /* Bold text uses brand color */
+  & strong,
+  & b,
+  & h1,
+  & h2,
+  & h3 {
+    color: var(--brand);
+  }
+
+  & .bg-layer {
+    @apply absolute inset-0;
+  }
+
+  & .slide-content {
+    @apply absolute inset-0;
+
+    & .slide-title {
+      @apply font-black m-0 leading-none;
+      font-size: var(--slide-title-size);
+      letter-spacing: -0.025em;
+      color: var(--brand);
+    }
+
+    /* ─── Slide body typography ────────────────────────────────────────── */
+
+    & .slide-body {
+      @apply font-medium box-border;
+      --body-bg: var(--muted);
+      font-size: var(--text-body);
+      line-height: 1.55;
+      color: var(--main);
+      margin-top: clamp(10px, 4cqmin, 80px);
+      padding: 5px 0;
+
+      & p {
+        @apply m-0;
+      }
+
+      & a {
+        @apply underline;
+        color: inherit;
+        text-underline-offset: 0.15em;
+        text-decoration-color: var(--sub);
+      }
+
+      & strong,
+      & b {
+        @apply font-bold;
+        -webkit-text-stroke: 0.005em currentColor;
+      }
+
+      & img {
+        @apply w-full h-full object-contain;
+      }
+
+      & hr {
+        @apply border-none;
+        border-top: 0.06em solid var(--border);
+        margin: 0.6em 0;
+      }
+
+      & .blank-spacer {
+        height: calc(var(--blanks, 1) * 0.5em);
+      }
+
+      /* Headings */
+      & :is(h2, h3, h4, h5, h6) {
+        @apply font-extrabold;
+        color: var(--brand);
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin: 0.6em 0 0.15em;
+
+        &:first-child {
+          @apply mt-0;
+        }
+      }
+
+      & h2 {
+        font-size: clamp(22px, 8cqmin, 160px);
+      }
+
+      & h3 {
+        @apply font-bold;
+        font-size: clamp(17px, 6.25cqmin, 125px);
+      }
+
+      & h4 {
+        @apply font-bold;
+        font-size: clamp(15px, 5.25cqmin, 105px);
+      }
+
+      & h5,
+      & h6 {
+        @apply font-bold;
+      }
+
+      /* Lists */
+      & ul {
+        @apply list-none m-0;
+        padding: 0 0 0 0.6em;
+
+        & > li {
+          @apply relative;
+          padding-left: 0.8em;
+
+          &::before {
+            @apply absolute rounded-full;
+            content: "";
+            left: -0.1em;
+            top: 0.65em;
+            width: 0.4em;
+            height: 0.4em;
+            background: currentColor;
+          }
+        }
+      }
+
+      & ol {
+        @apply m-0;
+        list-style: decimal;
+        padding: 0 0 0 1.6em;
+      }
+
+      & li {
+        margin: 0.2em 0;
+      }
+
+      /* Blockquote */
+      & blockquote {
+        @apply italic;
+        font-size: clamp(13px, 4.5cqmin, 90px);
+        margin: 0.3em 0;
+        padding: 0.2em 0 0.2em 0.6em;
+        border-left: 0.15em solid var(--brand);
+        color: var(--fg-mid);
+
+        & p {
+          @apply m-0;
+        }
+      }
+
+      /* Table */
+      & table {
+        @apply overflow-hidden;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 0.3em 0;
+        font-size: clamp(11px, 4cqmin, 80px);
+        line-height: 1.4;
+        border: 1px solid var(--border);
+        border-radius: 0.4em;
+        background: var(--base);
+      }
+
+      & th,
+      & td {
+        @apply text-left;
+        border-bottom: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        padding: 0.3em 0.6em;
+
+        &:last-child {
+          @apply border-r-none;
+        }
+      }
+
+      & tr:last-child td {
+        @apply border-b-none;
+      }
+
+      & th {
+        @apply font-bold;
+        background: var(--body-bg);
+      }
+    }
+  }
+}

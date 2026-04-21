@@ -2,20 +2,13 @@
 // Imported as <script type="module"> in deck pages.
 
 import 'virtual:uno.css';
-import '../styles/theme.css';
-import '../styles/components/typography.css';
-import '../styles/components/code-block.css';
-import '../styles/components/link-card.css';
-import '../styles/components/footer.css';
-import '../styles/components/table.css';
-import '../styles/templates/default.css';
-import '../styles/templates/title.css';
-import '../styles/templates/big.css';
-import '../styles/templates/small.css';
-import '../styles/templates/me.css';
-import '../styles/templates/note.css';
-import '../styles/templates/row.css';
-import '../styles/deck.css';
+import '../theme.css';
+import './styles/deck.css';
+import './styles/slide.css';
+import './styles/components/code-block.css';
+import './styles/components/link-card.css';
+import './styles/components/footer.css';
+import './styles/templates/utils.css';
 
 import './favicon';
 import './cursor-dot';

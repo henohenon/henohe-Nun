@@ -1,0 +1,34 @@
+.slide-footer-svg {
+  @apply absolute inset-0 pointer-events-none overflow-visible z-1;
+
+  & > .footer-svg-line,
+  & > .footer-svg-fl,
+  & > .footer-svg-fr {
+    fill: var(--strong);
+  }
+
+  & .footer-svg-line {
+    x: -1px;
+    width: calc(100cqw + 2px);
+    y: calc(100cqh - var(--footer-line-height) - 1px);
+    height: calc(var(--footer-line-height) + 3px);
+  }
+
+  & .footer-svg-fl,
+  & .footer-svg-fr {
+    @apply font-bold;
+    font-family: var(--font-body);
+    font-size: var(--footer-font-size);
+    dominant-baseline: text-after-edge;
+  }
+
+  & .footer-svg-fl {
+    text-anchor: start;
+    transform: translate(var(--footer-pad-x), calc(100cqh - var(--footer-line-height) - var(--footer-text-nudge)));
+  }
+
+  & .footer-svg-fr {
+    text-anchor: end;
+    transform: translate(calc(100cqw - var(--footer-pad-x)), calc(100cqh - var(--footer-line-height) - var(--footer-text-nudge)));
+  }
+}
