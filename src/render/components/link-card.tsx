@@ -16,9 +16,7 @@ const LinkCard: FC<{ ogp: OgpData; vertical: boolean }> = ({ ogp, vertical }) =>
     <div class={cls}>
       <div class="link-card-body">
         <div class="link-card-title">{ogp.title}</div>
-        {ogp.description
-          ? <div class="link-card-desc">{ogp.description}</div>
-          : <div />}
+        {ogp.description && <div class="link-card-desc">{ogp.description}</div>}
         <div class="link-card-site">
           {ogp.favicon && (
             <img class="link-card-favicon" src={ogp.favicon} alt="" onerror="this.style.display='none'" />

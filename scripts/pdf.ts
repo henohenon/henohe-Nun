@@ -48,7 +48,7 @@ try {
   await runExport('pdf', async (browser, deck) => {
     // PDF is vector-based; deviceScaleFactor is not needed. Pass scale only to page.pdf().
     const { ctx, page } = await openDeckPage(browser, deck, { width: WIDTH, height: HEIGHT });
-    const printCss = await readFile('src/client/styles/print.css', 'utf-8');
+    const printCss = await readFile('src/client/deck/styles/print.css', 'utf-8');
     await page.addStyleTag({ content: printCss });
     // Nested decks (`sub/foo`) need their parent dir created too.
     const pdfPath = join(PDF_DIR, `${deck}.pdf`);

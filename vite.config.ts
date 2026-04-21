@@ -1,10 +1,8 @@
 import devServer from '@hono/vite-dev-server';
 import UnoCSS from 'unocss/vite';
 import { defineConfig } from 'vite';
+import { BASE, SITE } from './src/site';
 import { ssgPlugin } from './src/ssg';
-
-const BASE = '/henohe-Nun/';
-const SITE = 'https://henohenon.github.io';
 
 export default defineConfig({
   base: BASE,

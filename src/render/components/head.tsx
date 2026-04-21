@@ -23,28 +23,24 @@ export const HeadMeta: FC<HeadProps> = ({ title, description, ogTitle, ogImage, 
         href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@100;200;300;400;500;600;700&display=swap"
       />
       {description && <meta name="description" content={description} />}
-      {ogTitle && (
+      {ogTitle && <meta property="og:title" content={ogTitle} />}
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="へのへ Nun" />
+      <meta property="og:locale" content="ja_JP" />
+      {description && <meta property="og:description" content={description} />}
+      {ogUrl && <meta property="og:url" content={ogUrl} />}
+      {ogImage && (
         <>
-          <meta property="og:title" content={ogTitle} />
-          <meta property="og:type" content="website" />
-          <meta property="og:site_name" content="へのへ Nun" />
-          <meta property="og:locale" content="ja_JP" />
-          {description && <meta property="og:description" content={description} />}
-          {ogUrl && <meta property="og:url" content={ogUrl} />}
-          {ogImage && (
-            <>
-              <meta property="og:image" content={ogImage} />
-              <meta property="og:image:width" content="1200" />
-              <meta property="og:image:height" content="630" />
-            </>
-          )}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:site" content="@henohenon_8282" />
-          <meta name="twitter:title" content={ogTitle} />
-          {description && <meta name="twitter:description" content={description} />}
-          {ogImage && <meta name="twitter:image" content={ogImage} />}
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
         </>
       )}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@henohenon_8282" />
+      {ogTitle && <meta name="twitter:title" content={ogTitle} />}
+      {description && <meta name="twitter:description" content={description} />}
+      {ogImage && <meta name="twitter:image" content={ogImage} />}
     </>
   );
 };

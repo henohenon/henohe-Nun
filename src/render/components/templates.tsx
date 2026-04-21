@@ -97,7 +97,6 @@ const RowTemplate: FC<TemplateProps> = ({ heading, sections }) => {
 export const templates: Record<string, TemplateEntry> = {
   default: { css: 'template-default', render: DefaultTemplate },
   title: { css: 'template-title', render: TitleTemplate },
-  hero: { css: 'template-title', render: TitleTemplate },
   me: { css: 'template-me', render: MeTemplate },
   big: { css: 'template-big', render: BigTemplate },
   small: { css: 'template-small', render: SmallTemplate },

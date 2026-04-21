@@ -15,7 +15,7 @@ function htmlToSvgText(html: string): string {
     .replace(/<b>(.*?)<\/b>/g, '<tspan font-weight="900">$1</tspan>')
     .replace(/<del>(.*?)<\/del>/g, '<tspan style="text-decoration:line-through">$1</tspan>')
     .replace(/<em>(.*?)<\/em>/g, '<tspan font-style="italic">$1</tspan>')
-    .replace(/<[^>]+>/g, '');
+    .replace(/<(?!\/?tspan[\s>])[^>]+>/g, '');
 }
 
 export const FooterLayer: FC<{

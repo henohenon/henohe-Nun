@@ -59,7 +59,6 @@ export function createApp(opts: AppOptions) {
 }
 
 // Dev server entry (used by @hono/vite-dev-server)
-const BASE = '/henohe-Nun/';
-const SITE = 'https://henohenon.github.io';
+import { BASE, SITE } from './site';
 
 export default createApp({ base: BASE, site: SITE });

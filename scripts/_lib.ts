@@ -21,11 +21,12 @@ import { tmpdir } from 'node:os';
 import { extname, join } from 'node:path';
 import { type Browser, type BrowserContext, chromium, type Page } from 'playwright';
 
+import { BASE } from '../src/site';
+
 const PORT = 4322;
 export const WIDTH = 1920;
 export const HEIGHT = 1080;
 const DIST_DIR = 'dist';
-const BASE = '/henohe-Nun/';
 
 // --scale=N flag (deviceScaleFactor for screenshots, also used by pdf).
 // Defaults to 1. Use 2 for retina-quality PNGs (3840×2160).
