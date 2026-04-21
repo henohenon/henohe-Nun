@@ -2,7 +2,7 @@
 
 import { type MarkdownRenderers, renderMarkdown } from '../markdown';
 import type { OgpData } from '../ogp-fetch';
-import type { RawSection } from './meta';
+import type { RawSection } from './build';
 
 export type ResolvedSection = {
   heading?: string;
@@ -11,19 +11,13 @@ export type ResolvedSection = {
   body: string;
 };
 
-function renderSection(
-  raw: RawSection,
-  ogpMap: Map<string, OgpData | null>,
-  renderers: MarkdownRenderers,
-): ResolvedSection {
-  const body = renderMarkdown(raw.lines.join('\n'), ogpMap, renderers);
-  return { heading: raw.heading, classes: raw.classes, vars: raw.vars, body };
-}
-
 export function renderSections(
   rawSections: RawSection[],
   ogpMap: Map<string, OgpData | null>,
   renderers: MarkdownRenderers,
 ): ResolvedSection[] {
-  return rawSections.map((s) => renderSection(s, ogpMap, renderers));
+  return rawSections.map((s) => {
+    const body = renderMarkdown(s.lines.join('\n'), ogpMap, renderers);
+    return { heading: s.heading, classes: s.classes, vars: s.vars, body };
+  });
 }

@@ -1,13 +1,13 @@
-import { splitDeck } from '../../parser/pipeline/split';
+import { buildDeckTree } from '../../parser/pipeline/build';
 import { HeadMeta, type HeadProps } from '../components/head';
 import type { PageOptions } from '../types';
 
 export function indexPage(decks: { name: string; md: string }[], opts: PageOptions): string {
   const items = decks
     .map(({ name, md }) => {
-      const s1 = splitDeck(md);
-      const title = s1.rawSlides[0]?.heading ?? name;
-      const date = s1.frontmatter.date ?? null;
+      const tree = buildDeckTree(md);
+      const title = tree.slides[0]?.heading ?? name;
+      const date = tree.frontmatter.date ?? null;
       return { name, title, date };
     })
     .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
