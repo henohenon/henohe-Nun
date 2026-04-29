@@ -1,105 +1,139 @@
 import type { FC } from 'hono/jsx';
+import type { HtmlEscapedString } from 'hono/utils/html';
 import { raw } from 'hono/html';
 import { renderInline } from '../../parser/markdown';
-import type { ResolvedSection } from '../../parser/pipeline/render';
+import type { ResolvedArticle } from '../../parser/pipeline/render';
 
-export type TemplateProps = {
-  heading: string;
-  sections: ResolvedSection[];
+/* ─── CSS class mapping ───────────────────────────────────────────────────── */
+
+export const templateCSS: Record<string, string> = {
+  default: 'template-default',
+  title: 'template-title',
+  me: 'template-me',
+  big: 'template-big',
+  small: 'template-small',
+  note: 'template-note',
 };
 
-type TemplateEntry = {
-  css: string;
-  render: FC<TemplateProps>;
-};
+/* ─── Shared helpers ──────────────────────────────────────────────────────── */
 
-const DefaultTemplate: FC<TemplateProps> = ({ heading, sections }) => {
-  const body = sections.map((s) => s.body).join('');
+type ArticleContentProps = { article: ResolvedArticle };
+
+function Heading({ level, children }: { level: number; children: string }) {
+  const Tag = `h${level}` as 'h1';
+  return <Tag>{children}</Tag>;
+}
+
+function BodyContent({ article: a }: ArticleContentProps): HtmlEscapedString {
   return (
     <>
-      {heading && <h1 class="slide-title">{heading}</h1>}
-      <div class="slide-body body">{raw(body)}</div>
+      {a.body.trim() && raw(a.body)}
+      {a.children.length > 0 && renderArticles(a.children)}
+    </>
+  ) as HtmlEscapedString;
+}
+
+/* ─── Template content renderers ──────────────────────────────────────────── */
+
+const DefaultContent: FC<ArticleContentProps> = ({ article: a }) => {
+  const hasContent = a.body.trim() || a.children.length > 0;
+  return (
+    <>
+      {a.heading && <Heading level={a.headingLevel}>{a.heading}</Heading>}
+      {hasContent && (
+        <div class={['body', ...a.bodyClasses].join(' ')}>
+          <BodyContent article={a} />
+        </div>
+      )}
     </>
   );
 };
 
-const TitleTemplate: FC<TemplateProps> = ({ heading, sections }) => {
-  const subtitle = sections.find((s) => s.heading)?.heading;
+const MeContent: FC<ArticleContentProps> = ({ article: a }) => {
+  const hasContent = a.body.trim() || a.children.length > 0;
+  return (
+    <>
+      {a.heading && <Heading level={a.headingLevel}>{a.heading}</Heading>}
+      {hasContent && (
+        <div class={['body', ...a.bodyClasses].join(' ')}>
+          <div class="left">
+            {a.icon && <img class={['icon', ...(a.iconOptions ?? [])].join(' ')} src={a.icon} alt="" />}
+          </div>
+          <div class="right">
+            <BodyContent article={a} />
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+const NoteContent: FC<ArticleContentProps> = ({ article: a }) => {
+  const hasContent = a.body.trim() || a.children.length > 0;
+  const captionHtml = a.caption ? renderInline(a.caption) : '';
+  return (
+    <>
+      {a.heading && <Heading level={a.headingLevel}>{a.heading}</Heading>}
+      {hasContent && (
+        <div class={['body', ...a.bodyClasses].join(' ')}>
+          <div class="body-center">
+            <BodyContent article={a} />
+          </div>
+          {captionHtml && (
+            <div class="body-bottom">
+              <p>{raw(captionHtml)}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  );
+};
+
+const TitleContent: FC<ArticleContentProps> = ({ article: a }) => {
+  const subtitle = a.children.find((c) => c.heading)?.heading;
   const subtitleHtml = subtitle ? renderInline(subtitle) : '';
   return (
     <>
       <div class="henoheno" id="henoheno-slot" />
       <div class="text">
-        <h1 class="title">{heading}</h1>
+        {a.heading && <h1 class="title">{a.heading}</h1>}
         {subtitleHtml && <p class="subtitle">{raw(subtitleHtml)}</p>}
       </div>
     </>
   );
 };
 
-const MeTemplate: FC<TemplateProps> = ({ heading, sections }) => {
-  const body = sections.map((s) => s.body).join('');
-  return (
-    <>
-      <div class="slide-body">
-        <div class="left" />
-        <div class="right">{raw(body)}</div>
-      </div>
-      <h1 class="slide-title label">{heading}</h1>
-    </>
-  );
-};
-
-const BigTemplate: FC<TemplateProps> = ({ heading }) => (
-  <h1 class="text">{heading}</h1>
+const CenteredContent: FC<ArticleContentProps> = ({ article: a }) => (
+  <>{a.heading && <h1 class="text">{a.heading}</h1>}</>
 );
 
-const SmallTemplate: FC<TemplateProps> = ({ heading }) => (
-  <h1 class="text">{heading}</h1>
-);
+const templateContent: Record<string, FC<ArticleContentProps>> = {
+  default: DefaultContent,
+  title: TitleContent,
+  me: MeContent,
+  big: CenteredContent,
+  small: CenteredContent,
+  note: NoteContent,
+};
 
-const NoteTemplate: FC<TemplateProps> = ({ heading, sections }) => {
-  const caption = sections.find((s) => s.heading)?.heading;
-  const captionHtml = caption ? renderInline(caption) : '';
-  const body = sections.map((s) => s.body).join('');
+/* ─── Article rendering ───────────────────────────────────────────────────── */
+
+function renderArticle(a: ResolvedArticle): HtmlEscapedString {
+  const cls = [a.template !== 'default' ? a.template : '', ...a.classes].filter(Boolean);
+  const style = Object.entries(a.vars)
+    .map(([k, v]) => `--${k}:${v}`)
+    .join(';');
+  const Content = templateContent[a.template] ?? templateContent.default;
   return (
-    <>
-      <h1 class="slide-title">{heading}</h1>
-      <div class="slide-body body">
-        <div class="body-center">{raw(body)}</div>
-        {captionHtml && (
-          <div class="body-bottom">
-            <p>{raw(captionHtml)}</p>
-          </div>
-        )}
-      </div>
-    </>
-  );
-};
+    <article class={cls.join(' ') || undefined} style={style || undefined}>
+      <Content article={a} />
+    </article>
+  ) as HtmlEscapedString;
+}
 
-const RowTemplate: FC<TemplateProps> = ({ heading, sections }) => {
-  const blocks = sections.filter((s) => s.heading !== undefined || s.body.trim());
-  return (
-    <>
-      {heading && <h1 class="slide-title">{heading}</h1>}
-      <div class="slide-body blocks">
-        {blocks.map((s) => (
-          <div class="row-block">
-            {s.heading && <h2>{s.heading}</h2>}
-            {raw(s.body)}
-          </div>
-        ))}
-      </div>
-    </>
-  );
-};
-
-export const templates: Record<string, TemplateEntry> = {
-  default: { css: 'template-default', render: DefaultTemplate },
-  title: { css: 'template-title', render: TitleTemplate },
-  me: { css: 'template-me', render: MeTemplate },
-  big: { css: 'template-big', render: BigTemplate },
-  small: { css: 'template-small', render: SmallTemplate },
-  note: { css: 'template-note', render: NoteTemplate },
-  row: { css: 'template-row', render: RowTemplate },
-};
+export function renderArticles(articles: ResolvedArticle[]): HtmlEscapedString[] {
+  return articles
+    .filter((a) => a.heading !== undefined || a.body.trim() || a.children.length > 0)
+    .map(renderArticle);
+}

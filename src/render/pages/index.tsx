@@ -6,7 +6,7 @@ export function indexPage(decks: { name: string; md: string }[], opts: PageOptio
   const items = decks
     .map(({ name, md }) => {
       const tree = buildDeckTree(md);
-      const title = tree.slides[0]?.heading ?? name;
+      const title = tree.slides[0]?.articles[0]?.heading ?? name;
       const date = tree.frontmatter.date ?? null;
       return { name, title, date };
     })

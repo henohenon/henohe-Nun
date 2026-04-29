@@ -1,5 +1,6 @@
 @import "highlight.js/styles/github.css";
 
+@layer templates {
 .code-block {
   @apply inline-block text-left overflow-hidden;
   margin: 0.3em 0;
@@ -109,3 +110,4 @@
   border-radius: 0.25em;
   color: var(--code-accent);
 }
+} /* @layer templates */

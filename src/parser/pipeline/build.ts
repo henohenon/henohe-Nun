@@ -1,28 +1,34 @@
 // Build: MD string -> DeckTree (frontmatter + classified line tree)
-// Replaces split.ts + meta.ts's extractSlideMeta + splitSections in a single pass.
+// Headings ##–###### create a nested article tree based on heading level.
 
 import { taggedLines } from '../markdown/fence';
-import { type LineSyntax, classifyLine } from '../syntax';
+import type { BgImage } from '../types';
+import { type LineSyntax, MD_IMG_RE, classifyLine } from '../syntax';
 
-export type RawSection = {
+export type RawArticle = {
   heading?: string;
+  headingLevel: number;
+  template: string;
   classes: string[];
+  bodyClasses: string[];
   vars: Record<string, string>;
   lines: string[];
+  children: RawArticle[];
+  icon?: string;
+  iconOptions?: string[];
+  caption?: string;
 };
 
 export type DeckTreeSlide = {
-  heading: string;
-  classes: string[];
-  vars: Record<string, string>;
-  template: string;
-  sections: RawSection[];
+  articles: RawArticle[];
 };
 
 export type DeckTree = {
   frontmatter: Record<string, string>;
   classes: string[];
   vars: Record<string, string>;
+  bg?: BgImage;
+  fbg?: BgImage;
   fr?: string;
   fl?: string;
   slides: DeckTreeSlide[];
@@ -47,6 +53,10 @@ function classifyAll(lines: string[]): LineSyntax[] {
   );
 }
 
+function newArticle(heading: string | undefined, level: number): RawArticle {
+  return { heading, headingLevel: level, template: 'default', classes: [], bodyClasses: [], vars: {}, lines: [], children: [] };
+}
+
 // --- Tree builder ---
 
 export function buildDeckTree(md: string): DeckTree {
@@ -69,24 +79,32 @@ export function buildDeckTree(md: string): DeckTree {
   // 3. Build tree in a single scan
   const rootClasses: string[] = [];
   const rootVars: Record<string, string> = {};
+  let rootBg: BgImage | undefined;
+  let rootFbg: BgImage | undefined;
   let rootFr: string | undefined;
   let rootFl: string | undefined;
   const slides: DeckTreeSlide[] = [];
   let slide: DeckTreeSlide | null = null;
-  let slideMeta = true; // accepting slide-level meta declarations
+  let slideMeta = true;
+  let templateSeen = false;
+  // Stack tracks nesting: [rootArticle, ##article, ###article, ...]
+  let stack: RawArticle[] = [];
 
   for (const line of classified) {
     // H1 = new slide boundary
     if (line.syntax === 'h1') {
-      slide = {
-        heading: line.heading,
-        classes: [],
-        vars: {},
-        template: 'default',
-        sections: [{ classes: [], vars: {}, lines: [] }],
-      };
+      // Finalize previous slide's root article
+      if (slide && !templateSeen) {
+        const prevRoot = slide.articles[0];
+        prevRoot.bodyClasses.push(...prevRoot.classes);
+        prevRoot.classes = [];
+      }
+      const root = newArticle(line.heading, 1);
+      slide = { articles: [root] };
       slides.push(slide);
+      stack = [root];
       slideMeta = true;
+      templateSeen = false;
       continue;
     }
 
@@ -96,61 +114,114 @@ export function buildDeckTree(md: string): DeckTree {
         rootClasses.push(...line.classes);
       } else if (line.syntax === 'var') {
         rootVars[line.name] = line.value;
-      } else if (line.syntax === 'tilde') {
+      } else if (line.syntax === 'nwyt') {
         if (line.key === 'fr') rootFr = line.value;
         else if (line.key === 'fl') rootFl = line.value;
+        else if (line.key === 'bg' || line.key === 'fbg') {
+          const imgMatch = MD_IMG_RE.exec(line.value);
+          const src = imgMatch ? imgMatch[2] : line.value;
+          const img: BgImage = { src, options: line.options };
+          if (line.key === 'bg') rootBg = img;
+          else rootFbg = img;
+        }
       }
       continue;
     }
 
-    // H2 = new section within current slide
+    // H2–H6 = new article, nested by heading level
     if (line.syntax === 'h2') {
-      slide.sections.push({
-        heading: line.heading || undefined,
-        classes: [],
-        vars: {},
-        lines: [],
-      });
+      const article = newArticle(line.heading || undefined, line.level);
+
+      // Pop stack until top's level is less than new heading's level
+      while (stack.length > 1 && stack[stack.length - 1].headingLevel >= line.level) {
+        stack.pop();
+      }
+
+      const parent = stack[stack.length - 1];
+      if (parent.headingLevel <= 1) {
+        // Direct child of root → top-level article in slide.articles
+        slide.articles.push(article);
+      } else {
+        // Nested under a higher-level heading
+        parent.children.push(article);
+      }
+      stack.push(article);
       slideMeta = false;
       continue;
     }
 
-    // Slide-level meta (top of slide, before any content)
+    // Slide-level meta (top of slide, before any content) → goes to root article
     if (slideMeta) {
       if (line.syntax === 'blank') continue;
       if (line.syntax === 'class') {
-        slide.classes.push(...line.classes);
+        if (templateSeen) {
+          stack[0].bodyClasses.push(...line.classes);
+        } else {
+          stack[0].classes.push(...line.classes);
+        }
         continue;
       }
       if (line.syntax === 'var') {
-        slide.vars[line.name] = line.value;
+        stack[0].vars[line.name] = line.value;
         continue;
       }
       if (line.syntax === 'template') {
-        slide.template = line.name;
+        stack[0].template = line.name;
+        templateSeen = true;
         continue;
       }
       slideMeta = false;
-      // fall through to section content
+      // fall through to article content
     }
 
-    // Section-level meta (top of section, before any content lines)
-    const section = slide.sections[slide.sections.length - 1];
-    if (section.lines.length === 0 && line.syntax !== 'fenced') {
+    // Current article = top of stack
+    const article = stack[stack.length - 1];
+
+    // Article-level meta (top of article, before any content lines)
+    // Classes before template → article classes; after template → body classes
+    if (article.lines.length === 0 && line.syntax !== 'fenced') {
       if (line.syntax === 'blank') continue;
+      if (line.syntax === 'template') {
+        article.template = line.name;
+        continue;
+      }
       if (line.syntax === 'class') {
-        section.classes.push(...line.classes);
+        if (article.template !== 'default') {
+          article.bodyClasses.push(...line.classes);
+        } else {
+          article.classes.push(...line.classes);
+        }
         continue;
       }
       if (line.syntax === 'var') {
-        section.vars[line.name] = line.value;
+        article.vars[line.name] = line.value;
         continue;
       }
     }
 
-    // Content (including fenced, tilde, and everything else)
-    section.lines.push(line.raw);
+    // Content (including fenced, nwyt, and everything else)
+    article.lines.push(line.raw);
   }
 
-  return { frontmatter, classes: rootClasses, vars: rootVars, fr: rootFr, fl: rootFl, slides };
+  // Finalize last slide's root article
+  if (slide && !templateSeen) {
+    const lastRoot = slide.articles[0];
+    lastRoot.bodyClasses.push(...lastRoot.classes);
+    lastRoot.classes = [];
+  }
+
+  // Finalize articles: if no template declared, move classes to bodyClasses
+  function finalizeArticles(articles: RawArticle[]) {
+    for (const a of articles) {
+      if (a.template === 'default') {
+        a.bodyClasses.push(...a.classes);
+        a.classes = [];
+      }
+      finalizeArticles(a.children);
+    }
+  }
+  // Skip root article (articles[0]) — already finalized above
+  for (const s of slides) finalizeArticles(s.articles.slice(1));
+
+  return { frontmatter, classes: rootClasses, vars: rootVars, bg: rootBg, fbg: rootFbg, fr: rootFr, fl: rootFl, slides };
 }

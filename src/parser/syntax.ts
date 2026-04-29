@@ -1,19 +1,21 @@
 // Shared syntax patterns for the 5 Nun markup types
 
-export const CLASS_RE = /^(\.[a-zA-Z][\w-]*(?:\.[a-zA-Z][\w-]*)*)$/;
+// Each class segment: starts with letter, then word/slash/hyphen chars, optionally with [...] arbitrary values
+const CLS_SEG = /[a-zA-Z][\w/\-]*(?:\[[^\]]*\][\w/\-]*)*/;
+export const CLASS_RE = new RegExp(`^(\\.(?:${CLS_SEG.source})(?:\\.(?:${CLS_SEG.source}))*)$`);
 export const VAR_RE = /^\$([a-zA-Z][\w-]*):\s*(.+)$/;
 export const TEMPLATE_RE = /^\u{1F30A}(\w+)\s*$/u;
 export const H1_RE = /^#\s+(.*)$/;
-export const H2_RE = /^##\s*(.*)$/;
-export const TILDE_RE = /^(.+)~(\w+(?:\.\w[\w-]*)*)$/;
+export const H2_RE = /^(#{2,6})\s*(.*)$/;
+export const NWYT_RE = /^(.+)~(\w+(?:\.\w[\w-]*)*)$/;
 export const MD_IMG_RE = /^!\[([^\]]*)\]\(([^)]+)\)$/;
 export const LINK_CARD_RE = /^\[([^\]]*)\]\(([^)]+)\)~card(?:\.\w+)*$/;
 
 export function parseClasses(dotted: string): string[] {
-  return dotted.split('.').filter(Boolean);
+  return dotted.match(new RegExp(CLS_SEG.source, 'g')) || [];
 }
 
-export function parseTildeOptions(raw: string): { key: string; options: string[] } {
+export function parseNwytOptions(raw: string): { key: string; options: string[] } {
   const parts = raw.split('.');
   return { key: parts[0], options: parts.slice(1) };
 }
@@ -22,11 +24,11 @@ export function parseTildeOptions(raw: string): { key: string; options: string[]
 
 export type LineSyntax =
   | { syntax: 'h1'; heading: string; raw: string }
-  | { syntax: 'h2'; heading: string; raw: string }
+  | { syntax: 'h2'; heading: string; level: number; raw: string }
   | { syntax: 'class'; classes: string[]; raw: string }
   | { syntax: 'var'; name: string; value: string; raw: string }
   | { syntax: 'template'; name: string; raw: string }
-  | { syntax: 'tilde'; value: string; key: string; options: string[]; raw: string }
+  | { syntax: 'nwyt'; value: string; key: string; options: string[]; raw: string }
   | { syntax: 'fenced'; raw: string }
   | { syntax: 'content'; raw: string }
   | { syntax: 'blank'; raw: string };
@@ -40,9 +42,9 @@ export function classifyLine(trimmed: string, raw: string): LineSyntax {
     if (h1) return { syntax: 'h1', heading: h1[1], raw };
   }
 
-  if ((trimmed.startsWith('## ') || trimmed === '##') && !trimmed.startsWith('###')) {
+  if (trimmed.startsWith('##') && !trimmed.startsWith('#######')) {
     const h2 = H2_RE.exec(trimmed);
-    return { syntax: 'h2', heading: h2?.[1]?.trim() ?? '', raw };
+    if (h2) return { syntax: 'h2', heading: h2[2].trim(), level: h2[1].length, raw };
   }
 
   const cm = CLASS_RE.exec(trimmed);
@@ -54,10 +56,10 @@ export function classifyLine(trimmed: string, raw: string): LineSyntax {
   const tm = TEMPLATE_RE.exec(trimmed);
   if (tm) return { syntax: 'template', name: tm[1], raw };
 
-  const tl = TILDE_RE.exec(trimmed);
+  const tl = NWYT_RE.exec(trimmed);
   if (tl) {
-    const { key, options } = parseTildeOptions(tl[2]);
-    return { syntax: 'tilde', value: tl[1].trim(), key, options, raw };
+    const { key, options } = parseNwytOptions(tl[2]);
+    return { syntax: 'nwyt', value: tl[1].trim(), key, options, raw };
   }
 
   return { syntax: 'content', raw };

@@ -1,3 +1,4 @@
+@layer templates {
 .slide {
   @apply hidden absolute inset-0 overflow-hidden;
   container-type: size;
@@ -15,22 +16,22 @@
   }
 
   & .bg-layer {
-    @apply absolute inset-0;
+    @apply absolute inset-0 bg-no-repeat bg-contain bg-center;
   }
 
   & .slide-content {
     @apply absolute inset-0;
 
-    & .slide-title {
+    & > h1 {
       @apply font-black m-0 leading-none;
       font-size: var(--slide-title-size);
       letter-spacing: -0.025em;
       color: var(--brand);
     }
 
-    /* ─── Slide body typography ────────────────────────────────────────── */
+    /* ─── Body typography ──────────────────────────────────────────────── */
 
-    & .slide-body {
+    & > .body {
       @apply font-medium box-border;
       --body-bg: var(--muted);
       font-size: var(--text-body);
@@ -57,7 +58,7 @@
       }
 
       & img {
-        @apply w-full h-full object-contain;
+        @apply max-w-full h-auto object-contain;
       }
 
       & hr {
@@ -183,3 +184,4 @@
     }
   }
 }
+} /* @layer templates */

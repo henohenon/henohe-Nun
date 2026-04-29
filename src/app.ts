@@ -33,6 +33,11 @@ export function createApp(opts: AppOptions) {
 
   const app = new Hono().basePath(base);
 
+  app.onError((err, c) => {
+    console.error(`[nun] ${c.req.path}:`, err);
+    return c.text(String(err), 500);
+  });
+
   app.get('/', (c) => {
     const deckNames = listDecks(BENBEN_DIR);
     const decks = deckNames

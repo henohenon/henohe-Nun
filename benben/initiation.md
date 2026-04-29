@@ -2,7 +2,7 @@
 date: 2026/04/10
 ---
 へのへ Nun~fr
-![](/henohe-Nun.png)~fbg
+![](/henohe-Nun/images/henohe-Nun.png)~fbg
 
 # Initiation
 🌊title
@@ -10,22 +10,28 @@ date: 2026/04/10
 
 # Index
 - [About](#2)
-- Usage
-  - Run
-  - File Paths
-  - Navigation
-- Basic Syntax
-  - Markdown
-  - Code Block
-  - HTML & UnoCSS
+- [Usage](#3)
+  - [Run](#4)
+  - [File Paths](#5)
+  - [Navigation](#6)
+- [Basic Syntax](#7)
+  - [Markdown](#8)
+  - [Code Block](#9)
+  - [HTML & UnoCSS](#10)
 ##
-- Custom Syntax
-  - Overview
-- Templates
-  - Overview
-  - ...
+- [Custom Syntax](#11)
+  - [Overview](#12)
+- [Templates & Classes](#13)
+  - [Default](#14) / [Note](#15) / [Me](#16) / [Title](#17)
+  - [Big](#19) / [Small](#21)
+- Customization
+  - [Footer & Background](#23)
+  - [CSS Variables](#24)
+
 # へのへ Nun
 🌊me
+![icon](/henohe-Nun/images/icon.png)~icon
+
 About~fl
 [へのへのん](https://github.com/henohenon/)'s md2slide project.
 - Markdown→HTML/PDF/PNG Export
@@ -33,9 +39,12 @@ About~fl
 - Responsive Rendering
 
 [GitHub](https://github.com/henohenon/henohe-Nun)~card
+![add image](/henohe-Nun/images/icon.png)
+
 
 # Usage
 🌊big
+
 
 # Run
 ## Setup
@@ -82,7 +91,7 @@ project-root/
 🌊big
 
 # Markdown
-🌊row
+.row
 
 ## Preview
 ### heading
@@ -97,7 +106,6 @@ project-root/
 | 1 | 2 |
 ---
 ## Source
-🌊row
 ```md
 ## Preview
 ### heading
@@ -114,8 +122,20 @@ project-root/
 ```
 
 # Code Block
-🌊row
+.row
+
 ## Preview
+### fence
+.row
+🌊note
+.henoheno
+aflwwekl
+fklwjekfwe~caption
+### fence
+#### fselj
+### fence
+#### fselj
+#### fselj
 basic
 ```ts
 const greet = (name: string): string => `Hello, ${name}!`;
@@ -145,8 +165,7 @@ auto clamp(T val, T lo, T hi) {
 }
 ```
 ## Source
-
-<div class="grid grid-flow-col gap-2">
+.row
 
 ````md
 basic
@@ -165,7 +184,6 @@ fn fibonacci(n: u32) -> u32 {
 }
 ```
 ````
-
 ````md
 with filename
 ```cs:Point.cs
@@ -182,11 +200,11 @@ auto clamp(T val, T lo, T hi) {
 ```
 ````
 
-</div>
-
 # HTML & UnoCSS
-🌊row
-## Preview
+🌊note
+.row.h-full.content-stretch.auto-rows-auto
+## new template is better
+### Preview
 <div id="game" class="relative w-full h-screen bg-slate-900 overflow-hidden font-mono">
   <div class="absolute bottom-0 w-full h-16 bg-slate-800"></div>
   <div id="player" class="absolute bottom-16 left-16 w-12 h-12 bg-blue-500 rounded"></div>
@@ -198,7 +216,7 @@ auto clamp(T val, T lo, T hi) {
 <script>let y=0,vy=0,x=0,score=0,running=false,speed=4,jumping=false;const player=document.getElementById('player'),obs=document.getElementById('obs'),scoreEl=document.getElementById('score'),msg=document.getElementById('msg'),game=document.getElementById('game');window.jump=function(){if(!running){running=true;x=0;score=0;speed=4+Math.random()*3;msg.textContent='';loop();return;}if(!jumping){jumping=true;vy=16;}};function loop(){if(jumping){vy-=0.8;y+=vy;if(y<=0){y=0;vy=0;jumping=false;}}player.style.bottom=(64+y)+'px';x+=speed;const w=game.offsetWidth;if(x>w+40){x=0;score++;scoreEl.textContent=score;speed=4+Math.random()*3;}obs.style.right=x+'px';const obsLeft=w-x;const px=64,py=64+y,pw=48,ph=48;const ox=obsLeft,oy=64,ow=40,oh=80;if(px<ox+ow&&px+pw>ox&&py<oy+oh&&py+ph>oy){running=false;msg.textContent='GAME OVER - SCORE: '+score;return;}requestAnimationFrame(loop);}</script>
 
 
-## Source
+### Source
 ```md
 <div id="game" class="relative w-full h-screen bg-slate-900 overflow-hidden font-mono">
   <div class="absolute bottom-0 w-full h-16 bg-slate-800"></div>
@@ -220,23 +238,28 @@ auto clamp(T val, T lo, T hi) {
 |--------|-------------|
 | `.class` | Add class to scope |
 | `$var: value` | Override CSS variable |
-| `text~fr` | Send value to footer-right |
-| `text~fl` | Send value to footer-left |
+| `text~fr` | Footer right text |
+| `text~fl` | Footer left text |
 | `![](path)~bg` | Slide background |
 | `![](path)~fbg` | Footer background |
+| `![](path)~icon` | Icon (me template) |
+| `[alt](url)~card` | OGP link card |
 | `🌊template` | Set template |
-| `---`frontmatter`---` | Deck-wide metadata |
+| `---` / `---` | Frontmatter (YAML) |
 
-# Templates
+# Templates & Classes
 | Template  | Description |
 |-----------|-------------|
 | `default` | Heading + body |
 | `title`   | Title slide |
-| `big`     | Large centered text |
-| `small`   | Small centered text |
 | `note`    | Centered body + subtitle |
 | `me`      | Profile / intro |
-| `row`     | Horizontal blocks |
+| `big`     | Large centered text |
+| `small`   | Small centered text |
+
+| Class     | Description |
+|-----------|-------------|
+| `.row`    | Horizontal section layout |
 
 # Default
 Heading + body text
@@ -250,32 +273,33 @@ Heading + body text
 ````
 
 # Note
-## Body centered + subtitle below
 🌊note
+## Body centered + subtitle below
 ````md
 # Note
-## Body centered + subtitle below
 🌊note
-```md
-...
-```
+## Body centered + subtitle below
 ````
 
 # Me
 🌊me
+![icon](/henohe-Nun/images/icon.png)~icon
+
 Profile template
+- Icon on the left
 - Body on the right
-- Background only right
 
 ````md
 # Name
 🌊me
+![icon](/path/to/icon.png)~icon
+
 Bio text
 ````
 
 # Title
 Title slide.
-`date` in frontmatter auto-fills `fr`. `fbg` doubles as `bg`.
+`fbg` doubles as `bg`.
 
 ````md
 ---
@@ -283,14 +307,14 @@ date: 2025/02/07
 ---
 ![](/henohe-Nun.png)~fbg
 ...
+🌊title
 # Title
 ## Subtitle
-🌊title
 ````
 
 # Title Sample
-## Subtitle
 🌊title
+## Subtitle
 
 # Big
 Large centered text
@@ -314,45 +338,14 @@ Small centered text
 # Small Sample
 🌊small
 
-# Row
-🌊row
-
-## Syntax
-`## ` splits blocks horizontally.
-
-```md
-# Heading
-🌊row
-
-## Block A
-- item
-## Block B
-- item
-```
-
-## Notes
-- Content-driven widths
-- H3 titles per block
-- Pre-H2 content becomes a title-less leading block
-
-# Row Sample
-🌊row
-
-## Pros
-- Clean syntax
-- No HTML needed
-- Works with any markdown
-
-## Cons
-- Only horizontal
-- No nested rows
-- Fixed block order
-
-
-# Footer & Theme
-
-# Background
-
+# Footer & Background
+.row
+## Footer
+`text~fr` → footer right, `text~fl` → footer left.
+## Background
+`![](path)~bg` → slide background.
+`![](path)~fbg` → footer background.
+Options: `![](path)~bg.blur-sm.opacity-50`
 
 # CSS Variables
 | Variable        | Default               | Description           |
@@ -366,9 +359,6 @@ Small centered text
 | `--font-body`   | IBM Plex Sans JP, ... | Body font             |
 | `--font-mono`   | Consolas, ...         | Mono font             |
 
-# Templates
-🌊big
 
-
-# FIN.
+# FIN. 🎉
 🌊small

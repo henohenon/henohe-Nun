@@ -33,7 +33,7 @@ export function linkCardExtension(
     name: 'linkCard',
     level: 'block',
     start(src) {
-      return src.match(/^\[/m)?.index;
+      return src.match(/^\[([^\]]*)\]\([^)]+\)~card/m)?.index;
     },
     tokenizer(src) {
       const match = /^\[([^\]]*)\]\(([^)]+)\)~card(?:\.(v|horiz))?\s*(?:\n|$)/.exec(src);

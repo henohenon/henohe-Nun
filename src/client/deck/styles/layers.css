@@ -1,0 +1,4 @@
+/* Declare layer order BEFORE any @layer blocks are created.
+   First declaration wins per CSS spec.
+   base (UnoCSS preflights) < templates (slide + template styles) < utilities (UnoCSS utilities) */
+@layer base, templates, utilities;

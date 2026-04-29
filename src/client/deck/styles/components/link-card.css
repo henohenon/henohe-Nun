@@ -2,6 +2,7 @@
    Layout: [body (1fr)] [thumb (fixed)]
    font-size drives all em-based sizing so clamp here scales everything. */
 
+@layer templates {
 .link-card {
   @apply relative grid no-underline overflow-hidden;
   grid-template-columns: 1fr auto;
@@ -102,3 +103,4 @@
     max-height: calc(1.4em * 3);
   }
 }
+} /* @layer templates */

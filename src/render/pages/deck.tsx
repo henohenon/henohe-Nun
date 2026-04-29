@@ -2,12 +2,12 @@ import type { FC } from 'hono/jsx';
 import { raw } from 'hono/html';
 import { renderInline } from '../../parser/markdown';
 import { parseDeck } from '../../parser/index';
-import type { Slide } from '../../parser/types';
+import type { Deck, Slide } from '../../parser/types';
 import { codeToHtml } from '../components/code-block';
 import { HeadMeta, type HeadProps } from '../components/head';
 import { ogpToHtml } from '../components/link-card';
 import { SlideWrapper } from '../components/parts';
-import { templates } from '../components/templates';
+import { templateCSS, renderArticles } from '../components/templates';
 import type { PageOptions } from '../types';
 
 const HenohenoScript: FC<{ base: string }> = ({ base }) => (
@@ -18,27 +18,32 @@ const HenohenoScript: FC<{ base: string }> = ({ base }) => (
   </script>
 );
 
-const SlideRenderer: FC<{ slide: Slide }> = ({ slide }) => {
-  const entry = templates[slide.template] ?? templates.default;
-  const isTitle = slide.template === 'title';
-  // Title slides: promote fbg to bg (no separate footer background needed)
-  const bg = slide.bg ?? (isTitle ? slide.fbg : undefined);
-  const fbg = isTitle && !slide.bg ? undefined : slide.fbg;
+const SlideRenderer: FC<{ slide: Slide; index: number; deck: Deck }> = ({ slide, index, deck }) => {
+  const root = slide.articles[0];
+  const template = root?.template ?? 'default';
+  const isTitle = template === 'title';
+
+  // Merge settings with defaults
+  const slideBg = slide.settings.bg ?? deck.defaults.bg;
+  const slideFbg = slide.settings.fbg ?? deck.defaults.fbg;
+  const bg = slideBg ?? (isTitle ? slideFbg : undefined);
+  const fbg = slideFbg;
+  const fr = slide.settings.fr ?? deck.defaults.fr ?? '';
+  const fl = slide.settings.fl ?? deck.defaults.fl ?? '';
+
+  const cssClass = templateCSS[template] ?? templateCSS.default;
 
   return (
     <SlideWrapper
-      index={slide.index}
-      classes={slide.classes}
-      vars={slide.vars}
-      templateClass={entry.css}
+      index={index}
+      templateClass={cssClass}
+      vars={deck.vars}
       bg={bg}
-      bgOptions={slide.bgOptions}
-      fr={slide.fr}
-      fl={slide.fl}
+      fr={fr}
+      fl={fl}
       fbg={fbg}
-      fbgOptions={slide.fbgOptions}
     >
-      <entry.render heading={slide.heading} sections={slide.sections} />
+      {renderArticles(slide.articles)}
     </SlideWrapper>
   );
 };
@@ -46,9 +51,9 @@ const SlideRenderer: FC<{ slide: Slide }> = ({ slide }) => {
 export async function deckPage(md: string, deckName: string, opts: PageOptions): Promise<string> {
   const deck = await parseDeck(md, { renderOgp: ogpToHtml, renderCode: codeToHtml });
 
-  const titleSlide = deck.slides.find((s) => s.template === 'title') ?? deck.slides[0];
-  const ogTitle = titleSlide?.heading ?? deckName;
-  const subtitle = titleSlide?.sections.find((s) => s.heading)?.heading;
+  const titleSlide = deck.slides.find((s) => s.articles[0]?.template === 'title') ?? deck.slides[0];
+  const ogTitle = titleSlide?.articles[0]?.heading ?? deckName;
+  const subtitle = titleSlide?.articles.find((a) => a.heading && a.headingLevel > 1)?.heading;
   const subtitleText = subtitle ? renderInline(subtitle).replace(/<[^>]+>/g, '') : '';
   const ogDesc = [subtitleText && `${subtitleText} by へのへのん`, deck.frontmatter.date].filter(Boolean).join(' ');
 
@@ -69,8 +74,8 @@ export async function deckPage(md: string, deckName: string, opts: PageOptions):
         {opts.cssLinks?.map((href) => <link rel="stylesheet" href={href} />)}
       </head>
       <body>
-        {deck.slides.map((slide) => (
-          <SlideRenderer slide={slide} />
+        {deck.slides.map((slide, i) => (
+          <SlideRenderer slide={slide} index={i} deck={deck} />
         ))}
         <div class="cursor-dot" id="cursor-dot" />
         <HenohenoScript base={opts.base} />

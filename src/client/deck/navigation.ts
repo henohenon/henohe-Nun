@@ -15,6 +15,7 @@ function adjustZoom(body: HTMLElement, children: HTMLElement[], iteration: numbe
   const sx = body.offsetWidth / csx;
   const sy = body.offsetHeight / csy;
   const scale = Math.min(sx, sy);
+  console.log(iteration, csx, csy, sx, sy, scale, currentZoom);
   if (scale >= 1 && currentZoom >= 1) return;
   const newZoom = currentZoom * scale;
   body.style.zoom = String(newZoom);
@@ -22,7 +23,7 @@ function adjustZoom(body: HTMLElement, children: HTMLElement[], iteration: numbe
 }
 
 function fitSlide(slide: HTMLElement) {
-  for (const body of slide.querySelectorAll<HTMLElement>('.slide-body')) {
+  for (const body of slide.querySelectorAll<HTMLElement>('.slide-content > .body')) {
     const children = Array.from(body.children) as HTMLElement[];
     if (children.length === 0) continue;
     body.style.zoom = '';

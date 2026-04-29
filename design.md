@@ -39,7 +39,7 @@ $accent: #ff0000
 内容
 ```
 
-`#` がスライド、`##` 以下がその中のsectionとして区切られる。インライン以下の粒度はHTMLを書く。
+`#` がスライド、`##` 以下がその中のarticleとして区切られる。インライン以下の粒度はHTMLを書く。
 
 ### `~` 記法
 
@@ -135,7 +135,7 @@ Playwright  PDF/PNG出力（既存）
 ```
 md
 → Stage1: frontmatter抽出 + # でスライド分割、ルートの .class $var を抽出
-→ Stage2: 各スライドから .class $var 🌊template を抽出、## でsectionに分割
+→ Stage2: 各スライドから .class $var 🌊template を抽出、## でarticleに分割
 → Stage3: ~ 展開（fr/fl/bg/fbg等をバッファに積む）、本文をmarkedに流す
 → Stage4: テンプレート関数でHTML文字列を組み立て
 ```
@@ -148,18 +148,19 @@ md
 ```ts
 const templates = {
   default: (slide) => `
-    <section class="${slide.classes}">
+    <section class="slide">
       ${bgLayer(slide)}
-      <div class="slide-body">${slide.body}</div>
-      ${footer(slide)}
-    </section>
-  `,
-  me: (slide) => `
-    <section class="${slide.classes}">
-      <div class="me-layout">
-        <div class="me-icon">${slide.sections[0].body}</div>
-        <div class="me-body">${slide.sections[1].body}</div>
-      </div>
+      <article class="slide-content template-default">
+        <h1>${slide.heading}</h1>
+        <div class="body">
+          ${slide.articles.map(a => `
+            <article>
+              <h2>${a.heading}</h2>
+              <div class="body">${a.body}</div>
+            </article>
+          `).join('')}
+        </div>
+      </article>
       ${footer(slide)}
     </section>
   `,
@@ -172,10 +173,10 @@ const templates = {
 ### スコープとclass/var指定
 
 テーマ指定（`.dark` 等）は `#` スライドスコープのみに限定する。
-`##` のsectionスコープには `.class` と `$var` のみ指定できる。
+`##` のarticleスコープには `.class` と `$var` のみ指定できる。
 
 ```
 ルート        .class $var   → デッキ全体に適用
 #             .class $var   → スライド全体に適用（テーマ指定もここ）
-##            .class $var   → section単位に適用
+##            .class $var   → article単位に適用
 ```

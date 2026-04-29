@@ -1,6 +1,7 @@
 // Deck viewer: navigation, zoom-fit, cursor dot, favicon animation, fullscreen
 // Imported as <script type="module"> in deck pages.
 
+import './styles/layers.css';
 import 'virtual:uno.css';
 import '../theme.css';
 import './styles/deck.css';

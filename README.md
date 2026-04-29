@@ -3,7 +3,7 @@
 Markdown でスライドを書いて HTML / PDF / PNG で出力する、俺俺プレゼンツール。
 Astro ベースの SSG で、`benben/` 以下の `.md` ファイルがそれぞれ 1 デッキになる。
 
-名前はうめき声とエジプトの神様から
+名前はうめき声とエジプト神話から
 
 ![img.png](img.png)
 
@@ -85,7 +85,7 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 | タグ | 説明 |
 |-----|------|
 | `@>template` | テンプレート指定 (省略で `default`) |
-| `## サブ見出し` | サブタイトル（title / note / row で使用） |
+| `## サブ見出し` | サブタイトル（title / note で使用）、セクション分割 |
 | `@icon [attrs]>パス` | アイコン画像 (me テンプレ用) |
 | `@bg [attrs]>パス` | 背景画像（そのスライドだけ） |
 | `@fbg [attrs]>パス` | フッター背景（そのスライドだけ） |
@@ -102,19 +102,18 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 | `me` | 自己紹介 | `# ラベル`, `@icon`, 本文 |
 | `default` | 汎用（省略時） | `# 見出し`, 本文 |
 | `big` | でかい一言 | `# テキスト` のみ |
+| `small` | 締め・小文字 | `# テキスト` のみ |
 | `note` | 中央本文 + 補足 | `# 見出し`, `## 補足`, 本文 |
-| `row` | 横並びブロック | `## ` でブロックを分割 |
-| `small` | 締め・小文字 | 固定表示 |
 
-### `@>row` テンプレート
+### レイアウトクラス
 
-`## ` ごとに横並びブロックを作る。H3 ではなく H2 がブロック境界になるのがポイント。
+| 名前 | 用途 |
+|------|------|
+| `.row` | `## ` セクションを横並び |
 
 ```md
 # 比較
-@>row
-@gap>3em
-@align>center
+.row
 
 ## Pros
 - Clean syntax
@@ -124,9 +123,6 @@ PDF 圧縮には [Ghostscript](https://www.ghostscript.com/) が別途必要。
 - Only horizontal
 - No nested rows
 ```
-
-- `@gap>` — ブロック間の間隔（CSS の `gap` そのまま）
-- `@align>` — 水平配置 (`left` / `center` / `right` / 生 `justify-content` 値)
 - 最初の `##` より前に本文があれば、タイトルなしの先頭ブロックになる
 - 幅は中身に応じた auto-fit (`grid-auto-columns: minmax(0, auto)`)
 
@@ -244,7 +240,7 @@ Copy ボタンはハイライト済み HTML ではなく生ソース (`data-sour
 - `Home` / `End` で最初／最後へ
 - `Enter` でフルスクリーントグル
 - 画面左右クリック（フルスクリーン時）・タッチスワイプ・マウスホイールで前後移動
-- `.slide-body` の内容が溢れたら `zoom` で自動縮小される
+- `.body` の内容が溢れたら `zoom` で自動縮小される
 
 ## 構成
 
