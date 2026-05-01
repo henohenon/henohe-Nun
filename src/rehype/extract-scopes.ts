@@ -1,5 +1,5 @@
 import type { Element, ElementContent, RootContent } from 'hast'
-import type { Scope, VFileData, TemplateName } from '../types.ts'
+import type { Scope, VFileData, TemplateName, TemplateEntry, NwytProp } from '../types.ts'
 
 const headingDepth: Record<string, number> = {
   h1: 1, h2: 2, h3: 3, h4: 4, h5: 5, h6: 6,
@@ -41,8 +41,16 @@ export function extractScopes(
   const groups = splitByHeading(nodes, depth)
   const scopes: Scope[] = []
 
-  for (const group of groups) {
-    const scope = buildScope(group, depth, data, sectionIndex)
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i]
+    // 行範囲: 前のグループの heading の行の次〜このグループの最後のノードの行
+    // テンプレートは heading の直前に書かれるので、前のグループ終了後〜このグループ終了が範囲
+    const startLine = i === 0
+      ? 0
+      : (groups[i - 1].lastLine + 1)
+    const endLine = group.lastLine
+
+    const scope = buildScope(group, depth, data, sectionIndex, startLine, endLine)
     scopes.push(scope)
   }
 
@@ -52,6 +60,15 @@ export function extractScopes(
 type NodeGroup = {
   heading: Element | null
   children: (RootContent | ElementContent)[]
+  lastLine: number  // グループ内の最終行
+}
+
+/** ノードの最終行を取得 */
+function getLastLine(node: RootContent | ElementContent): number {
+  if ('position' in node && node.position) {
+    return node.position.end.line
+  }
+  return 0
 }
 
 /**
@@ -63,26 +80,29 @@ function splitByHeading(
   depth: number,
 ): NodeGroup[] {
   const groups: NodeGroup[] = []
-  let current: NodeGroup = { heading: null, children: [] }
+  let current: NodeGroup = { heading: null, children: [], lastLine: 0 }
 
   for (const node of nodes) {
     const d = getHeadingDepth(node)
     if (d === depth) {
-      // 現在のグループを確定（中身がある場合のみ）
       if (current.heading !== null || hasContent(current.children)) {
         groups.push(current)
       }
-      // 新しいグループ開始
       const heading = isEmptyHeading(node as Element)
-        ? null  // 空白 heading は区切りとして機能するが heading 要素は生成しない
+        ? null
         : node as Element
-      current = { heading, children: [] }
+      current = {
+        heading,
+        children: [],
+        lastLine: getLastLine(node),
+      }
     } else {
       current.children.push(node)
+      const line = getLastLine(node)
+      if (line > current.lastLine) current.lastLine = line
     }
   }
 
-  // 最後のグループを確定
   if (current.heading !== null || hasContent(current.children)) {
     groups.push(current)
   }
@@ -99,6 +119,8 @@ function buildScope(
   depth: number,
   data: VFileData,
   sectionIndex: { value: number },
+  startLine: number,
+  endLine: number,
 ): Scope {
   const tag = depth === 1 ? 'section' as const : 'article' as const
 
@@ -106,10 +128,8 @@ function buildScope(
     sectionIndex.value++
   }
 
-  // TODO Phase 5: vfile.data から position ベースで template/nwyt を紐付け
-  const template: TemplateName = 'default'
-  const classes: string[] = []
-  const nwyts = [] as Scope['nwyts']
+  // vfile.data から position ベースで template/nwyt を紐付け
+  const bound = bindScopeData(data, startLine, endLine, sectionIndex.value)
 
   // body 内に depth+1 の heading があるか確認
   const hasSubHeadings = group.children.some(
@@ -118,35 +138,63 @@ function buildScope(
 
   let body: Scope['body']
   if (hasSubHeadings && depth + 1 <= 6) {
-    // 再帰的に子 Scope を構築
-    body = buildMixedBody(group.children, depth + 1, data, sectionIndex)
+    body = extractScopes(group.children, depth + 1, data, sectionIndex)
   } else {
     body = group.children as ElementContent[]
   }
 
-  return {
+  const scope: Scope = {
     tag,
     depth,
     heading: group.heading,
-    template,
-    classes,
-    nwyts,
+    template: bound.template,
+    classes: bound.classes,
+    nwyts: bound.nwyts,
     body,
   }
+  if (bound.fnDef) scope.fnDef = bound.fnDef
+  return scope
 }
 
 /**
- * hast ノードと子 Scope が混在する body を構築する。
- * depth の heading で分割し、heading 間のノードはそのまま残す。
+ * vfile.data から position ベースで template/nwyt prop を Scope に紐付ける。
+ *
+ * startLine 〜 endLine の範囲にある entry をフィルタ。
+ * グローバル指定（最初の h1 より前）は別途処理（TODO）。
  */
-function buildMixedBody(
-  nodes: (RootContent | ElementContent)[],
-  depth: number,
+function bindScopeData(
   data: VFileData,
-  sectionIndex: { value: number },
-): (ElementContent | Scope)[] {
-  const childScopes = extractScopes(nodes, depth, data, sectionIndex)
-  // extractScopes が全ノードを Scope として返す
-  // heading 前のコンテンツは implicit article (heading: null) として含まれる
-  return childScopes
+  startLine: number,
+  endLine: number,
+  pageNumber: number,
+): {
+  template: TemplateName
+  classes: string[]
+  nwyts: NwytProp[]
+  fnDef?: string
+} {
+  const inRange = (line: number) => line >= startLine && line <= endLine
+
+  // テンプレート: 範囲内のもの、後勝ち
+  const matchingTemplates = data.templates.filter(
+    t => inRange(t.position.start.line)
+  )
+  const lastTemplate = matchingTemplates[matchingTemplates.length - 1]
+  const template: TemplateName = lastTemplate?.template ?? 'default'
+  const classes = matchingTemplates.flatMap(t => t.classes)
+
+  // nwyt prop: 範囲内のもの
+  const nwyts = data.nwyts.filter(n => inRange(n.position.start.line))
+
+  // 脚注定義の検出
+  let fnDef: string | undefined
+  for (const [id, entry] of Object.entries(data.footnotes)) {
+    if (inRange(entry.position.start.line)) {
+      fnDef = id
+      data.footnoteLocs[id] = { page: pageNumber }
+      break
+    }
+  }
+
+  return { template, classes, nwyts, fnDef }
 }

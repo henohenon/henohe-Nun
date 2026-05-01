@@ -2,6 +2,11 @@ import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
+import { remarkNunSyntax } from './remark/nun-syntax.ts'
+import { remarkNunMeta } from './remark/nun-meta.ts'
+import { remarkNunExtract } from './remark/nun-extract.ts'
+import { remarkNunAdmonition } from './remark/nun-admonition.ts'
+import { nunHandlers } from './remark/nun-handlers.ts'
 import { rehypeNunStructure } from './rehype/nun-structure.ts'
 
 export type ProcessOptions = {
@@ -11,15 +16,14 @@ export type ProcessOptions = {
 export function createProcessor(options: ProcessOptions) {
   return unified()
     .use(remarkParse)
-    // Phase 5: remarkNunSyntax (micromark extensions)
+    .use(remarkNunSyntax)
     // Phase 6: remarkGfm, remarkMath, remarkBreaks, remarkMark
-    // Phase 5: remarkNunMeta
-    // Phase 5: remarkNunExtract
-    .use(remarkRehype)
+    .use(remarkNunMeta)
+    .use(remarkNunAdmonition)
+    .use(remarkNunExtract)
+    .use(remarkRehype, { handlers: nunHandlers })
     // Phase 6: rehypeKatex
-    // Phase 8: rehypeNunCodePre
-    // Phase 8: rehypeShiki
-    // Phase 8: rehypeNunCodeBlock
+    // Phase 8: rehypeNunCodePre, rehypeShiki, rehypeNunCodeBlock
     // Phase 5: rehypeNunCard
     // Phase 10: rehypeNunFnRef
     .use(rehypeNunStructure, {
