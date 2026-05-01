@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { globSync } from 'node:fs'
@@ -18,6 +18,46 @@ function findDecks(): string[] {
 export function nunPlugin(): Plugin {
   return {
     name: 'nun',
+
+    // ----- Build: config + resolveId + load -----
+
+    config() {
+      const decks = findDecks().map(deckName)
+      return {
+        build: {
+          rollupOptions: {
+            input: {
+              index: 'index.html',
+              ...Object.fromEntries(decks.map(d => [d, `${d}/index.html`])),
+            },
+          },
+        },
+      }
+    },
+
+    resolveId(id) {
+      if (id === 'index.html' || id.endsWith('/index.html')) {
+        return id
+      }
+    },
+
+    async load(id) {
+      if (id === 'index.html') {
+        return buildIndex(findDecks())
+      }
+      const match = id.match(/^(.+)\/index\.html$/)
+      if (match) {
+        const mdPath = resolve('benben', `${match[1]}.md`)
+        if (existsSync(mdPath)) {
+          const md = await readFile(mdPath, 'utf-8')
+          return String(await processMarkdown(md, {
+            jsPath: '/src/client/index.ts',
+          }))
+        }
+      }
+    },
+
+    // ----- Dev: middleware + HMR -----
 
     configureServer(server) {
       server.watcher.add('benben')
@@ -63,8 +103,6 @@ export function nunPlugin(): Plugin {
         return []
       }
     },
-
-    // TODO Phase 12: build hooks (config, resolveId, load)
   }
 }
 
