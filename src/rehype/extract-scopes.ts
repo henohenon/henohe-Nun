@@ -152,7 +152,8 @@ function buildScope(
     nwyts: bound.nwyts,
     body,
   }
-  if (bound.fnDef) scope.fnDef = bound.fnDef
+  // fnDef は article レベルのみ（section には付けない）
+  if (bound.fnDef && tag === 'article') scope.fnDef = bound.fnDef
   return scope
 }
 
@@ -191,6 +192,7 @@ function bindScopeData(
   for (const [id, entry] of Object.entries(data.footnotes)) {
     if (inRange(entry.position.start.line)) {
       fnDef = id
+      // pageNumber は section/article 両方から呼ばれるが、同じ値なので上書きは無害
       data.footnoteLocs[id] = { page: pageNumber }
       break
     }

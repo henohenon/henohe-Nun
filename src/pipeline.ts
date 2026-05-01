@@ -13,6 +13,10 @@ import { remarkNunAdmonition } from './remark/nun-admonition.ts'
 import { remarkNunExtract } from './remark/nun-extract.ts'
 import { nunHandlers } from './remark/nun-handlers.ts'
 import { rehypeNunStructure } from './rehype/nun-structure.ts'
+import { rehypeNunCodePre } from './rehype/nun-code-pre.ts'
+import { rehypeNunCodeBlock } from './rehype/nun-code-block.ts'
+import { rehypeNunFnRef } from './rehype/nun-fn-ref.ts'
+import rehypeShiki from '@shikijs/rehype'
 
 export type ProcessOptions = {
   jsPath: string
@@ -31,9 +35,11 @@ export function createProcessor(options: ProcessOptions) {
     .use(remarkNunExtract)      // template/nwyt prop → vfile.data
     .use(remarkRehype, { handlers: nunHandlers })
     .use(rehypeKatex)           // 数式レンダリング
-    // Phase 8: rehypeNunCodePre, rehypeShiki, rehypeNunCodeBlock
+    .use(rehypeNunCodePre)      // code block pre-processing (diff, embed, name/startLine)
+    .use(rehypeShiki, { theme: 'nord' })
+    .use(rehypeNunCodeBlock)    // code block post-processing (embed, diff classes, figure wrapper)
     // Phase 5: rehypeNunCard
-    // Phase 10: rehypeNunFnRef
+    .use(rehypeNunFnRef)        // !fn[id] → <sup data-fn="id">
     .use(rehypeNunStructure, {
       jsPath: options.jsPath,
     })

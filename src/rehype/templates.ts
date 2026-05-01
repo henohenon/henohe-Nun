@@ -21,7 +21,15 @@ export function render(scope: Scope): Element {
   const templateFn = templates[scope.template]
   const el = templateFn(scope)
 
-  // TODO Phase 10: 脚注定義 Scope の処理 (addFnMark, dataFnDef)
+  // 脚注定義: article に data-fn-def 属性、heading に [^id] マークを追加
+  if (scope.fnDef) {
+    el.properties ??= {}
+    el.properties['dataFnDef'] = scope.fnDef
+    if (scope.heading) {
+      const mark = h('span.fn-def-mark', `[^${scope.fnDef}]`)
+      scope.heading.children.unshift(mark as ElementContent)
+    }
+  }
 
   return el
 }

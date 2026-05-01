@@ -10,9 +10,9 @@
 - [x] 5. micromark extensions — template, nwyt prop, nwyt content, admonition (remark plugin)
 - [x] 6. 既存 remark/rehype plugins 統合 — gfm, math, breaks, katex (mark 保留, shiki Phase 8)
 - [x] 7. 残りのテンプレート — title, me, message, solo (Phase 3 で実装済み)
-- [ ] 8. コードブロック拡張 — diff, embed, header, 行番号, shiki
+- [x] 8. コードブロック拡張 — diff, embed, header, 行番号, shiki
 - [x] 9. フッター + 背景 — fl/fr, bg (fbg マスク未実装)
-- [ ] 10. 脚注 — 収集 → Scope 紐付け → render → 参照解決
+- [x] 10. 脚注 — 収集 → Scope 紐付け → render → 参照解決
 - [x] 11. クライアント JS — navigation, zoom-fit, tooltip, copy
 - [x] 12. ビルド (resolveId/load) — Vite HTML エントリ方式
 - [ ] 13. PDF/WebP 出力 — Playwright + mutool
