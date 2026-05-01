@@ -1,5 +1,8 @@
 import { h } from 'hastscript'
 import type { Element, ElementContent } from 'hast'
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
 import type { Scope, NwytProp } from '../types.ts'
 import { isScope } from '../types.ts'
 
@@ -39,9 +42,38 @@ export function resolveNwyt(scope: Scope, key: string): Element | null {
 }
 
 /** rawValue を key に応じてパース */
-export function parseNwytValue(_key: string, raw: string): ElementContent[] {
-  // TODO Phase 7+: bg, fbg, icon → img, fl/fr/sub/lead → inline markdown
+export function parseNwytValue(key: string, raw: string): ElementContent[] {
+  // bg, fbg, icon: Markdown 画像記法としてパース → img 要素
+  if (key === 'bg' || key === 'fbg' || key === 'icon') {
+    // 画像パス or Markdown 画像記法
+    const imgMatch = raw.match(/!\[([^\]]*)\]\(([^)]+)\)/)
+    if (imgMatch) {
+      return [h('img', { src: imgMatch[2], alt: imgMatch[1] }) as ElementContent]
+    }
+    // 素のパスとして扱う
+    return [h('img', { src: raw.trim(), alt: '' }) as ElementContent]
+  }
+
+  // fl, fr, sub, lead: Markdown インラインとしてパース
+  if (key === 'fl' || key === 'fr' || key === 'sub' || key === 'lead') {
+    return parseInlineMarkdown(raw)
+  }
+
+  // その他: プレーンテキスト
   return [{ type: 'text', value: raw }]
+}
+
+/** Markdown インラインをパースして hast children を返す */
+function parseInlineMarkdown(raw: string): ElementContent[] {
+  const processor = unified().use(remarkParse).use(remarkRehype)
+  const mdast = processor.parse(raw)
+  const hast = processor.runSync(mdast)
+  // root > p > children を取り出す
+  const root = hast as any
+  if (root.children?.[0]?.tagName === 'p') {
+    return root.children[0].children as ElementContent[]
+  }
+  return root.children as ElementContent[] ?? [{ type: 'text', value: raw }]
 }
 
 function defaultTemplate(scope: Scope): Element {

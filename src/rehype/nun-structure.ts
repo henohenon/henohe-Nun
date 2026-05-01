@@ -3,8 +3,9 @@ import type { Root, Element, ElementContent } from 'hast'
 import type { Plugin } from 'unified'
 import { extractScopes } from './extract-scopes.ts'
 import { render } from './templates.ts'
+import { appendFooter } from './footer.ts'
 import { initVFileData } from '../types.ts'
-import type { VFileData } from '../types.ts'
+import type { VFileData, NwytProp } from '../types.ts'
 
 type Options = {
   jsPath: string
@@ -30,6 +31,12 @@ export const rehypeNunStructure: Plugin<[Options], Root, Root> = function (optio
     const sectionIndex = { value: 0 }
     const scopes = extractScopes(tree.children, 1, data, sectionIndex)
 
+    // グローバル nwyt props を抽出（最初の section heading より前の entries）
+    const firstHeadingLine = scopes.find(s => s.heading)?.heading?.position?.start.line ?? Infinity
+    const globalNwyts: NwytProp[] = data.nwyts.filter(
+      n => n.position.start.line < firstHeadingLine
+    )
+
     // 2. 各 Scope を再帰的にテンプレート適用して hast 化
     const sections = scopes.map((scope, i) => {
       const el = render(scope)
@@ -37,8 +44,9 @@ export const rehypeNunStructure: Plugin<[Options], Root, Root> = function (optio
       if (scope.tag === 'section') {
         el.properties ??= {}
         el.properties.id = String(i + 1)
+        // フッター追加
+        appendFooter(el, scope, data, globalNwyts)
       }
-      // TODO Phase 9: section レベルならフッター追加
       return el
     })
 

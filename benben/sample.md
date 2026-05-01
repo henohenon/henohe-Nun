@@ -4,6 +4,9 @@ description: Nun のデモ
 date: 2024-01-15
 ~~~
 
+!fl~**henohe** Nun
+!fr~2024/01/15
+
 🌊title
 # はじめに
 
