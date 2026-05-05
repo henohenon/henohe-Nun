@@ -72,7 +72,7 @@ a { color: var(--brand); text-decoration: underline; }
 strong, b { font-weight: 700; }
 em, i { font-style: italic; }
 mark {
-  background: color-mix(in srgb, var(--brand) 20%, transparent);
+  background: color-mix(in srgb, var(--brand) 30%, transparent);
   border-radius: 0.15em;
   padding: 0 0.1em;
 }
