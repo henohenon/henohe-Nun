@@ -109,13 +109,15 @@
 - mermaid 描画時に section が display:none で SVG が 16x16 に縮小: 描画前に全 section を一時表示 (`4319335`)
 - message リード強調 (E 案 → さらに強化、size 6.5cqmin + strong + tracking)
 
-### Phase D. タイポグラフィと色階層
+### Phase D. タイポグラフィと色階層 ✅
 
 → Important の I1, I2, I6。
 
-- [ ] 見出し色: h1 = brand、h2 = strong、h3 = main、h4-6 = fg-mid
-- [ ] 見出しサイズ: h2/h3 のスケールを広げる (例: 6.5 vs 4.8 cqmin)
-- [ ] 脚注定義の装飾: `[^N]` をシンプルなラベルに、参照 sup を太字 + brand 色
+- [x] 見出し色: 4 段配色 (h1=brand / h2=strong / h3=main / h4-6=fg-mid) を **`.hierarchy` opt-in** で提供。デフォルトは brand 統一を維持
+- [x] 見出しサイズ: h2 6→6.5cqmin / h3 5→4.8cqmin に変更し差を広げた
+- [x] 脚注: 参照 sup を太字 brand に、定義 `[^N]` を上寄せ (`vertical-align: top`) + 太字 brand の最小ラベルに
+
+**Phase D 関連コミット**: `075b610` (size), `e668e64` (.hierarchy), `75b30e5` (footnote)
 
 ### Phase E. コンテナ要素
 
