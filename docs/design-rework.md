@@ -123,7 +123,7 @@
 
 → Important の I5 + Critical の C7。
 
-- [x] **table** — 罫線を `color-mix(in srgb, var(--main) 30%, var(--base))` (≒ #c4c4c4) に強化 (table 局所変数 `--table-border-color` で他 `--border` 利用箇所には波及させない)。cell padding を 0.25em 0.55em → 0.3em 0.6em に微増。`border-collapse: separate` + `border-spacing: 0` + `border-radius: 0.4em` + `overflow: hidden` で角丸対応 (`ecea036`)。**stripe と見出し行差別化はシンプル志向のため見送り**。
+- [x] **table** — 罫線を `color-mix(in srgb, var(--main) 30%, var(--base))` (≒ #c4c4c4) に強化 (table 局所変数 `--table-border-color` で他 `--border` 利用箇所には波及させない)。cell padding を 0.25em 0.55em → 0.3em 0.6em に微増。`border-collapse: separate` + `border-spacing: 0` + `border-radius: 0.4em` + `overflow: hidden` で角丸対応 (`ecea036`)。**stripe と見出し行差別化はシンプル志向のためやらない判断**。
 - [ ] **footer** — テキストの clipping 対策 (text-anchor / padding 見直し、SVG overflow visible)
 
 **Phase E 関連 + 派生して直したもの**:
