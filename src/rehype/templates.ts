@@ -1,12 +1,23 @@
 import { h } from 'hastscript'
-import type { Element, ElementContent } from 'hast'
+import type { Element, ElementContent, Properties } from 'hast'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
+import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
 import remarkRehype from 'remark-rehype'
+import rehypeKatex from 'rehype-katex'
 import type { Scope, NwytProp } from '../types.ts'
 import { isScope } from '../types.ts'
 
-const inlineProcessor = unified().use(remarkParse).use(remarkRehype)
+// 本体パイプラインと同じ拡張セットで lead/sub/fl/fr のインライン記法を処理する。
+// インライン抽出 (root > p > children) で block 系は捨てられるので、
+// table/codeblock 等が混ざっても害はなく、strikethrough・autolink・$math$ が効く。
+const inlineProcessor = unified()
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkMath)
+  .use(remarkRehype)
+  .use(rehypeKatex)
 
 export type TemplateFn = (scope: Scope) => Element
 
@@ -48,7 +59,9 @@ export function resolveNwyt(scope: Scope, key: string): Element | null {
   const nwyt = scope.nwyts.find(n => n.key === key)
   if (!nwyt) return null
   const children = parseNwytValue(nwyt.key, nwyt.rawValue)
-  return h('span', { className: nwyt.classes }, children)
+  // クラス未指定時は class="" を出さない
+  const props: Properties = nwyt.classes.length > 0 ? { className: nwyt.classes } : {}
+  return h('span', props, children)
 }
 
 /** rawValue を key に応じてパース */
