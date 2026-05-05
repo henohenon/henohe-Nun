@@ -98,8 +98,9 @@ section の body（h2 以下の要素を含むコンテナ）が溢れた場合�
   - 独自コンテナ左にicon
   - 右にbody
 - message
-  - 通常通りtitle, body
-  - bodyが中央寄せで、その下にleadのテキストがある
+  - title (h1) と body 内の見出し要素 (h2 等) は default と同じ位置 — 上端、左寄せ、brand 色
+  - body は縦横中央寄せ
+  - lead テキストは下中央 (`!lead~text` で指定)
 - solo
   - headのテキスト、タイトルだけが中央寄せ
   - bodyはなし
