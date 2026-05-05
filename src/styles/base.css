@@ -26,6 +26,12 @@ input, button, textarea, select {
   font-size: inherit;
 }
 
+/* table はブラウザ既定で font-size: medium を持つ (継承しない) ため、
+   親の font-size を引き継ぐよう明示。 */
+table {
+  font: inherit;
+}
+
 /* Slides container — cqmin baseline */
 .slides {
   width: 100%;
