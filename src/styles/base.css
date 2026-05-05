@@ -7,10 +7,6 @@
 
 html {
   height: 100%;
-  /* html / body のサイズが visible area とずれた際、下地が白く露出して
-     footer 下に 1px の帯が見える事象を回避するため、ルートの背景を slide
-     と同じ `--base` で塗っておく。dark theme でも追従するよう変数経由。 */
-  background-color: var(--base);
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 }
@@ -22,7 +18,6 @@ body {
   height: 100%;
   height: 100dvh;
   font-family: var(--font-body);
-  background-color: var(--base);
   overflow: hidden;
 }
 
