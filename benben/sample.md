@@ -15,8 +15,6 @@ date: 2026-05-01
 🌊default
 # テンプレート一覧
 
-## 種類
-
 | テンプレート | 記法 | 特徴 |
 | --- | --- | --- |
 | default | `🌊default` | タイトル + 左寄せ body。通常スライド |
@@ -25,9 +23,10 @@ date: 2026-05-01
 | message | `🌊message` | タイトル + 中央寄せ body + リードテキスト |
 | solo | `🌊solo` | タイトルのみ中央寄せ、body なし |
 
-## 指定方法
+🌊default
+# テンプレートの指定方法
 
-見出し（`#`）の直前に記述する。
+見出し（`#`）の直前に `🌊name` を記述する。
 
 省略した場合は `default` として扱われる。
 
@@ -67,9 +66,7 @@ date: 2026-05-01
 # solo テンプレート
 
 🌊default
-# 基本 Markdown
-
-## テキスト装飾
+# 基本 Markdown — テキスト装飾
 
 **太字** / *斜体* / ***太字斜体***
 
@@ -83,7 +80,10 @@ date: 2026-05-01
 >
 > 複数行の引用
 
-## リスト
+🌊default
+# 基本 Markdown — リスト
+
+## 箇条書き・番号付き
 
 - 箇条書き
   - ネスト項目
@@ -92,8 +92,13 @@ date: 2026-05-01
 1. 番号付き
 2. リスト
 
+## チェックリスト
+
 - [ ] 未完了タスク
 - [x] 完了タスク
+
+🌊default
+# 基本 Markdown — テーブル・リンク
 
 ## テーブル
 
@@ -110,9 +115,9 @@ date: 2026-05-01
 ![Nun ロゴ](/images/henohe-Nun.png "henohe-Nun")
 
 🌊default
-# コードブロック
+# コードブロック — 基本
 
-## 基本
+## 言語指定
 
 ```js
 const greet = (name) => `Hello, ${name}!`;
@@ -127,13 +132,17 @@ export async function process(md: string) {
 }
 ```
 
-## diff 表示
+🌊default
+# コードブロック — diff
 
 ```diff_ts
 -const value = "old";
 +const value = "new";
  console.log(value);
 ```
+
+🌊default
+# コードブロック — embed_svg / embed_html
 
 ## embed_svg
 
@@ -154,7 +163,8 @@ export async function process(md: string) {
 </div>
 ```
 
-## embed_mermaid
+🌊default
+# コードブロック — embed_mermaid
 
 ```embed_mermaid
 flowchart LR
@@ -164,7 +174,8 @@ flowchart LR
   hast --> HTML[HTML]
 ```
 
-## embed_math
+🌊default
+# コードブロック — embed_math
 
 ```embed_math
 \begin{aligned}
@@ -174,9 +185,7 @@ flowchart LR
 ```
 
 🌊default
-# 装飾ブロック
-
-## 種類
+# 装飾ブロック — 種類
 
 :::note
 **note** — 補足・メモ
@@ -198,7 +207,8 @@ flowchart LR
 **alert** — 強い警告
 :::
 
-## 折りたたみ・タイトル
+🌊default
+# 装飾ブロック — 折りたたみ
 
 :::note+ 開いた補足ブロック
 初期状態で展開されている。`:::note+` で指定。
@@ -208,7 +218,8 @@ flowchart LR
 クリックで展開できる。`:::warning-` で指定。
 :::
 
-## ネスト
+🌊default
+# 装飾ブロック — ネスト
 
 ::::note 外側のブロック
 :::tip 内側のブロック
@@ -219,13 +230,13 @@ flowchart LR
 🌊default
 # 数式
 
-## インライン数式
+## インライン
 
 ピタゴラスの定理: $a^2 + b^2 = c^2$
 
 オイラーの等式: $e^{i\pi} + 1 = 0$
 
-## ブロック数式
+## ブロック
 
 $$
 \int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
@@ -247,9 +258,7 @@ $$
 !card.v[henohe-Nun](https://github.com/henohenon/henohe-Nun)
 
 🌊default
-# nwyt・脚注
-
-## nwyt prop（消費される）
+# nwyt prop 一覧
 
 | キー | 用途 |
 | --- | --- |
@@ -261,7 +270,10 @@ $$
 | `!lead~text` | message テンプレートのリード |
 | `!fn~[id]` | 脚注定義マーク |
 
-## 脚注参照
+🌊default
+# 脚注
+
+## 参照
 
 本文中に上付きマーク !fn[1] が挿入される。
 
