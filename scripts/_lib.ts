@@ -1,13 +1,10 @@
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
-import { existsSync, mkdirSync, globSync } from 'node:fs'
+import { existsSync, mkdirSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { preview as vitePreview } from 'vite'
 
-export function findDecks(): string[] {
-  return (globSync('benben/**/*.md') as string[])
-    .map(p => p.replace(/^benben[\\/]/, '').replace(/\.md$/, '').replace(/\\/g, '/'))
-}
+export { findDecks } from '../src/decks.ts'
 
 export function ensureDir(path: string): void {
   if (!existsSync(path)) mkdirSync(path, { recursive: true })

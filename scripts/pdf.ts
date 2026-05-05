@@ -1,4 +1,5 @@
-import { writeFile, readFile, stat, unlink } from 'node:fs/promises'
+import { writeFile, stat, unlink } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { spawn } from 'node:child_process'
 import { PDFDocument } from 'pdf-lib'
@@ -6,6 +7,7 @@ import {
   findDecks, ensureBuild, ensureDir, parseArgs,
   startPreview, launchBrowser, openDeck,
 } from './_lib.ts'
+import { buildIndex } from '../src/decks.ts'
 
 const args = parseArgs()
 const deckFilter = args.values['deck']
@@ -84,6 +86,13 @@ async function main(): Promise<void> {
       )
 
       await page.close()
+    }
+
+    // PDF が生成された (≒ slide.pdf が dist/<deck>/ にある) 状態で
+    // インデックスページを再生成し、PDF バッジを反映する
+    if (existsSync('dist/index.html')) {
+      await writeFile('dist/index.html', buildIndex(findDecks()))
+      console.log('rebuilt dist/index.html with PDF badges')
     }
   } finally {
     await browser.close()
