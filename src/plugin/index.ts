@@ -109,7 +109,11 @@ export function nunPlugin(): Plugin {
 function buildIndex(deckPaths: string[]): string {
   const items = deckPaths
     .map(p => deckName(p))
-    .map(name => `<li><a href="./${name}/">${name}</a></li>`)
+    .map(name => {
+      const pdfExists = existsSync(resolve('dist', name, 'slide.pdf'))
+      const pdf = pdfExists ? ` <a class="pdf" href="./${name}/slide.pdf" download>PDF</a>` : ''
+      return `<li><a href="./${name}/">${name}</a>${pdf}</li>`
+    })
     .join('\n')
 
   return `<!DOCTYPE html>
@@ -118,6 +122,19 @@ function buildIndex(deckPaths: string[]): string {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nun - Decks</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0; border-bottom: 1px solid #eee; }
+    li > a:first-child { flex: 1; font-size: 1.05rem; text-decoration: none; color: #1a1a1a; }
+    li > a:first-child:hover { text-decoration: underline; }
+    .pdf {
+      font-size: 0.75rem; padding: 0.15rem 0.5rem;
+      background: #5932ff; color: #fff; border-radius: 4px;
+      text-decoration: none;
+    }
+    .pdf:hover { background: #4520d6; }
+  </style>
 </head>
 <body>
   <h1>Decks</h1>
