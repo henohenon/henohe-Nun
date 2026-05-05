@@ -7,7 +7,7 @@
   --brand: #5932ff; /* brand accent */
 
   /* Derived (via color-mix). Don't edit directly. */
-  --muted: color-mix(in srgb, var(--base) 94%, var(--main)); /* muted surface (code-header, th, page canvas) */
+  --muted: color-mix(in srgb, var(--base) 96%, var(--main)); /* muted surface (code-header, th, page canvas) */
   --fg-mid: color-mix(in srgb, var(--main) 50%, var(--sub)); /* secondary text (blockquote, subtitle, description) */
   --border: color-mix(in srgb, var(--base) 70%, var(--sub)); /* dividers (table, hr, code-block) */
   --overlay: color-mix(in srgb, var(--main) 10%, transparent); /* hover wash for small controls (copy-btn etc.) */
