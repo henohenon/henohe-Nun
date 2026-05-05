@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "capture": "tsx scripts/capture.ts",
+    "pdf": "tsx scripts/pdf.ts"
   },
   "dependencies": {
     "@shikijs/rehype": "^4.0.2",
@@ -30,6 +32,9 @@
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "playwright": "^1.59.1",
+    "sharp": "^0.34.5",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "unocss": "^66.6.8"
   }

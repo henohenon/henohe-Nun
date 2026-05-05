@@ -744,14 +744,7 @@ function fitSlide(slide: HTMLElement) {
 
 ## PDF / WebP 出力
 
-Playwright（Chromium）で PDF / WebP を生成する。HTML ビルドとは別コマンドで実行。
-
-- ブラウザインスタンスは1回起動して使い回し
-- ページサイズは 16:9（1920x1080 相当）固定
-- JS（zoom-fit 等）を実行完了してからキャプチャ
-- WebP: 1ページ目のスクリーンショットから生成。`dist/<deck>/thumb.webp` に出力。OGP image パスはビルド時に `base` 設定から組み立て
-- PDF: `page.pdf()` で生成後、`mutool clean -gggg` で圧縮（Chromium の PDF エンジンが画像を非圧縮で埋め込むため必須）
-- 同一ブラウザインスタンスで WebP → PDF を連続処理
+詳細は **[`docs/spec/export.md`](./export.md)** に分離。コマンド (`capture`, `pdf`)、画像形式の選定、Chromium PDF と mutool の関係、CI 設定までまとめてある。
 
 ## ディレクトリ構成
 
