@@ -5,10 +5,11 @@ import { visit } from 'unist-util-visit'
 /**
  * rehype plugin that pre-processes code blocks before shiki.
  *
- * Handles:
- * - diff_lang: `language-diff_typescript` -> diff mode + lang
- * - embed_xxx: `language-embed_html` -> nunEmbed custom element
- * - lang:name#n: `language-typescript:app.ts#10` -> name + startLine
+ * Metadata (lang, name, startLine, diff) is encoded into code.data.meta
+ * so Shiki preserves it via meta.__raw and the nunShikiTransformer can
+ * transfer it to data-nun-* attributes on the output <pre>.
+ *
+ * Encoding: "nun;<lang>[;name=<name>][;start=<n>][;diff]"
  */
 export const rehypeNunCodePre: Plugin<[], Root> = function () {
   return (tree: Root) => {
@@ -26,21 +27,21 @@ export const rehypeNunCodePre: Plugin<[], Root> = function () {
       )
       if (!langClass) return
 
-      const raw = langClass.slice('language-'.length) // e.g. "diff_typescript", "embed_html", "typescript:app.ts#10"
+      const raw = langClass.slice('language-'.length)
+
+      // --- embed_xxx: becomes nunEmbed, never hits Shiki ---
+      if (raw.startsWith('embed_')) {
+        const embedType = raw.slice('embed_'.length)
+        node.tagName = 'nunEmbed'
+        node.properties = { ...node.properties, embedType }
+        return
+      }
 
       // --- diff_lang ---
       if (raw.startsWith('diff_')) {
         const lang = raw.slice('diff_'.length)
         classes[classes.indexOf(langClass)] = `language-${lang}`
-        ;(node as any).data = { ...((node as any).data ?? {}), diff: true }
-        return
-      }
-
-      // --- embed_xxx ---
-      if (raw.startsWith('embed_')) {
-        const embedType = raw.slice('embed_'.length) // html | svg | mermaid | math
-        node.tagName = 'nunEmbed'
-        node.properties = { ...node.properties, embedType }
+        setMeta(code, encodeMeta(lang, undefined, undefined, true))
         return
       }
 
@@ -48,9 +49,8 @@ export const rehypeNunCodePre: Plugin<[], Root> = function () {
       const colonIdx = raw.indexOf(':')
       if (colonIdx !== -1) {
         const lang = raw.slice(0, colonIdx)
-        const rest = raw.slice(colonIdx + 1) // "app.ts#10" or "app.ts"
+        const rest = raw.slice(colonIdx + 1)
         const hashIdx = rest.indexOf('#')
-
         let name: string
         let startLine: number | undefined
         if (hashIdx !== -1) {
@@ -60,14 +60,30 @@ export const rehypeNunCodePre: Plugin<[], Root> = function () {
         } else {
           name = rest
         }
-
         classes[classes.indexOf(langClass)] = `language-${lang}`
-        ;(node as any).data = {
-          ...((node as any).data ?? {}),
-          name,
-          ...(startLine != null ? { startLine } : {}),
-        }
+        setMeta(code, encodeMeta(lang, name, startLine, false))
+        return
       }
+
+      // --- plain lang ---
+      setMeta(code, encodeMeta(raw, undefined, undefined, false))
     })
   }
+}
+
+function setMeta(code: Element, meta: string) {
+  code.data = { ...(code.data ?? {}), meta }
+}
+
+function encodeMeta(
+  lang: string,
+  name: string | undefined,
+  startLine: number | undefined,
+  diff: boolean,
+): string {
+  const parts = ['nun', lang]
+  if (name) parts.push('name=' + name)
+  if (startLine != null) parts.push('start=' + startLine)
+  if (diff) parts.push('diff')
+  return parts.join(';')
 }

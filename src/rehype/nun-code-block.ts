@@ -4,6 +4,7 @@ import { visit, SKIP } from 'unist-util-visit'
 import { h } from 'hastscript'
 import { fromHtml } from 'hast-util-from-html'
 import { toString } from 'hast-util-to-string'
+import katex from 'katex'
 
 /**
  * rehype plugin that post-processes code blocks after shiki.
@@ -36,9 +37,15 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
         case 'mermaid':
           replacement = h('pre.mermaid', textContent)
           break
-        case 'math':
-          replacement = h('div.math-display', textContent)
-          break
+        case 'math': {
+          const html = katex.renderToString(textContent.trim(), {
+            displayMode: true,
+            throwOnError: false,
+          })
+          const parsed = fromHtml(html, { fragment: true })
+          parent.children.splice(index, 1, ...parsed.children)
+          return [SKIP, index] as const
+        }
         default:
           return
       }
@@ -50,7 +57,7 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
     // --- Pass 2: diff blocks ---
     visit(tree, 'element', (node: Element) => {
       if (node.tagName !== 'pre') return
-      if (!(node as any).data?.diff) return
+      if (!('data-nun-diff' in (node.properties ?? {}))) return
 
       const code = node.children.find(
         (c): c is Element => c.type === 'element' && c.tagName === 'code',
@@ -77,22 +84,11 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
       )
       if (!code) return
 
-      const data = (node as any).data as
-        | { name?: string; startLine?: number }
-        | undefined
-      const name = data?.name
-      const startLine = data?.startLine
-
-      // Determine lang from code className
-      const classes = code.properties?.className
-      let lang: string | undefined
-      if (Array.isArray(classes)) {
-        const langClass = classes.find(
-          (c): c is string =>
-            typeof c === 'string' && c.startsWith('language-'),
-        )
-        if (langClass) lang = langClass.slice('language-'.length)
-      }
+      const props = node.properties ?? {}
+      const lang      = props['data-nun-lang']  as string | undefined
+      const name      = props['data-nun-name']  as string | undefined
+      const startRaw  = props['data-nun-start'] as string | undefined
+      const startLine = startRaw != null ? parseInt(startRaw, 10) : undefined
 
       // Add line numbers if startLine is set
       if (startLine != null) {
@@ -120,7 +116,7 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
       ])
 
       parent.children[index] = figure
-      return [SKIP, index] as const
+      return [SKIP, index + 1] as const
     })
   }
 }
@@ -130,10 +126,17 @@ function getTextContent(node: Element): string {
 }
 
 function addClassName(node: Element, className: string) {
-  const existing = node.properties?.className
-  if (Array.isArray(existing)) {
-    existing.push(className)
+  node.properties ??= {}
+  const raw = node.properties.class
+  const arr = node.properties.className
+
+  if (Array.isArray(arr)) {
+    arr.push(className)
+  } else if (typeof raw === 'string') {
+    // Shiki emits `class: "line"` (raw string) — normalize to className array
+    delete node.properties.class
+    node.properties.className = raw ? [raw, className] : [className]
   } else {
-    node.properties = { ...node.properties, className: [className] }
+    node.properties.className = [className]
   }
 }
