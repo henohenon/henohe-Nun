@@ -119,12 +119,16 @@
 
 **Phase D 関連コミット**: `075b610` (size), `e668e64` (.hierarchy), `75b30e5` (footnote)
 
-### Phase E. コンテナ要素
+### Phase E. コンテナ要素 (table 一段落 / footer 未着手)
 
 → Important の I5 + Critical の C7。
 
-- [ ] table — 罫線を `--border` から `--main 30%` 程度に強化、行ストライピング (`tbody tr:nth-child(even)`)、padding 余裕、見出し行の差別化
-- [ ] footer — テキストの clipping 対策 (text-anchor / padding 見直し、SVG overflow visible)
+- [x] **table** — 罫線を `color-mix(in srgb, var(--main) 30%, var(--base))` (≒ #c4c4c4) に強化 (table 局所変数 `--table-border-color` で他 `--border` 利用箇所には波及させない)。cell padding を 0.25em 0.55em → 0.3em 0.6em に微増。`border-collapse: separate` + `border-spacing: 0` + `border-radius: 0.4em` + `overflow: hidden` で角丸対応 (`ecea036`)。**stripe と見出し行差別化はシンプル志向のため見送り**。
+- [ ] **footer** — テキストの clipping 対策 (text-anchor / padding 見直し、SVG overflow visible)
+
+**Phase E 関連 + 派生して直したもの**:
+- `--muted` を 1 段薄く (94/6 → 96/4)、code/inline/th/card/admonition の muted 背景の主張を抑制 (`c284ce3`)
+- diff 行の二重改行を解消: `.diff-add` / `.diff-del` に `display: block` を当てた span 直後の `\n` テキストノードを削除 (`4b75c55`)
 
 ### Phase F. Polish
 
@@ -134,7 +138,7 @@
 - [ ] ハイライト (`mark`): 背景色をブランドと協調する色 (例: `color-mix(--brand, transparent 80%)`)
 - [ ] nwyt 余白の定数化
 - [ ] ダークテーマで全スライド再キャプチャしてレグレッション確認
-- [ ] table cell padding 緩和
+- [x] table cell padding 緩和 — Phase E で対応済 (`ecea036`)
 - [ ] リスト・ネストの marker 整列
 
 ### Phase G. Spec gap
