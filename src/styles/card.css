@@ -1,0 +1,83 @@
+/* ---- Link card ---- */
+
+a.card {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid var(--border);
+  border-radius: 0.5em;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--main);
+  max-width: 32em;
+  transition: background-color 0.15s;
+}
+
+a.card:hover {
+  background-color: var(--overlay);
+}
+
+a.card.v {
+  flex-direction: column;
+  max-width: 16em;
+}
+
+.card-thumb {
+  width: 10em;
+  height: auto;
+  object-fit: cover;
+  flex-shrink: 0;
+  background-color: var(--muted);
+}
+
+a.card.v .card-thumb {
+  width: 100%;
+  height: 9em;
+}
+
+.card-body {
+  padding: 0.6em 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+  overflow: hidden;
+  justify-content: center;
+}
+
+.card-title {
+  font-size: 0.9em;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-desc {
+  font-size: 0.75em;
+  color: var(--fg-mid);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.card-url {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 0.7em;
+  color: var(--sub);
+  margin-top: auto;
+  overflow: hidden;
+}
+
+.card-url span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-favicon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}

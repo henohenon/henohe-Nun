@@ -1,0 +1,13 @@
+/* ---- solo template ---- */
+section.solo {
+  align-content: center;
+  justify-items: center;
+}
+
+section.solo > h1 {
+  font-size: var(--slide-title-size);
+  color: var(--brand);
+  text-align: center;
+  line-height: 1.1;
+  max-width: 80%;
+}

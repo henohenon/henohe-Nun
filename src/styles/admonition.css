@@ -1,0 +1,59 @@
+.admonition {
+  border-left: 3px solid var(--border);
+  border-radius: 0 0.3em 0.3em 0;
+  padding: 0.45em 0.75em;
+  background: var(--muted);
+  margin-block: 0.35em;
+}
+
+.admonition-title {
+  font-weight: 600;
+  font-size: 0.88em;
+  margin-block-end: 0.2em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+/* Collapsible */
+details.admonition > summary {
+  cursor: pointer;
+  list-style: none;
+  margin-block-end: 0;
+}
+
+details.admonition > summary::-webkit-details-marker { display: none; }
+
+details.admonition[open] > summary {
+  margin-block-end: 0.2em;
+}
+
+.admonition-title::before {
+  content: '';
+  display: inline-block;
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.admonition-body {
+  font-size: 0.88em;
+  line-height: 1.55;
+}
+
+.admonition-body > *:last-child { margin-block-end: 0; }
+
+/* ---- Type colors ---- */
+.admonition.note    { border-color: var(--sub); }
+.admonition.info    { border-color: #4b70ff; }
+.admonition.tip     { border-color: #22c55e; }
+.admonition.warning { border-color: #f59e0b; }
+.admonition.alert   { border-color: #ef4444; }
+
+.admonition.note    .admonition-title { color: var(--sub); }
+.admonition.info    .admonition-title { color: #4b70ff; }
+.admonition.tip     .admonition-title { color: #22c55e; }
+.admonition.warning .admonition-title { color: #f59e0b; }
+.admonition.alert   .admonition-title { color: #ef4444; }

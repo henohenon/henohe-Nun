@@ -1,0 +1,46 @@
+/* ---- Footnote reference ---- */
+sup[data-fn] {
+  color: var(--brand);
+  font-size: 0.7em;
+  vertical-align: super;
+  position: relative;
+  cursor: pointer;
+}
+
+sup[data-fn] a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---- Tooltip ---- */
+.fn-tooltip {
+  position: absolute;
+  bottom: 1.6em;
+  left: 0;
+  background: var(--base);
+  border: 1px solid var(--border);
+  border-radius: 0.4em;
+  padding: 0.5em 0.8em;
+  min-width: 12em;
+  max-width: 28em;
+  box-shadow: 0 2px 8px var(--shadow);
+  z-index: 100;
+  font-size: 0.8em;
+  font-weight: normal;
+  color: var(--main);
+  line-height: 1.5;
+  pointer-events: none;
+  white-space: normal;
+}
+
+.fn-tooltip:not([hidden]) {
+  display: block;
+}
+
+/* ---- Definition mark ---- */
+.fn-def-mark {
+  font-size: 0.75em;
+  color: var(--brand);
+  margin-right: 0.3em;
+  font-weight: normal;
+}

@@ -1,0 +1,29 @@
+/* ---- message template ---- */
+section.message {
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+section.message > h1 {
+  font-size: var(--slide-title-size);
+  color: var(--brand);
+  line-height: 1.1;
+  margin-block-end: 0.35em;
+}
+
+section.message > .body {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  overflow: hidden;
+  max-width: 80%;
+  min-height: 0;
+}
+
+section.message > .lead {
+  font-size: clamp(12px, 4.5cqmin, 90px);
+  color: var(--fg-mid);
+  padding-block-end: 0.4em;
+  text-align: center;
+}

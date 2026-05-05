@@ -1,0 +1,29 @@
+/* ---- title template ---- */
+section.title {
+  align-content: center;
+  position: relative;
+}
+
+section.title > h1 {
+  font-size: var(--slide-title-size);
+  color: var(--strong);
+  line-height: 1.05;
+  max-width: 65%;
+}
+
+section.title > .sub {
+  font-size: clamp(12px, 4cqmin, 80px);
+  color: var(--fg-mid);
+  margin-block-start: 0.5em;
+  max-width: 65%;
+  line-height: 1.4;
+}
+
+section.title > img.logo {
+  position: absolute;
+  right: var(--slide-pad-x);
+  bottom: var(--slide-pad-bottom);
+  height: clamp(60px, 22cqmin, 400px);
+  width: auto;
+  opacity: 0.12;
+}

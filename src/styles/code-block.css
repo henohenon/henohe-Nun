@@ -1,0 +1,70 @@
+/* ---- Inline code ---- */
+:not(pre) > code {
+  font-family: var(--font-mono);
+  background: var(--muted);
+  color: var(--code-accent);
+  padding: 0.1em 0.35em;
+  border-radius: 0.2em;
+  font-size: 0.88em;
+}
+
+/* ---- Code block (figure.code-block) ---- */
+figure.code-block {
+  border: 1px solid var(--border);
+  border-radius: 0.4em;
+  overflow: hidden;
+  font-size: 0.85em;
+  background: var(--muted);
+}
+
+figure.code-block > figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3em 0.8em;
+  background: var(--muted);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  min-height: 1.8em;
+}
+
+figure.code-block .lang {
+  color: var(--sub);
+}
+
+figure.code-block button.copy {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0.25em;
+  padding: 0.1em 0.5em;
+  cursor: pointer;
+  font-size: 0.8em;
+  color: var(--sub);
+  font-family: var(--font-mono);
+  transition: background 0.15s, color 0.15s;
+}
+
+figure.code-block button.copy:hover {
+  background: var(--overlay);
+  color: var(--main);
+}
+
+figure.code-block > pre {
+  overflow-x: auto;
+  padding: 0.75em 1em;
+}
+
+/* ---- Diff ---- */
+.diff-add { background: var(--diff-add); display: block; }
+.diff-del { background: var(--diff-del); display: block; }
+
+/* ---- Line numbers ---- */
+.line-number {
+  display: inline-block;
+  min-width: 2em;
+  text-align: right;
+  margin-right: 1em;
+  color: var(--sub);
+  user-select: none;
+}

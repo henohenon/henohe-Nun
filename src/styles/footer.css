@@ -1,0 +1,45 @@
+section > footer,
+section > footer.masked {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  height: calc(var(--footer-font-size) + var(--footer-line-height));
+  padding: 0;
+}
+
+.footer-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.footer-rule {
+  width: 100%;
+  y: var(--footer-font-size);
+  height: var(--footer-line-height);
+  fill: var(--strong);
+}
+
+.footer-fl,
+.footer-fr {
+  dominant-baseline: alphabetic;
+  fill: var(--strong);
+  font-size: var(--footer-font-size);
+  font-family: var(--font-body);
+}
+
+.footer-fl {
+  translate: var(--footer-pad-x) var(--footer-font-size);
+}
+
+.footer-fr {
+  x: 100%;
+  translate: calc(-1 * var(--footer-pad-x)) var(--footer-font-size);
+  text-anchor: end;
+}
+
+/* Background image on section */
+section[style*="background-image"] {
+  background-size: cover;
+  background-position: center;
+}

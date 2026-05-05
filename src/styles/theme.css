@@ -25,8 +25,8 @@
   --font-mono: "Consolas", "Monaco", "Menlo", monospace;
 }
 
-/* Slide-scoped tokens — requires container-type: size on .slide */
-.slide {
+/* Slide-scoped tokens — requires container-type: size on section */
+section {
   /* Typography scale (cqmin-based, floors set for cqmin ≈ 280) */
   --text-body: clamp(14px, 5cqmin, 100px);
   --slide-title-size: clamp(20px, 9.1cqmin, 180px);
@@ -35,19 +35,18 @@
   --slide-pad-top: clamp(16px, 8cqmin, 180px);
   --slide-pad-bottom: clamp(16px, 10cqmin, 200px);
   /* Footer */
-  --footer-line-height: clamp(4px, 1.2cqmin, 25px);
-  --footer-font-size: clamp(8px, 2.7cqmin, 55px);
+  --footer-font-size: clamp(10px, 4cqmin, 80px);
+  --footer-line-height: clamp(5px, 2cqmin, 40px);
   --footer-pad-x: clamp(8px, 4cqmin, 80px);
-  --footer-text-nudge: clamp(-22px, calc(-1cqmin - 2px), -8px);
 }
 
 /* Theme preset: dark. Flips the 5 core tokens, then tightens the derived
    mix ratios — human lightness perception is logarithmic, so the same
    mix percentage that's invisible on white becomes a glaring lift on
    near-black. Scoped so it works on either :root (deck-wide via
-   @theme>dark in preamble) or .slide (per-slide). */
+   @theme>dark in preamble) or section (per-slide). */
 :root[data-theme="dark"],
-.slide[data-theme="dark"] {
+section[data-theme="dark"] {
   --base: #0f0f10;
   --main: #e6e6e6;
   --sub: #888888;

@@ -1,0 +1,66 @@
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+body {
+  height: 100%;
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+
+input, button, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Slides container — cqmin baseline */
+.slides {
+  width: 100%;
+  height: 100%;
+  container-type: size;
+}
+
+/* ---- Section (slide) base ---- */
+section {
+  container-type: size;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  display: none;
+  grid-template-rows: auto 1fr;
+  background-color: var(--base);
+  color: var(--main);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
+}
+
+section.active {
+  display: grid;
+}
+
+/* ---- Inline elements ---- */
+a { color: var(--brand); text-decoration: underline; }
+strong, b { font-weight: 700; }
+em, i { font-style: italic; }
+mark {
+  background: color-mix(in srgb, var(--brand) 20%, transparent);
+  border-radius: 0.15em;
+  padding: 0 0.1em;
+}
+code { font-family: var(--font-mono); }
+del { text-decoration: line-through; }

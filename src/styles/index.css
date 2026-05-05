@@ -1,99 +1,12 @@
-:root {
-  /* Core palette */
-  --base: #ffffff;
-  --main: #1a1a1a;
-  --sub: #888888;
-  --strong: #000000;
-  --brand: #5932ff;
-
-  /* Derived */
-  --muted: color-mix(in srgb, var(--base) 94%, var(--main));
-  --fg-mid: color-mix(in srgb, var(--main) 50%, var(--sub));
-  --border: color-mix(in srgb, var(--base) 70%, var(--sub));
-  --overlay: color-mix(in srgb, var(--main) 10%, transparent);
-  --shadow: color-mix(in srgb, var(--main) 50%, transparent);
-
-  /* Exceptions */
-  --code-accent: #d6336c;
-  --diff-add: color-mix(in srgb, #4b70ff 18%, transparent);
-  --diff-del: color-mix(in srgb, #ff4b75 18%, transparent);
-
-  /* Typography */
-  --font-body:
-    "IBM Plex Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
-  --font-mono: "Consolas", "Monaco", "Menlo", monospace;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
-  font-family: var(--font-body);
-  color: var(--main);
-  background: var(--base);
-}
-
-.slides {
-  width: 100%;
-  height: 100%;
-}
-
-section {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  position: relative;
-  display: none;
-  padding: 2rem 3rem;
-}
-
-section:first-child,
-section:target {
-  display: flex;
-  flex-direction: column;
-}
-
-section h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  color: var(--strong);
-}
-
-section .body {
-  flex: 1;
-  overflow: hidden;
-}
-
-section .body h2 {
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-}
-
-section .body h3 {
-  font-size: 1.4rem;
-  margin-bottom: 0.5rem;
-}
-
-section .body p {
-  margin-bottom: 0.5em;
-  line-height: 1.6;
-}
-
-section .body ul, section .body ol {
-  margin-left: 1.5em;
-  margin-bottom: 0.5em;
-}
-
-/* Article nesting */
-article {
-  margin-top: 1rem;
-}
-
-article .body {
-  margin-left: 0.5rem;
-}
+@import './theme.css';
+@import './base.css';
+@import './footer.css';
+@import './code-block.css';
+@import './admonition.css';
+@import './footnote.css';
+@import './card.css';
+@import './templates/default.css';
+@import './templates/title.css';
+@import './templates/me.css';
+@import './templates/message.css';
+@import './templates/solo.css';

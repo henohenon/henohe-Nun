@@ -1,0 +1,30 @@
+/* ---- me template ---- */
+section.me > h1 {
+  font-size: var(--slide-title-size);
+  color: var(--brand);
+  line-height: 1.1;
+  margin-block-end: 0.35em;
+}
+
+section.me > .container {
+  display: grid;
+  grid-template-columns: clamp(60px, 20cqmin, 360px) 1fr;
+  gap: clamp(16px, 5cqmin, 100px);
+  align-items: start;
+  min-height: 0;
+  overflow: hidden;
+}
+
+section.me > .container > .icon img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+section.me > .container > .body {
+  overflow: hidden;
+  min-width: 0;
+}
