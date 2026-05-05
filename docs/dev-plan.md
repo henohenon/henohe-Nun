@@ -15,4 +15,5 @@
 - [x] 10. 脚注 — 収集 → Scope 紐付け → render → 参照解決
 - [x] 11. クライアント JS — navigation, zoom-fit, tooltip, copy
 - [x] 12. ビルド (resolveId/load) — Vite HTML エントリ方式
-- [ ] 13. PDF/WebP 出力 — Playwright + mutool
+- [x] 13. PDF/WebP 出力 — Playwright + sharp + mutool optional (`docs/spec/export.md`)
+- [ ] 14. デザイン・CSS リワーク — 見た目とレイアウトの課題整理 (`docs/design-rework.md`)
