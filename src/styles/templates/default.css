@@ -26,16 +26,16 @@ section.default > .body {
   overflow: hidden;
 }
 
-/* Article headings */
+/* Article headings — h2/h3 のサイズ差を広げて視覚的階層を強調 */
 article.default > h2 {
-  font-size: clamp(14px, 6cqmin, 120px);
+  font-size: clamp(14px, 6.5cqmin, 130px);
   color: var(--brand);
   line-height: 1.1;
   margin-block-end: 0.2em;
 }
 
 article.default > h3 {
-  font-size: clamp(13px, 5cqmin, 100px);
+  font-size: clamp(13px, 4.8cqmin, 96px);
   color: var(--brand);
   line-height: 1.15;
   margin-block-end: 0.2em;
