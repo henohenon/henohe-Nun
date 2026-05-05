@@ -133,16 +133,19 @@
 - モバイル (iPhone Chrome) で `100vh` が URL バー領域を含むため footer が画面外に出ていた問題を `section { height: 100dvh }` で解消 (`2692a8b`)
 - 同上修正で section 上端が URL バーに重なるようになったため `body { height: 100dvh }` も追加して可視領域全体に揃える (`4ab8746`)
 
-### Phase F. Polish
+### Phase F. Polish (一部進行中)
 
 → Polish の P1〜P6。
 
-- [ ] blockquote: 縦罫線を太く、`--brand` 系に寄せるか別 token を切る
-- [ ] ハイライト (`mark`): 背景色をブランドと協調する色 (例: `color-mix(--brand, transparent 80%)`)
-- [ ] nwyt 余白の定数化
+- [x] **blockquote**: 縦罫線を 3px → 10px に倍以上太く (`0225a99`)。色は `--border` のまま、italic + fg-mid 維持。admonition と機能的に被らないシンプルさ優先。`--brand` 寄せや別 token は **やらない判断**
+- [x] **ハイライト (`mark`)**: brand 透過 20% → 30% に強める (`2739306`)
+- [x] **nwyt 余白の定数化** — **やらない判断**。各テンプレートの余白は em ベースで font-size 連動しており重複も少なく、共通化の得は小さい
 - [ ] ダークテーマで全スライド再キャプチャしてレグレッション確認
 - [x] table cell padding 緩和 — Phase E で対応済 (`ecea036`)
-- [ ] リスト・ネストの marker 整列
+- [x] **リスト・ネストの marker 整列** (`63a5c10`): ul/ol を `padding-inline-start` ベースに揃え、`<input type=checkbox>` を `appearance: none` + brand 枠 + チェック時 brand 塗り + 白 ✓ にカスタム描画
+
+**Phase F 関連 + 派生で直したもの**:
+- **admonition** リファイン (`d958a91`): 左罫線撤廃 + 四隅角丸 + bg を `color-mix(type 9-10%, var(--base))` の低彩度 tint に。title/dot は `color-mix(type 80%, var(--base))` で抑える。元の tailwind 風飽和度 (#4b70ff / #22c55e / #f59e0b / #ef4444) は data として保持しつつ全体トーンを slide の落ち着き寄せ
 
 ### Phase G. Spec gap
 
@@ -151,6 +154,17 @@
 - [ ] title の固定画像位置/サイズ仕様を spec に明文化、実装と整合
 - [ ] mermaid の描画完了待ちを capture スクリプトに導入 (現状 networkidle + 150ms では足りない可能性) → `await mermaid.run` 完了マーカーで wait
 - [ ] OGP meta が出ているか確認、出てなければ `nun-structure.ts` に追加
+
+### Phase H. 要追加調査 (メモ書き)
+
+セッション中に oneline で挙がった気になり点。詳細・再現条件は要確認。
+
+- [ ] **テンプレ指定が想定と違う / prop も違いそう** — どの template / どの prop が spec と合わないか具体例を集める。`docs/spec/syntax.md` の templates セクションと現挙動の差分を洗う作業
+- [ ] **コードブロックのコピー、padding-l** — copy ボタン周りのパディング問題？コピー範囲が狭い／広すぎる？要再現
+- [ ] **テーブルの中央寄せが効いてない** — Markdown の `|---:|` (右寄せ) や `|:---:|` (中央) のアライメント指定が現状 CSS で打ち消されてる可能性。`.body td[align="center"]` 等の対応が必要かも
+- [ ] **閉じる開くの zoom-fit** — `<details>` admonition の開閉で zoom-fit が再計算されない問題。`details` の `toggle` event をフックして fitSlide 呼び直す必要あり
+- [ ] **脚注 none** — 表示されない事例があるらしい。`fn-tooltip[hidden]` の display 制御か、参照→定義のリンク切れか、要再現
+- [ ] **blockquote の brand 版のための class 指定？** — `.brand` 等の opt-in クラスで brand 寄せ blockquote を可能にする案？シンプル維持の方針で見送ったが、必要なら opt-in 形で残す手
 
 ---
 
