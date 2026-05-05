@@ -150,7 +150,7 @@ article.default > .body {
 
 /* Blockquote */
 .body blockquote {
-  border-left: 3px solid var(--border);
+  border-left: 10px solid var(--border);
   padding-inline-start: 0.75em;
   color: var(--fg-mid);
   font-style: italic;
