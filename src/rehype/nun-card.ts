@@ -53,6 +53,23 @@ export const rehypeNunCard: Plugin<[], Root> = function () {
       const card = buildCard(ogp, url ?? '#', isVertical)
       parent.children.splice(index, 1, card)
     }
+
+    // card は内部に <div> を含むため、親が <p> のままだと
+    // ブラウザの adoption agency が走り a タグが分裂する。
+    // card だけを含む <p> は card で unwrap する。
+    visit(tree, 'element', (pNode: Element, pIndex, pParent: any) => {
+      if (pNode.tagName !== 'p' || !pParent || pIndex == null) return
+      const meaningful = (pNode.children as ElementContent[]).filter(c =>
+        !(c.type === 'text' && /^\s*$/.test(c.value))
+      )
+      if (meaningful.length !== 1) return
+      const only = meaningful[0]
+      if (only.type !== 'element' || only.tagName !== 'a') return
+      const cls = only.properties?.className
+      if (!Array.isArray(cls) || !cls.includes('card')) return
+      pParent.children.splice(pIndex, 1, only)
+      return [SKIP, pIndex] as const
+    })
   }
 }
 
@@ -68,14 +85,16 @@ function buildCard(ogp: OgpData, url: string, vertical: boolean): Element {
   }
   body.push(
     h('div.card-url', [
-      ...(ogp.favicon ? [h('img.card-favicon', { src: ogp.favicon, alt: '', loading: 'lazy' })] : []),
+      ...(ogp.favicon ? [h('img.card-favicon', { src: ogp.favicon, alt: '' })] : []),
       h('span', domain),
     ])
   )
 
   const inner: ElementContent[] = []
   if (ogp.image) {
-    inner.push(h('img.card-thumb', { src: ogp.image, alt: '', loading: 'lazy' }))
+    // card 画像はスライドのフォーカスコンテンツ。lazy だとキャプチャ時に
+    // 描画が間に合わないため eager 読み込み。
+    inner.push(h('img.card-thumb', { src: ogp.image, alt: '' }))
   }
   inner.push(h('div.card-body', body))
 
