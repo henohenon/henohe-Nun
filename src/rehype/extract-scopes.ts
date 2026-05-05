@@ -29,25 +29,19 @@ function hasContent(nodes: (RootContent | ElementContent)[]): boolean {
   })
 }
 
-/** Scope に対応する 2 種類の行範囲。
+/** Scope の行範囲。template / nwyt prop / 脚注定義すべてこの範囲で紐付ける。
  *
- * - `template`: テンプレートマーカー (`🌊name`) は heading の上に書く慣例なので、
- *   前スコープの末尾〜このスコープの heading 末尾を範囲にする。
- * - `nwyt`: nwyt prop (`!key~value`) と脚注定義 (`!fn~[id]`) は heading 直下〜次 heading 直前を範囲にする。
- *   spec (technical.md:163) の「scope 範囲 = heading の行〜次の同レベル以上 heading の行」に揃える。
- *   body の lastLine 起点だと、splice 済みの nwyt 位置が前グループの lastLine を超えた場合に
- *   次スコープへ漏れる (lead 等が前後で取り違わる) ため heading 起点が必須。
+ * spec (technical.md:163) 規定: heading の行 〜 次の同レベル以上 heading の行。
+ * この範囲内のどこに `🌊template` / `!key~value` / `!fn~[id]` を書いても
+ * そのスコープに属する (推奨配置は heading 直下)。
  */
-type ScopeRanges = {
-  template: { start: number; end: number }
-  nwyt: { start: number; end: number }
-}
+type ScopeRange = { start: number; end: number }
 
 /**
  * hast の子ノード列を指定 depth の heading で分割し、Scope ツリーを構築する。
  *
- * 再帰時には親スコープの nwyt 範囲末尾を `parentNwytEnd` として渡す。
- * 末尾サブスコープ (次の同レベル heading が無い) の nwyt 範囲が親を超えて
+ * 再帰時には親スコープの範囲末尾を `parentRangeEnd` として渡す。
+ * 末尾サブスコープ (次の同レベル heading が無い) の範囲が親を超えて
  * 隣スコープの定義 (例: 後続セクションの `!fn~`) を巻き込まないようにするため。
  */
 export function extractScopes(
@@ -55,23 +49,17 @@ export function extractScopes(
   depth: number,
   data: VFileData,
   sectionIndex: { value: number },
-  parentNwytEnd: number = Number.MAX_SAFE_INTEGER,
+  parentRangeEnd: number = Number.MAX_SAFE_INTEGER,
 ): Scope[] {
   const groups = splitByHeading(nodes, depth)
   return groups.map((group, i) => {
-    const ranges: ScopeRanges = {
-      template: {
-        start: i === 0 ? 0 : groups[i - 1].lastLine + 1,
-        end: group.lastLine,
-      },
-      nwyt: {
-        start: group.headingStartLine,
-        end: i < groups.length - 1
-          ? groups[i + 1].headingStartLine - 1
-          : parentNwytEnd,
-      },
+    const range: ScopeRange = {
+      start: group.headingStartLine,
+      end: i < groups.length - 1
+        ? groups[i + 1].headingStartLine - 1
+        : parentRangeEnd,
     }
-    return buildScope(group, depth, data, sectionIndex, ranges)
+    return buildScope(group, depth, data, sectionIndex, range)
   })
 }
 
@@ -147,7 +135,7 @@ function buildScope(
   depth: number,
   data: VFileData,
   sectionIndex: { value: number },
-  ranges: ScopeRanges,
+  range: ScopeRange,
 ): Scope {
   const tag = depth === 1 ? 'section' as const : 'article' as const
 
@@ -156,7 +144,7 @@ function buildScope(
   }
 
   // vfile.data から position ベースで template/nwyt を紐付け
-  const bound = bindScopeData(data, ranges, sectionIndex.value)
+  const bound = bindScopeData(data, range, sectionIndex.value)
 
   // body 内に depth+1 の heading があるか確認
   const hasSubHeadings = group.children.some(
@@ -165,8 +153,8 @@ function buildScope(
 
   let body: Scope['body']
   if (hasSubHeadings && depth + 1 <= 6) {
-    // 子スコープの nwyt 範囲がこのスコープを超えないよう nwyt.end を伝播
-    body = extractScopes(group.children, depth + 1, data, sectionIndex, ranges.nwyt.end)
+    // 子スコープの範囲がこのスコープを超えないよう range.end を伝播
+    body = extractScopes(group.children, depth + 1, data, sectionIndex, range.end)
   } else {
     body = group.children as ElementContent[]
   }
@@ -187,11 +175,11 @@ function buildScope(
 
 /**
  * vfile.data から position ベースで template/nwyt prop / 脚注定義を Scope に紐付ける。
- * 範囲は `ScopeRanges` 参照。
+ * 範囲は spec (technical.md:163) に従い template / nwyt / fnDef 共通。
  */
 function bindScopeData(
   data: VFileData,
-  ranges: ScopeRanges,
+  range: ScopeRange,
   pageNumber: number,
 ): {
   template: TemplateName
@@ -199,25 +187,22 @@ function bindScopeData(
   nwyts: NwytProp[]
   fnDef?: string
 } {
-  const inTemplateRange = (line: number) =>
-    line >= ranges.template.start && line <= ranges.template.end
-  const inNwytRange = (line: number) =>
-    line >= ranges.nwyt.start && line <= ranges.nwyt.end
+  const inRange = (line: number) =>
+    line >= range.start && line <= range.end
 
   // テンプレート: 範囲内のもの、後勝ち
   const matchingTemplates = data.templates.filter(
-    t => inTemplateRange(t.position.start.line)
+    t => inRange(t.position.start.line)
   )
   const lastTemplate = matchingTemplates[matchingTemplates.length - 1]
   const template: TemplateName = lastTemplate?.template ?? 'default'
   const classes = matchingTemplates.flatMap(t => t.classes)
 
-  // nwyt prop と脚注定義はどちらも `!key~value` 構文の派生なので同じ nwyt 範囲を使う
-  const nwyts = data.nwyts.filter(n => inNwytRange(n.position.start.line))
+  const nwyts = data.nwyts.filter(n => inRange(n.position.start.line))
 
   let fnDef: string | undefined
   for (const [id, entry] of Object.entries(data.footnotes)) {
-    if (inNwytRange(entry.position.start.line)) {
+    if (inRange(entry.position.start.line)) {
       fnDef = id
       data.footnoteLocs[id] = { page: pageNumber }
       break
