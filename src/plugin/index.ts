@@ -109,7 +109,7 @@ export function nunPlugin(): Plugin {
 function buildIndex(deckPaths: string[]): string {
   const items = deckPaths
     .map(p => deckName(p))
-    .map(name => `<li><a href="/${name}">${name}</a></li>`)
+    .map(name => `<li><a href="./${name}/">${name}</a></li>`)
     .join('\n')
 
   return `<!DOCTYPE html>
