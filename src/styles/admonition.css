@@ -1,8 +1,8 @@
 .admonition {
-  border-left: 3px solid var(--border);
-  border-radius: 0 0.3em 0.3em 0;
+  /* K1: 罫線撤廃 + 全方角丸 + type 色 5% bg + title/dot は type 70% mix で抑える。
+     type 別の bg と title 色は下の `.admonition.<type>` で当てる。 */
+  border-radius: 0.3em;
   padding: 0.45em 0.75em;
-  background: var(--muted);
   margin-block: 0.35em;
 }
 
@@ -45,15 +45,18 @@ details.admonition[open] > summary {
 
 .admonition-body > *:last-child { margin-block-end: 0; }
 
-/* ---- Type colors ---- */
-.admonition.note    { border-color: var(--sub); }
-.admonition.info    { border-color: #4b70ff; }
-.admonition.tip     { border-color: #22c55e; }
-.admonition.warning { border-color: #f59e0b; }
-.admonition.alert   { border-color: #ef4444; }
+/* ---- Type colors ----
+   bg は `--base` (= 白/暗 page bg) を基調に type を 5-6% 混ぜた低彩度 tint。
+   ネスト時に親が透けて二重 tint にならないよう transparent や muted ではなく
+   不透明 base を採用。title/dot は type 色を 80% で base 寄せして抑える。 */
+.admonition.note    { background: color-mix(in srgb, var(--sub) 9%, var(--base)); }
+.admonition.info    { background: color-mix(in srgb, #4b70ff   9%, var(--base)); }
+.admonition.tip     { background: color-mix(in srgb, #22c55e   9%, var(--base)); }
+.admonition.warning { background: color-mix(in srgb, #f59e0b   10%, var(--base)); }
+.admonition.alert   { background: color-mix(in srgb, #ef4444   9%, var(--base)); }
 
-.admonition.note    .admonition-title { color: var(--sub); }
-.admonition.info    .admonition-title { color: #4b70ff; }
-.admonition.tip     .admonition-title { color: #22c55e; }
-.admonition.warning .admonition-title { color: #f59e0b; }
-.admonition.alert   .admonition-title { color: #ef4444; }
+.admonition.note    .admonition-title { color: color-mix(in srgb, var(--sub) 80%, var(--base)); }
+.admonition.info    .admonition-title { color: color-mix(in srgb, #4b70ff   80%, var(--base)); }
+.admonition.tip     .admonition-title { color: color-mix(in srgb, #22c55e   80%, var(--base)); }
+.admonition.warning .admonition-title { color: color-mix(in srgb, #f59e0b   80%, var(--base)); }
+.admonition.alert   .admonition-title { color: color-mix(in srgb, #ef4444   80%, var(--base)); }
