@@ -1,5 +1,6 @@
 import 'virtual:uno.css'
 import '../styles/index.css'
+import 'katex/dist/katex.min.css'
 
 const sections = document.querySelectorAll<HTMLElement>('section')
 if (sections.length > 0) {
@@ -7,6 +8,7 @@ if (sections.length > 0) {
   initZoomFit(sections)
   initCopyButtons()
   initFnTooltips()
+  initMermaid(sections)
 }
 
 // ---------------------------------------------------------------------------
@@ -22,7 +24,7 @@ function initNavigation(sections: NodeListOf<HTMLElement>) {
   function showSlide(page: number) {
     const go = () => {
       sections.forEach((section, i) => {
-        section.style.display = (i + 1 === page) ? 'flex' : 'none'
+        section.classList.toggle('active', i + 1 === page)
       })
       fitSlide(sections[page - 1])
     }
@@ -48,10 +50,16 @@ function initNavigation(sections: NodeListOf<HTMLElement>) {
 
   // Keyboard
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    const active = document.activeElement
+    if (active instanceof HTMLElement) {
+      const tag = active.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || active.isContentEditable) return
+    }
+
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'd' || e.key === 's') {
       e.preventDefault()
       navigate(1)
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'a' || e.key === 'w') {
       e.preventDefault()
       navigate(-1)
     } else if (e.key === 'Home') {
@@ -181,7 +189,8 @@ function initCopyButtons() {
 
 function initFnTooltips() {
   document.addEventListener('mouseenter', (e) => {
-    const sup = (e.target as HTMLElement).closest('sup[data-fn]')
+    if (!(e.target instanceof Element)) return
+    const sup = e.target.closest('sup[data-fn]')
     if (!sup) return
     const tooltip = sup.nextElementSibling as HTMLElement | null
     if (tooltip?.classList.contains('fn-tooltip')) {
@@ -190,11 +199,29 @@ function initFnTooltips() {
   }, true)
 
   document.addEventListener('mouseleave', (e) => {
-    const sup = (e.target as HTMLElement).closest('sup[data-fn]')
+    if (!(e.target instanceof Element)) return
+    const sup = e.target.closest('sup[data-fn]')
     if (!sup) return
     const tooltip = sup.nextElementSibling as HTMLElement | null
     if (tooltip?.classList.contains('fn-tooltip')) {
       tooltip.hidden = true
     }
   }, true)
+}
+
+// ---------------------------------------------------------------------------
+// Mermaid (非同期ロード)
+// ---------------------------------------------------------------------------
+
+function initMermaid(sections: NodeListOf<HTMLElement>) {
+  const elements = document.querySelectorAll<HTMLElement>('.mermaid')
+  if (elements.length === 0) return
+
+  import('mermaid').then(async ({ default: mermaid }) => {
+    mermaid.initialize({ startOnLoad: false, theme: 'neutral' })
+    await mermaid.run({ nodes: Array.from(elements) })
+    const page = parseInt(location.hash.replace('#', '') || '1', 10)
+    const section = sections[page - 1]
+    if (section) fitSlide(section)
+  })
 }

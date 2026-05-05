@@ -554,8 +554,24 @@ shiki 処理後のコードブロックを種別ごとに処理する。
 |---|---|
 | embed_html | `hast-util-from-html` で hast 化 |
 | embed_svg | 同上 |
-| embed_mermaid | mermaid API で SVG レンダリング -> hast 化 |
+| embed_mermaid | クライアントサイドレンダリング（後述） |
 | embed_math | KaTeX API で HTML レンダリング -> hast 化 |
+
+#### embed_mermaid: クライアントサイドレンダリング採用の経緯
+
+当初仕様では「mermaid API で SVG レンダリング → hast 化」(SSR) を想定していた。
+調査の結果、Mermaid の SSR には DOM 環境が必要で、実用的な手段は以下の3択になる：
+
+| 手段 | 問題 |
+|---|---|
+| `@mermaid-js/mermaid-cli` | 内部で Puppeteer (Chromium バイナリ ~100MB+) を使用。公式ツールだが重い |
+| jsdom + mermaid | 軽量だが全ダイアグラム型の動作は保証されない |
+| Playwright headless | ビルドのたびにブラウザ起動。PDF 出力用途とは分離したい |
+
+**決定**: `<pre class="mermaid">` を出力し、`mermaid` npm パッケージをクライアントで動的 import して非同期レンダリングする。
+- ナビゲーション初期化はブロックしない（`initMermaid` は fire-and-forget）
+- レンダリング完了後に現在スライドを `fitSlide` で再調整
+- Mermaid は Vite の code splitting により別チャンクに分離される
 
 ### コードブロックヘッダー
 
