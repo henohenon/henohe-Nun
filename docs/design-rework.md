@@ -58,14 +58,27 @@
 
 依存関係と影響範囲を考えてフェーズ化する。**早いフェーズの修正で後段の問題が見えにくくなる**ため、毎フェーズ後に全スライドを再キャプチャして次フェーズの内容を再評価する。
 
-### Phase A. zoom-fit を直す
+### Phase A. zoom-fit を直す ✅
 
 → Critical の C1 が複数のスライドで二次的影響を出している (本来見えるはずの本文が切れて評価できない)。最優先で根本対処。
 
-- [ ] zoom-fit のクライアント JS (`src/client/index.ts` `initZoomFit`) を読み解く
-- [ ] body の `grid-auto-rows: auto` + `gap` + `min-height: 0` が想定通り潰れているか確認
-- [ ] zoom が overflow した場合のスケール計算が正しいか
-- [ ] 全スライドで zoom-fit が破綻しないことを確認
+- [x] zoom-fit のクライアント JS (`src/client/index.ts` `initZoomFit`) を読み解く
+- [x] body の `grid-auto-rows: auto` + `gap` + `min-height: 0` が想定通り潰れているか確認
+- [x] zoom が overflow した場合のスケール計算が正しいか
+- [x] 全スライドで zoom-fit が破綻しないことを確認
+
+**結論**: `article.default` 自体と `article.default > .body` の `min-height:0 / overflow:hidden` が原因で、article 全体が h2 のサイズだけに圧縮 → 本文が visually hidden、zoom-fit からも overflow が見えず縮小トリガー無し。両方の制約を撤廃して解消 (commit `91d00c7`)。
+
+### Phase A2. コンテンツ密度・スケール調整
+
+→ Phase A の修正で zoom-fit が機能した結果、**コンテンツの多いスライドではフォントが小さく縮みすぎる** 副次問題が顕在化。現状の `--text-body: clamp(14px, 5cqmin, 100px)` ベースは、sample デッキの「全機能デモ」を 1 スライドに詰めるとほとんど読めなくなる。
+
+- [ ] サンプル `benben/sample.md` の密度を見直す (1 スライドに詰める量を減らすか分割)
+- [ ] cqmin ベースのテキストスケールを再検討 (フロア/天井、5cqmin が最適か、line-height との関係)
+- [ ] zoom-fit が縮小発動する閾値の体感確認 (どこから読みづらくなるか)
+- [ ] 「これ以上は縮小せず overflow 切り捨て」の上限設定を検討 (現状は無制限縮小 = 文字 1px まで縮む可能性)
+
+判断: スライド = "1 トピック 1 枚" の原則を踏襲するなら、サンプル分割 + 適度な default scale で大半は解決。zoom-fit はあくまで "想定オーバーの保険" 位置付けに戻す。
 
 ### Phase B. テンプレート修正
 
