@@ -82,14 +82,16 @@
 
 **第一段** (sample 分割) 完了 (commit `b1feeb4`): 13 → 23 スライドに拡大、各スライドが zoom-fit 不要 or 軽い縮小で読める粒度に。残りの cqmin スケール再検討と縮小下限は Phase B 以降と並行して必要に応じ着手。
 
-### Phase B. テンプレート修正
+### Phase B. テンプレート修正 ✅
 
 → Critical の C5, C6 (テンプレートの中央配置)。Phase A で zoom-fit が正常化した後に着手 (干渉する可能性)。
 
-- [ ] title — 「中央左」を達成 (vertical center + max-width 65% は維持)
-- [ ] solo — タイトル中央配置 (vertical + horizontal)
-- [ ] me — アイコン仕様の整理 (404 を回避: デフォルト画像 or 必須にする or fallback) + slide.md の `/images/icon.png` 配置 or 別パス指定
-- [ ] message — リード位置の確認
+- [x] title — 「中央左」を達成 (vertical center + max-width 65% は維持)
+- [x] solo — タイトル中央配置 (vertical + horizontal)
+- [x] me — アイコン 404 を /henoheno.svg に差し替え + parseNwytValue が `[alt](url)` (link syntax) も受け付けるよう修正
+- [x] message — h1 + body + lead を縦中央寄せ
+
+**結論**: base.css の `grid-template-rows: auto 1fr` が全 section を full fill するため `align-content: center` が機能しなかった。各テンプレで `grid-template-rows` を override (title: auto auto / solo: auto / message: auto auto auto) して残り空間を作り、center 効くようにする (commit `8df7c7f`)。
 
 ### Phase C. ブロック要素
 
