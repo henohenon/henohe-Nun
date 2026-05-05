@@ -602,16 +602,19 @@ OGP キャッシュは dev サーバーのプロセス内メモリに保持（�
 スライド本体の hast を `<html>` で包む。hastscript `h()` で構築し一括 stringify。
 
 ```ts
-const shell = (content: Element, meta: Meta): Element =>
+const shell = (content: Element, meta: ShellMeta): Element =>
   h('html', { lang: 'ja' }, [
     h('head', [
       h('meta', { charset: 'utf-8' }),
       h('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }),
       h('title', meta.title),
       h('meta', { property: 'og:title', content: meta.title }),
+      h('meta', { name: 'description', content: meta.description }),
       h('meta', { property: 'og:description', content: meta.description }),
+      h('meta', { property: 'og:type', content: 'website' }),
+      h('meta', { property: 'og:url', content: meta.ogUrl }),
       h('meta', { property: 'og:image', content: meta.ogImage }),
-      h('link', { rel: 'stylesheet', href: meta.cssPath }),
+      h('meta', { name: 'twitter:card', content: 'summary_large_image' }),
     ]),
     h('body', [
       content,
@@ -620,7 +623,14 @@ const shell = (content: Element, meta: Meta): Element =>
   ])
 ```
 
-OGP メタは `~~~meta` ブロックから取得（自動生成なし）。`og:image` は Vite の `base` 設定（例: `https://example.com/`）とデッキ名から `{base}{deck}/thumb.webp` として組み立てる。`base` が未設定の場合は相対パス `{deck}/thumb.webp` にフォールバック。
+OGP メタは `~~~meta` ブロックの値 + Vite `base` + デッキ名から組み立てる:
+
+- `og:title` / `og:description` / `<title>` / `<meta name=description>` ← `meta.title` / `meta.description`
+- `og:image` ← `meta.ogImage` / `meta.image` 明示指定があれば優先、無ければ `{base}{deck}/thumb.webp` に自動派生
+- `og:url` ← `meta.url` 明示指定があれば優先、無ければ `{base}{deck}/` に自動派生
+- `og:type` は `website` 固定。`twitter:card` は og:image がある時のみ `summary_large_image` を出す
+
+`base` がフル URL (`https://example.com/`) なら絶対 URL が出る。GitHub Pages 等でパスのみ (`/repo-name/`) の場合は同 origin の絶対パス URL になり、scraper はページ URL に対して解決する。
 
 ## `~~~meta`
 

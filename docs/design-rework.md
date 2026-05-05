@@ -118,7 +118,7 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 
 - [ ] **ダークテーマで全 23 スライド再キャプチャ** (Polish P4 残) — Phase D/E/F の色階層・muted・accent 等の dark 時挙動確認
 - [ ] **mermaid 描画完了待ち** (Spec S2 残) — capture スクリプトの `networkidle + 150ms` では甘い → `await mermaid.run` の完了マーカーで wait
-- [ ] **OGP meta 確認・追加** (Spec S3 残) — 出ているか確認、出てなければ `nun-structure.ts` の shell 生成に `<meta property="og:title" og:description og:image>` 等を追加
+- [x] **OGP meta 確認・追加** (Spec S3 残) — `nun-structure.ts` の shell 生成を拡充。`og:title` / `og:description` / `<meta name=description>` / `og:type=website` / `og:url` / `og:image` / `twitter:card=summary_large_image` を出力。`og:url` と `og:image` は Vite `base` + deck 名から自動派生 (`{base}{deck}/` と `{base}{deck}/thumb.webp`)、`meta.url` / `meta.image` / `meta.ogImage` で個別上書き可
 
 ### 機能・UI 細部
 
