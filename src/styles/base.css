@@ -6,7 +6,11 @@
 }
 
 html {
+  /* body / section と高さを揃え、URL バー領域による html 背景漏れを防ぐ。
+     html の `height: 100%` (= lvh) と body の `100dvh` の差分が下端に
+     白い 1px の帯として見えていた。 */
   height: 100%;
+  height: 100dvh;
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 }
