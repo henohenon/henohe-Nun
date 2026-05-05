@@ -159,7 +159,7 @@
 
 セッション中に oneline で挙がった気になり点。詳細・再現条件は要確認。
 
-- [ ] **テンプレ指定が想定と違う / prop も違いそう** — どの template / どの prop が spec と合わないか具体例を集める。`docs/spec/syntax.md` の templates セクションと現挙動の差分を洗う作業
+- [x] **テンプレ指定が想定と違う / prop も違いそう** — 調査結果: spec (`technical.md:163`) は `[heading 行, 次同レベル heading 行 - 1]` を template/nwyt 共通範囲として規定済みで、ユーザ意図 (対象 head から次 head 直前まで) と一致。ズレてたのは extract-scopes.ts の template 範囲 (前グループ末尾基準) と sample.md の「`🌊foo` を heading の **前** に書く」慣例だった。template 範囲を nwyt と統一 + sample.md を「heading 直下」に migrate して解消
 - [ ] **コードブロックのコピー、padding-l** — copy ボタン周りのパディング問題？コピー範囲が狭い／広すぎる？要再現
 - [ ] **テーブルの中央寄せが効いてない** — Markdown の `|---:|` (右寄せ) や `|:---:|` (中央) のアライメント指定が現状 CSS で打ち消されてる可能性。`.body td[align="center"]` 等の対応が必要かも
 - [ ] **閉じる開くの zoom-fit** — `<details>` admonition の開閉で zoom-fit が再計算されない問題。`details` の `toggle` event をフックして fitSlide 呼び直す必要あり
