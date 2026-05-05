@@ -7,13 +7,13 @@ date: 2026-05-01
 !fl~**Nun** 記法一覧
 !fr~2026/05/01
 
-🌊title
 # Nun 記法一覧
+🌊title
 
 !sub~Markdown スライドツールの全機能デモ
 
-🌊default
 # テンプレート一覧
+🌊default
 
 | テンプレート | 記法 | 特徴 |
 | --- | --- | --- |
@@ -23,28 +23,28 @@ date: 2026-05-01
 | message | `🌊message` | タイトル + 中央寄せ body + リードテキスト |
 | solo | `🌊solo` | タイトルのみ中央寄せ、body なし |
 
-🌊default
 # テンプレートの指定方法
+🌊default
 
-見出し（`#`）の直前に `🌊name` を記述する。
+対象 heading から次 heading 直前までの範囲のどこかに `🌊name` を記述する (推奨は heading の直下)。
 
 省略した場合は `default` として扱われる。
 
 ```markdown
-🌊title
 # スライドタイトル
+🌊title
 
-🌊me
 # プロフィール
+🌊me
 ```
 
-🌊title
 # title テンプレート
+🌊title
 
 !sub~中央左にタイトル、その下にサブタイトル。固定画像付き
 
-🌊me
 # me テンプレート
+🌊me
 
 !icon~[icon](/henoheno.svg)
 
@@ -53,8 +53,8 @@ date: 2026-05-01
 - `!icon~[alt](url)` でアイコン画像を指定
 - 左にアイコン、右に body が並ぶ
 
-🌊message
 # message テンプレート
+🌊message
 
 !lead~body の下に表示されるリードテキスト
 
@@ -62,11 +62,11 @@ date: 2026-05-01
 
 中央寄せのコールアウト的スライドに使う。
 
-🌊solo
 # solo テンプレート
+🌊solo
 
-🌊default
 # 基本 Markdown — テキスト装飾
+🌊default
 
 **太字** / *斜体* / ***太字斜体***
 
@@ -80,8 +80,8 @@ date: 2026-05-01
 >
 > 複数行の引用
 
-🌊default
 # 基本 Markdown — リスト
+🌊default
 
 ## 箇条書き・番号付き
 
@@ -97,8 +97,8 @@ date: 2026-05-01
 - [ ] 未完了タスク
 - [x] 完了タスク
 
-🌊default
 # 基本 Markdown — テーブル・リンク
+🌊default
 
 ## テーブル
 
@@ -114,8 +114,8 @@ date: 2026-05-01
 
 ![Nun ロゴ](/images/henohe-Nun.png "henohe-Nun")
 
-🌊default
 # コードブロック — 基本
+🌊default
 
 ## 言語指定
 
@@ -132,8 +132,8 @@ export async function process(md: string) {
 }
 ```
 
-🌊default
 # コードブロック — diff
+🌊default
 
 ```diff_ts
 -const value = "old";
@@ -141,8 +141,8 @@ export async function process(md: string) {
  console.log(value);
 ```
 
-🌊default
 # コードブロック — embed_svg / embed_html
+🌊default
 
 ## embed_svg
 
@@ -163,8 +163,8 @@ export async function process(md: string) {
 </div>
 ```
 
-🌊default
 # コードブロック — embed_mermaid
+🌊default
 
 ```embed_mermaid
 flowchart LR
@@ -174,8 +174,8 @@ flowchart LR
   hast --> HTML[HTML]
 ```
 
-🌊default
 # コードブロック — embed_math
+🌊default
 
 ```embed_math
 \begin{aligned}
@@ -184,8 +184,8 @@ flowchart LR
 \end{aligned}
 ```
 
-🌊default
 # 装飾ブロック — 種類
+🌊default
 
 :::note
 **note** — 補足・メモ
@@ -207,8 +207,8 @@ flowchart LR
 **alert** — 強い警告
 :::
 
-🌊default
 # 装飾ブロック — 折りたたみ
+🌊default
 
 :::note+ 開いた補足ブロック
 初期状態で展開されている。`:::note+` で指定。
@@ -218,8 +218,8 @@ flowchart LR
 クリックで展開できる。`:::warning-` で指定。
 :::
 
-🌊default
 # 装飾ブロック — ネスト
+🌊default
 
 ::::note 外側のブロック
 :::tip 内側のブロック
@@ -227,8 +227,8 @@ flowchart LR
 :::
 ::::
 
-🌊default
 # 数式
+🌊default
 
 ## インライン
 
@@ -246,8 +246,8 @@ $$
 \sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
 $$
 
-🌊default
 # リンクカード
+🌊default
 
 ## 横型（デフォルト）
 
@@ -257,8 +257,8 @@ $$
 
 !card.v[henohe-Nun](https://github.com/henohenon/henohe-Nun)
 
-🌊default
 # nwyt prop 一覧
+🌊default
 
 | キー | 用途 |
 | --- | --- |
@@ -270,8 +270,8 @@ $$
 | `!lead~text` | message テンプレートのリード |
 | `!fn~[id]` | 脚注定義マーク |
 
-🌊default
 # 脚注
+🌊default
 
 ## 参照
 
@@ -291,5 +291,5 @@ $$
 
 脚注2の内容。$e^{i\pi} + 1 = 0$ のように数式も使える。
 
-🌊solo
 # おわり
+🌊solo
