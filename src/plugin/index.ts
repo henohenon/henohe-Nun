@@ -6,8 +6,15 @@ import { processMarkdown } from '../pipeline.ts'
 import { findDecks, buildIndex } from '../decks.ts'
 
 export function nunPlugin(): Plugin {
+  // OGP の絶対 URL 組み立てに使う Vite base を `configResolved` で捕捉する
+  let base = '/'
+
   return {
     name: 'nun',
+
+    configResolved(config) {
+      base = config.base
+    },
 
     // ----- Build: config + resolveId + load -----
 
@@ -37,11 +44,14 @@ export function nunPlugin(): Plugin {
       }
       const match = id.match(/^(.+)\/index\.html$/)
       if (match) {
-        const mdPath = resolve('benben', `${match[1]}.md`)
+        const deck = match[1]
+        const mdPath = resolve('benben', `${deck}.md`)
         if (existsSync(mdPath)) {
           const md = await readFile(mdPath, 'utf-8')
           return String(await processMarkdown(md, {
             jsPath: '/src/client/index.ts',
+            base,
+            deck,
           }))
         }
       }
@@ -76,6 +86,8 @@ export function nunPlugin(): Plugin {
           const md = await readFile(mdPath, 'utf-8')
           const raw = await processMarkdown(md, {
             jsPath: '/src/client/index.ts',
+            base,
+            deck: name,
           })
           const html = await server.transformIndexHtml(url, raw)
           res.setHeader('Content-Type', 'text/html')

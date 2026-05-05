@@ -11,6 +11,8 @@ import { isScope } from '../types.ts'
 
 type Options = {
   jsPath: string
+  base: string
+  deck: string
 }
 
 /**
@@ -68,7 +70,9 @@ export const rehypeNunStructure: Plugin<[Options], Root, Root> = function (optio
       {
         title: meta.title ?? '',
         description: meta.description ?? '',
-        ogImage: meta.ogImage ?? '',
+        // og:image は明示指定があれば優先、なければ {base}{deck}/thumb.webp に自動派生
+        ogImage: meta.ogImage ?? meta.image ?? defaultOgImage(options.base, options.deck),
+        ogUrl: meta.url ?? defaultOgUrl(options.base, options.deck),
         jsPath: options.jsPath,
       }
     )
@@ -82,7 +86,21 @@ type ShellMeta = {
   title: string
   description: string
   ogImage: string
+  ogUrl: string
   jsPath: string
+}
+
+/** {base}{deck}/thumb.webp を組み立て (capture スクリプトが生成するサムネ位置)。
+ *  base / deck が未設定の場合は空文字を返して呼び出し側でスキップ判定。 */
+function defaultOgImage(base: string, deck: string): string {
+  if (!base || !deck) return ''
+  return `${base.replace(/\/$/, '')}/${deck}/thumb.webp`
+}
+
+/** {base}{deck}/ を組み立て。og:url と canonical link 用。 */
+function defaultOgUrl(base: string, deck: string): string {
+  if (!base || !deck) return ''
+  return `${base.replace(/\/$/, '')}/${deck}/`
 }
 
 /**
@@ -162,10 +180,19 @@ function buildShell(content: Element, meta: ShellMeta): Element {
     headChildren.push(h('meta', { property: 'og:title', content: meta.title }))
   }
   if (meta.description) {
+    // OGP 用 + 一般的な description meta の両方を出す
+    headChildren.push(h('meta', { name: 'description', content: meta.description }))
     headChildren.push(h('meta', { property: 'og:description', content: meta.description }))
+  }
+  // og:type は website 固定 (slide deck はサイト的位置付け)
+  headChildren.push(h('meta', { property: 'og:type', content: 'website' }))
+  if (meta.ogUrl) {
+    headChildren.push(h('meta', { property: 'og:url', content: meta.ogUrl }))
   }
   if (meta.ogImage) {
     headChildren.push(h('meta', { property: 'og:image', content: meta.ogImage }))
+    // Twitter は og:image を拾う summary_large_image を指定すれば大画像 preview
+    headChildren.push(h('meta', { name: 'twitter:card', content: 'summary_large_image' }))
   }
 
   return h('html', { lang: 'ja' }, [

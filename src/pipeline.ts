@@ -21,6 +21,10 @@ import { nunShikiTransformer } from './rehype/nun-shiki-transformer.ts'
 
 export type ProcessOptions = {
   jsPath: string
+  /** Vite の `base` (例: `/henohe-Nun/` or `https://example.com/`)。OGP の絶対 URL 組み立てに使う。 */
+  base?: string
+  /** デッキ名 (例: `sample`)。`{base}{deck}/thumb.webp` 等の URL 組み立てに使う。 */
+  deck?: string
 }
 
 export function createProcessor(options: ProcessOptions) {
@@ -42,6 +46,8 @@ export function createProcessor(options: ProcessOptions) {
     .use(rehypeNunFnRef)        // !fn[id] → <sup data-fn="id">
     .use(rehypeNunStructure, {
       jsPath: options.jsPath,
+      base: options.base ?? '/',
+      deck: options.deck ?? '',
     })
     .use(rehypeStringify)
 }
