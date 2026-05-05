@@ -43,14 +43,18 @@ export function extractScopes(
 
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i]
-    // 行範囲: 前のグループの heading の行の次〜このグループの最後のノードの行
-    // テンプレートは heading の直前に書かれるので、前のグループ終了後〜このグループ終了が範囲
     const startLine = i === 0
       ? 0
       : (groups[i - 1].lastLine + 1)
     const endLine = group.lastLine
 
-    const scope = buildScope(group, depth, data, sectionIndex, startLine, endLine)
+    // nwyt props は heading より後の行に書かれるため、hast の lastLine だけでは
+    // body が空のスコープで range 外になる。次のグループの heading 直前まで延ばす。
+    const nwytEndLine = i < groups.length - 1
+      ? groups[i + 1].headingStartLine - 1
+      : Number.MAX_SAFE_INTEGER
+
+    const scope = buildScope(group, depth, data, sectionIndex, startLine, endLine, nwytEndLine)
     scopes.push(scope)
   }
 
@@ -59,14 +63,23 @@ export function extractScopes(
 
 type NodeGroup = {
   heading: Element | null
+  headingStartLine: number  // heading 要素の開始行（空 heading でも保持）
   children: (RootContent | ElementContent)[]
-  lastLine: number  // グループ内の最終行
+  lastLine: number
 }
 
 /** ノードの最終行を取得 */
 function getLastLine(node: RootContent | ElementContent): number {
   if ('position' in node && node.position) {
     return node.position.end.line
+  }
+  return 0
+}
+
+/** ノードの開始行を取得 */
+function getStartLine(node: RootContent | ElementContent): number {
+  if ('position' in node && node.position) {
+    return node.position.start.line
   }
   return 0
 }
@@ -80,7 +93,7 @@ function splitByHeading(
   depth: number,
 ): NodeGroup[] {
   const groups: NodeGroup[] = []
-  let current: NodeGroup = { heading: null, children: [], lastLine: 0 }
+  let current: NodeGroup = { heading: null, headingStartLine: 0, children: [], lastLine: 0 }
 
   for (const node of nodes) {
     const d = getHeadingDepth(node)
@@ -93,6 +106,7 @@ function splitByHeading(
         : node as Element
       current = {
         heading,
+        headingStartLine: getStartLine(node),
         children: [],
         lastLine: getLastLine(node),
       }
@@ -121,6 +135,7 @@ function buildScope(
   sectionIndex: { value: number },
   startLine: number,
   endLine: number,
+  nwytEndLine: number,
 ): Scope {
   const tag = depth === 1 ? 'section' as const : 'article' as const
 
@@ -129,7 +144,7 @@ function buildScope(
   }
 
   // vfile.data から position ベースで template/nwyt を紐付け
-  const bound = bindScopeData(data, startLine, endLine, sectionIndex.value)
+  const bound = bindScopeData(data, startLine, endLine, nwytEndLine, sectionIndex.value)
 
   // body 内に depth+1 の heading があるか確認
   const hasSubHeadings = group.children.some(
@@ -160,13 +175,15 @@ function buildScope(
 /**
  * vfile.data から position ベースで template/nwyt prop を Scope に紐付ける。
  *
- * startLine 〜 endLine の範囲にある entry をフィルタ。
- * グローバル指定（最初の h1 より前）は別途処理（TODO）。
+ * - template: startLine〜endLine（strict）でマッチ。template marker は heading の直前に書く。
+ * - nwyt prop:  startLine〜nwytEndLine（relaxed）でマッチ。prop は heading の直後に書けるため
+ *               hast の lastLine を超えることがある。
  */
 function bindScopeData(
   data: VFileData,
   startLine: number,
   endLine: number,
+  nwytEndLine: number,
   pageNumber: number,
 ): {
   template: TemplateName
@@ -175,6 +192,7 @@ function bindScopeData(
   fnDef?: string
 } {
   const inRange = (line: number) => line >= startLine && line <= endLine
+  const inNwytRange = (line: number) => line >= startLine && line <= nwytEndLine
 
   // テンプレート: 範囲内のもの、後勝ち
   const matchingTemplates = data.templates.filter(
@@ -184,15 +202,14 @@ function bindScopeData(
   const template: TemplateName = lastTemplate?.template ?? 'default'
   const classes = matchingTemplates.flatMap(t => t.classes)
 
-  // nwyt prop: 範囲内のもの
-  const nwyts = data.nwyts.filter(n => inRange(n.position.start.line))
+  // nwyt prop: nwyt 用の広い範囲でマッチ
+  const nwyts = data.nwyts.filter(n => inNwytRange(n.position.start.line))
 
-  // 脚注定義の検出
+  // 脚注定義の検出（fnDef は article 内に本文を持つため strict range で十分）
   let fnDef: string | undefined
   for (const [id, entry] of Object.entries(data.footnotes)) {
     if (inRange(entry.position.start.line)) {
       fnDef = id
-      // pageNumber は section/article 両方から呼ばれるが、同じ値なので上書きは無害
       data.footnoteLocs[id] = { page: pageNumber }
       break
     }

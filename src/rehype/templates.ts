@@ -6,6 +6,8 @@ import remarkRehype from 'remark-rehype'
 import type { Scope, NwytProp } from '../types.ts'
 import { isScope } from '../types.ts'
 
+const inlineProcessor = unified().use(remarkParse).use(remarkRehype)
+
 export type TemplateFn = (scope: Scope) => Element
 
 export const templates: Record<string, TemplateFn> = {
@@ -73,9 +75,8 @@ export function parseNwytValue(key: string, raw: string): ElementContent[] {
 
 /** Markdown インラインをパースして hast children を返す */
 function parseInlineMarkdown(raw: string): ElementContent[] {
-  const processor = unified().use(remarkParse).use(remarkRehype)
-  const mdast = processor.parse(raw)
-  const hast = processor.runSync(mdast)
+  const mdast = inlineProcessor.parse(raw)
+  const hast = inlineProcessor.runSync(mdast)
   // root > p > children を取り出す
   const root = hast as any
   if (root.children?.[0]?.tagName === 'p') {

@@ -40,12 +40,19 @@ export const rehypeNunStructure: Plugin<[Options], Root, Root> = function (optio
     )
 
     // 2. 各 Scope を再帰的にテンプレート適用して hast 化
+    let firstSectionMarked = false
     const sections = scopes.map((scope, i) => {
       const el = render(scope)
       // section に id を付与（ナビゲーション用）
       if (scope.tag === 'section') {
         el.properties ??= {}
         el.properties.id = String(i + 1)
+        // 1 枚目に .active を付与（JS なしでの初期表示用）
+        if (!firstSectionMarked) {
+          const existing = el.properties.className as string[] | undefined
+          el.properties.className = [...(existing ?? []), 'active']
+          firstSectionMarked = true
+        }
         // フッター追加
         appendFooter(el, scope, data, globalNwyts)
       }
