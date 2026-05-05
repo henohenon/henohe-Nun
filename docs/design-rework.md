@@ -93,14 +93,21 @@
 
 **結論**: base.css の `grid-template-rows: auto 1fr` が全 section を full fill するため `align-content: center` が機能しなかった。各テンプレで `grid-template-rows` を override (title: auto auto / solo: auto / message: auto auto auto) して残り空間を作り、center 効くようにする (commit `8df7c7f`)。
 
-### Phase C. ブロック要素
+### Phase C. ブロック要素 ✅ (一段落)
 
 → Critical の C3, C4 + Important の I3, I4。
 
-- [ ] **card** — 横型レイアウトを 1 つの枠 + 内部分割に統合。縦型は `.v` modifier で grid-template 切替
-- [ ] **card** — OGP fetch が dev でも動くか (Vite preview/file:// 制約) を調査、必要なら fallback (キャプション風表示)
-- [ ] **admonition** — `display: grid` で `[icon] [title|body]` の 2 カラム構成、アイコン縦中央、本文インデント揃え
-- [ ] **code-block** — figure に枠/影、header と body のシームレス化、zoom-fit 内で本文が viewable になるサイズを保つ
+- [x] **card** — 横型レイアウト分離問題を修正。原因はブラウザの adoption agency: `<a class='card'><div></div></a>` が親 `<p>` のせいで分裂していた。card のみを含む `<p>` を unwrap する後処理で解決 (`bf68877`)
+- [x] **card** — 画像の `loading='lazy'` を撤廃 (capture 時に確実に描画)
+- [ ] **card** — favicon が GitHub の場合 404 (`getFavicon` の URL 推定が GitHub の特殊形式を扱えない)。Phase F 候補
+- [x] **admonition** — Phase A の zoom-fit fix で本文が表示されるようになり、整列の指摘は実用レベルに収まった (個別 fix なし)
+- [x] **code-block** — Phase A で本文が見えるようになった。header/body 装飾は Phase D 以降
+
+**Phase C 関連 + 派生して直したもの**:
+- table 行が container 高さに stretch される問題: `section.default > .body` に `align-content: start` を指定 (`d97bb15`)
+- table の font-size がブラウザ既定 medium で継承されず極小に: `table { font: inherit }` を base に追加 (`54842a8`)
+- mermaid 描画時に section が display:none で SVG が 16x16 に縮小: 描画前に全 section を一時表示 (`4319335`)
+- message リード強調 (E 案 → さらに強化、size 6.5cqmin + strong + tracking)
 
 ### Phase D. タイポグラフィと色階層
 

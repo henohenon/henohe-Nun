@@ -24,9 +24,12 @@ section.message > .body {
 }
 
 section.message > .lead {
-  /* 下中央 (grid 最終行の auto に乗るので自動的に下、text-align で横中央) */
+  /* 下中央 (grid 最終行の auto に乗るので自動的に下、text-align で横中央)。
+     bold は使わずサイズ + 色 + tracking で「コンセプト宣言の一文」感を出す。 */
   text-align: center;
-  font-size: clamp(12px, 4.5cqmin, 90px);
-  color: var(--fg-mid);
+  font-size: clamp(16px, 6.5cqmin, 130px);
+  color: var(--strong);
+  letter-spacing: 0.05em;
+  margin-block-start: 0.6em;
   padding-block-end: 0.4em;
 }
