@@ -2,6 +2,7 @@
 sup[data-fn] {
   color: var(--brand);
   font-size: 0.7em;
+  font-weight: 700;
   vertical-align: super;
   position: relative;
   cursor: pointer;
@@ -37,10 +38,12 @@ sup[data-fn] a {
   display: block;
 }
 
-/* ---- Definition mark ---- */
+/* ---- Definition mark ----
+   `[^N]` を見出し文字と区別する程度の最小装飾。brand 文字色 + 太字のみ。 */
 .fn-def-mark {
   font-size: 0.75em;
   color: var(--brand);
-  margin-right: 0.3em;
-  font-weight: normal;
+  margin-right: 0.35em;
+  font-weight: 600;
+  vertical-align: top;
 }
