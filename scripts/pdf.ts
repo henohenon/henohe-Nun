@@ -33,12 +33,15 @@ async function main(): Promise<void> {
     for (const deck of decks) {
       const page = await openDeck(browser, preview.baseUrl, deck, { width, height })
 
-      // 全 section を強制表示 + page-break で 1 枚 = 1 ページ化
+      // 全 section を強制表示 + page-break で 1 枚 = 1 ページ化。
+      // CSS の section は display: grid; .active で表示する設計なので、
+      // .active 相当の表示状態を再現するため display: grid で上書き。
+      // (display: flex にすると grid-template-rows が無視されてレイアウト崩壊)
       await page.addStyleTag({
         content: `
           @page { size: ${width}px ${height}px; margin: 0; }
           section {
-            display: flex !important;
+            display: grid !important;
             opacity: 1 !important;
             page-break-after: always;
             break-after: page;
