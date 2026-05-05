@@ -1,6 +1,7 @@
-import { writeFile, rename } from 'node:fs/promises'
+import { writeFile, readFile, stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import { spawn } from 'node:child_process'
+import { PDFDocument } from 'pdf-lib'
 import {
   findDecks, ensureBuild, ensureDir, parseArgs,
   startPreview, launchBrowser, openDeck,
@@ -10,10 +11,16 @@ const args = parseArgs()
 const deckFilter = args.values['deck']
 const width = parseInt(args.values['width'] ?? '1920', 10)
 const height = parseInt(args.values['height'] ?? '1080', 10)
+const noCompress = args.flags.has('no-compress')
 
 async function main(): Promise<void> {
   await ensureBuild()
-  await checkMutool()
+  const useMutool = !noCompress && await hasMutool()
+  if (!noCompress && !useMutool) {
+    console.warn('[warn] mutool not found in PATH. Falling back to pdf-lib (軽量、~10% 削減のみ)。')
+    console.warn('       強圧縮したい場合は MuPDF tools を install してください:')
+    console.warn('         winget install Artifex.MuPDF.Tools  /  brew install mupdf-tools  /  apt-get install mupdf-tools')
+  }
 
   const decks = deckFilter ? [deckFilter] : findDecks()
 
@@ -38,7 +45,7 @@ async function main(): Promise<void> {
         `,
       })
 
-      const pdf = await page.pdf({
+      const raw = await page.pdf({
         width: `${width}px`,
         height: `${height}px`,
         printBackground: true,
@@ -48,21 +55,32 @@ async function main(): Promise<void> {
 
       const outDir = join('dist', deck)
       ensureDir(outDir)
-      const rawPath = join(outDir, 'slide.raw.pdf')
       const finalPath = join(outDir, 'slide.pdf')
 
-      await writeFile(rawPath, pdf)
-      const before = pdf.byteLength
+      const before = raw.byteLength
+      let finalSize = before
+      let mode = 'no-compress'
 
-      // mutool clean -gggg で圧縮 (画像/オブジェクトをまとめて再エンコード)
-      await runMutool(['clean', '-gggg', rawPath, finalPath])
+      if (useMutool) {
+        const rawPath = join(outDir, 'slide.raw.pdf')
+        await writeFile(rawPath, raw)
+        await runMutool(['clean', '-gggg', rawPath, finalPath])
+        finalSize = (await stat(finalPath)).size
+        await unlink(rawPath)
+        mode = 'mutool'
+      } else if (!noCompress) {
+        const doc = await PDFDocument.load(raw)
+        const compressed = await doc.save({ useObjectStreams: true })
+        await writeFile(finalPath, compressed)
+        finalSize = compressed.byteLength
+        mode = 'pdf-lib'
+      } else {
+        await writeFile(finalPath, raw)
+      }
 
-      const { statSync, unlinkSync } = await import('node:fs')
-      const after = statSync(finalPath).size
-      unlinkSync(rawPath)
-
+      const reduction = ((1 - finalSize / before) * 100).toFixed(1)
       console.log(
-        `generated ${finalPath} (${(before / 1024).toFixed(1)} KB → ${(after / 1024).toFixed(1)} KB, ${(100 - after / before * 100).toFixed(1)}% 削減)`,
+        `generated ${finalPath} (${(before / 1024).toFixed(1)} KB → ${(finalSize / 1024).toFixed(1)} KB, ${reduction}% off via ${mode})`,
       )
 
       await page.close()
@@ -73,29 +91,21 @@ async function main(): Promise<void> {
   }
 }
 
-async function checkMutool(): Promise<void> {
-  await new Promise<void>((resolve, reject) => {
-    const proc = spawn('mutool', ['-v'], { stdio: 'ignore', shell: true })
-    proc.on('exit', code => {
-      if (code === 0 || code === 1) {
-        resolve()
-      } else {
-        reject(new Error(
-          'mutool not found. Install MuPDF tools:\n' +
-          '  Ubuntu/Debian: sudo apt-get install mupdf-tools\n' +
-          '  macOS:         brew install mupdf-tools\n' +
-          '  Windows:       https://mupdf.com/releases/',
-        ))
-      }
-    })
-    proc.on('error', () => reject(new Error('mutool not found in PATH')))
+function hasMutool(): Promise<boolean> {
+  // shell:true 経由だと cmd の "not recognized" が exit 1 で返り判別不能。
+  // shell なしで spawn すれば ENOENT が error イベントに来る。
+  return new Promise(resolve => {
+    const proc = spawn('mutool', ['-v'], { stdio: 'ignore' })
+    proc.on('exit', code => resolve(code === 0))
+    proc.on('error', () => resolve(false))
   })
 }
 
 function runMutool(args: string[]): Promise<void> {
   return new Promise((resolve, reject) => {
-    const proc = spawn('mutool', args, { stdio: 'inherit', shell: true })
+    const proc = spawn('mutool', args, { stdio: 'inherit' })
     proc.on('exit', code => code === 0 ? resolve() : reject(new Error(`mutool ${args.join(' ')} exited ${code}`)))
+    proc.on('error', err => reject(err))
   })
 }
 
