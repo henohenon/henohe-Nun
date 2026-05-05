@@ -4,6 +4,7 @@ import { nunTemplateSyntax, nunTemplateFromMarkdown } from '../micromark/templat
 import { nunNwytPropSyntax, nunNwytPropFromMarkdown } from '../micromark/nwyt-prop.ts'
 import { nunNwytContentSyntax, nunNwytContentFromMarkdown } from '../micromark/nwyt-content.ts'
 import { nunAdmonitionSyntax, nunAdmonitionFromMarkdown } from '../micromark/admonition.ts'
+import { nunMarkSyntax, nunMarkFromMarkdown } from '../micromark/mark.ts'
 
 /**
  * remark plugin: micromark extensions を remarkParse に登録する。
@@ -21,6 +22,7 @@ export const remarkNunSyntax: Plugin<[], Root> = function () {
   data.micromarkExtensions.push(nunTemplateSyntax())
   data.micromarkExtensions.push(nunNwytPropSyntax())
   data.micromarkExtensions.push(nunNwytContentSyntax())
+  data.micromarkExtensions.push(nunMarkSyntax())
   // TODO: admonition micromark extension を修正後に有効化
   // data.micromarkExtensions.push(nunAdmonitionSyntax())
 
@@ -29,5 +31,6 @@ export const remarkNunSyntax: Plugin<[], Root> = function () {
   data.fromMarkdownExtensions.push(nunTemplateFromMarkdown())
   data.fromMarkdownExtensions.push(nunNwytPropFromMarkdown())
   data.fromMarkdownExtensions.push(nunNwytContentFromMarkdown())
+  data.fromMarkdownExtensions.push(nunMarkFromMarkdown())
   // data.fromMarkdownExtensions.push(nunAdmonitionFromMarkdown())
 }

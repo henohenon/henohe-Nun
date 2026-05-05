@@ -7,6 +7,10 @@ import type { Element } from 'hast'
  * Pass these as the `handlers` option to remarkRehype.
  */
 export const nunHandlers: Record<string, Handler> = {
+  nunMark(state: State, node: any): Element {
+    return h('mark', state.all(node))
+  },
+
   nwytContent(state: State, node: any): Element {
     const { key, classes, url } = node.data ?? {}
     const children = state.all(node)
