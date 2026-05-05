@@ -1,5 +1,8 @@
 /* ---- solo template ---- */
 section.solo {
+  /* base.css の auto 1fr を上書き。タイトルだけなので 1 行に絞り、
+     align-content: center で縦中央。 */
+  grid-template-rows: auto;
   align-content: center;
   justify-items: center;
 }

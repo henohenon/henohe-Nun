@@ -1,5 +1,8 @@
 /* ---- message template ---- */
 section.message {
+  /* base.css の auto 1fr を上書き。h1 + body + lead の 3 行を
+     auto sized にして align-content: center で縦中央寄せ。 */
+  grid-template-rows: auto auto auto;
   align-content: center;
   justify-items: center;
   text-align: center;

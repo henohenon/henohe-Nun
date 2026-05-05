@@ -1,5 +1,8 @@
 /* ---- title template ---- */
 section.title {
+  /* base.css の auto 1fr を上書き。auto auto にすることで残り空間が
+     生まれ、align-content: center が効くようになる。 */
+  grid-template-rows: auto auto;
   align-content: center;
   position: relative;
 }

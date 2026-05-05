@@ -46,7 +46,7 @@ date: 2026-05-01
 🌊me
 # me テンプレート
 
-!icon~[icon](/images/icon.png)
+!icon~[icon](/henoheno.svg)
 
 アイコン付き自己紹介スライド。
 

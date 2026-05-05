@@ -53,14 +53,15 @@ export function resolveNwyt(scope: Scope, key: string): Element | null {
 
 /** rawValue を key に応じてパース */
 export function parseNwytValue(key: string, raw: string): ElementContent[] {
-  // bg, fbg, icon: Markdown 画像記法としてパース → img 要素
+  // bg, fbg, icon: 画像として扱う
+  // nwyt の `!` 自体が syntax marker なので、value 側は link 風の
+  // `[alt](url)` で書く慣例 (Markdown 画像 `![alt](url)` の `!` を二重に
+  // しない)。両形式 + 素のパスを受け付ける。
   if (key === 'bg' || key === 'fbg' || key === 'icon') {
-    // 画像パス or Markdown 画像記法
-    const imgMatch = raw.match(/!\[([^\]]*)\]\(([^)]+)\)/)
+    const imgMatch = raw.match(/!?\[([^\]]*)\]\(([^)]+)\)/)
     if (imgMatch) {
       return [h('img', { src: imgMatch[2], alt: imgMatch[1] }) as ElementContent]
     }
-    // 素のパスとして扱う
     return [h('img', { src: raw.trim(), alt: '' }) as ElementContent]
   }
 
