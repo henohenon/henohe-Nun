@@ -1,9 +1,8 @@
 /* ---- default template ---- */
 article.default {
   display: grid;
-  grid-template-rows: auto 1fr;
-  min-height: 0;
-  overflow: hidden;
+  grid-template-rows: auto auto;
+  /* min-height/overflow は付けない (zoom-fit が overflow を検知できなくなる) */
 }
 
 /* Section title */
@@ -47,8 +46,12 @@ article.default > h6 {
 }
 
 article.default > .body {
-  overflow: hidden;
-  min-height: 0;
+  /* min-height/overflow は付けない。
+     ここで body を 0 まで圧縮可能にすると article 全体が h2 のみのサイズに
+     潰れ、本文が section.body の overflow:hidden で hidden され、
+     zoom-fit も overflow を検知できず縮小しない (= 本文が消える)。
+     article > .body は素直に natural content height を持たせて、
+     overflow 制御は外側 (section > .body) と zoom-fit に任せる。 */
 }
 
 /* ---- Body content typography (shared across all templates) ---- */
