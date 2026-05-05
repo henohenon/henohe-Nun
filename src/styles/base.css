@@ -12,7 +12,11 @@ html {
 }
 
 body {
+  /* モバイルで URL バー領域に section が掛からないよう body 自体を dvh で
+     可視領域に合わせる。section も 100dvh のため body と一致し、上下
+     どちら側のバーにも見切られなくなる。dvh 非対応ブラウザは 100% フォールバック。 */
   height: 100%;
+  height: 100dvh;
   font-family: var(--font-body);
   overflow: hidden;
 }
