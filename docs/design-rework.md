@@ -125,10 +125,13 @@
 
 - [x] **table** — 罫線を `color-mix(in srgb, var(--main) 30%, var(--base))` (≒ #c4c4c4) に強化 (table 局所変数 `--table-border-color` で他 `--border` 利用箇所には波及させない)。cell padding を 0.25em 0.55em → 0.3em 0.6em に微増。`border-collapse: separate` + `border-spacing: 0` + `border-radius: 0.4em` + `overflow: hidden` で角丸対応 (`ecea036`)。**stripe と見出し行差別化はシンプル志向のためやらない判断**。
 - [ ] **footer** — テキストの clipping 対策 (text-anchor / padding 見直し、SVG overflow visible)
+- [ ] **footer (mobile)** — モバイルで footer 下に 1px の白い帯が見える事象。`html`/`body` の `height` と `100dvh` の subpixel 差で下地が露出していると推測。`html { height: 100dvh }` 化 (`043444f`) と `html/body { background: var(--base) }` (`3d16b81`) を試したがどちらも効かず、`2846d9c` で revert 済み。実機ローカルで再調査予定。
 
 **Phase E 関連 + 派生して直したもの**:
 - `--muted` を 1 段薄く (94/6 → 96/4)、code/inline/th/card/admonition の muted 背景の主張を抑制 (`c284ce3`)
 - diff 行の二重改行を解消: `.diff-add` / `.diff-del` に `display: block` を当てた span 直後の `\n` テキストノードを削除 (`4b75c55`)
+- モバイル (iPhone Chrome) で `100vh` が URL バー領域を含むため footer が画面外に出ていた問題を `section { height: 100dvh }` で解消 (`2692a8b`)
+- 同上修正で section 上端が URL バーに重なるようになったため `body { height: 100dvh }` も追加して可視領域全体に揃える (`4ab8746`)
 
 ### Phase F. Polish
 
