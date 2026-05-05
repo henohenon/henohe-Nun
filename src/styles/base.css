@@ -43,7 +43,11 @@ table {
 section {
   container-type: size;
   width: 100vw;
+  /* mobile (iOS Safari / Chrome) では URL バー領域を含む 100vh のせいで
+     section が可視領域より高くなり、絶対配置 footer が画面外に押し出される。
+     dvh で動的ビューポートに追随させる (旧ブラウザは vh にフォールバック)。 */
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   position: relative;
   display: none;
