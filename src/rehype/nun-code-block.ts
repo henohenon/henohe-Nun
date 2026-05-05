@@ -64,13 +64,20 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
       )
       if (!code) return
 
-      for (const child of code.children) {
+      for (let i = 0; i < code.children.length; i++) {
+        const child = code.children[i]
         if (child.type !== 'element' || child.tagName !== 'span') continue
         const lineText = getTextContent(child)
-        if (lineText.startsWith('+')) {
-          addClassName(child, 'diff-add')
-        } else if (lineText.startsWith('-')) {
-          addClassName(child, 'diff-del')
+        const isAdd = lineText.startsWith('+')
+        const isDel = lineText.startsWith('-')
+        if (!isAdd && !isDel) continue
+        addClassName(child, isAdd ? 'diff-add' : 'diff-del')
+        // diff 行は CSS で display: block にして背景を行幅に伸ばす都合上、
+        // shiki が出力する直後の "\n" テキストノードがあると二重改行になる
+        // (block 自身の改行 + 残った \n)。該当ノードを削除する。
+        const next = code.children[i + 1]
+        if (next?.type === 'text' && next.value === '\n') {
+          code.children.splice(i + 1, 1)
         }
       }
     })
