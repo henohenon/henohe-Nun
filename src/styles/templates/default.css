@@ -17,6 +17,10 @@ section.default > h1 {
 section.default > .body {
   display: grid;
   grid-auto-rows: auto;
+  /* grid の既定 align-content (stretch) だと track が container 高さに
+     引き伸ばされ、table 行などが余白で stretch される。start 固定で
+     コンテンツは自然サイズ + 余りは下に。zoom-fit はそのまま機能。 */
+  align-content: start;
   gap: clamp(4px, 1cqmin, 20px);
   min-height: 0;
   overflow: hidden;
