@@ -219,7 +219,11 @@ function initMermaid(sections: NodeListOf<HTMLElement>) {
 
   import('mermaid').then(async ({ default: mermaid }) => {
     mermaid.initialize({ startOnLoad: false, theme: 'neutral' })
+    // section が display:none だと .mermaid の親幅が 0 で SVG が極小に縮む。
+    // 一時的に全 section を block で見える状態にして mermaid に幅を測らせる。
+    sections.forEach(s => { s.style.display = 'block' })
     await mermaid.run({ nodes: Array.from(elements) })
+    sections.forEach(s => { s.style.removeProperty('display') })
     const page = parseInt(location.hash.replace('#', '') || '1', 10)
     const section = sections[page - 1]
     if (section) fitSlide(section)

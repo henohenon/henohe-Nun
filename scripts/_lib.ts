@@ -60,6 +60,12 @@ export async function openDeck(
   await page.goto(`${baseUrl}/${deck}/`)
   await page.waitForLoadState('networkidle')
   await page.evaluate(() => (document as any).fonts?.ready)
+  // mermaid は client で動的 import → 非同期描画。
+  // 全 .mermaid 要素が svg を持つまで待つ (mermaid なしのスライドは即 true)。
+  await page.waitForFunction(() => {
+    const els = document.querySelectorAll('.mermaid')
+    return Array.from(els).every(el => el.querySelector('svg') !== null)
+  }, { timeout: 15000 }).catch(() => {})
   return page
 }
 
