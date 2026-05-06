@@ -8,6 +8,10 @@ import { findDecks, buildIndex } from '../decks.ts'
 export function nunPlugin(): Plugin {
   // OGP の絶対 URL 組み立てに使う Vite base を `configResolved` で捕捉する
   let base = '/'
+  // OGP の og:url / og:image を絶対 URL にするための site origin。
+  // `NUN_SITE_URL` (例: `https://henohenon.github.io`) で上書き可。
+  // 未設定なら base 相対のまま (scraper が host 解決できない可能性あり)。
+  const siteUrl = (process.env.NUN_SITE_URL ?? 'https://henohenon.github.io').replace(/\/$/, '')
 
   return {
     name: 'nun',
@@ -50,7 +54,9 @@ export function nunPlugin(): Plugin {
           const md = await readFile(mdPath, 'utf-8')
           return String(await processMarkdown(md, {
             jsPath: '/src/client/index.ts',
-            base,
+            // build 時のみ siteUrl を付けて OGP の og:url / og:image を絶対 URL に。
+            // dev / preview ではローカルでアセットを serve するためパス相対のまま。
+            base: `${siteUrl}${base}`,
             deck,
           }))
         }
@@ -86,7 +92,7 @@ export function nunPlugin(): Plugin {
           const md = await readFile(mdPath, 'utf-8')
           const raw = await processMarkdown(md, {
             jsPath: '/src/client/index.ts',
-            base,
+            base,  // dev は localhost で serve するため base のみ (siteUrl 付けない)
             deck: name,
           })
           const html = await server.transformIndexHtml(url, raw)

@@ -3,10 +3,10 @@ import UnoCSS from 'unocss/vite'
 import { nunPlugin } from './src/plugin/index.ts'
 
 export default defineConfig(({ command }) => ({
-  // build 時は絶対 URL にして OGP の og:image / og:url が外部 scraper から
-  // 解決可能な形で出力されるようにする (相対パスだと多くの scraper が拾わない)。
-  // dev 時はローカルなので相対のまま。
-  base: command === 'build' ? 'https://henohenon.github.io/henohe-Nun/' : '/',
+  // base はパスのまま (アセット URL を相対化し、preview/capture をローカルで動かすため)。
+  // OGP の og:url / og:image は別経路で `NUN_SITE_URL` を頭につけて絶対化する
+  // (`src/plugin/index.ts` 参照)。
+  base: command === 'build' ? '/henohe-Nun/' : '/',
   server: {
     port: 5175,
   },
