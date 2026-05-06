@@ -158,7 +158,7 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 - [x] **details (admonition) 開閉時の zoom-fit 再計算** — 動的トグル自体を廃止する方向で解消。`:::note+` / `:::note-` の折りたたみ記法と `<details>`/`<summary>` 出力を撤廃し、admonition は常に `<div>` で静的出力。スライドという静的メディアに動的要素を持ち込まない方針に揃えた
 - [x] **脚注 `!fn[id]` 参照側 (sup + tooltip) の adoption agency バグ** (`856d4d8`) — `<span class="fn-tooltip" hidden>` 路線では sup の置き場所が `<p>` の中であるため、tooltip 内の block (`<p>` 等) が adoption agency で外側 `<p>` を強制 close → tooltip が DOM 上でリフトされ `hidden` が外れた状態で本文混入していた。**`<template data-fn>` 路線**で解決: template 中身は parse 時に別 insertion mode に切り替わるため、どんな block でも外側を壊さない。fnDef body は変換ナシで丸ごと template に流し込む (block→inline 変換ロジック不要)。client 側は起動時に各 `template[data-fn]` の `.content` を clone して表示用 `<div class="fn-tooltip">` を隣に作り、hover で toggle
 - [x] **blockquote brand opt-in クラス** — `🌊default.brand-quote` で section / article に `.brand-quote` を付けると、その scope 配下の blockquote が brand 色寄せ (`border-left-color: var(--brand) / color: var(--main)`)。デフォルトは引き続き控えめ (`border / fg-mid`)。`.hierarchy` と同じ section 単位 opt-in パターンで実装
-- [ ] **card の GitHub favicon 404** (Phase C 持ち越し) — `getFavicon` の URL 推定が GitHub の特殊形式を扱えない。`https://github.githubassets.com/favicons/favicon.svg` フォールバック or hostname ベース判定追加
+- [x] **card の GitHub favicon 404** (Phase C 持ち越し) (`a3c4ab0`) — `nun-card.ts` の手書き OGP/favicon パーサを `open-graph-scraper` (v6.11.0) に置換して解消。GitHub の `<link rel="icon" type="image/svg+xml" href="...githubassets.com/favicons/favicon.svg">` も正しく取得できる。og:title/description/image/favicon のロジックがライブラリ実装に集約、エンティティデコード等のヘルパも撤廃
 
 ### Spec
 
