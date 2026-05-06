@@ -17,19 +17,6 @@
   gap: 0.4em;
 }
 
-/* Collapsible */
-details.admonition > summary {
-  cursor: pointer;
-  list-style: none;
-  margin-block-end: 0;
-}
-
-details.admonition > summary::-webkit-details-marker { display: none; }
-
-details.admonition[open] > summary {
-  margin-block-end: 0.2em;
-}
-
 .admonition-title::before {
   content: '';
   display: inline-block;

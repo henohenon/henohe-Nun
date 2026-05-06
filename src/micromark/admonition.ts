@@ -12,8 +12,6 @@ import { fromMarkdown } from 'mdast-util-from-markdown'
 // ---------------------------------------------------------------------------
 
 const CODE_COLON = 58 // `:`
-const CODE_PLUS = 43 // `+`
-const CODE_MINUS = 45 // `-`
 const CODE_SPACE = 32 // ` `
 const CODE_TAB = 9
 
@@ -33,7 +31,6 @@ const T = 'nunAdmonition'
 const T_FENCE_OPEN = 'nunAdmonitionFenceOpen'
 const T_FENCE_CLOSE = 'nunAdmonitionFenceClose'
 const T_TYPE = 'nunAdmonitionType'
-const T_COLLAPSE = 'nunAdmonitionCollapse'
 const T_TITLE = 'nunAdmonitionTitle'
 const T_BODY = 'nunAdmonitionBody'
 
@@ -107,12 +104,6 @@ export function nunAdmonitionSyntax(): Extension {
         return typeName
       }
       effects.exit(T_TYPE)
-      if (code === CODE_PLUS || code === CODE_MINUS) {
-        effects.enter(T_COLLAPSE)
-        effects.consume(code)
-        effects.exit(T_COLLAPSE)
-        return afterMeta
-      }
       return afterMeta(code)
     }
 
@@ -310,11 +301,6 @@ export function nunAdmonitionFromMarkdown(): FromMarkdownExtension {
         const node = this.stack[this.stack.length - 1] as any
         node.data.admonitionType = typeName
         node.data.title = DEFAULT_TITLES[typeName] ?? typeName
-      },
-      [T_COLLAPSE](token) {
-        const marker = this.sliceSerialize(token)
-        const node = this.stack[this.stack.length - 1] as any
-        node.data.collapse = marker === '+' ? 'open' : 'closed'
       },
       [T_TITLE](token) {
         const title = this.sliceSerialize(token).trim()

@@ -122,7 +122,7 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 
 ### 機能・UI 細部
 
-- [ ] **details (admonition) 開閉時の zoom-fit 再計算** — `<details>` の `toggle` event をフックして `fitSlide` を呼び直す
+- [x] **details (admonition) 開閉時の zoom-fit 再計算** — 動的トグル自体を廃止する方向で解消。`:::note+` / `:::note-` の折りたたみ記法と `<details>`/`<summary>` 出力を撤廃し、admonition は常に `<div>` で静的出力。スライドという静的メディアに動的要素を持ち込まない方針に揃えた
 - [ ] **脚注 none — 表示されない事例** — `fn-tooltip[hidden]` の display 制御か、参照→定義のリンク切れか。要再現
 - [ ] **blockquote brand opt-in クラス** — シンプル版を維持しつつ `.brand` 等の opt-in クラスで brand 寄せ blockquote を選べる案。必要性が出たら検討
 - [ ] **card の GitHub favicon 404** (Phase C 持ち越し) — `getFavicon` の URL 推定が GitHub の特殊形式を扱えない。`https://github.githubassets.com/favicons/favicon.svg` フォールバック or hostname ベース判定追加

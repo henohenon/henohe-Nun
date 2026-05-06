@@ -28,7 +28,6 @@ declare module 'micromark-util-types' {
     nunAdmonitionFenceOpen: 'nunAdmonitionFenceOpen'
     nunAdmonitionFenceClose: 'nunAdmonitionFenceClose'
     nunAdmonitionType: 'nunAdmonitionType'
-    nunAdmonitionCollapse: 'nunAdmonitionCollapse'
     nunAdmonitionTitle: 'nunAdmonitionTitle'
     nunAdmonitionBody: 'nunAdmonitionBody'
   }

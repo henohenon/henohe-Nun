@@ -650,15 +650,14 @@ description: 説明文
 | remark-math | `$...$` / `$$...$$` 数式 |
 | remark-breaks | 改行 -> `<br>` |
 | remark-mark | `==highlight==` |
-| ~~remark-directive~~ | 装飾ブロックは自前 micromark extension で実装（`:::note+` 構文のため） |
+| ~~remark-directive~~ | 装飾ブロックは自前 micromark extension で実装 (ネスト用に colon 数を増やせる必要があるため) |
 
 ### 装飾ブロック
 
-自前 micromark extension でパース。name から `+`/`-` を分離し、rehype 変換で hast 化。
+自前 micromark extension でパース、rehype 変換で hast 化。スライドという静的メディアの性質に合わせ、折りたたみ (動的 toggle) は提供しない。
 
 #### HTML 出力構造
 
-通常:
 ```html
 <div class="admonition note">
   <div class="admonition-title">Note</div>
@@ -666,15 +665,7 @@ description: 説明文
 </div>
 ```
 
-折りたたみ（`+` = 開、`-` = 閉）:
-```html
-<details class="admonition warning" open>
-  <summary class="admonition-title">閉じた注意</summary>
-  <div class="admonition-body">本文</div>
-</details>
-```
-
-CSS は `.admonition` / `.admonition-title` / `.admonition-body` で共通化。外側が `div` vs `details`、タイトルが `div` vs `summary` の違いのみ。
+CSS は `.admonition` / `.admonition-title` / `.admonition-body` で構成。type 別の色は `.admonition.<type>` の `--admonition-accent` で当てる。
 
 #### デフォルトタイトル
 

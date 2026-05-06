@@ -21,20 +21,10 @@ export const nunHandlers: Record<string, Handler> = {
   },
 
   nunAdmonition(state: State, node: any): Element {
-    const { admonitionType, collapse, title } = node.data ?? {}
+    const { admonitionType, title } = node.data ?? {}
     const children = state.all(node)
-
-    const isCollapsible = collapse !== null && collapse !== undefined
-    const outerTag = isCollapsible ? 'details' : 'div'
-    const titleTag = isCollapsible ? 'summary' : 'div'
-
-    const outerProps: Record<string, any> = {
-      className: ['admonition', admonitionType ?? 'note'],
-    }
-    if (collapse === 'open') outerProps.open = true
-
-    return h(outerTag, outerProps, [
-      h(titleTag + '.admonition-title', title ?? ''),
+    return h('div', { className: ['admonition', admonitionType ?? 'note'] }, [
+      h('div.admonition-title', title ?? ''),
       h('div.admonition-body', children),
     ])
   },

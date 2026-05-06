@@ -11,7 +11,7 @@ const DEFAULT_TITLES: Record<string, string> = {
 }
 
 // 3コロン以上 + 種別名 (ネスト時は4+コロン)
-const OPEN_RE = /^:{3,}([a-zA-Z]+)([+-])?\s*(.*)$/
+const OPEN_RE = /^:{3,}([a-zA-Z]+)\s*(.*)$/
 const CLOSE_RE = /^:{3,}\s*$/
 
 export const remarkNunAdmonition: Plugin<[], Root> = function () {
@@ -140,7 +140,7 @@ function isCloseFence(node: RootContent): boolean {
 }
 
 function buildAdmonition(match: RegExpMatchArray, bodyText: string, position: any): any {
-  const [, typeName, collapse, customTitle] = match
+  const [, typeName, customTitle] = match
   const bodyChildren: RootContent[] = bodyText.trim()
     ? (fromMarkdown(bodyText).children as RootContent[])
     : []
@@ -149,7 +149,6 @@ function buildAdmonition(match: RegExpMatchArray, bodyText: string, position: an
     type: 'nunAdmonition',
     data: {
       admonitionType: typeName,
-      collapse: collapse === '+' ? 'open' : collapse === '-' ? 'closed' : null,
       title: customTitle.trim() || DEFAULT_TITLES[typeName] || typeName,
     },
     children: bodyChildren,
@@ -162,12 +161,11 @@ function buildAdmonitionFromNodes(
   bodyNodes: RootContent[],
   position: any,
 ): any {
-  const [, typeName, collapse, customTitle] = match
+  const [, typeName, customTitle] = match
   return {
     type: 'nunAdmonition',
     data: {
       admonitionType: typeName,
-      collapse: collapse === '+' ? 'open' : collapse === '-' ? 'closed' : null,
       title: customTitle.trim() || DEFAULT_TITLES[typeName] || typeName,
     },
     children: bodyNodes,
