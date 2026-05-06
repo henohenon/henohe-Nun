@@ -215,7 +215,11 @@ function initFnTooltips() {
 
 function initMermaid(sections: NodeListOf<HTMLElement>) {
   const elements = document.querySelectorAll<HTMLElement>('.mermaid')
-  if (elements.length === 0) return
+  if (elements.length === 0) {
+    // mermaid 要素がない場合も即 ready (capture 側はこれを待って撮影)
+    document.documentElement.dataset.mermaidReady = ''
+    return
+  }
 
   import('mermaid').then(async ({ default: mermaid }) => {
     mermaid.initialize({ startOnLoad: false, theme: 'neutral' })
@@ -227,5 +231,7 @@ function initMermaid(sections: NodeListOf<HTMLElement>) {
     const page = parseInt(location.hash.replace('#', '') || '1', 10)
     const section = sections[page - 1]
     if (section) fitSlide(section)
+    // 描画完了マーカー (capture スクリプトが待機判定に使う)
+    document.documentElement.dataset.mermaidReady = ''
   })
 }
