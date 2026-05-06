@@ -23,7 +23,9 @@ section.default > .body {
   align-content: start;
   gap: clamp(4px, 1cqmin, 20px);
   min-height: 0;
-  overflow: hidden;
+  /* overflow: hidden は撤廃。tooltip 等の position:absolute 要素が body
+     端からはみ出して表示できるようにする。section 自体は overflow:hidden
+     なので slide 端を超える分は引き続きクランプされる。 */
 }
 
 /* Article headings — h2/h3 のサイズ差を広げて視覚的階層を強調 */

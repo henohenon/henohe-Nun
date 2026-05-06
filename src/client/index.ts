@@ -188,39 +188,35 @@ function initCopyButtons() {
 
 function initFnTooltips() {
   // SSG 側は <template data-fn> に脚注内容を詰めてある (adoption agency 回避)。
-  // 起動時に各 template の隣に表示用 div を作って中身を clone する。
+  // 起動時に対応する <sup data-fn> に表示用 div を仕込む (sup 子に置くことで
+  // sup 基点の position: absolute が効く)。
   for (const tpl of document.querySelectorAll<HTMLTemplateElement>('template[data-fn]')) {
+    const fnId = tpl.dataset.fn
+    if (!fnId) continue
+    const sup = document.querySelector<HTMLElement>(`sup[data-fn="${CSS.escape(fnId)}"]`)
+    if (!sup) continue
     const div = document.createElement('div')
     div.className = 'fn-tooltip'
     div.hidden = true
     div.appendChild(tpl.content.cloneNode(true))
-    tpl.after(div)
+    sup.appendChild(div)
   }
 
   document.addEventListener('mouseenter', (e) => {
     if (!(e.target instanceof Element)) return
-    const sup = e.target.closest('sup[data-fn]')
+    const sup = e.target.closest<HTMLElement>('sup[data-fn]')
     if (!sup) return
-    const tooltip = findFnTooltip(sup)
+    const tooltip = sup.querySelector<HTMLElement>(':scope > .fn-tooltip')
     if (tooltip) tooltip.hidden = false
   }, true)
 
   document.addEventListener('mouseleave', (e) => {
     if (!(e.target instanceof Element)) return
-    const sup = e.target.closest('sup[data-fn]')
+    const sup = e.target.closest<HTMLElement>('sup[data-fn]')
     if (!sup) return
-    const tooltip = findFnTooltip(sup)
+    const tooltip = sup.querySelector<HTMLElement>(':scope > .fn-tooltip')
     if (tooltip) tooltip.hidden = true
   }, true)
-}
-
-/** sup → next <template> → next <div.fn-tooltip> の並びを辿る。 */
-function findFnTooltip(sup: Element): HTMLElement | null {
-  let n = sup.nextElementSibling
-  while (n && !n.classList.contains('fn-tooltip')) {
-    n = n.nextElementSibling
-  }
-  return n as HTMLElement | null
 }
 
 // Mermaid は build 時に `scripts/render-mermaid.ts` で SVG に静的化済みのため

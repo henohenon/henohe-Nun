@@ -49,7 +49,10 @@ export const remarkNunExtract: Plugin<[], Root> = function () {
         if (prop.key === 'fn') {
           const idMatch = prop.rawValue.match(/^\[(.+)\]$/)
           if (idMatch) {
-            data.footnotes[idMatch[1]] = { position: node.position }
+            data.footnotes[idMatch[1]] = {
+              position: node.position,
+              classes: prop.classes,
+            }
           }
         }
 

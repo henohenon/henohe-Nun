@@ -18,6 +18,7 @@ export type TemplateEntry = {
 
 export type FootnoteEntry = {
   position: Position
+  classes: string[]
 }
 
 export type FootnoteLocation = {

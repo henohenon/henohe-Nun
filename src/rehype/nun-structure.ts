@@ -116,7 +116,7 @@ function resolveFootnotes(
   data: VFileData,
 ): void {
   // fnDef article の body コンテンツを id → Element[] で収集
-  const fnBodies = collectFnBodies(scopes)
+  const fnBodies = collectFnBodies(scopes, data)
   if (Object.keys(fnBodies).length === 0) return
 
   for (const section of sections) {
@@ -148,14 +148,20 @@ function resolveFootnotes(
   }
 }
 
-/** Scope ツリーから fnDef を持つ article の body を再帰的に収集 */
-function collectFnBodies(scopes: Scope[]): Record<string, ElementContent[]> {
+/** Scope ツリーから fnDef を持つ scope の body を再帰的に収集。
+ *  `!fn.head~[id]` (head class 付き) の場合は heading も先頭に含める。 */
+function collectFnBodies(scopes: Scope[], data: VFileData): Record<string, ElementContent[]> {
   const result: Record<string, ElementContent[]> = {}
 
   function walk(scope: Scope) {
     if (scope.fnDef) {
-      // body から ElementContent のみ収集（子 Scope は展開しない）
       const content: ElementContent[] = []
+      // head class 付きなら heading を先頭に prepend
+      const withHead = data.footnotes[scope.fnDef]?.classes.includes('head')
+      if (withHead && scope.heading) {
+        content.push(scope.heading)
+      }
+      // body から ElementContent のみ収集（子 Scope は展開しない）
       for (const child of scope.body) {
         if (!isScope(child)) {
           content.push(child)

@@ -14,28 +14,39 @@ sup[data-fn] a {
 }
 
 /* ---- Tooltip ---- */
+/* sup の子要素として配置される。sup は position:relative なのでここの
+   absolute は sup 基点。常に sup の右下 (top:100%, left:100%) に出す。 */
 .fn-tooltip {
   position: absolute;
-  bottom: 1.6em;
-  left: 0;
+  top: 100%;
+  left: 100%;
   background: var(--base);
   border: 1px solid var(--border);
   border-radius: 0.4em;
   padding: 0.5em 0.8em;
-  min-width: 12em;
-  max-width: 28em;
-  box-shadow: 0 2px 8px var(--shadow);
+  min-width: 16em;
+  max-width: 50em;
+  width: max-content;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--shadow) 40%, transparent);
   z-index: 100;
   font-size: 0.8em;
   font-weight: normal;
   color: var(--main);
   line-height: 1.5;
-  pointer-events: none;
   white-space: normal;
 }
 
 .fn-tooltip:not([hidden]) {
   display: block;
+}
+
+/* `.head` クラス付き fnDef では heading が tooltip に含まれる。
+   元々の見出しサイズだと tooltip 内で過剰なので軽くスケールダウン。 */
+.fn-tooltip :is(h1, h2, h3, h4, h5, h6) {
+  font-size: 1em;
+  font-weight: 700;
+  margin: 0 0 0.4em;
+  color: var(--brand);
 }
 
 /* ---- Definition mark ----

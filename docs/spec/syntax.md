@@ -405,6 +405,7 @@ Markdown記法として解釈されたくない文字は `\` でエスケープ�
 - クリックで定義がある article のスライドページに遷移する。
 - 定義側の article のタイトル左に `[^id]` マークが付く。
 - 脚注内容は tooltip 用の hidden 要素と、定義側 article の本文の両方に存在する。
+- tooltip にはデフォルトで scope の body のみが含まれる。`!fn.head~[id]` のように `.head` クラスを付けると heading も含まれる (section 単位で脚注を定義する用途で文脈付きで見せたい時に使う)。
 
 ### コメント
 
@@ -457,6 +458,7 @@ section テンプレートで使用:
 
 article レベルで使用:
 - `!fn~[id]` — この scope (section / article) を脚注 id の定義としてマークする
+  - `.head` クラス指定 (`!fn.head~[id]`) で tooltip に scope の heading も含める。デフォルトは body のみ
 
 ### content（`!key[value]`）
 コンテンツとして残る（消費されない）。本文中のインラインマーカー。
