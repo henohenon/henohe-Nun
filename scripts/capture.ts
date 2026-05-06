@@ -10,8 +10,10 @@ const args = parseArgs()
 const isThumb = args.flags.has('thumb')
 const deckFilter = args.values['deck']
 const slideFilter = args.values['slide'] ? parseInt(args.values['slide'], 10) : undefined
-const width = parseInt(args.values['width'] ?? '1920', 10)
-const height = parseInt(args.values['height'] ?? '1080', 10)
+// `--thumb` 時は OGP 推奨の 1200x630 (1.91:1) をデフォルトに、それ以外は
+// 16:9 (1920x1080) のフルスライド。`--width` / `--height` で個別上書き可能。
+const width = parseInt(args.values['width'] ?? (isThumb ? '1200' : '1920'), 10)
+const height = parseInt(args.values['height'] ?? (isThumb ? '630' : '1080'), 10)
 const quality = parseInt(args.values['quality'] ?? (isThumb ? '75' : '85'), 10)
 
 async function main(): Promise<void> {
