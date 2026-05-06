@@ -103,6 +103,23 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 
 ---
 
+## 直近セッションの状況メモ (2026-05-06)
+
+このセッションで片付いたもの (時系列):
+- テンプレ範囲を nwyt と統一 + sample.md 移行 (`a3608d1` `271f5b4`)
+- OGP meta 一式 (`a75153e` `569571a` `9d37afc` `a90f3b4`) → og:image 1200x630 自動派生 + 絶対 URL 化
+- table 中央寄せ `|:---:|` 対応 (`3fd4631`) + spec 明文化 (`7fcd905`)
+- admonition リファイン (bg 4% + border 55%) (`bafa817`)
+- blockquote 罫線太く (`0225a99`)
+- mermaid SSG 化 (`ad0854f`) → bundle 数百 KB → 3.6 KB / head の modulepreload 大量タグ消滅
+- admonition の折りたたみ記法を**思想として撤廃** (`bb5c1c0`) → `:::type+/-` 廃止、`<details>` 撤廃。スライドは静的メディア
+- `!fn~[id]` (脚注定義) を section (h1) でも紐付くよう制約撤廃 (`3d25d00`) + spec 整え
+
+**次セッションの最優先タスク**:
+- 脚注 `!fn[id]` 参照側の adoption agency バグ修正 (B 案 = tooltip 中身 inline 化)。詳細は下の「機能・UI 細部」項目参照
+
+—
+
 ## 残作業
 
 優先度・トピック別に再構築。
@@ -117,13 +134,15 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 ### スクリプト・出力品質
 
 - [ ] **ダークテーマで全 23 スライド再キャプチャ** (Polish P4 残) — Phase D/E/F の色階層・muted・accent 等の dark 時挙動確認
-- [ ] **mermaid 描画完了待ち** (Spec S2 残) — capture スクリプトの `networkidle + 150ms` では甘い → `await mermaid.run` の完了マーカーで wait
+- [x] **mermaid 描画完了待ち** (Spec S2 残) — そもそも client-side mermaid を撤廃し、build 時に Playwright で SVG 静的化する SSG 化で根治 (`ad0854f`)。capture 側の `mermaidReady` 属性待機は SSG 互換のために残置 (`b7e620d`)。bundle / modulepreload からも mermaid 関連 chunks が消える副次効果あり
 - [x] **OGP meta 確認・追加** (Spec S3 残) — `nun-structure.ts` の shell 生成を拡充。`og:title` / `og:description` / `<meta name=description>` / `og:type=website` / `og:url` / `og:image` / `twitter:card=summary_large_image` を出力。`og:url` と `og:image` は Vite `base` + deck 名から自動派生 (`{base}{deck}/` と `{base}{deck}/thumb.webp`)、`meta.url` / `meta.image` / `meta.ogImage` で個別上書き可
 
 ### 機能・UI 細部
 
 - [x] **details (admonition) 開閉時の zoom-fit 再計算** — 動的トグル自体を廃止する方向で解消。`:::note+` / `:::note-` の折りたたみ記法と `<details>`/`<summary>` 出力を撤廃し、admonition は常に `<div>` で静的出力。スライドという静的メディアに動的要素を持ち込まない方針に揃えた
-- [ ] **脚注 none — 表示されない事例** — `fn-tooltip[hidden]` の display 制御か、参照→定義のリンク切れか。要再現
+- [ ] **脚注 `!fn[id]` 参照側 (sup + tooltip) の adoption agency バグ** — 原因特定済み。tooltip は `<span class="fn-tooltip" hidden>` で出力されるが、中に block 要素 (`<p>`) が入ると HTML5 adoption agency が親 `<p>` を強制 close、tooltip 中身が DOM 上で外に出て **`hidden` が外れた状態で本文に混入する**。slide 21 (脚注ページ) の上段 (参照 article) で、tooltip の中身が散らばって見えてる現象。**参照側 (`!fn~` 定義側) は `3d25d00` で完了済み**。次セッションでの推奨着手:
+  - **(B) tooltip 中身を inline 化**: `<span class="fn-tooltip" data-fn="id" hidden>` のままで、中の `<p>` を `<span>` 等に flatten。`position: absolute` の sup 基点 (現行 CSS) を維持できる。仕様 (`<aside>` 利用) からは外れるが機能は仕様通り
+  - 他に (A) `<aside>` 化して `<p>` 外にリフトアップ (CSS positioning 再設計必要) / (C) `<sup>` の中に inline で詰める (仕様乖離大) もあり、議論分は本書頭の Discord ログ参照
 - [ ] **blockquote brand opt-in クラス** — シンプル版を維持しつつ `.brand` 等の opt-in クラスで brand 寄せ blockquote を選べる案。必要性が出たら検討
 - [ ] **card の GitHub favicon 404** (Phase C 持ち越し) — `getFavicon` の URL 推定が GitHub の特殊形式を扱えない。`https://github.githubassets.com/favicons/favicon.svg` フォールバック or hostname ベース判定追加
 
