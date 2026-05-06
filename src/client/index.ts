@@ -8,7 +8,6 @@ if (sections.length > 0) {
   initZoomFit(sections)
   initCopyButtons()
   initFnTooltips()
-  initMermaid(sections)
 }
 
 // ---------------------------------------------------------------------------
@@ -209,29 +208,8 @@ function initFnTooltips() {
   }, true)
 }
 
-// ---------------------------------------------------------------------------
-// Mermaid (非同期ロード)
-// ---------------------------------------------------------------------------
-
-function initMermaid(sections: NodeListOf<HTMLElement>) {
-  const elements = document.querySelectorAll<HTMLElement>('.mermaid')
-  if (elements.length === 0) {
-    // mermaid 要素がない場合も即 ready (capture 側はこれを待って撮影)
-    document.documentElement.dataset.mermaidReady = ''
-    return
-  }
-
-  import('mermaid').then(async ({ default: mermaid }) => {
-    mermaid.initialize({ startOnLoad: false, theme: 'neutral' })
-    // section が display:none だと .mermaid の親幅が 0 で SVG が極小に縮む。
-    // 一時的に全 section を block で見える状態にして mermaid に幅を測らせる。
-    sections.forEach(s => { s.style.display = 'block' })
-    await mermaid.run({ nodes: Array.from(elements) })
-    sections.forEach(s => { s.style.removeProperty('display') })
-    const page = parseInt(location.hash.replace('#', '') || '1', 10)
-    const section = sections[page - 1]
-    if (section) fitSlide(section)
-    // 描画完了マーカー (capture スクリプトが待機判定に使う)
-    document.documentElement.dataset.mermaidReady = ''
-  })
-}
+// Mermaid は build 時に `scripts/render-mermaid.ts` で SVG に静的化済みのため
+// client-side では何もしない。capture スクリプト用の互換性のため、
+// `mermaidReady` データ属性は HTML 解析直後 (このファイルが評価された時点)
+// に立てておく。
+document.documentElement.dataset.mermaidReady = ''
