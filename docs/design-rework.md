@@ -115,24 +115,31 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 - admonition の折りたたみ記法を**思想として撤廃** (`bb5c1c0`) → `:::type+/-` 廃止、`<details>` 撤廃。スライドは静的メディア
 - `!fn~[id]` (脚注定義) を section (h1) でも紐付くよう制約撤廃 (`3d25d00`) + spec 整え
 
-このセッションで片付いたもの:
+このセッションで片付いたもの (時系列):
 - 脚注 `!fn[id]` 参照側 adoption agency バグ修正 (`856d4d8`) → tooltip を `<template data-fn>` に詰めて parse 時の adoption agency を回避。fnDef body の block→inline 変換は不要となり丸ごと SSG 出力。client 側で起動時に `template.content` を clone して表示用 div に展開、hover で toggle
 - 脚注 tooltip 配置・装飾改善 + `.head` opt-in 導入 (`df4e58c`) → tooltip を sup 子要素に置いて `position:absolute` 基点を確立、min/max-width 拡張 + shadow 弱化、`section.default > .body { overflow: hidden }` 撤廃で tooltip が body 端を越えてもクリップされない (section 自体の overflow:hidden で slide 外側はクランプ継続)。`!fn.head~[id]` で heading を tooltip に含める opt-in 追加、別ページ section 単位定義のサンプルも追加
 - コードブロック copy / diff / 行番号整理 (`b071062`) → `extractCleanCode` で `.line` 単位 join + `.line-number` / `.diff-marker` 除外、copy ボタンのボーダー削除、diff の `\n` 剥がし & `display:block` 撤廃で非 diff と DOM 構造を統一 (`box-decoration-break: clone` で行幅着色は inline で対応)、`+`/`-`/` ` プレフィックスを `.diff-marker` 化して user-select:none + copy 除外、行番号幅を `--ln-width: <maxDigits>ch` で SSG 時に最大桁数ベースに自動調整、sample.md のコードブロックを基本系/埋め込み系の 2 ページに再編
+- CLAUDE.md / docs 整理 (`db1e14e`) → CLAUDE.md の Commands 節に「dev server を作業終了時に停止」rule 追加、`design.md` ↔ 実装の乖離 3 件を `design-rework.md` 残作業に「docs ドリフト」として明文化
+- blockquote `.brand-quote` opt-in 追加 (`4b908d4`) → `.hierarchy` 同様 section/article 単位の opt-in パターンで brand 色 blockquote を選択可能に
+- card OGP/favicon を `open-graph-scraper` 化 (`a3c4ab0`) → 手書き regex パーサ (`getMetaContent` / `getFavicon` / `decodeEntities` 等) を全撤廃し v6.11.0 に置換。GitHub の favicon 404 解消 (`<link rel="icon" type="image/svg+xml" href="...githubassets.com/...">` を正しく取得)。仕様 (cache / timeout / UA / fallback) は維持
+
+**進行中 (tmp commit `d686295`)**:
+- `!bg~` / `!fbg~` バグ調査 + img レイヤー化リファクタ — 確実に動くバグ修正 (`extractImageSrc` 正規表現 / `appendFooter` 早期 return 順 / 2 重 `<use>` 削除) は適用済。`<img class="bg-layer / fbg-layer">` レイヤー化 (CSS 共通: `position:absolute; inset:0; object-fit:cover; pointer-events:none`、section bg-layer のみ `z-index:-1`) も入れたが fbg の visual が確認できてない (CSS mask が拾えてない/section-aspect クロップ揃え未着手)。次セッションで dev server 起動して目視からスタート
 
 **次セッションの候補**:
-- **`!bg~` / `!fbg~` の WIP を完成させる** (今セッションで tmp commit 済み、後述の「進行中」項目参照)
+- 進行中の `!bg~` / `!fbg~` を完成させる (visual 確認 + section-aspect クロップ揃え)
 - footer text clipping (Critical C7) や mobile 1px 白帯など、コンテナ・レイアウト系の残作業
+- テーブルの中央寄せ `|:---:|` `|---:|` 対応
 - ダークテーマで全 23 スライド再キャプチャ (Polish P4)
-- card の GitHub favicon 404 (Phase C 持ち越し)
+- `design.md` ↔ 実装ドリフト 3 件の更新 (footer position:absolute / .fn-tooltip overflow / .body overflow:hidden 撤廃)
+- title の固定画像位置/サイズ仕様明文化
 
-**進行中 (tmp commit 済み)**:
-- **`!bg~` / `!fbg~` バグ調査 + img レイヤー化リファクタ**:
-  - 既知バグ修正済み: `extractImageSrc` 正規表現 (`!?\[`)、`appendFooter` 早期 return 順序入れ替え (bg を fl/fr 不在でも適用)、2 重 `<use>` 削除
-  - レイヤー化: `<section>` の inline style → `<img class="bg-layer">` 子要素、`<footer>` の inline style → `<img class="fbg-layer">` 子要素 + SVG defs (mask)。CSS は `position: absolute; inset:0; object-fit: cover; pointer-events: none` 共通、`section > .bg-layer { z-index: -1 }`
-  - **未確認**: fbg-layer の visual。SVG mask が `mask-image: url(#footer-mask-N)` で正しく適用されてるか、画像が見える状態か。「白で覆われてる」報告があったのが最後の状態 (CSS bg 路線)。img 化後の表示は dev server で目視確認待ち
-  - サンプル: `benben/sample.md` slide 22 (`# 背景画像 — !bg~`) と slide 23 (`# フッター背景 — !fbg~`) でそれぞれ動作確認可能 (両方 `/images/tgs.jpg` 使用)
-  - 引き続きの議論ポイント: **bg と fbg を同じクロップで揃える** (footer-aspect ではなく section-aspect で cover)。`background-attachment: fixed` 路線で挫折、img + `object-fit: cover` でも footer 自体のアスペクトに合わせる挙動。section の bg と同じ位置に footer の fbg を出すには「footer 内の img を section サイズで配置 + footer 領域でクリップ」が必要
+**進行中 (tmp commit `d686295`) — 詳細**:
+- 既知バグ修正済 (確実に動く): `extractImageSrc` 正規表現 (`!\[` → `!?\[`)、`appendFooter` 早期 return 順 (bg を fl/fr 不在でも適用)、2 重 `<use>` 削除
+- レイヤー化: `<section>` の inline style → `<img class="bg-layer">` 子要素、`<footer>` の inline style → `<img class="fbg-layer">` 子要素 + SVG defs (mask)。共通 CSS は `position:absolute; inset:0; width/height:100%; object-fit:cover; pointer-events:none`、`section > .bg-layer { z-index:-1 }`
+- **未確認**: fbg-layer の visual。CSS `mask-image: url(#footer-mask-N)` が拾えてない可能性 (CSS bg 路線で「白で覆われてる」現象あり、img 路線後は目視未確認)
+- サンプル: `benben/sample.md` slide 22 (`# 背景画像 — !bg~`) と slide 23 (`# フッター背景 — !fbg~`)、両方 `/images/tgs.jpg`
+- 残課題: **bg と fbg を同じクロップで揃える** (section-aspect cover) — `background-attachment: fixed` 路線挫折、`object-fit: cover` でも footer アスペクトに引っ張られる。section の bg と同じ位置で footer の fbg を出すには「footer 内の img を section サイズで配置 + footer 領域でクリップ」要、別タスクとして残置
 
 —
 
