@@ -156,6 +156,14 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 
 - [ ] **title の固定画像位置/サイズ仕様を spec に明文化** (Spec S1 残) — `docs/spec/structure.md` の title テンプレート節に書き、実装と整合確認
 
+### docs ドリフト (`design.md` ↔ 実装)
+
+`design.md` は CSS 設計の道標として書かれた aspiration だが、実装過程で別解に倒れた箇所がある。要追従または design.md 側を更新。
+
+- [ ] **footer の `position: absolute`** — `design.md` 4.5 / 11 は「footer は section grid の最終 auto 行に置く、position:absolute を使うな」だが、実装は `footer.css:3` で `position: absolute; inset-block-end: 0` を採用 (mobile dvh 問題対応の流れで)。grid 行に戻すか、design.md を「実装事情で absolute 採用」に修正するか
+- [ ] **`.fn-tooltip` の overflow と max-width** — `design.md` 11 は「`overflow: hidden + max-width` で可変長を制御」だが、実装は `width: max-content / max-width: 50em` ベース (overflow 設定なし)。design.md 側を実装に合わせる
+- [ ] **`section.default > .body { overflow: hidden }`** — `design.md` 11 「.body は `min-height:0; overflow: hidden`」だったが、tooltip overflow 対応で `overflow: hidden` を撤廃 (`templates/default.css`)。design.md 側を更新
+
 ---
 
 ## 完了基準

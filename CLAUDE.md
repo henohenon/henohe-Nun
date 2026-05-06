@@ -65,6 +65,8 @@ bun run dev          # Dev server with HMR
 bun run build        # Production build
 ```
 
+`bun run dev` を起動したら、作業終了時に必ず停止する (port 滞積防止)。
+
 ## Tech Stack
 
 - **bun** — package manager and runtime
