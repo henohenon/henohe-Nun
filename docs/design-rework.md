@@ -117,8 +117,11 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 
 このセッションで片付いたもの:
 - 脚注 `!fn[id]` 参照側 adoption agency バグ修正 (`856d4d8`) → tooltip を `<template data-fn>` に詰めて parse 時の adoption agency を回避。fnDef body の block→inline 変換は不要となり丸ごと SSG 出力。client 側で起動時に `template.content` を clone して表示用 div に展開、hover で toggle
+- 脚注 tooltip 配置・装飾改善 + `.head` opt-in 導入 (`df4e58c`) → tooltip を sup 子要素に置いて `position:absolute` 基点を確立、min/max-width 拡張 + shadow 弱化、`section.default > .body { overflow: hidden }` 撤廃で tooltip が body 端を越えてもクリップされない (section 自体の overflow:hidden で slide 外側はクランプ継続)。`!fn.head~[id]` で heading を tooltip に含める opt-in 追加、別ページ section 単位定義のサンプルも追加
+- コードブロック copy / diff / 行番号整理 (`b071062`) → `extractCleanCode` で `.line` 単位 join + `.line-number` / `.diff-marker` 除外、copy ボタンのボーダー削除、diff の `\n` 剥がし & `display:block` 撤廃で非 diff と DOM 構造を統一 (`box-decoration-break: clone` で行幅着色は inline で対応)、`+`/`-`/` ` プレフィックスを `.diff-marker` 化して user-select:none + copy 除外、行番号幅を `--ln-width: <maxDigits>ch` で SSG 時に最大桁数ベースに自動調整、sample.md のコードブロックを基本系/埋め込み系の 2 ページに再編
 
 **次セッションの候補**:
+- `!bg~` / `!fbg~` (背景画像 / フッター背景画像) の動作確認・修正
 - footer text clipping (Critical C7) や mobile 1px 白帯など、コンテナ・レイアウト系の残作業
 - ダークテーマで全 23 スライド再キャプチャ (Polish P4)
 - card の GitHub favicon 404 (Phase C 持ち越し)
@@ -134,7 +137,7 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 - [ ] **footer text clipping** (Critical C7 残) — text-anchor / padding 見直し / SVG overflow visible
 - [ ] **footer (mobile) 1px 白帯** — `html`/`body` の `height` と `100dvh` の subpixel 差で下地が露出。`html { height: 100dvh }` (`043444f`) と `html/body { background: var(--base) }` (`3d16b81`) を試したがどちらも効かず revert (`2846d9c`)。実機ローカルで再調査予定
 - [ ] **テーブルの中央寄せが効いてない** — Markdown の `|---:|` (右寄せ) や `|:---:|` (中央) のアライメント指定が CSS で打ち消されてる。`.body td[align="center"]` 等の対応が必要
-- [ ] **コードブロックのコピーボタン padding-l** — copy ボタン周りのパディング問題、要再現
+- [x] **コードブロックのコピーボタン padding-l** (`b071062`) — copy ボタンのボーダー撤廃 (`border: 0`)、hover bg だけで浮かす形に。あわせて copy 動作 (改行落ち / 行番号 prefix 混入 / diff `+`/`-` 混入) を全て `extractCleanCode` で吸収
 
 ### スクリプト・出力品質
 
