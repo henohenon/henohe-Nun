@@ -135,6 +135,12 @@ article.default > .body {
   padding: 0.3em 0.6em;
   text-align: left;
 }
+/* Markdown の `|:---:|` `|---:|` で出力される HTML `align` 属性を尊重する。
+   (`text-align: left` ルールが UA stylesheet を上書きしてしまうため明示) */
+.body th[align="center"],
+.body td[align="center"] { text-align: center; }
+.body th[align="right"],
+.body td[align="right"] { text-align: right; }
 .body th:last-child,
 .body td:last-child {
   border-right: 0;
