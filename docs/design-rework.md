@@ -105,7 +105,7 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 
 ## 直近セッションの状況メモ (2026-05-06)
 
-このセッションで片付いたもの (時系列):
+前セッションで片付いたもの (時系列):
 - テンプレ範囲を nwyt と統一 + sample.md 移行 (`a3608d1` `271f5b4`)
 - OGP meta 一式 (`a75153e` `569571a` `9d37afc` `a90f3b4`) → og:image 1200x630 自動派生 + 絶対 URL 化
 - table 中央寄せ `|:---:|` 対応 (`3fd4631`) + spec 明文化 (`7fcd905`)
@@ -115,8 +115,13 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 - admonition の折りたたみ記法を**思想として撤廃** (`bb5c1c0`) → `:::type+/-` 廃止、`<details>` 撤廃。スライドは静的メディア
 - `!fn~[id]` (脚注定義) を section (h1) でも紐付くよう制約撤廃 (`3d25d00`) + spec 整え
 
-**次セッションの最優先タスク**:
-- 脚注 `!fn[id]` 参照側の adoption agency バグ修正 (B 案 = tooltip 中身 inline 化)。詳細は下の「機能・UI 細部」項目参照
+このセッションで片付いたもの:
+- 脚注 `!fn[id]` 参照側 adoption agency バグ修正 (`856d4d8`) → tooltip を `<template data-fn>` に詰めて parse 時の adoption agency を回避。fnDef body の block→inline 変換は不要となり丸ごと SSG 出力。client 側で起動時に `template.content` を clone して表示用 div に展開、hover で toggle
+
+**次セッションの候補**:
+- footer text clipping (Critical C7) や mobile 1px 白帯など、コンテナ・レイアウト系の残作業
+- ダークテーマで全 23 スライド再キャプチャ (Polish P4)
+- card の GitHub favicon 404 (Phase C 持ち越し)
 
 —
 
@@ -140,9 +145,7 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 ### 機能・UI 細部
 
 - [x] **details (admonition) 開閉時の zoom-fit 再計算** — 動的トグル自体を廃止する方向で解消。`:::note+` / `:::note-` の折りたたみ記法と `<details>`/`<summary>` 出力を撤廃し、admonition は常に `<div>` で静的出力。スライドという静的メディアに動的要素を持ち込まない方針に揃えた
-- [ ] **脚注 `!fn[id]` 参照側 (sup + tooltip) の adoption agency バグ** — 原因特定済み。tooltip は `<span class="fn-tooltip" hidden>` で出力されるが、中に block 要素 (`<p>`) が入ると HTML5 adoption agency が親 `<p>` を強制 close、tooltip 中身が DOM 上で外に出て **`hidden` が外れた状態で本文に混入する**。slide 21 (脚注ページ) の上段 (参照 article) で、tooltip の中身が散らばって見えてる現象。**参照側 (`!fn~` 定義側) は `3d25d00` で完了済み**。次セッションでの推奨着手:
-  - **(B) tooltip 中身を inline 化**: `<span class="fn-tooltip" data-fn="id" hidden>` のままで、中の `<p>` を `<span>` 等に flatten。`position: absolute` の sup 基点 (現行 CSS) を維持できる。仕様 (`<aside>` 利用) からは外れるが機能は仕様通り
-  - 他に (A) `<aside>` 化して `<p>` 外にリフトアップ (CSS positioning 再設計必要) / (C) `<sup>` の中に inline で詰める (仕様乖離大) もあり、議論分は本書頭の Discord ログ参照
+- [x] **脚注 `!fn[id]` 参照側 (sup + tooltip) の adoption agency バグ** (`856d4d8`) — `<span class="fn-tooltip" hidden>` 路線では sup の置き場所が `<p>` の中であるため、tooltip 内の block (`<p>` 等) が adoption agency で外側 `<p>` を強制 close → tooltip が DOM 上でリフトされ `hidden` が外れた状態で本文混入していた。**`<template data-fn>` 路線**で解決: template 中身は parse 時に別 insertion mode に切り替わるため、どんな block でも外側を壊さない。fnDef body は変換ナシで丸ごと template に流し込む (block→inline 変換ロジック不要)。client 側は起動時に各 `template[data-fn]` の `.content` を clone して表示用 `<div class="fn-tooltip">` を隣に作り、hover で toggle
 - [ ] **blockquote brand opt-in クラス** — シンプル版を維持しつつ `.brand` 等の opt-in クラスで brand 寄せ blockquote を選べる案。必要性が出たら検討
 - [ ] **card の GitHub favicon 404** (Phase C 持ち越し) — `getFavicon` の URL 推定が GitHub の特殊形式を扱えない。`https://github.githubassets.com/favicons/favicon.svg` フォールバック or hostname ベース判定追加
 
