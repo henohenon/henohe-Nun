@@ -156,12 +156,21 @@ article.default > .body {
   font-weight: 600;
 }
 
-/* Blockquote */
+/* Blockquote
+   デフォルトは控えめ (border-color: --border, text: --fg-mid)。
+   `.brand-quote` を section/article (`🌊default.brand-quote`) に付ける
+   と、その scope 配下の blockquote が brand 色寄せになる。class 名は
+   `.hierarchy` (heading 色階層) と同じ section 単位 opt-in パターン。 */
 .body blockquote {
   border-left: 10px solid var(--border);
   padding-inline-start: 0.75em;
   color: var(--fg-mid);
   font-style: italic;
+}
+
+.brand-quote .body blockquote {
+  border-left-color: var(--brand);
+  color: var(--main);
 }
 
 /* HR */
