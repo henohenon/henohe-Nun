@@ -168,8 +168,9 @@ function buildScope(
     nwyts: bound.nwyts,
     body,
   }
-  // fnDef は article レベルのみ（section には付けない）
-  if (bound.fnDef && tag === 'article') scope.fnDef = bound.fnDef
+  // fnDef は section / article どちらでも (`!fn~[id]` をその scope の範囲内に
+  // 書けば紐付く)。spec technical.md:494 の「該当 Scope」に従い tag 制限なし。
+  if (bound.fnDef) scope.fnDef = bound.fnDef
   return scope
 }
 

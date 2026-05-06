@@ -503,7 +503,7 @@ type FootnoteLocation = {
 
 `render()` が `scope.fnDef` を検出した場合、以下を自動処理する:
 - heading に `[^id]` マーク挿入（`addFnMark`）
-  - heading あり → heading の子の先頭に `<span class="fn-mark">[^id]</span>` を挿入
+  - heading あり → heading の子の先頭に `<span class="fn-def-mark">[^id]</span>` を挿入
   - heading なし（暗黙 article）→ 空の heading 要素を生成し、その子としてマークを挿入
 - ルート要素に `data-fn-def="id"` 属性を付与
 
@@ -516,7 +516,7 @@ type FootnoteLocation = {
 
 ```html
 <!-- 定義側 article の heading（完成形） -->
-<h2><span class="fn-mark">[^1]</span>脚注タイトル</h2>
+<h2><span class="fn-def-mark">[^1]</span>脚注タイトル</h2>
 
 <!-- 参照箇所（完成形） -->
 <sup data-fn="1"><a href="#3">1</a></sup>

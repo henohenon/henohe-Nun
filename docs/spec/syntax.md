@@ -388,7 +388,7 @@ Markdown記法として解釈されたくない文字は `\` でエスケープ�
 ### 脚注
 
 本文中に `!fn[id]` で脚注参照マークを配置する（コンテンツとして残る）。
-脚注の定義は nwyt prop `!fn~[id]` でその article をマークする（消費される）。定義側 article の body 全体が脚注内容となる。
+脚注の定義は nwyt prop `!fn~[id]` でその scope (section / article どちらも可) をマークする（消費される）。定義側 scope の body 全体が脚注内容となる。
 
 ```Markdown
 ## 脚注1の内容
@@ -456,7 +456,7 @@ section テンプレートで使用:
 - `!lead~テキスト` — message テンプレートのリードテキスト
 
 article レベルで使用:
-- `!fn~[id]` — この article を脚注 id の定義としてマークする
+- `!fn~[id]` — この scope (section / article) を脚注 id の定義としてマークする
 
 ### content（`!key[value]`）
 コンテンツとして残る（消費されない）。本文中のインラインマーカー。
