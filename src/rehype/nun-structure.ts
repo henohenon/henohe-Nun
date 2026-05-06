@@ -135,10 +135,14 @@ function resolveFootnotes(
         node.children = [link as ElementContent]
       }
 
-      // tooltip: 脚注内容の hidden 要素
+      // tooltip: 脚注内容を <template> に詰めて隣に置く。
+      // sup は <p> の中にいるため、生の block (<p> 等) を sibling に置くと
+      // HTML5 adoption agency が外側 <p> を強制 close する。<template> は parse 時に
+      // 別 insertion mode に切り替わるため中身がどんな block でも外側を壊さない。
+      // 表示は client 側で content を clone して visible div に展開する。
       if (body && body.length > 0) {
-        const tooltip = h('span.fn-tooltip', { hidden: true }, body)
-        parent.children.splice(index + 1, 0, tooltip as ElementContent)
+        const tpl = h('template', { dataFn: fnId }, body)
+        parent.children.splice(index + 1, 0, tpl as ElementContent)
       }
     })
   }
