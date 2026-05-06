@@ -3,6 +3,7 @@ import type { Root, Element, ElementContent } from 'hast'
 import { visit, SKIP } from 'unist-util-visit'
 import { h } from 'hastscript'
 import { toString } from 'hast-util-to-string'
+import ogs from 'open-graph-scraper'
 
 interface OgpData {
   title: string
@@ -111,67 +112,34 @@ async function fetchOgp(url: string, fallbackTitle: string): Promise<OgpData> {
 
   let data: OgpData = { title: fallbackTitle, description: '', image: '', favicon: '' }
   try {
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Nun/1.0; +https://github.com/henohenon/henohe-Nun)' },
-      signal: AbortSignal.timeout(8000),
+    const { error, result } = await ogs({
+      url,
+      timeout: 8,
+      fetchOptions: {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Nun/1.0; +https://github.com/henohenon/henohe-Nun)',
+        },
+      },
     })
-    const html = await res.text()
-    const origin = new URL(url).origin
-
-    data = {
-      title: getMetaContent(html, 'og:title') || getTagContent(html, 'title') || fallbackTitle,
-      description: getMetaContent(html, 'og:description') || getMetaContent(html, 'description'),
-      image: resolveUrl(getMetaContent(html, 'og:image'), origin),
-      favicon: getFavicon(html, origin),
+    if (!error) {
+      const origin = new URL(url).origin
+      const baseUrl = result.requestUrl || origin
+      data = {
+        title: result.ogTitle || fallbackTitle,
+        description: result.ogDescription || '',
+        image: result.ogImage?.[0]?.url ? resolveUrl(result.ogImage[0].url, baseUrl) : '',
+        favicon: result.favicon ? resolveUrl(result.favicon, baseUrl) : '',
+      }
     }
   } catch (err) {
-    process.stderr.write(`[nun-card] fetch failed: ${url}: ${err}\n`)
+    process.stderr.write(`[nun-card] ogs failed: ${url}: ${err}\n`)
   }
 
   ogpCache.set(url, data)
   return data
 }
 
-function getMetaContent(html: string, prop: string): string {
-  const e = prop.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  // ダブル・シングルクォート両対応、属性順不同
-  for (const q of ['"', "'"] as const) {
-    const re = new RegExp(
-      `<meta[^>]+(?:property|name)=${q}${e}${q}[^>]+content=${q}([^${q}]*)${q}` +
-      `|<meta[^>]+content=${q}([^${q}]*)${q}[^>]+(?:property|name)=${q}${e}${q}`,
-      'i'
-    )
-    const m = html.match(re)
-    if (m) return decodeEntities(m[1] ?? m[2] ?? '')
-  }
-  return ''
-}
-
-function getTagContent(html: string, tag: string): string {
-  const m = html.match(new RegExp(`<${tag}[^>]*>([^<]+)</${tag}>`, 'i'))
-  return m ? decodeEntities(m[1]) : ''
-}
-
-function getFavicon(html: string, origin: string): string {
-  // <link rel="icon" href="..."> を探す
-  const m = html.match(/<link[^>]+rel="(?:shortcut )?icon"[^>]+href="([^"]+)"/i)
-    || html.match(/<link[^>]+href="([^"]+)"[^>]+rel="(?:shortcut )?icon"/i)
-  if (m) return resolveUrl(m[1], origin)
-  return origin + '/favicon.ico'
-}
-
 function resolveUrl(href: string, origin: string): string {
   if (!href) return ''
   try { return new URL(href, origin).href } catch { return '' }
-}
-
-function decodeEntities(text: string): string {
-  return text
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
-    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
 }
