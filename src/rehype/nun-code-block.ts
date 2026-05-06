@@ -55,6 +55,11 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
     })
 
     // --- Pass 2: diff blocks ---
+    // diff-add / diff-del の class 付与 + 行頭 `+` / `-` を `.diff-marker` 化。
+    // marker は CSS で `user-select: none` を当て、copy ボタン側 (extractCleanCode)
+    // でも除外する → カーソル選択でも button でも prefix 文字が混入しない。
+    // `\n` は触らない (剥がすと非 diff と DOM 構造が非対称になる + マウス copy
+    // で改行が落ちる弊害がある)。CSS の `display: block` も使わない。
     visit(tree, 'element', (node: Element) => {
       if (node.tagName !== 'pre') return
       if (!('data-nun-diff' in (node.properties ?? {}))) return
@@ -64,20 +69,19 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
       )
       if (!code) return
 
-      for (let i = 0; i < code.children.length; i++) {
-        const child = code.children[i]
+      for (const child of code.children) {
         if (child.type !== 'element' || child.tagName !== 'span') continue
         const lineText = getTextContent(child)
-        const isAdd = lineText.startsWith('+')
-        const isDel = lineText.startsWith('-')
-        if (!isAdd && !isDel) continue
-        addClassName(child, isAdd ? 'diff-add' : 'diff-del')
-        // diff 行は CSS で display: block にして背景を行幅に伸ばす都合上、
-        // shiki が出力する直後の "\n" テキストノードがあると二重改行になる
-        // (block 自身の改行 + 残った \n)。該当ノードを削除する。
-        const next = code.children[i + 1]
-        if (next?.type === 'text' && next.value === '\n') {
-          code.children.splice(i + 1, 1)
+        if (lineText.startsWith('+')) {
+          addClassName(child, 'diff-add')
+          extractDiffMarker(child, '+')
+        } else if (lineText.startsWith('-')) {
+          addClassName(child, 'diff-del')
+          extractDiffMarker(child, '-')
+        } else if (lineText.startsWith(' ')) {
+          // unified diff の context 行 (先頭スペース 1 文字)。bg は無いが
+          // 先頭スペースだけ marker 化して copy / 選択から除外する。
+          extractDiffMarker(child, ' ')
         }
       }
     })
@@ -97,8 +101,18 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
       const startRaw  = props['data-nun-start'] as string | undefined
       const startLine = startRaw != null ? parseInt(startRaw, 10) : undefined
 
-      // Add line numbers if startLine is set
+      // Add line numbers if startLine is set.
+      // 桁幅は code 全体の最大行番号で決まる: `--ln-width: <maxDigits>ch` を
+      // pre に inline style で乗せて、CSS 側で `.line-number` の min-width に
+      // 反映させる。これで 2 桁 / 3 桁 / 4 桁の deck で gap が均一にならず、
+      // 必要最小限の幅で揃う。 */
       if (startLine != null) {
+        const lineCount = code.children.filter(
+          c => c.type === 'element' && c.tagName === 'span'
+        ).length
+        const maxLine = startLine + lineCount - 1
+        const maxDigits = String(maxLine).length
+
         let lineNum = startLine
         for (const child of code.children) {
           if (child.type === 'element' && child.tagName === 'span') {
@@ -112,6 +126,11 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
             lineNum++
           }
         }
+
+        // 既存 style に `--ln-width: <n>ch` を追記
+        const existingStyle = (node.properties?.['style'] as string | undefined) ?? ''
+        node.properties ??= {}
+        node.properties['style'] = `${existingStyle ? existingStyle.replace(/;?\s*$/, ';') : ''}--ln-width:${maxDigits}ch`
       }
 
       const figure = h('figure.code-block', [
@@ -130,6 +149,39 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
 
 function getTextContent(node: Element): string {
   return toString(node)
+}
+
+/** diff 行の先頭 `+`/`-` を探して `.diff-marker` span に分離。
+ *  shiki は `-const` のように prefix を続く token と一塊にして出力するので
+ *  最初の text-bearing token を見つけて 1 文字分だけ切り出す。 */
+function extractDiffMarker(line: Element, marker: '+' | '-' | ' ') {
+  for (let i = 0; i < line.children.length; i++) {
+    const child = line.children[i]
+    if (child.type !== 'element' || child.tagName !== 'span') continue
+    const firstChild = child.children[0]
+    if (firstChild?.type !== 'text') continue
+    if (!firstChild.value.startsWith(marker)) continue
+
+    const rest = firstChild.value.slice(1)
+    const markerSpan: Element = {
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: ['diff-marker'],
+        ...(child.properties?.['style']
+          ? { style: child.properties['style'] as string }
+          : {}),
+      },
+      children: [{ type: 'text', value: marker } as Text],
+    }
+    if (rest === '') {
+      line.children.splice(i, 1, markerSpan)
+    } else {
+      firstChild.value = rest
+      line.children.splice(i, 0, markerSpan)
+    }
+    return
+  }
 }
 
 function addClassName(node: Element, className: string) {

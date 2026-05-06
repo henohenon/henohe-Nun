@@ -114,7 +114,7 @@ date: 2026-05-01
 
 ![Nun ロゴ](/images/henohe-Nun.png "henohe-Nun")
 
-# コードブロック — 基本
+# コードブロック
 🌊default
 
 ## 言語指定
@@ -132,8 +132,7 @@ export async function process(md: string) {
 }
 ```
 
-# コードブロック — diff
-🌊default
+## diff
 
 ```diff_ts
 -const value = "old";
@@ -141,7 +140,7 @@ export async function process(md: string) {
  console.log(value);
 ```
 
-# コードブロック — embed_svg / embed_html
+# コードブロック — 埋め込み
 🌊default
 
 ## embed_svg
@@ -163,8 +162,7 @@ export async function process(md: string) {
 </div>
 ```
 
-# コードブロック — embed_mermaid
-🌊default
+## embed_mermaid
 
 ```embed_mermaid
 flowchart LR
@@ -174,8 +172,7 @@ flowchart LR
   hast --> HTML[HTML]
 ```
 
-# コードブロック — embed_math
-🌊default
+## embed_math
 
 ```embed_math
 \begin{aligned}

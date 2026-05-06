@@ -35,7 +35,7 @@ figure.code-block .lang {
 
 figure.code-block button.copy {
   background: transparent;
-  border: 1px solid var(--border);
+  border: 0;
   border-radius: 0.25em;
   padding: 0.1em 0.5em;
   cursor: pointer;
@@ -56,15 +56,34 @@ figure.code-block > pre {
 }
 
 /* ---- Diff ---- */
-.diff-add { background: var(--diff-add); display: block; }
-.diff-del { background: var(--diff-del); display: block; }
+/* `display: block` は使わない。block + 行末 `\n` は二重改行になるので
+   `\n` を剥がす必要が生じ、結果 DOM 構造が非 diff と非対称になる + マウス
+   copy で改行が落ちる弊害がある。inline + box-decoration-break で折り返し
+   時にも背景が分割されるよう。bg はテキスト幅のみに付く (行幅ではない)。 */
+.diff-add,
+.diff-del {
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.diff-add { background: var(--diff-add); }
+.diff-del { background: var(--diff-del); }
 
-/* ---- Line numbers ---- */
+/* 行頭 `+`/`-` は視覚マーカー扱い。マウス選択でもカーソルでも掴めない
+   ようにし、copy ボタン側 (extractCleanCode) でも除外する。 */
+.diff-marker {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---- Line numbers ----
+   pre 側 inline style の `--ln-width: <maxDigits>ch` で行番号最大桁数に
+   合わせた min-width を取得。digit 専用の `ch` 単位なので proportional
+   font でも数字幅と一致する。fallback は 2ch (2 桁想定)。 */
 .line-number {
   display: inline-block;
-  min-width: 2em;
+  min-width: var(--ln-width, 2ch);
+  padding-right: 0.7em;
   text-align: right;
-  margin-right: 1em;
   color: var(--sub);
   user-select: none;
 }
