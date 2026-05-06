@@ -287,5 +287,21 @@ $$
 
 参照側 (`!fn[3]`) からはクリックでこのスライドに遷移し、ホバー時の tooltip にはこのスライドの本文がそのまま展開される。`!fn.head~[id]` のように `.head` クラスを付けると、tooltip に heading も含める (デフォルトは body のみ)。
 
+# 背景画像 — `!bg~`
+!bg~[bg](/images/tgs.jpg)
+🌊default
+
+`!bg~[alt](url)` で section 全体に背景画像を敷く。本文はその上にレイヤされる形。
+
+URL は `[alt](url)` 形式 / 素のパス両方受け付け。グローバルに書けば全 section に伝播する。
+
+# フッター背景 — `!fbg~`
+!fbg~[fbg](/images/tgs.jpg)
+🌊default
+
+`!fbg~[alt](url)` でフッターの SVG 形状 (line + text) を mask として画像を切り抜く演出。
+
+footer の文字とラインだけが「窓」になって背景画像が浮き出る形。
+
 # おわり
 🌊solo

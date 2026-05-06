@@ -14,23 +14,30 @@ export function appendFooter(
   data: VFileData,
   globalNwyts: NwytProp[],
 ): void {
-  const fl = findNwyt(scope.nwyts, 'fl') ?? findNwyt(globalNwyts, 'fl')
-  const fr = findNwyt(scope.nwyts, 'fr') ?? findNwyt(globalNwyts, 'fr')
-  if (!fl && !fr) return
-
+  const fl  = findNwyt(scope.nwyts, 'fl')  ?? findNwyt(globalNwyts, 'fl')
+  const fr  = findNwyt(scope.nwyts, 'fr')  ?? findNwyt(globalNwyts, 'fr')
   const fbg = findNwyt(scope.nwyts, 'fbg') ?? findNwyt(globalNwyts, 'fbg')
   const bg  = findNwyt(scope.nwyts, 'bg')  ?? findNwyt(globalNwyts, 'bg')
 
-  const sectionId = String(el.properties?.id ?? '0')
-  el.children.push(buildFooter(sectionId, fl, fr, fbg) as ElementContent)
-
+  // bg は section 内の専用 `<img class="bg-layer">` で扱う。`<div + bg-image>`
+  // ではなく実 `<img>` を使うことで「画像である」が DOM 上で explicit になり、
+  // inspect / src 確認が容易。CSS は `object-fit: cover` で同等表現。fbg と
+  // 実装パターンを揃える。
   if (bg) {
     const src = extractImageSrc(bg.rawValue)
     if (src) {
-      el.properties ??= {}
-      el.properties.style = `background-image: url('${src}')`
+      const bgLayer = h('img.bg-layer', { src, alt: '' }) as ElementContent
+      el.children.unshift(bgLayer)
     }
   }
+
+  // footer 自体は fl / fr のどちらかが無いと出さない (テキストゼロのフッターは
+  // 罫線だけになり装飾過剰)。fbg は footer の SVG mask 経由で適用されるので
+  // 必然的に footer と運命共同体。
+  if (!fl && !fr) return
+
+  const sectionId = String(el.properties?.id ?? '0')
+  el.children.push(buildFooter(sectionId, fl, fr, fbg) as ElementContent)
 }
 
 // ---------------------------------------------------------------------------
@@ -52,40 +59,39 @@ function buildFooter(
 
   const svgChildren: ElementContent[] = []
 
-  if (fbg) {
-    const src = extractImageSrc(fbg.rawValue)
-    // Shapes を <defs> に入れて <use> で参照 → mask にも可視レイヤーにも流用
+  const fbgSrc = fbg ? extractImageSrc(fbg.rawValue) : null
+
+  if (fbg && fbgSrc) {
+    // SVG には <defs> (shapes + mask) のみ置く。実画像は footer 内の専用
+    // `<img class="fbg-layer">` に CSS mask-image で SVG mask を参照して
+    // shapes 形状に切り抜く。bg-layer と同じく `<img>` で扱う。
     svgChildren.push(h('defs', [
       h('g', { id: shapesId }, shapes),
       h('mask', { id: maskId, maskUnits: 'userSpaceOnUse' }, [
-        // mask 全体を黒（非表示）にしてから shapes の部分を白（表示）で上書き
         h('rect', { x: '-9999', y: '-9999', width: '19998', height: '19998', fill: 'black' }),
         h('use', { href: `#${shapesId}`, style: 'fill: white; stroke: white;' }),
       ]),
     ]) as ElementContent)
-    // !fbg 画像（mask で形状に切り抜き）
-    if (src) {
-      svgChildren.push(h('image', {
-        class: 'fbg-layer',
-        href: src,
-        x: '0', y: '0', width: '100%', height: '100%',
-        preserveAspectRatio: 'xMidYMid slice',
-        mask: `url(#${maskId})`,
-      }) as ElementContent)
-    }
-    // 可視フッター形状
-    svgChildren.push(h('use', { href: `#${shapesId}` }) as ElementContent)
   } else {
+    // 通常 footer (fbg なし) または fbg src 解決失敗: 普通に shapes を描画
     svgChildren.push(...shapes)
   }
 
-  const cls = fbg ? 'footer.masked' : 'footer'
-  return h(cls, [
-    h('svg.footer-svg', {
-      xmlns: 'http://www.w3.org/2000/svg',
-      'aria-hidden': 'true',
-    }, svgChildren) as ElementContent,
-  ])
+  const footerChildren: ElementContent[] = []
+  if (fbgSrc) {
+    footerChildren.push(h('img.fbg-layer', {
+      src: fbgSrc,
+      alt: '',
+      style: `-webkit-mask-image: url(#${maskId}); mask-image: url(#${maskId});`,
+    }) as ElementContent)
+  }
+  footerChildren.push(h('svg.footer-svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    'aria-hidden': 'true',
+  }, svgChildren) as ElementContent)
+
+  const cls = fbgSrc ? 'footer.masked' : 'footer'
+  return h(cls, footerChildren)
 }
 
 /** line + fl text + fr text の SVG 形状を生成
@@ -144,7 +150,10 @@ function findNwyt(nwyts: NwytProp[], key: string): NwytProp | undefined {
 }
 
 function extractImageSrc(raw: string): string | null {
-  const match = raw.match(/!\[([^\]]*)\]\(([^)]+)\)/)
+  // nwyt syntax の `!` は外側 prop syntax で消費済み。rawValue は `[alt](url)`
+  // で渡る (Markdown の `![alt](url)` のように `!` をもう一度書く慣例ではない)。
+  // 念のため `!` 付きも受け付け、最後に素のパス fallback。
+  const match = raw.match(/!?\[([^\]]*)\]\(([^)]+)\)/)
   if (match) return match[2]
   const trimmed = raw.trim()
   return trimmed || null

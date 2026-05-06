@@ -121,10 +121,18 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 - コードブロック copy / diff / 行番号整理 (`b071062`) → `extractCleanCode` で `.line` 単位 join + `.line-number` / `.diff-marker` 除外、copy ボタンのボーダー削除、diff の `\n` 剥がし & `display:block` 撤廃で非 diff と DOM 構造を統一 (`box-decoration-break: clone` で行幅着色は inline で対応)、`+`/`-`/` ` プレフィックスを `.diff-marker` 化して user-select:none + copy 除外、行番号幅を `--ln-width: <maxDigits>ch` で SSG 時に最大桁数ベースに自動調整、sample.md のコードブロックを基本系/埋め込み系の 2 ページに再編
 
 **次セッションの候補**:
-- `!bg~` / `!fbg~` (背景画像 / フッター背景画像) の動作確認・修正
+- **`!bg~` / `!fbg~` の WIP を完成させる** (今セッションで tmp commit 済み、後述の「進行中」項目参照)
 - footer text clipping (Critical C7) や mobile 1px 白帯など、コンテナ・レイアウト系の残作業
 - ダークテーマで全 23 スライド再キャプチャ (Polish P4)
 - card の GitHub favicon 404 (Phase C 持ち越し)
+
+**進行中 (tmp commit 済み)**:
+- **`!bg~` / `!fbg~` バグ調査 + img レイヤー化リファクタ**:
+  - 既知バグ修正済み: `extractImageSrc` 正規表現 (`!?\[`)、`appendFooter` 早期 return 順序入れ替え (bg を fl/fr 不在でも適用)、2 重 `<use>` 削除
+  - レイヤー化: `<section>` の inline style → `<img class="bg-layer">` 子要素、`<footer>` の inline style → `<img class="fbg-layer">` 子要素 + SVG defs (mask)。CSS は `position: absolute; inset:0; object-fit: cover; pointer-events: none` 共通、`section > .bg-layer { z-index: -1 }`
+  - **未確認**: fbg-layer の visual。SVG mask が `mask-image: url(#footer-mask-N)` で正しく適用されてるか、画像が見える状態か。「白で覆われてる」報告があったのが最後の状態 (CSS bg 路線)。img 化後の表示は dev server で目視確認待ち
+  - サンプル: `benben/sample.md` slide 22 (`# 背景画像 — !bg~`) と slide 23 (`# フッター背景 — !fbg~`) でそれぞれ動作確認可能 (両方 `/images/tgs.jpg` 使用)
+  - 引き続きの議論ポイント: **bg と fbg を同じクロップで揃える** (footer-aspect ではなく section-aspect で cover)。`background-attachment: fixed` 路線で挫折、img + `object-fit: cover` でも footer 自体のアスペクトに合わせる挙動。section の bg と同じ位置に footer の fbg を出すには「footer 内の img を section サイズで配置 + footer 領域でクリップ」が必要
 
 —
 
