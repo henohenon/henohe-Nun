@@ -9,7 +9,9 @@
   justify-items: center;
 }
 
-.solo > h1 {
+/* h1 (section) / h2 (article in compare 等) どちらでも solo の中央寄せ視覚を
+   再現するため `:is(h1, h2)` で両対応。 */
+.solo > :is(h1, h2) {
   /* baseline (margin-block-end: 0.3em) は body が無いので不要 → 0 に上書き */
   margin-block-end: 0;
   text-align: center;

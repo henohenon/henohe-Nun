@@ -10,7 +10,9 @@
   position: relative;
 }
 
-.title > h1 {
+/* h1 (section) / h2 (article in compare 等) どちらでも title の視覚を再現する
+   ため `:is(h1, h2)` で両対応。 */
+.title > :is(h1, h2) {
   /* baseline (base.css) からの差分: 強調色 + 詰めた line-height + 折り返し制御 */
   color: var(--strong);
   line-height: 1.05;

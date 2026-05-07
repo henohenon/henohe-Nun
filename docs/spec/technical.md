@@ -336,7 +336,7 @@ function titleTemplate(scope: Scope): Element {
   if (scope.heading) children.push(scope.heading)
   const sub = resolveNwyt(scope, 'sub')
   if (sub) children.push(h('div.sub', [sub]))
-  children.push(h('img.logo', { src: '/henoheno.svg', alt: '' }))
+  children.push(h('svg.henoheno', { src: '/henoheno.svg', alt: '' }))
   // body なし — 子 Scope は無視される
   return h(`${scope.tag}.title`, { className: scope.classes }, children)
 }

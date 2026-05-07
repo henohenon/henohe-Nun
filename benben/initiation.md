@@ -147,21 +147,19 @@ date:
 🌊compare
 !fl~Templates
 
-##
+## Preview
 🌊default.window
-### Sub heading
-- Title + left body
-- Most slides use this
-- h2 / h3 form sub-articles
+- bullet
+- nested ・ items
+- standard layout
 
-##
+## Source
 ````md
 🌊default
 
-### Sub heading
-- Title + left body
-- Most slides use this
-- h2 / h3 form sub-articles
+- bullet
+- nested ・ items
+- standard layout
 ````
 
 
@@ -169,14 +167,14 @@ date:
 🌊compare
 !fl~Templates
 
-##
+## Preview
 🌊title.window
-!sub~Subtitle goes here in fg-mid color
+!sub~Subtitle text
 
-##
+## Source
 ````md
 🌊title
-!sub~Subtitle goes here in fg-mid color
+!sub~Subtitle text
 ````
 
 
@@ -184,24 +182,20 @@ date:
 🌊compare
 !fl~Templates
 
-##
+## Preview
 🌊me.window
 !icon~[icon](/henoheno.svg)
 
-Profile-style intro.
-- Icon column on the left
-- Body content on the right
-- Used for the About slide of this deck
+- bullet
+- bullet
 
-##
+## Source
 ````md
 🌊me
 !icon~[icon](/henoheno.svg)
 
-Profile-style intro.
-- Icon column on the left
-- Body content on the right
-- Used for the About slide of this deck
+- bullet
+- bullet
 ````
 
 
@@ -209,20 +203,18 @@ Profile-style intro.
 🌊compare
 !fl~Templates
 
-##
+## Preview
 🌊message.window
-!lead~Lead text in strong color
+!lead~Lead text
 
-Centered callout body.
-For single-message slides.
+Body text
 
-##
+## Source
 ````md
 🌊message
-!lead~Lead text in strong color
+!lead~Lead text
 
-Centered callout body.
-For single-message slides.
+Body text
 ````
 
 
@@ -230,16 +222,12 @@ For single-message slides.
 🌊compare
 !fl~Templates
 
-##
-🌊default.window
-Title-only slide, vertically centered.
-Used for section breaks (Custom Syntax / Showcase / etc.).
+## Preview
+🌊solo.window
 
-##
+## Source
 ````md
 🌊solo
-
-# Section title
 ````
 
 
@@ -247,21 +235,24 @@ Used for section breaks (Custom Syntax / Showcase / etc.).
 🌊compare
 !fl~Templates
 
-##
-🌊default.window
-Two-column layout for h2 articles.
-Typical use: rendered preview vs source.
-Combine with `.window` for a framed look.
+## Preview
+🌊compare.window
 
-##
+### left
+A
+
+### right
+B
+
+## Source
 ````md
 🌊compare
 
 ## left
-left content
+A
 
 ## right
-right content
+B
 ````
 
 
