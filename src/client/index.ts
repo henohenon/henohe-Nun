@@ -2,6 +2,11 @@ import 'virtual:uno.css'
 import '../styles/index.css'
 import 'katex/dist/katex.min.css'
 
+/** 次スライド (右 / 下 / space / 右手側 vim) へのナビゲーションキー */
+const FORWARD_KEYS = new Set(['ArrowRight', 'ArrowDown', ' ', 'd', 's'])
+/** 前スライド (左 / 上 / 左手側 vim) へのナビゲーションキー */
+const BACKWARD_KEYS = new Set(['ArrowLeft', 'ArrowUp', 'a', 'w'])
+
 const sections = document.querySelectorAll<HTMLElement>('section')
 if (sections.length > 0) {
   initNavigation(sections)
@@ -55,10 +60,10 @@ function initNavigation(sections: NodeListOf<HTMLElement>) {
       if (tag === 'INPUT' || tag === 'TEXTAREA' || active.isContentEditable) return
     }
 
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'd' || e.key === 's') {
+    if (FORWARD_KEYS.has(e.key)) {
       e.preventDefault()
       navigate(1)
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'a' || e.key === 'w') {
+    } else if (BACKWARD_KEYS.has(e.key)) {
       e.preventDefault()
       navigate(-1)
     } else if (e.key === 'Home') {
