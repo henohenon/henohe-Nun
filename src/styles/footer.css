@@ -6,20 +6,11 @@ section > footer {
   padding: 0;
 }
 
-.footer-svg, .fbg-svg {
+.footer-svg {
   --shape-fill: var(--strong);
   width: 100%;
   height: 100%;
   overflow: visible;
-}
-.fbg-svg{
-  --shape-fill: var(--base);
-  position: absolute;
-  inset: 0;
-}
-
-.fbg-svg > mask > use {
-  y: calc(100% - var(--footer-line-height) - var(--footer-font-size))
 }
 
 .footer-rule {
@@ -45,35 +36,4 @@ section > footer {
   x: 100%;
   translate: calc(-1 * var(--footer-pad-x)) var(--footer-font-size);
   text-anchor: end;
-}
-
-/* Background image layers (`!bg~` / `!fbg~`).
-   bg は section 内の `.bg-layer` img、fbg は footer 内の `.fbg-layer` img
-   として共通の `<img>` パターンで扱う。実 `<img>` を使うことで src が
-   DOM に explicit に出る + inspect が容易。`position: absolute; inset: 0
-   + width/height: 100% + object-fit: cover` で親要素を cover 表示。
-   `pointer-events: none` で操作干渉を避ける。`z-index: -1` で本文・footer
-   より背面に下げる (section の bg-layer のみ)。 */
-.bg-layer,
-.fbg-layer
-{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.bg-layer,
-.fbg-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  pointer-events: none;
-}
-
-section > .bg-layer {
-  z-index: -1;
 }
