@@ -119,6 +119,13 @@ nwyt prop で設定可能。レイヤーは下から `!bg` → フッター → 
 - `!bg~[alt](url)` — スライド全体の背景画像（最背面）
 - `!fbg~[alt](url)` — フッター部分がマスクされた背景画像。フッター要素を SVG 化し、`mask: url(#footer-mask)` で切り抜く。フッターの線・テキスト形状を通して画像が見える
 
+### 装飾レイヤーの DOM 配置
+`!bg` / `!fbg` / `<footer>` を含む装飾レイヤーは、すべて該当 section の直下の子要素として配置する。`<div class="slide">` 等の wrapper でラップして section の sibling とする構成は採らない。
+
+理由: Nun の pipeline は markdown → document semantic を DOM に投影する設計で、`Scope.nwyts` に保持される装飾 prop は scope (= section) に属する。これを DOM 上でも parent-child 包含関係として表現することで、思想と DOM 構造が一致する。wrapper 案は presentation-first (Keynote / Figma 的) な思想転換が前提となり、Nun の content-first 哲学と乖離するため採用しない。
+
+実装上の代償として bg / fbg / footer の `position: absolute` + `z-index` choreography が section 内に残るが、これは思想一貫性とのトレードオフとして許容する。
+
 ### テーマ
 スライドの配色は少数のCSS変数で制御する。
 

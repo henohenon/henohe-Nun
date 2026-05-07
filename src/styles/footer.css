@@ -7,23 +7,33 @@ section > footer.masked {
   padding: 0;
 }
 
-.footer-svg {
+.footer-svg, .fbg-svg {
+  --shape-fill: var(--strong);
   width: 100%;
   height: 100%;
   overflow: visible;
 }
+.fbg-svg{
+  --shape-fill: var(--base);
+  position: absolute;
+  inset: 0;
+}
+
+.fbg-svg > mask > use {
+  y: calc(100% - var(--footer-line-height) - var(--footer-font-size))
+}
 
 .footer-rule {
   width: 100%;
+  fill: var(--shape-fill);
   y: var(--footer-font-size);
   height: var(--footer-line-height);
-  fill: var(--strong);
 }
 
 .footer-fl,
 .footer-fr {
   dominant-baseline: alphabetic;
-  fill: var(--strong);
+  fill: var(--shape-fill);
   font-size: var(--footer-font-size);
   font-family: var(--font-body);
 }
@@ -46,7 +56,16 @@ section > footer.masked {
    `pointer-events: none` で操作干渉を避ける。`z-index: -1` で本文・footer
    より背面に下げる (section の bg-layer のみ)。 */
 .bg-layer,
-.fbg-layer {
+.fbg-layer
+{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bg-layer,
+.fbg-img {
   position: absolute;
   inset: 0;
   width: 100%;

@@ -8,6 +8,7 @@ import { appendFooter } from './footer.ts'
 import { initVFileData } from '../types.ts'
 import type { VFileData, NwytProp, Scope } from '../types.ts'
 import { isScope } from '../types.ts'
+import {appendBackground, appendFooterBackground} from "./background.ts";
 
 type Options = {
   jsPath: string
@@ -45,19 +46,23 @@ export const rehypeNunStructure: Plugin<[Options], Root, Root> = function (optio
     let firstSectionMarked = false
     const sections = scopes.map((scope, i) => {
       const el = render(scope)
+      const sectionId = String(i + 1);
       // section に id を付与（ナビゲーション用）
       if (scope.tag === 'section') {
         el.properties ??= {}
-        el.properties.id = String(i + 1)
+        el.properties.id = sectionId
         // 1 枚目に .active を付与（JS なしでの初期表示用）
         if (!firstSectionMarked) {
           const existing = el.properties.className as string[] | undefined
           el.properties.className = [...(existing ?? []), 'active']
           firstSectionMarked = true
         }
-        // フッター追加
-        appendFooter(el, scope, data, globalNwyts)
+
       }
+      // フッター追加
+      appendBackground(el, scope, globalNwyts)
+      appendFooter(el, scope, globalNwyts, sectionId)
+      appendFooterBackground(el, scope, globalNwyts, sectionId)
       return el
     })
 
