@@ -65,6 +65,18 @@ section.active {
   display: grid;
 }
 
+/* ---- Slide title (`section > h1`) baseline ----
+   全 template 共通の見た目 (font / color / line-height) はここに集約し、
+   各 template ファイルでは差分のみ override する。
+   - title: `color: var(--strong)` + `line-height: 1.05`
+   - solo:  `text-align: center` + `max-width`
+   - default / me / message: `margin-block-end` のみ追加 */
+section > h1 {
+  font-size: var(--slide-title-size);
+  color: var(--brand);
+  line-height: 1.1;
+}
+
 /* ---- Inline elements ---- */
 a { color: var(--brand); text-decoration: underline; }
 strong, b { font-weight: 700; }
