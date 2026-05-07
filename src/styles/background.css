@@ -34,6 +34,12 @@ section > .bg-layer {
   overflow: visible;
 }
 
-.fbg-layer > mask > use {
-  y: calc(100% - var(--footer-line-height) - var(--footer-font-size));
+/* mask 内の shape group を footer 領域 (画面下端) に shift。 transform-box:
+   view-box で translateY 100% が SVG viewport 高さ基準になり、 そこから
+   footer 高さ分を引いて footer 上端に配置。 transform は SVG 直下の `<g>`
+   なので mask context でも CSS が effective (use + CSS y で同等の効果を狙う
+   旧構造は PDF backend で動かなかった)。 */
+.fbg-layer > mask > .fbg-shapes {
+  transform-box: view-box;
+  transform: translateY(calc(100% - var(--footer-line-height) - var(--footer-font-size)));
 }
