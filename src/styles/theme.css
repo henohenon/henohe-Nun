@@ -29,7 +29,10 @@
 section {
   /* Typography scale (cqmin-based, floors set for cqmin ≈ 280) */
   --text-body: clamp(14px, 5cqmin, 100px);
-  --slide-title-size: clamp(20px, 9.1cqmin, 180px);
+  --text-h1: clamp(20px, 9.1cqmin, 180px);  /* slide title */
+  --text-h2: clamp(14px, 6.5cqmin, 130px);
+  --text-h3: clamp(13px, 4.8cqmin, 96px);
+  --text-h4: clamp(12px, 4cqmin, 80px);     /* h4 / h5 / h6 共通 */
   /* Layout spacing */
   --slide-pad-x: clamp(16px, 8cqmin, 180px);
   --slide-pad-top: clamp(16px, 8cqmin, 180px);

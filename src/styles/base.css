@@ -72,7 +72,7 @@ section.active {
    - solo:  `text-align: center` + `max-width`
    - default / me / message: `margin-block-end` のみ追加 */
 section > h1 {
-  font-size: var(--slide-title-size);
+  font-size: var(--text-h1);
   color: var(--brand);
   line-height: 1.1;
 }
