@@ -20,9 +20,9 @@ date: 2026-05-07
 - [Custom Syntax](#5)
   - [Scope](#6) / [🌊 Template](#7) / [nwyt](#8) / [meta](#9)
 - [Showcase](#10)
-  - [Templates](#11) — [Default](#12) / [Title](#13) / [Me](#14) / [Message](#15) / [Solo](#16) / [Compare](#17)
-  - [Basic Markdown](#18) — [Text](#19) / [Lists](#20) / [Tables](#21) / [Code](#22) / [Embed](#23) / [Decoration](#24) / [Nested](#25) / [Math](#26)
-  - [Custom Content](#27) — [nwyt list](#28) / [Footnote](#29) / [Footnote dedicated](#30) / [Background](#31) / [Footer bg](#32) / [Card](#33)
+  - [Templates](#11) — [Default](#12) / [Title](#13) / [Me](#14) / [Message](#15) / [Solo](#16)
+  - [Basic Markdown](#17) — [Text](#18) / [Lists](#19) / [Tables](#20) / [Code](#21) / [Embed](#22) / [Decoration](#23) / [Nested](#24) / [Math](#25)
+  - [Custom Content](#26) — [nwyt list](#27) / [Footnote](#28) / [Footnote dedicated](#29) / [Background](#30) / [Footer bg](#31) / [Card](#32)
 
 
 # へのへ Nun
@@ -140,7 +140,7 @@ date:
 | [`🌊me`](#14) | icon left + body right |
 | [`🌊message`](#15) | centered body + lead |
 | [`🌊solo`](#16) | title only, centered, no body |
-| [`🌊compare`](#17) | two-column comparison (h2 articles) |
+| `🌊compare` | two-column comparison (h2 articles) |
 
 
 # Default
@@ -235,31 +235,6 @@ Body text
 ##
 ````md
 🌊solo
-````
-
-
-# Compare
-🌊compare
-!fl~Templates
-
-## Preview
-🌊compare.window
-
-### left
-A
-
-### right
-B
-
-##
-````md
-🌊compare
-
-## left
-A
-
-## right
-B
 ````
 
 
@@ -462,15 +437,15 @@ $$
 | --- | --- | --- |
 | `!fl~text` | prop | footer left |
 | `!fr~text` | prop | footer right |
-| [`!bg~[alt](url)`](#31) | prop | background image |
-| [`!fbg~[alt](url)`](#32) | prop | footer background |
+| [`!bg~[alt](url)`](#30) | prop | background image |
+| [`!fbg~[alt](url)`](#31) | prop | footer background |
 | [`!sub~text`](#13) | prop | subtitle (title template) |
 | [`!icon~[alt](url)`](#14) | prop | icon (me template) |
 | [`!lead~text`](#15) | prop | lead (message template) |
-| [`!fn~[id]`](#29) | prop | footnote definition |
-| [`!fn[id]`](#29) | content | footnote reference |
-| [`!card[label](url)`](#33) | content | OGP link card |
-| [`!card.v[label](url)`](#33) | content | vertical card |
+| [`!fn~[id]`](#28) | prop | footnote definition |
+| [`!fn[id]`](#28) | content | footnote reference |
+| [`!card[label](url)`](#32) | content | OGP link card |
+| [`!card.v[label](url)`](#32) | content | vertical card |
 
 
 # Footnote
