@@ -1,5 +1,4 @@
-section > footer,
-section > footer.masked {
+section > footer {
   position: absolute;
   inset-block-end: 0;
   inset-inline: 0;
