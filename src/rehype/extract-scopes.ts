@@ -143,8 +143,14 @@ function buildScope(
     sectionIndex.value++
   }
 
-  // vfile.data から position ベースで template/nwyt を紐付け
-  const bound = bindScopeData(data, range, sectionIndex.value)
+  // vfile.data から position ベースで template/nwyt を紐付け (pure)
+  const bound = bindScopeData(data, range)
+
+  // 脚注定義のページ位置を vfile.data に記録 (副作用)。
+  // 探索結果 (bound.fnDef) を使うので bindScopeData の後に実行。
+  if (bound.fnDef) {
+    data.footnoteLocs[bound.fnDef] = { page: sectionIndex.value }
+  }
 
   // body 内に depth+1 の heading があるか確認
   const hasSubHeadings = group.children.some(
@@ -175,13 +181,14 @@ function buildScope(
 }
 
 /**
- * vfile.data から position ベースで template/nwyt prop / 脚注定義を Scope に紐付ける。
+ * vfile.data から position ベースで template / nwyt prop / 脚注定義を Scope に紐付ける。
  * 範囲は spec (technical.md:163) に従い template / nwyt / fnDef 共通。
+ *
+ * pure: data は read-only。 footnoteLocs への記録は呼び出し側 (buildScope) が行う。
  */
 function bindScopeData(
   data: VFileData,
   range: ScopeRange,
-  pageNumber: number,
 ): {
   template: TemplateName
   classes: string[]
@@ -205,7 +212,6 @@ function bindScopeData(
   for (const [id, entry] of Object.entries(data.footnotes)) {
     if (inRange(entry.position.start.line)) {
       fnDef = id
-      data.footnoteLocs[id] = { page: pageNumber }
       break
     }
   }
