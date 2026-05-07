@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import remarkRehype from 'remark-rehype'
 import rehypeKatex from 'rehype-katex'
-import type { Scope, NwytProp } from '../types.ts'
+import type { Scope, NwytProp, TemplateName } from '../types.ts'
 import { isScope } from '../types.ts'
 
 // 本体パイプラインと同じ拡張セットで lead/sub/fl/fr のインライン記法を処理する。
@@ -21,7 +21,7 @@ const inlineProcessor = unified()
 
 export type TemplateFn = (scope: Scope) => Element
 
-export const templates: Record<string, TemplateFn> = {
+export const templates: Record<TemplateName, TemplateFn> = {
   default: defaultTemplate,
   title: titleTemplate,
   me: meTemplate,

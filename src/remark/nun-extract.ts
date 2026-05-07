@@ -2,9 +2,9 @@ import type { Plugin } from 'unified'
 import type { Root, Parent } from 'mdast'
 import { visit } from 'unist-util-visit'
 import type { VFileData, TemplateEntry, NwytProp, TemplateName } from '../types.ts'
-import { initVFileData } from '../types.ts'
+import { TEMPLATE_NAMES } from '../types.ts'
 
-const validTemplates = new Set(['default', 'title', 'me', 'message', 'solo'])
+const validTemplates: ReadonlySet<string> = new Set(TEMPLATE_NAMES)
 
 /**
  * remark plugin: nunTemplate / nunNwytProp mdast ノードを走査して
