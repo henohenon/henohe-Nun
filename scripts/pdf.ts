@@ -63,6 +63,98 @@ async function main(): Promise<void> {
         await (document as Document & { fonts: { ready: Promise<unknown> } }).fonts.ready
       })
 
+      // fbg (footer background image) は screen では `<div class="fbg-layer">` 内
+      // `<img>` + `<svg>` + CSS `mask-image: url(#fragment)` で描画される (bg-layer
+      // と画像 CSS 共通化、 inspect 容易)。 ただ Chromium PDF backend は CSS
+      // mask-image fragment URL も cross-svg `<use href>` も resolve しないため
+      // PDF 出力でこの構造をそのまま使うと fbg が真っ黒 / 位置ズレで焼かれる。
+      //
+      // PDF 専用に DOM を swap して、 redesign/syntax (regenerate 前) と同じ
+      // 「単一 SVG + `<clipPath>` + 同一 svg 内に shape 直書き + `<image clip-path>`」
+      // 構造に置換する。 CSS 依存をゼロにするため、 clipPath 内 shape の幾何は
+      // visible footer 形状の getBoundingClientRect から実 pixel 値で焼き付ける。
+      // 設計判断は memory project_fbg_pdf_strategy.md 参照。
+      await page.evaluate(() => {
+        const NS = 'http://www.w3.org/2000/svg'
+        document.querySelectorAll('section').forEach(section => {
+          const fbgDiv = section.querySelector(':scope > .fbg-layer')
+          if (!fbgDiv || fbgDiv.tagName !== 'DIV') return
+          const fbgImg = fbgDiv.querySelector('img.fbg-img') as HTMLImageElement | null
+          const src = fbgImg?.getAttribute('src')
+          if (!src) return
+
+          const footerSvg = section.querySelector(':scope > footer svg.footer-svg')
+          const shapesG = footerSvg?.querySelector('[id^="footer-shapes-"]')
+          if (!shapesG) return
+
+          const secRect = section.getBoundingClientRect()
+          const newSvg = document.createElementNS(NS, 'svg')
+          newSvg.setAttribute('class', 'fbg-layer')
+          newSvg.setAttribute('aria-hidden', 'true')
+          newSvg.setAttribute('viewBox', `0 0 ${secRect.width} ${secRect.height}`)
+          newSvg.setAttribute('preserveAspectRatio', 'xMidYMid slice')
+
+          const defs = document.createElementNS(NS, 'defs')
+          const clipPath = document.createElementNS(NS, 'clipPath')
+          const clipId = `${shapesG.id}-pdf-clip`
+          clipPath.setAttribute('id', clipId)
+          clipPath.setAttribute('clipPathUnits', 'userSpaceOnUse')
+
+          Array.from(shapesG.children).forEach(shape => {
+            const r = shape.getBoundingClientRect()
+            const x = r.x - secRect.x
+            const y = r.y - secRect.y
+            const tag = shape.tagName.toLowerCase()
+            if (tag === 'rect') {
+              const rect = document.createElementNS(NS, 'rect')
+              rect.setAttribute('x', String(x))
+              rect.setAttribute('y', String(y))
+              rect.setAttribute('width', String(r.width))
+              rect.setAttribute('height', String(r.height))
+              clipPath.appendChild(rect)
+            } else if (tag === 'text') {
+              const cs = window.getComputedStyle(shape)
+              const anchor = cs.textAnchor || 'start'
+              const tx = anchor === 'end' ? r.right - secRect.x
+                : anchor === 'middle' ? (r.left + r.right) / 2 - secRect.x
+                : x
+              // dominant-baseline: alphabetic で y はおおよそ bbox.bottom (descender 無視)。
+              // footer text は日付/タイトル等 ASCII 中心で descender が少ないので近似で許容。
+              const ty = r.bottom - secRect.y
+              const text = shape.cloneNode(true) as Element
+              text.removeAttribute('style')
+              text.removeAttribute('transform')
+              text.setAttribute('x', String(tx))
+              text.setAttribute('y', String(ty))
+              text.setAttribute('text-anchor', anchor)
+              text.setAttribute('dominant-baseline', 'alphabetic')
+              text.setAttribute('font-family', cs.fontFamily)
+              text.setAttribute('font-size', cs.fontSize)
+              text.setAttribute('font-weight', cs.fontWeight)
+              // CSS 由来の translate / transform を打ち消す (SVG attribute 側は除去済みだが
+              // CSS rule が再 match しないようにインライン style で完全 override)
+              text.setAttribute('style', 'transform: none !important; translate: none !important;')
+              clipPath.appendChild(text)
+            }
+          })
+
+          defs.appendChild(clipPath)
+          newSvg.appendChild(defs)
+
+          const image = document.createElementNS(NS, 'image')
+          image.setAttribute('href', src)
+          image.setAttribute('x', '0')
+          image.setAttribute('y', '0')
+          image.setAttribute('width', String(secRect.width))
+          image.setAttribute('height', String(secRect.height))
+          image.setAttribute('preserveAspectRatio', 'xMidYMid slice')
+          image.setAttribute('clip-path', `url(#${clipId})`)
+          newSvg.appendChild(image)
+
+          fbgDiv.replaceWith(newSvg)
+        })
+      })
+
       const raw = await page.pdf({
         width: `${width}px`,
         height: `${height}px`,
