@@ -4,8 +4,8 @@
 .cursor-jack {
   position: fixed;
   pointer-events: none;
-  width: clamp(32px, 4cqmin, 96px);
-  height: clamp(32px, 4cqmin, 96px);
+  width: clamp(64px, 8cqmin, 192px);
+  height: clamp(64px, 8cqmin, 192px);
   border-radius: 50%;
   background: color-mix(in srgb, var(--brand) 45%, transparent);
   transform: translate(-50%, -50%);

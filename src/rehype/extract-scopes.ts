@@ -100,7 +100,11 @@ function splitByHeading(
   for (const node of nodes) {
     const d = getHeadingDepth(node)
     if (d === depth) {
-      if (current.heading !== null || hasContent(current.children)) {
+      if (current.headingStartLine > 0 || hasContent(current.children)) {
+        // 空 heading (`##` 単独) は heading=null だが headingStartLine > 0 で
+        // 識別できる。 nwyt prop だけのスコープ (例: `🌊title.window` + `!sub~`)
+        // は markdown 上 body 空に見えても template が visual 要素を生成する
+        // ので、 group を保持する必要がある。
         groups.push(current)
       }
       const heading = isEmptyHeading(node as Element)
@@ -119,7 +123,7 @@ function splitByHeading(
     }
   }
 
-  if (current.heading !== null || hasContent(current.children)) {
+  if (current.headingStartLine > 0 || hasContent(current.children)) {
     groups.push(current)
   }
 
