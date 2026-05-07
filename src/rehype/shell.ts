@@ -40,11 +40,13 @@ export function buildShell(sections: ElementContent[], meta: ShellMeta): Element
   const headChildren: ElementContent[] = [
     h('meta', { charset: 'utf-8' }),
     h('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }),
-    // favicon: ICO は universal fallback、 wave01.png は client/favicon-anim.ts が
-    // wave02-04.png に差し替えてループアニメ化する初期フレーム。 `data-anim`
-    // 属性で client 側が「自分が動かす対象」 を識別。
-    h('link', { rel: 'icon', sizes: 'any', href: '/favicon/favicon.ico' }),
+    // favicon: PNG (wave01) を **先頭** に置いてアニメの primary に、 ICO を
+    // **fallback** として後ろに。 順序を逆にすると `sizes="any"` 指定の ICO が
+    // primary として勝ってしまい、 後続 PNG への href 切替が tab favicon UI
+    // に反映されなくなる (browser が ICO を「全サイズ用」 と解釈するため)。
+    // `data-anim` 属性で client/favicon-anim.ts が「自分が動かす対象」 を識別。
     h('link', { rel: 'icon', type: 'image/png', dataAnim: '', href: '/favicon/wave01.png' }),
+    h('link', { rel: 'icon', href: '/favicon/favicon.ico' }),
   ]
 
   if (meta.title) {

@@ -23,8 +23,8 @@ export function buildIndex(deckNames: string[]): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" sizes="any" href="/favicon/favicon.ico">
   <link rel="icon" type="image/png" data-anim href="/favicon/wave01.png">
+  <link rel="icon" href="/favicon/favicon.ico">
   <title>Nun - Decks</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
