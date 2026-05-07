@@ -17,11 +17,11 @@ date: 2026-05-07
 
 - [About](#3)
 - [Custom Syntax](#4)
-  - [Scope](#5) / [🌊 Template](#6) / [nwyt](#7) / [meta](#8) / [nwyt list](#9)
-- [Showcase](#10)
-  - [Templates](#11) — [Default](#12) / [Title](#13) / [Me](#14) / [Message](#15) / [Solo](#16)
-  - [Basic Markdown](#17) — [Text](#18) / [Lists](#19) / [Tables](#20) / [Code](#21) / [Embed](#22) / [Decoration](#23) / [Nested](#24) / [Math](#25)
-  - [Custom Content](#26) — [Footnote](#27) / [Footnote dedicated](#28) / [Background](#29) / [Footer bg](#30) / [Card](#31)
+  - [Scope](#5) / [🌊 Template](#6) / [nwyt](#7) / [meta](#8)
+- [Showcase](#9)
+  - [Templates](#10) — [Default](#11) / [Title](#12) / [Me](#13) / [Message](#14) / [Solo](#15)
+  - [Basic Markdown](#16) — [Text](#17) / [Lists](#18) / [Tables](#19) / [Code](#20) / [Embed](#21) / [Decoration](#22) / [Nested](#23) / [Math](#24)
+  - [Custom Content](#25) — [nwyt list](#26) / [Footnote](#27) / [Footnote dedicated](#28) / [Background](#29) / [Footer bg](#30) / [Card](#31)
 
 
 # へのへ Nun
@@ -108,25 +108,6 @@ date:
 ````
 
 
-# nwyt list
-🌊default
-!fl~Custom Syntax
-
-| key | kind | role |
-| --- | --- | --- |
-| `!fl~text` | prop | footer left |
-| `!fr~text` | prop | footer right |
-| [`!bg~[alt](url)`](#29) | prop | background image |
-| [`!fbg~[alt](url)`](#30) | prop | footer background |
-| [`!sub~text`](#13) | prop | subtitle (title template) |
-| [`!icon~[alt](url)`](#14) | prop | icon (me template) |
-| [`!lead~text`](#15) | prop | lead (message template) |
-| [`!fn~[id]`](#27) | prop | footnote definition |
-| [`!fn[id]`](#27) | content | footnote reference |
-| [`!card[label](url)`](#31) | content | OGP link card |
-| [`!card.v[label](url)`](#31) | content | vertical card |
-
-
 # Showcase
 🌊solo
 
@@ -136,11 +117,11 @@ date:
 
 | template | feature |
 | --- | --- |
-| [`🌊default`](#12) | title + left body (standard) |
-| [`🌊title`](#13) | center-left title + sub + fixed image |
-| [`🌊me`](#14) | icon left + body right |
-| [`🌊message`](#15) | centered body + lead |
-| [`🌊solo`](#16) | title only, centered, no body |
+| [`🌊default`](#11) | title + left body (standard) |
+| [`🌊title`](#12) | center-left title + sub + fixed image |
+| [`🌊me`](#13) | icon left + body right |
+| [`🌊message`](#14) | centered body + lead |
+| [`🌊solo`](#15) | title only, centered, no body |
 | `🌊compare` | two-column comparison (h2 articles) |
 
 
@@ -414,6 +395,25 @@ $$
 
 # Custom Content
 🌊solo
+
+
+# nwyt list
+🌊default
+!fl~Custom Content
+
+| key | kind | role |
+| --- | --- | --- |
+| `!fl~text` | prop | footer left |
+| `!fr~text` | prop | footer right |
+| [`!bg~[alt](url)`](#29) | prop | background image |
+| [`!fbg~[alt](url)`](#30) | prop | footer background |
+| [`!sub~text`](#12) | prop | subtitle (title template) |
+| [`!icon~[alt](url)`](#13) | prop | icon (me template) |
+| [`!lead~text`](#14) | prop | lead (message template) |
+| [`!fn~[id]`](#27) | prop | footnote definition |
+| [`!fn[id]`](#27) | content | footnote reference |
+| [`!card[label](url)`](#31) | content | OGP link card |
+| [`!card.v[label](url)`](#31) | content | vertical card |
 
 
 # Footnote
