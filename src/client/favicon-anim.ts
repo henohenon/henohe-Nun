@@ -16,7 +16,7 @@
  */
 
 const FRAMES = ['wave01.png', 'wave02.png', 'wave03.png', 'wave04.png']
-const FRAME_INTERVAL_MS = 250
+const FRAME_INTERVAL_MS = 500
 const ANIM_LINK_SELECTOR = 'link[rel="icon"][data-anim]'
 
 export function initFaviconAnimation(): void {
