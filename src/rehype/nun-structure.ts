@@ -44,20 +44,23 @@ export const rehypeNunStructure: Plugin<[Options], Root, Root> = function (optio
       n => n.position.start.line < firstHeadingLine,
     )
 
-    // 2. 各 Scope を再帰的にテンプレート適用して hast 化、 section に装飾レイヤー追加
+    // 2. 各 Scope を再帰的にテンプレート適用して hast 化。 section 専用処理
+    // (id 付与 / .active / 装飾レイヤー) は全部 section guard の中に閉じる。
+    // extractScopes(tree, 1, ...) は depth=1 で分割するので top-level は常に
+    // section だが、 仕様上 article が混ざる可能性に備えて明示 guard を残す。
     let firstSectionMarked = false
     const sections = scopes.map((scope, i) => {
       const el = render(scope)
+      if (scope.tag !== 'section') return el
+
       const sectionId = String(i + 1)
-      if (scope.tag === 'section') {
-        el.properties ??= {}
-        el.properties.id = sectionId
-        // 1 枚目に .active を付与 (JS なしでの初期表示用)
-        if (!firstSectionMarked) {
-          const existing = el.properties.className as string[] | undefined
-          el.properties.className = [...(existing ?? []), 'active']
-          firstSectionMarked = true
-        }
+      el.properties ??= {}
+      el.properties.id = sectionId
+      // 1 枚目に .active を付与 (JS なしでの初期表示用)
+      if (!firstSectionMarked) {
+        const existing = el.properties.className as string[] | undefined
+        el.properties.className = [...(existing ?? []), 'active']
+        firstSectionMarked = true
       }
       // 装飾レイヤー (bg / footer / fbg) を section に追加
       appendBackground(el, scope, globalNwyts)
