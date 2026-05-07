@@ -16,6 +16,12 @@
   overflow: hidden;
 }
 
+.me > .container > .icon {
+  /* container は align-items: start (= body 上端揃え) だが、 icon だけは
+     縦方向中央に配置して body との視覚バランスを取る。 */
+  align-self: center;
+}
+
 .me > .container > .icon img {
   width: 100%;
   height: auto;
