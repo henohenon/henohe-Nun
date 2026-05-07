@@ -8,7 +8,7 @@ section.title {
 }
 
 section.title > h1 {
-  font-size: var(--slide-title-size);
+  /* baseline (base.css) からの差分: 強調色 + 詰めた line-height + 折り返し制御 */
   color: var(--strong);
   line-height: 1.05;
   max-width: 65%;

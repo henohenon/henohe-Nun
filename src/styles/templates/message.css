@@ -5,10 +5,7 @@ section.message {
 }
 
 section.message > h1 {
-  /* default と同じ上端・左寄せ・brand 色 */
-  font-size: var(--slide-title-size);
-  color: var(--brand);
-  line-height: 1.1;
+  /* default と同じ上端・左寄せ・brand 色 (baseline は base.css) */
   margin-block-end: 0.3em;
 }
 

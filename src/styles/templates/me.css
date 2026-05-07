@@ -1,8 +1,5 @@
 /* ---- me template ---- */
 section.me > h1 {
-  font-size: var(--slide-title-size);
-  color: var(--brand);
-  line-height: 1.1;
   margin-block-end: 0.35em;
 }
 
