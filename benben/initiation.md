@@ -1,6 +1,6 @@
 ~~~meta
 title: Initiation
-description: Nun の全記法デモスライド
+description: All-syntax demo of へのへ Nun
 date: 2026-05-07
 ~~~
 
@@ -44,8 +44,8 @@ date: 2026-05-07
 🌊solo
 
 # Scope
-heading から次の同レベル以上 heading までが 1 scope。
-最初の heading より上はグローバル default。
+A scope spans from one heading to the next of equal or higher level.
+Anything before the first heading is the global default.
 
 ````md
 ---
@@ -63,28 +63,27 @@ heading から次の同レベル以上 heading までが 1 scope。
 ````
 
 # 🌊Template
-scope 内に `🌊name` を 1 行 (heading 直下推奨)。
-省略時は `default`、 複数は後勝ち。
+Pick a template per scope with `🌊name` on its own line (right under the heading).
+Default is `default`. Last wins.
 
 ```markdown
-# スライドタイトル
+# Slide title
 🌊title
 
-# プロフィール
+# Profile
 🌊me
 ```
 
 # nwyt
 
 ## prop
-`!key~value`のように書く。
-対応するscopeにプロパティを指定する。
+`!key~value` — assign a property to the surrounding scope.
+
 ## content
-`!key[value]`のように書く。
-対応する位置を独自コンテンツで置き換える。
+`!key[value]` — replace the inline position with custom content.
 
 # meta
-Set meta data like this.
+Page meta block (title / description / date / etc.).
 ````md
 ~~~meta
 title:
@@ -93,65 +92,65 @@ date:
 ~~~
 ````
 
-# nwyt props 一覧
+# nwyt props
 🌊default
 
-| キー | 用途 |
+| key | role |
 | --- | --- |
-| `!fl~text` | フッター左 |
-| `!fr~text` | フッター右 |
-| `!bg~[alt](url)` | 背景画像 |
-| `!sub~text` | title のサブタイトル |
-| `!icon~[alt](url)` | me のアイコン |
-| `!lead~text` | message のリード |
-| `!fn~[id]` | 脚注定義マーク |
+| `!fl~text` | footer left |
+| `!fr~text` | footer right |
+| `!bg~[alt](url)` | background image |
+| `!sub~text` | subtitle (title template) |
+| `!icon~[alt](url)` | icon (me template) |
+| `!lead~text` | lead (message template) |
+| `!fn~[id]` | footnote definition mark |
 
-# 脚注
+# Footnote
 🌊default
 
-`!fn[id]` で上付きマーク !fn[1]。
-hover で tooltip、 click で定義スライドへ !fn[2]。 別スライドも参照可 !fn[3]。
+`!fn[id]` renders a sup mark !fn[1].
+Hover for tooltip, click to jump !fn[2]. Cross-slide refs work too !fn[3].
 
-## 脚注1
+## Footnote 1
 !fn~[1]
-**脚注1** の本文。Markdown 可。
+**Footnote 1** body. Markdown is allowed.
 
-## 脚注2
+## Footnote 2
 !fn~[2]
-$e^{i\pi} + 1 = 0$ のような数式も。
+Math is allowed too: $e^{i\pi} + 1 = 0$.
 
-# 別ページに置く脚注定義
+# Footnote on a dedicated slide
 !fn.head~[3]
 🌊default
 
-`!fn~[id]` を h1 直下に書けば、 そのスライド全体が脚注定義になる。
-`.head` を付けると tooltip に heading も含まれる (default は body のみ)。
+`!fn~[id]` at h1 scope makes the whole slide the body of the footnote.
+`.head` includes the heading in the tooltip (default: body only).
 
-# 背景画像 — `!bg~`
+# Background — `!bg~`
 !bg~[bg](/images/tgs.jpg)
 🌊default
 
-`!bg~[alt](url)` で section 全体に背景画像。
-URL は `[alt](url)` / 素のパスどちらも可。 グローバルで全 section に伝播。
+`!bg~[alt](url)` lays an image behind the slide.
+`[alt](url)` or a bare path. Global setting propagates to all slides.
 
-# フッター背景 — `!fbg~`
+# Footer background — `!fbg~`
 !fbg~[fbg](/images/tgs.jpg)
 🌊default
 
-`!fbg~[alt](url)` で footer 形状 (line + text) を mask に画像を切り抜く。
-文字と線だけが「窓」になり背景が透ける。
+`!fbg~[alt](url)` masks an image with the footer's SVG shapes (line + text).
+Only the line and text show through, framing the image.
 
 # Templates
 🌊solo
 
 # Index
-| テンプレート | 記法 | 特徴 |
+| template | syntax | feature |
 | --- | --- | --- |
-| default | `🌊default` | タイトル + 左寄せ body。通常スライド |
-| title | `🌊title` | 中央左タイトル + サブタイトル + 固定画像 |
-| me | `🌊me` | タイトル + アイコン左 + body 右 |
-| message | `🌊message` | タイトル + 中央寄せ body + リードテキスト |
-| solo | `🌊solo` | タイトルのみ中央寄せ、body なし |
+| default | `🌊default` | title + left body (standard) |
+| title | `🌊title` | center-left title + sub + fixed image |
+| me | `🌊me` | title + icon left + body right |
+| message | `🌊message` | title + centered body + lead |
+| solo | `🌊solo` | title only, centered, no body |
 
 
 # Default
@@ -167,90 +166,127 @@ preview
 preview
 ```
 
-# title テンプレート
+# Title
+🌊compare
+
+##
+🌊title.window
+!sub~Center-left title + subtitle + fixed image
+
+##
+````md
 🌊title
+!sub~Center-left title + subtitle + fixed image
+````
 
-!sub~中央左にタイトル、その下にサブタイトル。固定画像付き
 
-# me テンプレート
-🌊me
+# Me
+🌊compare
 
+##
+🌊me.window
 !icon~[icon](/henoheno.svg)
 
-アイコン付き自己紹介スライド。
-- 左 icon / 右 body
-- `!icon~[alt](url)` でアイコン指定
+Profile-style slide. icon left, body right.
 
-# message テンプレート
+##
+````md
+🌊me
+!icon~[icon](/henoheno.svg)
+
+Profile-style slide. icon left, body right.
+````
+
+
+# Message
+🌊compare
+
+##
+🌊message.window
+!lead~Lead text below the body
+
+Centered callout body.
+
+##
+````md
 🌊message
+!lead~Lead text below the body
 
-!lead~body の下に出るリードテキスト
+Centered callout body.
+````
 
-中央寄せのコールアウト用。 タイトル / 本文 / `!lead~` の 3 段。
 
-# solo テンプレート
+# Solo
+🌊compare
+
+##
+🌊solo.window
+
+##
+````md
 🌊solo
+````
 
-# 基本 Markdown — テキスト装飾
+# Markdown — text decoration
 🌊default
 
-**太字** / *斜体* / ***太字斜体***
+**bold** / *italic* / ***bold italic***
 
-~~打ち消し線~~ / ==ハイライト==
+~~strike~~ / ==mark==
 
-インラインコード `const x = 1`
+inline `const x = 1`
 
 ---
 
-> 引用文
+> blockquote
 >
-> 複数行の引用
+> multi-line
 
-# 基本 Markdown — リスト
+# Markdown — lists
 🌊default
 
-## 箇条書き・番号付き
+## bullet / ordered
 
-- 箇条書き
-  - ネスト項目
-- 二番目
+- bullet
+  - nested
+- second
 
-1. 番号付き
-2. リスト
+1. ordered
+2. list
 
-## チェックリスト
+## checklist
 
-- [ ] 未完了タスク
-- [x] 完了タスク
+- [ ] open task
+- [x] done task
 
-# 基本 Markdown — テーブル・リンク
+# Markdown — tables / links
 🌊default
 
-## テーブル
+## table
 
-| 左寄せ | 中央 | 右寄せ |
+| left | center | right |
 | :----- | :---: | -----: |
-| apple  |  赤   |    100 |
-| banana |  黄   |     80 |
-| cherry |  赤   |    120 |
+| apple  |  red   |    100 |
+| banana | yellow |     80 |
+| cherry |  red   |    120 |
 
-## リンク・画像
+## links / images
 
-[Nun リポジトリ](https://github.com/henohenon/henohe-Nun "GitHub") / [外部リンク](https://example.com)
+[Nun repo](https://github.com/henohenon/henohe-Nun "GitHub") / [external](https://example.com)
 
-![Nun ロゴ](/images/henohe-Nun.png "henohe-Nun")
+![Nun logo](/images/henohe-Nun.png "henohe-Nun")
 
-# コードブロック
+# Code block
 🌊default
 
-## 言語指定
+## language
 
 ```js
 const greet = (name) => `Hello, ${name}!`;
 console.log(greet("Nun"));
 ```
 
-## ファイル名・行番号
+## filename / start line
 
 ```ts:src/pipeline.ts#42
 export async function process(md: string) {
@@ -266,7 +302,7 @@ export async function process(md: string) {
  console.log(value);
 ```
 
-# コードブロック — 埋め込み
+# Code block — embed
 🌊default
 
 ## embed_svg
@@ -307,48 +343,48 @@ flowchart LR
 \end{aligned}
 ```
 
-# 装飾ブロック — 種類
+# Decoration block — kinds
 🌊default
 
 :::note
-**note** — 補足・メモ
+**note** — supplemental remark
 :::
 
 :::info
-**info** — 追加情報
+**info** — extra information
 :::
 
 :::tip
-**tip** — ヒント・推奨
+**tip** — recommendation
 :::
 
 :::warning
-**warning** — 注意
+**warning** — caution
 :::
 
 :::alert
-**alert** — 強い警告
+**alert** — strong warning
 :::
 
-# 装飾ブロック — ネスト
+# Decoration block — nested
 🌊default
 
-::::note 外側のブロック
-:::tip 内側のブロック
-装飾ブロックはコロンを増やすことでネストできる。
+::::note Outer
+:::tip Inner
+Add more colons to nest.
 :::
 ::::
 
-# 数式
+# Math
 🌊default
 
-## インライン
+## inline
 
-ピタゴラスの定理: $a^2 + b^2 = c^2$
+Pythagoras: $a^2 + b^2 = c^2$
 
-オイラーの等式: $e^{i\pi} + 1 = 0$
+Euler: $e^{i\pi} + 1 = 0$
 
-## ブロック
+## block
 
 $$
 \int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
@@ -358,14 +394,14 @@ $$
 \sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
 $$
 
-# リンクカード
+# Link card
 🌊default
 
-## 横型（デフォルト）
+## horizontal (default)
 
 !card[henohe-Nun](https://github.com/henohenon/henohe-Nun)
 
-## 縦型（`.v`）
+## vertical (`.v`)
 
 !card.v[henohe-Nun](https://github.com/henohenon/henohe-Nun)
 
