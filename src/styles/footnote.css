@@ -36,10 +36,6 @@ sup[data-fn] a {
   white-space: normal;
 }
 
-.fn-tooltip:not([hidden]) {
-  display: block;
-}
-
 /* `.head` クラス付き fnDef では heading が tooltip に含まれる。
    元々の見出しサイズだと tooltip 内で過剰なので軽くスケールダウン。 */
 .fn-tooltip :is(h1, h2, h3, h4, h5, h6) {

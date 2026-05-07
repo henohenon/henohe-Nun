@@ -62,14 +62,12 @@ article.default > h6 {
 .hierarchy article.default > h5,
 .hierarchy article.default > h6 { color: var(--fg-mid); }
 
-article.default > .body {
-  /* min-height/overflow は付けない。
-     ここで body を 0 まで圧縮可能にすると article 全体が h2 のみのサイズに
-     潰れ、本文が section.body の overflow:hidden で hidden され、
-     zoom-fit も overflow を検知できず縮小しない (= 本文が消える)。
-     article > .body は素直に natural content height を持たせて、
-     overflow 制御は外側 (section > .body) と zoom-fit に任せる。 */
-}
+/* article.default > .body には min-height/overflow を付けない。
+   ここで body を 0 まで圧縮可能にすると article 全体が h2 のみのサイズに
+   潰れ、本文が section.body の overflow:hidden で hidden され、
+   zoom-fit も overflow を検知できず縮小しない (= 本文が消える)。
+   article > .body は素直に natural content height を持たせて、
+   overflow 制御は外側 (section > .body) と zoom-fit に任せる。 */
 
 /* ---- Body content typography (shared across all templates) ---- */
 .body p {
