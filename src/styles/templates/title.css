@@ -22,11 +22,20 @@ section.title > .sub {
   line-height: 1.4;
 }
 
-section.title > img.logo {
+/* henoheno は build 時に SVG を inline 化 (templates.ts:readHenohenoSvg)。
+   `currentColor` を使う path に CSS `color` が効くので、 brand 色で塗れる。 */
+section.title > .henoheno {
   position: absolute;
   right: var(--slide-pad-x);
   bottom: var(--slide-pad-bottom);
-  height: clamp(60px, 22cqmin, 400px);
-  width: auto;
-  opacity: 0.12;
+  width: 80%;
+  height: auto;
+  color: var(--brand);
+  pointer-events: none;
+}
+
+section.title > .henoheno > svg {
+  width: 100%;
+  height: auto;
+  display: block;
 }

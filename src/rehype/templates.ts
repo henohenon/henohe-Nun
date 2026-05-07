@@ -1,11 +1,14 @@
 import { h } from 'hastscript'
-import type { Element, ElementContent, Properties } from 'hast'
+import type { Element, ElementContent, Properties, Root as HastRoot } from 'hast'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import remarkRehype from 'remark-rehype'
 import rehypeKatex from 'rehype-katex'
+import { fromHtml } from 'hast-util-from-html'
+import { readFileSync, statSync } from 'node:fs'
+import { resolve } from 'node:path'
 import type { Scope, NwytProp, TemplateName } from '../types.ts'
 import { isScope } from '../types.ts'
 import { parseImageNwytValue } from './nwyt-helpers.ts'
@@ -117,8 +120,48 @@ function titleTemplate(scope: Scope): Element {
   if (scope.heading) children.push(scope.heading)
   const sub = resolveNwyt(scope, 'sub')
   if (sub) children.push(h('div.sub', [sub]))
-  children.push(h('img.logo', { src: '/henoheno.svg', alt: '' }))
+  const henoheno = readHenohenoSvg()
+  if (henoheno) children.push(h('div.henoheno', [henoheno]))
   return h(`${scope.tag}.title`, { className: scope.classes }, children)
+}
+
+// ---------------------------------------------------------------------------
+// henoheno SVG inlining
+// ---------------------------------------------------------------------------
+
+/**
+ * `public/henoheno.svg` を読んで SVG element として返す。 inline 化することで
+ * SVG 内 `currentColor` 使用 path に CSS の `color: var(--brand)` を効かせて
+ * ブランドカラーで塗れるようにする (`<img>` 参照だと CSS が SVG 内部に届かない)。
+ *
+ * mtime を見て差分時のみ再読 + 再パース、 同一ビルド内では cache から返す。
+ */
+const HENOHENO_PATH = resolve('public/henoheno.svg')
+let henohenoCache: { mtimeMs: number; element: Element } | null = null
+
+function readHenohenoSvg(): Element | null {
+  try {
+    const stat = statSync(HENOHENO_PATH)
+    if (henohenoCache && henohenoCache.mtimeMs === stat.mtimeMs) {
+      return henohenoCache.element
+    }
+    const content = readFileSync(HENOHENO_PATH, 'utf-8')
+    const tree = fromHtml(content, { fragment: true }) as HastRoot
+    const svg = tree.children.find(
+      (c): c is Element => c.type === 'element' && c.tagName === 'svg',
+    )
+    if (!svg) return null
+    // role="img" + aria-label で意味を保ちつつ、 子の `<title>` 等は不要
+    svg.properties = {
+      ...svg.properties,
+      role: 'img',
+      'aria-label': '巨大なへのへのもへじ',
+    }
+    henohenoCache = { mtimeMs: stat.mtimeMs, element: svg }
+    return svg
+  } catch {
+    return null
+  }
 }
 
 function meTemplate(scope: Scope): Element {
