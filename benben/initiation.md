@@ -20,9 +20,9 @@ date: 2026-05-07
 - [Custom Syntax](#5)
   - [Scope](#6) / [🌊 Template](#7) / [nwyt](#8) / [meta](#9)
 - [Showcase](#10)
-  - [Templates](#11) — [Default](#12) / [Title](#13) / [Me](#14) / [Message](#15) / [Solo](#16)
-  - [Basic Markdown](#17) — [Text](#18) / [Lists](#19) / [Tables](#20) / [Code](#21) / [Embed](#22) / [Decoration](#23) / [Nested](#24) / [Math](#25)
-  - [Custom Content](#26) — [nwyt list](#27) / [Footnote](#28) / [Footnote dedicated](#29) / [Background](#30) / [Footer bg](#31) / [Card](#32)
+  - [Templates](#11) — [Default](#12) / [Title](#13) / [Me](#14) / [Message](#15) / [Solo](#16) / [Compare](#17)
+  - [Basic Markdown](#18) — [Text](#19) / [Lists](#20) / [Tables](#21) / [Code](#22) / [Embed](#23) / [Decoration](#24) / [Nested](#25) / [Math](#26)
+  - [Custom Content](#27) — [nwyt list](#28) / [Footnote](#29) / [Footnote dedicated](#30) / [Background](#31) / [Footer bg](#32) / [Card](#33)
 
 
 # へのへ Nun
@@ -140,22 +140,29 @@ date:
 | [`🌊me`](#14) | icon left + body right |
 | [`🌊message`](#15) | centered body + lead |
 | [`🌊solo`](#16) | title only, centered, no body |
-| `🌊compare` | two-column comparison (h2 articles) |
+| [`🌊compare`](#17) | two-column comparison (h2 articles) |
 
 
 # Default
 🌊compare
 !fl~Templates
 
-## 
+##
 🌊default.window
-preview
+### Sub heading
+- Title + left body
+- Most slides use this
+- h2 / h3 form sub-articles
 
-## 
-```md
+##
+````md
 🌊default
-preview
-```
+
+### Sub heading
+- Title + left body
+- Most slides use this
+- h2 / h3 form sub-articles
+````
 
 
 # Title
@@ -164,12 +171,12 @@ preview
 
 ##
 🌊title.window
-!sub~Center-left title + subtitle + fixed image
+!sub~Subtitle goes here in fg-mid color
 
 ##
 ````md
 🌊title
-!sub~Center-left title + subtitle + fixed image
+!sub~Subtitle goes here in fg-mid color
 ````
 
 
@@ -181,14 +188,20 @@ preview
 🌊me.window
 !icon~[icon](/henoheno.svg)
 
-Profile-style slide. icon left, body right.
+Profile-style intro.
+- Icon column on the left
+- Body content on the right
+- Used for the About slide of this deck
 
 ##
 ````md
 🌊me
 !icon~[icon](/henoheno.svg)
 
-Profile-style slide. icon left, body right.
+Profile-style intro.
+- Icon column on the left
+- Body content on the right
+- Used for the About slide of this deck
 ````
 
 
@@ -198,16 +211,18 @@ Profile-style slide. icon left, body right.
 
 ##
 🌊message.window
-!lead~Lead text below the body
+!lead~Lead text in strong color
 
 Centered callout body.
+For single-message slides.
 
 ##
 ````md
 🌊message
-!lead~Lead text below the body
+!lead~Lead text in strong color
 
 Centered callout body.
+For single-message slides.
 ````
 
 
@@ -216,11 +231,37 @@ Centered callout body.
 !fl~Templates
 
 ##
-🌊solo.window
+🌊default.window
+Title-only slide, vertically centered.
+Used for section breaks (Custom Syntax / Showcase / etc.).
 
 ##
 ````md
 🌊solo
+
+# Section title
+````
+
+
+# Compare
+🌊compare
+!fl~Templates
+
+##
+🌊default.window
+Two-column layout for h2 articles.
+Typical use: rendered preview vs source.
+Combine with `.window` for a framed look.
+
+##
+````md
+🌊compare
+
+## left
+left content
+
+## right
+right content
 ````
 
 
@@ -423,15 +464,15 @@ $$
 | --- | --- | --- |
 | `!fl~text` | prop | footer left |
 | `!fr~text` | prop | footer right |
-| [`!bg~[alt](url)`](#30) | prop | background image |
-| [`!fbg~[alt](url)`](#31) | prop | footer background |
+| [`!bg~[alt](url)`](#31) | prop | background image |
+| [`!fbg~[alt](url)`](#32) | prop | footer background |
 | [`!sub~text`](#13) | prop | subtitle (title template) |
 | [`!icon~[alt](url)`](#14) | prop | icon (me template) |
 | [`!lead~text`](#15) | prop | lead (message template) |
-| [`!fn~[id]`](#28) | prop | footnote definition |
-| [`!fn[id]`](#28) | content | footnote reference |
-| [`!card[label](url)`](#32) | content | OGP link card |
-| [`!card.v[label](url)`](#32) | content | vertical card |
+| [`!fn~[id]`](#29) | prop | footnote definition |
+| [`!fn[id]`](#29) | content | footnote reference |
+| [`!card[label](url)`](#33) | content | OGP link card |
+| [`!card.v[label](url)`](#33) | content | vertical card |
 
 
 # Footnote
