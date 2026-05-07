@@ -1,6 +1,5 @@
 import 'virtual:uno.css'
 import '../styles/index.css'
-import 'katex/dist/katex.min.css'
 
 import { initNavigation } from './navigation.ts'
 import { initCopyButtons } from './copy.ts'

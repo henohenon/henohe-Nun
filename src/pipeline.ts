@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import remarkBreaks from 'remark-breaks'
 import remarkRehype from 'remark-rehype'
-import rehypeKatex from 'rehype-katex'
+import rehypeMathjax from 'rehype-mathjax/svg'
 import rehypeStringify from 'rehype-stringify'
 import { remarkNunSyntax } from './remark/nun-syntax.ts'
 import { remarkNunMeta } from './remark/nun-meta.ts'
@@ -36,7 +36,7 @@ export function createProcessor(options: ProcessOptions) {
     .use(remarkNunAdmonition)   // :::type → nunAdmonition
     .use(remarkNunExtract)      // template/nwyt prop → vfile.data
     .use(remarkRehype, { handlers: nunHandlers })
-    .use(rehypeKatex)           // 数式レンダリング
+    .use(rehypeMathjax)         // 数式 → inline SVG (build 時静的化、 runtime fetch なし)
     .use(rehypeNunCodePre)      // code block pre-processing (diff, embed, name/startLine)
     .use(rehypeShiki, { theme: 'github-light', transformers: [nunShikiTransformer] })
     .use(rehypeNunCodeBlock)    // code block post-processing (embed, diff classes, figure wrapper)

@@ -4,7 +4,27 @@ import { visit, SKIP } from 'unist-util-visit'
 import { h } from 'hastscript'
 import { fromHtml } from 'hast-util-from-html'
 import { toString } from 'hast-util-to-string'
-import katex from 'katex'
+import { mathjax } from 'mathjax-full/js/mathjax.js'
+import { TeX } from 'mathjax-full/js/input/tex.js'
+import { SVG } from 'mathjax-full/js/output/svg.js'
+import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor.js'
+import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js'
+import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js'
+
+/** embed_math ブロック専用の MathJax SVG レンダラ。 module load 時に 1 回だけ
+ *  初期化、 以降 renderMathToSvg(latex) で都度 SVG 文字列を生成。 main pipeline
+ *  の `$...$` / `$$...$$` は rehype-mathjax 経由で同じ SVG 出力経路に乗る。 */
+const mathjaxAdaptor = liteAdaptor()
+RegisterHTMLHandler(mathjaxAdaptor)
+const mathjaxDoc = mathjax.document('', {
+  InputJax: new TeX({ packages: AllPackages }),
+  OutputJax: new SVG({ fontCache: 'local' }),
+})
+
+function renderMathToSvg(latex: string): string {
+  const node = mathjaxDoc.convert(latex, { display: true })
+  return mathjaxAdaptor.outerHTML(node)
+}
 
 /** copy ボタンの初期表示ラベル。 client/copy.ts は click 時に "copied" に
  *  差し替え、 1.5 秒後にこの初期値に戻す。 */
@@ -42,10 +62,7 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
           replacement = h('pre.mermaid', textContent)
           break
         case 'math': {
-          const html = katex.renderToString(textContent.trim(), {
-            displayMode: true,
-            throwOnError: false,
-          })
+          const html = renderMathToSvg(textContent.trim())
           const parsed = fromHtml(html, { fragment: true })
           parent.children.splice(index, 1, ...parsed.children)
           return [SKIP, index] as const

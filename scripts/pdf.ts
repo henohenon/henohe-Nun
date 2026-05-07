@@ -50,6 +50,19 @@ async function main(): Promise<void> {
         `,
       })
 
+      // KaTeX 等の webfont は @font-face 宣言時には load 開始されず、
+      // 該当 glyph が render された時点で初めて fetch される。 普段は問題ない
+      // が、 PDF 出力では section 強制表示の直後に page.pdf() が走るので、
+      // hidden section の math 文字に必要なフォントが未 load のまま PDF に
+      // 焼かれて 「数字が出ない」 等の症状を起こす。 全 FontFace を明示的に
+      // load してから .ready 待ちで取りこぼしを抑える。
+      await page.evaluate(async () => {
+        if (!('fonts' in document)) return
+        const fonts = Array.from((document as Document & { fonts: Set<FontFace> }).fonts)
+        await Promise.all(fonts.map(f => f.load().catch(() => {})))
+        await (document as Document & { fonts: { ready: Promise<unknown> } }).fonts.ready
+      })
+
       const raw = await page.pdf({
         width: `${width}px`,
         height: `${height}px`,

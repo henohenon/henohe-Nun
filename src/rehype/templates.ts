@@ -5,7 +5,7 @@ import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import remarkRehype from 'remark-rehype'
-import rehypeKatex from 'rehype-katex'
+import rehypeMathjax from 'rehype-mathjax/svg'
 import { fromHtml } from 'hast-util-from-html'
 import { readFileSync, statSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -21,7 +21,7 @@ const inlineProcessor = unified()
   .use(remarkGfm)
   .use(remarkMath)
   .use(remarkRehype)
-  .use(rehypeKatex)
+  .use(rehypeMathjax)
 
 export type TemplateFn = (scope: Scope) => Element
 
