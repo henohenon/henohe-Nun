@@ -18,7 +18,7 @@ date: 2026-05-07
 
 - [About](#3)
 - [Custom Syntax](#4)
-  - [Scope](#5) / [🌊 Template](#6) / [nwyt](#7) / [meta](#8) / [nwyt props](#9)
+  - [Scope](#5) / [🌊 Template](#6) / [nwyt](#7) / [meta](#8) / [nwyt list](#9)
 - [Showcase](#10)
   - [Templates](#11) — [Default](#12) / [Title](#13) / [Me](#14) / [Message](#15) / [Solo](#16)
   - [Basic Markdown](#17) — [Text](#18) / [Lists](#19) / [Tables](#20) / [Code](#21) / [Embed](#22) / [Decoration](#23) / [Nested](#24) / [Math](#25)
@@ -92,18 +92,22 @@ date:
 ````
 
 
-# nwyt props
+# nwyt list
 🌊default
 
-| key | role |
-| --- | --- |
-| `!fl~text` | footer left |
-| `!fr~text` | footer right |
-| `!bg~[alt](url)` | background image |
-| `!sub~text` | subtitle (title template) |
-| `!icon~[alt](url)` | icon (me template) |
-| `!lead~text` | lead (message template) |
-| `!fn~[id]` | footnote definition mark |
+| key | kind | role |
+| --- | --- | --- |
+| `!fl~text` | prop | footer left |
+| `!fr~text` | prop | footer right |
+| [`!bg~[alt](url)`](#29) | prop | background image |
+| [`!fbg~[alt](url)`](#30) | prop | footer background |
+| [`!sub~text`](#13) | prop | subtitle (title template) |
+| [`!icon~[alt](url)`](#14) | prop | icon (me template) |
+| [`!lead~text`](#15) | prop | lead (message template) |
+| [`!fn~[id]`](#27) | prop | footnote definition |
+| [`!fn[id]`](#27) | content | footnote reference |
+| [`!card[label](url)`](#31) | content | OGP link card |
+| [`!card.v[label](url)`](#31) | content | vertical card |
 
 
 # Showcase
