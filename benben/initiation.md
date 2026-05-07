@@ -15,21 +15,15 @@ date: 2026-05-07
 
 # Index
 !fl~index
-- About
-- CustomSyntax
-- Templates
-  - Default
-  - Title
-  - Me
-  - Message
-  - Solo
-- Markdown
-- Code blocks
-- Decoration blocks
-- Math
-- Card
-- nwyt props
-- Footnotes
+
+- [About](#3)
+- [Custom Syntax](#4)
+  - [Scope](#5) / [🌊 Template](#6) / [nwyt](#7) / [meta](#8) / [nwyt props](#9)
+- [Showcase](#10)
+  - [Templates](#11) — [Default](#12) / [Title](#13) / [Me](#14) / [Message](#15) / [Solo](#16)
+  - [Basic Markdown](#17) — [Text](#18) / [Lists](#19) / [Tables](#20) / [Code](#21) / [Embed](#22) / [Decoration](#23) / [Nested](#24) / [Math](#25)
+  - [Custom Content](#26) — [Footnote](#27) / [Footnote dedicated](#28) / [Background](#29) / [Footer bg](#30) / [Card](#31)
+
 
 # へのへ Nun
 🌊me
@@ -40,8 +34,10 @@ date: 2026-05-07
 - DOM that mirrors Markdown semantics
 - Responsive Rendering
 
+
 # Custom Syntax
 🌊solo
+
 
 # Scope
 A scope spans from one heading to the next of equal or higher level.
@@ -62,6 +58,7 @@ Anything before the first heading is the global default.
 ---
 ````
 
+
 # 🌊Template
 Pick a template per scope with `🌊name` on its own line (right under the heading).
 Default is `default`. Last wins.
@@ -74,6 +71,7 @@ Default is `default`. Last wins.
 🌊me
 ```
 
+
 # nwyt
 
 ## prop
@@ -81,6 +79,7 @@ Default is `default`. Last wins.
 
 ## content
 `!key[value]` — replace the inline position with custom content.
+
 
 # meta
 Page meta block (title / description / date / etc.).
@@ -91,6 +90,7 @@ description:
 date:
 ~~~
 ````
+
 
 # nwyt props
 🌊default
@@ -105,52 +105,13 @@ date:
 | `!lead~text` | lead (message template) |
 | `!fn~[id]` | footnote definition mark |
 
-# Footnote
-🌊default
 
-`!fn[id]` renders a sup mark !fn[1].
-Hover for tooltip, click to jump !fn[2]. Cross-slide refs work too !fn[3].
+# Showcase
+🌊solo
 
-## Footnote 1
-!fn~[1]
-**Footnote 1** body. Markdown is allowed.
-
-## Footnote 2
-!fn~[2]
-Math is allowed too: $e^{i\pi} + 1 = 0$.
-
-# Footnote on a dedicated slide
-!fn.head~[3]
-🌊default
-
-`!fn~[id]` at h1 scope makes the whole slide the body of the footnote.
-`.head` includes the heading in the tooltip (default: body only).
-
-# Background — `!bg~`
-!bg~[bg](/images/tgs.jpg)
-🌊default
-
-`!bg~[alt](url)` lays an image behind the slide.
-`[alt](url)` or a bare path. Global setting propagates to all slides.
-
-# Footer background — `!fbg~`
-!fbg~[fbg](/images/tgs.jpg)
-🌊default
-
-`!fbg~[alt](url)` masks an image with the footer's SVG shapes (line + text).
-Only the line and text show through, framing the image.
 
 # Templates
 🌊solo
-
-# Index
-| template | syntax | feature |
-| --- | --- | --- |
-| default | `🌊default` | title + left body (standard) |
-| title | `🌊title` | center-left title + sub + fixed image |
-| me | `🌊me` | title + icon left + body right |
-| message | `🌊message` | title + centered body + lead |
-| solo | `🌊solo` | title only, centered, no body |
 
 
 # Default
@@ -165,6 +126,7 @@ preview
 🌊default
 preview
 ```
+
 
 # Title
 🌊compare
@@ -227,6 +189,11 @@ Centered callout body.
 🌊solo
 ````
 
+
+# Basic Markdown
+🌊solo
+
+
 # Markdown — text decoration
 🌊default
 
@@ -241,6 +208,7 @@ inline `const x = 1`
 > blockquote
 >
 > multi-line
+
 
 # Markdown — lists
 🌊default
@@ -259,6 +227,7 @@ inline `const x = 1`
 - [ ] open task
 - [x] done task
 
+
 # Markdown — tables / links
 🌊default
 
@@ -275,6 +244,7 @@ inline `const x = 1`
 [Nun repo](https://github.com/henohenon/henohe-Nun "GitHub") / [external](https://example.com)
 
 ![Nun logo](/images/henohe-Nun.png "henohe-Nun")
+
 
 # Code block
 🌊default
@@ -301,6 +271,7 @@ export async function process(md: string) {
 +const value = "new";
  console.log(value);
 ```
+
 
 # Code block — embed
 🌊default
@@ -343,6 +314,7 @@ flowchart LR
 \end{aligned}
 ```
 
+
 # Decoration block — kinds
 🌊default
 
@@ -366,6 +338,7 @@ flowchart LR
 **alert** — strong warning
 :::
 
+
 # Decoration block — nested
 🌊default
 
@@ -374,6 +347,7 @@ flowchart LR
 Add more colons to nest.
 :::
 ::::
+
 
 # Math
 🌊default
@@ -394,6 +368,50 @@ $$
 \sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
 $$
 
+
+# Custom Content
+🌊solo
+
+
+# Footnote
+🌊default
+
+`!fn[id]` renders a sup mark !fn[1].
+Hover for tooltip, click to jump !fn[2]. Cross-slide refs work too !fn[3].
+
+## Footnote 1
+!fn~[1]
+**Footnote 1** body. Markdown is allowed.
+
+## Footnote 2
+!fn~[2]
+Math is allowed too: $e^{i\pi} + 1 = 0$.
+
+
+# Footnote on a dedicated slide
+!fn.head~[3]
+🌊default
+
+`!fn~[id]` at h1 scope makes the whole slide the body of the footnote.
+`.head` includes the heading in the tooltip (default: body only).
+
+
+# Background — `!bg~`
+!bg~[bg](/images/tgs.jpg)
+🌊default
+
+`!bg~[alt](url)` lays an image behind the slide.
+`[alt](url)` or a bare path. Global setting propagates to all slides.
+
+
+# Footer background — `!fbg~`
+!fbg~[fbg](/images/tgs.jpg)
+🌊default
+
+`!fbg~[alt](url)` masks an image with the footer's SVG shapes (line + text).
+Only the line and text show through, framing the image.
+
+
 # Link card
 🌊default
 
@@ -404,6 +422,7 @@ $$
 ## vertical (`.v`)
 
 !card.v[henohe-Nun](https://github.com/henohenon/henohe-Nun)
+
 
 # FIN
 🌊solo
