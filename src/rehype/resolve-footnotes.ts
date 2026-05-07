@@ -11,15 +11,17 @@ import { isScope } from '../types.ts'
  * 2. sections 内の `<sup data-fn>` を走査
  * 3. 各参照に
  *    - href: 定義ページへのリンク (`#<page>`)
- *    - tooltip: 脚注内容を `<template data-fn>` に詰めて sibling 配置
+ *    - tooltip: 脚注内容を `<template>` に詰めて `<sup>` の **子** に配置
  *    を施す
  *
- * `<template>` を sibling に置く理由: `<sup>` は `<p>` の中にいて、 生の block
- * (`<p>` / `<div>` 等) を sibling に置くと HTML5 adoption agency が外側 `<p>` を
+ * `<template>` を使う理由: `<sup>` は `<p>` の中にいて、 生の block
+ * (`<p>` / `<div>` 等) を直接子に置くと HTML5 adoption agency が外側 `<p>` を
  * 強制 close してしまう。 `<template>` は parse 時に別 insertion mode に切り
- * 替わるため中身がどんな block でも外側 `<p>` を壊さない。 表示は client 側で
- * `template.content` を clone して `<sup>` 内の visible `<div>` に展開する
- * (client/tooltip.ts)。
+ * 替わるため中身がどんな block でも外側 `<p>` を壊さない。
+ *
+ * sup の **子** に置く構造にしたことで、 client (`client/tooltip.ts`) は ID
+ * 経由で sup を逆引きする必要が無くなり、 sup-scoped query (`:scope > template`)
+ * で局所完結する。
  */
 export function resolveFootnotes(
   sections: Element[],
@@ -30,8 +32,7 @@ export function resolveFootnotes(
   if (Object.keys(fnBodies).length === 0) return
 
   for (const section of sections) {
-    visit(section, 'element', (node: Element, index, parent) => {
-      if (!parent || index === undefined) return
+    visit(section, 'element', (node: Element) => {
       if (node.tagName !== 'sup') return
       const fnId = node.properties?.['dataFn'] as string | undefined
       if (!fnId) return
@@ -46,7 +47,7 @@ export function resolveFootnotes(
 
       if (body && body.length > 0) {
         const tpl = h('template', { dataFn: fnId }, body)
-        parent.children.splice(index + 1, 0, tpl as ElementContent)
+        node.children = [...node.children, tpl as ElementContent]
       }
     })
   }

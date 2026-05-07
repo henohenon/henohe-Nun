@@ -1,21 +1,19 @@
 /**
  * 脚注 (`!fn[id]`) の tooltip を初期化する。
  *
- * SSG 側は `<template data-fn="id">...</template>` を `<sup data-fn="id">` の
- * sibling として置いてある (HTML5 adoption agency 回避のため `<sup>` の親
- * `<p>` 内では block 要素を sibling 配置できない時のための仕掛け)。 起動時に
- * template の中身を `<div class="fn-tooltip">` として sup の子に複製して、
- * sup 基点の `position: absolute` で右下に出せるようにする。
+ * SSG 側は `<sup data-fn="id">` の **子** に `<template>` を置いてある
+ * (`resolve-footnotes.ts` 参照、 HTML5 adoption agency 回避のため `<p>` 内で
+ * block 要素を直接置けない場面のための仕掛け)。 起動時に各 sup を走査して
+ * 自身の template を見つけ、 中身を `<div class="fn-tooltip">` として sup の
+ * 子に複製する。 sup 基点の `position: absolute` で右下に出せる。
  *
  * mouseenter / mouseleave で hidden 属性の付け外し。 `[hidden]` で初期非表示。
  */
 
 export function initFnTooltips(): void {
-  for (const tpl of document.querySelectorAll<HTMLTemplateElement>('template[data-fn]')) {
-    const fnId = tpl.dataset.fn
-    if (!fnId) continue
-    const sup = document.querySelector<HTMLElement>(`sup[data-fn="${CSS.escape(fnId)}"]`)
-    if (!sup) continue
+  for (const sup of document.querySelectorAll<HTMLElement>('sup[data-fn]')) {
+    const tpl = sup.querySelector<HTMLTemplateElement>(':scope > template[data-fn]')
+    if (!tpl) continue
     const div = document.createElement('div')
     div.className = 'fn-tooltip'
     div.hidden = true
