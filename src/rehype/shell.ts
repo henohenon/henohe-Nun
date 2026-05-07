@@ -40,13 +40,14 @@ export function buildShell(sections: ElementContent[], meta: ShellMeta): Element
   const headChildren: ElementContent[] = [
     h('meta', { charset: 'utf-8' }),
     h('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }),
-    // favicon: PNG (wave01) を **先頭** に置いてアニメの primary に、 ICO を
-    // **fallback** として後ろに。 順序を逆にすると `sizes="any"` 指定の ICO が
-    // primary として勝ってしまい、 後続 PNG への href 切替が tab favicon UI
-    // に反映されなくなる (browser が ICO を「全サイズ用」 と解釈するため)。
+    // favicon: PNG (wave01、 アニメ primary) と ICO (fallback)。
+    // sizes 属性で browser の選択 hint を作る:
+    // - PNG に `sizes="32x32"`: tab favicon の典型 size、 modern browser はこちらを採用
+    // - ICO に `sizes="48x48"`: tab には大きすぎる size を主張、 PNG 非対応環境のみ fallback
+    // - 順序は PNG 先頭 (タイ時 last-wins だが PNG 自体に hint を持たせて確実化)
     // `data-anim` 属性で client/favicon-anim.ts が「自分が動かす対象」 を識別。
-    h('link', { rel: 'icon', type: 'image/png', dataAnim: '', href: '/favicon/wave01.png' }),
-    h('link', { rel: 'icon', href: '/favicon/favicon.ico' }),
+    h('link', { rel: 'icon', type: 'image/png', sizes: '32x32', dataAnim: '', href: '/favicon/wave01.png' }),
+    h('link', { rel: 'icon', sizes: '48x48', href: '/favicon/favicon.ico' }),
   ]
 
   if (meta.title) {
