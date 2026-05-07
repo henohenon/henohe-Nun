@@ -5,13 +5,17 @@ import { findNwytInScope, parseImageNwytValue } from '../nwyt-helpers.ts'
 import { footerMaskId, footerShapeId } from './_ids.ts'
 
 /**
- * section に `<div class="fbg-layer">` を fbg (footer 形状で抜いた背景画像)
+ * section に `<svg class="fbg-layer">` を fbg (footer 形状で抜いた背景画像)
  * レイヤーとして追加する。
  *
- * 構造:
- * - `<div.fbg-layer>` 直下に
- *   - `<img.fbg-img>` (CSS `mask-image` で footer 形状にクリップされる)
- *   - `<svg.fbg-svg>` (mask 定義のみ。 footer SVG の `<g>` を `<use>` で参照)
+ * 構造: 単一 SVG 内に `<mask>` (footer shape を `<use>` で参照) と
+ * `<image>` (元画像、 mask 属性で footer 形状に切り抜き) を内包。
+ *
+ * 旧構造は `<div class="fbg-layer">` 内に `<img>` + `<svg>` を並べて CSS
+ * `mask-image: url(#fragment)` で連携していたが、 Chromium の PDF backend
+ * が CSS mask + fragment URL を resolve しない問題があった。 SVG `mask`
+ * 属性 + SVG `<image>` 要素に統合することで PDF / screen どちらでも標準
+ * SVG として render される。
  *
  * footer.ts が出力する `<g id="footer-shapes-...">` shape group を mask の
  * stencil として再利用する設計。 ID 命名は `_ids.ts` に集約。
@@ -42,18 +46,20 @@ function buildFooterBackground(
   maskId: string,
   shapeId: string,
 ): ElementContent {
-  const mask = h('mask', { id: maskId }, [
-    h('use', { href: `#${shapeId}` }),
-  ])
-  const svg = h('svg.fbg-svg', {
+  return h('svg.fbg-layer', {
     xmlns: 'http://www.w3.org/2000/svg',
     'aria-hidden': 'true',
-  }, mask)
-
-  const img = h('img.fbg-img', {
-    src, alt,
-    style: `-webkit-mask-image: url(#${maskId}); mask-image: url(#${maskId});`,
-  }) as ElementContent
-
-  return h('div.fbg-layer', [img, svg]) as ElementContent
+    preserveAspectRatio: 'xMidYMid slice',
+  }, [
+    h('mask', { id: maskId }, [
+      h('use', { href: `#${shapeId}` }),
+    ]),
+    h('image', {
+      href: src,
+      width: '100%',
+      height: '100%',
+      preserveAspectRatio: 'xMidYMid slice',
+      mask: `url(#${maskId})`,
+    }, alt ? [h('title', alt)] : []),
+  ]) as ElementContent
 }
