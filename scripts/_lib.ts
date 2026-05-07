@@ -4,7 +4,7 @@ import { existsSync, mkdirSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { preview as vitePreview } from 'vite'
 
-export { findDecks } from '../src/decks.ts'
+export { findDecks } from '../src/plugin/decks.ts'
 
 export function ensureDir(path: string): void {
   if (!existsSync(path)) mkdirSync(path, { recursive: true })

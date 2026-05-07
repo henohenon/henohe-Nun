@@ -7,7 +7,7 @@ import {
   findDecks, ensureBuild, ensureDir, parseArgs,
   startPreview, launchBrowser, openDeck,
 } from './_lib.ts'
-import { buildIndex } from '../src/decks.ts'
+import { buildIndex } from '../src/plugin/decks.ts'
 
 const args = parseArgs()
 const deckFilter = args.values['deck']
