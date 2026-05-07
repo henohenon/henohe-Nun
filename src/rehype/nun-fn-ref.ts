@@ -2,6 +2,7 @@ import type { Plugin } from 'unified'
 import type { Root, Element } from 'hast'
 import { visit } from 'unist-util-visit'
 import { h } from 'hastscript'
+import { toString } from 'hast-util-to-string'
 
 /**
  * rehype plugin: !fn[id] の nwytContent ノードを <sup data-fn="id"> に変換する。
@@ -18,7 +19,7 @@ export const rehypeNunFnRef: Plugin<[], Root> = function () {
         node.properties?.['dataNwyt'] === 'fn'
       ) {
         // children のテキストが脚注 id
-        const id = getTextContent(node).trim()
+        const id = toString(node).trim()
         if (!id) return
 
         const sup = h('sup', { 'data-fn': id }, [
@@ -29,16 +30,4 @@ export const rehypeNunFnRef: Plugin<[], Root> = function () {
       }
     })
   }
-}
-
-function getTextContent(node: Element): string {
-  let text = ''
-  for (const child of node.children) {
-    if (child.type === 'text') {
-      text += child.value
-    } else if (child.type === 'element') {
-      text += getTextContent(child)
-    }
-  }
-  return text
 }
