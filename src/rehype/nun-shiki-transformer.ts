@@ -1,29 +1,22 @@
 import type { ShikiTransformer } from 'shiki'
+import { decodeNunMeta } from './code-meta-codec.ts'
 
 /**
- * Shiki transformer that reads nun metadata from meta.__raw and
- * transfers it to data-nun-* attributes on the output <pre> element.
+ * Shiki transformer that reads nun metadata from `meta.__raw` and transfers
+ * it to `data-nun-*` attributes on the output `<pre>` element.
  *
- * Meta format set by rehypeNunCodePre: "nun;<lang>[;name=<n>][;start=<n>][;diff]"
+ * encoding/decoding 仕様は `code-meta-codec.ts` を参照 (single source)。
  */
 export const nunShikiTransformer: ShikiTransformer = {
   name: 'nun',
   pre(node) {
     const raw: string = (this.options.meta as Record<string, string>)?.__raw ?? ''
-    if (!raw.startsWith('nun;')) return
+    const meta = decodeNunMeta(raw)
+    if (!meta) return
 
-    const parts = raw.split(';')
-    const lang = parts[1]
-    if (lang) node.properties['data-nun-lang'] = lang
-
-    for (const part of parts.slice(2)) {
-      if (part.startsWith('name=')) {
-        node.properties['data-nun-name'] = part.slice(5)
-      } else if (part.startsWith('start=')) {
-        node.properties['data-nun-start'] = part.slice(6)
-      } else if (part === 'diff') {
-        node.properties['data-nun-diff'] = ''
-      }
-    }
+    node.properties['data-nun-lang'] = meta.lang
+    if (meta.name != null) node.properties['data-nun-name'] = meta.name
+    if (meta.start != null) node.properties['data-nun-start'] = String(meta.start)
+    if (meta.diff) node.properties['data-nun-diff'] = ''
   },
 }
