@@ -1,13 +1,16 @@
 /* Background image layers (`!bg~` / `!fbg~`).
    bg は section 直下の `<img class="bg-layer">`、 fbg は section 直下の
-   `<svg class="fbg-layer">` (内部に `<mask>` + `<image>` を持つ単一 SVG)。
-   `pointer-events: none` で操作干渉を避ける。 `z-index: -1` で本文・footer
-   より背面に下げる (bg のみ; fbg は footer 形状で見せるので前面)。 */
+   `<div class="fbg-layer">` 内に `<img class="fbg-img">` (mask 適用) と
+   `<svg class="fbg-svg">` (mask 定義) を持つ。 実 `<img>` を使うことで src が
+   DOM に explicit に出る + inspect が容易、 bg-layer と画像取り回し CSS を
+   共通化できる。 `pointer-events: none` で操作干渉を避ける。 `z-index: -1`
+   で本文・footer より背面に下げる (bg のみ; fbg は footer 形状で見せるので前面)。 */
 
 /* cover-fill: 親 (section) を完全に埋める。 装飾レイヤーは操作対象では
    ないので pointer-events: none で本文側のクリック / hover を干渉しない。 */
 .bg-layer,
-.fbg-layer {
+.fbg-layer,
+.fbg-img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -15,9 +18,9 @@
   pointer-events: none;
 }
 
-/* `<img class="bg-layer">` の image fitting (fbg は SVG 内 `<image>` 側で
-   preserveAspectRatio="xMidYMid slice" 指定済み) */
-.bg-layer {
+/* `<img>` 系のみ object-fit */
+.bg-layer,
+.fbg-img {
   object-fit: cover;
   object-position: center;
 }
@@ -26,14 +29,19 @@ section > .bg-layer {
   z-index: -1;
 }
 
-/* fbg-layer の SVG 自体は overflow: visible で footer 形状の overshoot を許容。
-   mask 内 shape の塗りは theme 非依存の白固定 (mask alpha は luminance 基準
-   なので、 dark theme で `--base` が黒になると mask が機能しなくなる)。 */
-.fbg-layer {
+/* fbg の SVG mask layer。 描画はせず `<mask>` 定義の宿主。
+   shape の塗りは theme 非依存の white 固定 (mask alpha は luminance 基準
+   なので、 dark theme で `--base` が黒だと mask が機能しなくなる)。 */
+.fbg-svg {
   --shape-fill: white;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: visible;
+  pointer-events: none;
 }
 
-.fbg-layer > mask > use {
+.fbg-svg > mask > use {
   y: calc(100% - var(--footer-line-height) - var(--footer-font-size));
 }
