@@ -4,9 +4,11 @@
    の並列表示 (markdown preview / code 等)。
 
    article 数は 2 推奨。 1 つだけなら左 1 列、 3 つ以上は折り返して 2 行目に
-   流れる (重要なら markdown 側で 2 つに整理する)。 */
+   流れる (重要なら markdown 側で 2 つに整理する)。
 
-section.compare > .body {
+   selector は `.compare` (element 非依存) で section / article 両方に適用。 */
+
+.compare > .body {
   /* display:grid / min-height:0 は base.css の baseline */
   grid-template-columns: 1fr 1fr;
   align-content: start;
@@ -16,14 +18,14 @@ section.compare > .body {
 /* 各 article は自然な高さ、 内側に grid を持つ場合 (default の入れ子等) は
    そのレイアウトを尊重。 列内の content overflow は zoom-fit (slide 全体)
    経由で吸収される。 */
-section.compare > .body > article {
+.compare > .body > article {
   min-width: 0;
   min-height: 0;
 }
 
 /* article の heading (h2) はカラムタイトルとして機能。 default.css の h2
    サイズがやや大きすぎることがあるので、 compare では一段抑える。 */
-section.compare > .body > article > h2 {
+.compare > .body > article > h2 {
   font-size: clamp(13px, 4.5cqmin, 90px);
   margin-block-end: 0.3em;
 }

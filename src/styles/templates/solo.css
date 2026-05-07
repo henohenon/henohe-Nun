@@ -1,5 +1,7 @@
-/* ---- solo template ---- */
-section.solo {
+/* ---- solo template ----
+   selector は `.solo` (element 非依存) で section / article 両方に適用。 */
+
+.solo {
   /* base.css の auto 1fr を上書き。 タイトルだけなので 1 行に絞り、
      align-content: center で縦中央。 */
   grid-template-rows: auto;
@@ -7,7 +9,7 @@ section.solo {
   justify-items: center;
 }
 
-section.solo > h1 {
+.solo > h1 {
   /* baseline (margin-block-end: 0.3em) は body が無いので不要 → 0 に上書き */
   margin-block-end: 0;
   text-align: center;
