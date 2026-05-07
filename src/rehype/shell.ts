@@ -1,6 +1,8 @@
 import { h } from 'hastscript'
 import type { Element, ElementContent } from 'hast'
 
+
+
 export type ShellMeta = {
   title: string
   description: string
@@ -27,10 +29,14 @@ export function defaultOgUrl(base: string, deck: string): string {
 }
 
 /**
- * `<html><head>...</head><body>{content}<script>...</script></body></html>` を
+ * `<html><head>...</head><body>{...sections}<script>...</script></body></html>` を
  * 組み立てる。 OGP / twitter card meta は meta が存在する時だけ出す。
+ *
+ * sections は body の直接の子として展開される (wrapper div は使わない)。
+ * cqmin の container baseline は section 自身の `container-type: size` に
+ * 任せる。
  */
-export function buildShell(content: Element, meta: ShellMeta): Element {
+export function buildShell(sections: ElementContent[], meta: ShellMeta): Element {
   const headChildren: ElementContent[] = [
     h('meta', { charset: 'utf-8' }),
     h('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }),
@@ -59,7 +65,7 @@ export function buildShell(content: Element, meta: ShellMeta): Element {
   return h('html', { lang: 'ja' }, [
     h('head', headChildren),
     h('body', [
-      content,
+      ...sections,
       h('script', { type: 'module', src: meta.jsPath }),
     ]),
   ])

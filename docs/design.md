@@ -328,8 +328,7 @@ The base form for anything that needs to be "boxed in" (admonitions, cards, code
 
 ```css
 /* size: tracks both width and height (higher computation cost) */
-.slides    { container-type: size; }  /* baseline for cqmin */
-section    { container-type: size; }
+section    { container-type: size; }  /* baseline for cqmin */
 
 /* inline-size: tracks width only (recommended for most components) */
 .card-wrapper { container-type: inline-size; }
@@ -504,7 +503,7 @@ The client JS `fitSlide()` function sets the `zoom` property on `.body`.
 
 **`zoom` characteristics:**
 - Affects layout (relationships with surrounding elements change)
-- Does not change the `cqmin` baseline (`.slides` / `section` remain the reference after scaling)
+- Does not change the `cqmin` baseline (`section` remains the reference after scaling)
 - Different from `transform: scale` (`scale` does not affect layout)
 
 **Interaction with `zoom`:**
@@ -558,7 +557,7 @@ Nearly unnecessary after migrating to Grid. Use an `auto` Grid track instead of 
 Required when a `1fr` Grid/Flex item won't shrink. Pair it with `overflow: hidden`.
 
 **`cqmin` resolves to 0**
-Happens when there is no `container-type: size` ancestor. Verify that both `.slides` and `section` have `container-type: size`.
+Happens when there is no `container-type: size` ancestor. Verify that `section` has `container-type: size`.
 
 **`transition: all` is prohibited**
 It transitions unintended properties and degrades performance. Name what you're animating.

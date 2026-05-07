@@ -1,4 +1,3 @@
-import { h } from 'hastscript'
 import type { Root, ElementContent } from 'hast'
 import type { Plugin } from 'unified'
 import { extractScopes } from './extract-scopes.ts'
@@ -70,9 +69,9 @@ export const rehypeNunStructure: Plugin<[Options], Root, Root> = function (optio
     // 3. 脚注の一括解決: tooltip 挿入 + href 設定
     resolveFootnotes(sections, scopes, data)
 
-    // 4. ページシェルで包む
+    // 4. ページシェルで包む (sections は body 直下に展開、 wrapper div は使わない)
     const shell = buildShell(
-      h('div.slides', sections as ElementContent[]),
+      sections as ElementContent[],
       {
         title: meta.title ?? '',
         description: meta.description ?? '',

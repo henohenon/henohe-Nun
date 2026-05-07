@@ -397,8 +397,8 @@ function rehypeNunStructure(options: { meta: Meta }) {
     // 4. 脚注の一括解決（footnoteLocs を使用）
     resolveFootnotes(sections, data.footnoteLocs)
 
-    // 5. ページシェルで包む
-    return shell(h('div.slides', sections), options.meta)
+    // 5. ページシェルで包む (sections は body 直下、 wrapper div は使わない)
+    return shell(sections, options.meta)
   }
 }
 ```
