@@ -1,6 +1,6 @@
 ~~~meta
 title: Initiation
-description: All-feature demo of Nun
+description: Nun の全記法デモスライド
 date: 2026-05-07
 ~~~
 
@@ -9,16 +9,20 @@ date: 2026-05-07
 
 # Initiation
 🌊title
-!sub~All-feature demo of Nun
+!sub~へのへNun's all demo
 !bg~[bg](/images/henohe-Nun.png)
 
 
 # Index
 !fl~index
 - About
-- Custom Syntax
+- CustomSyntax
 - Templates
-  - Default / Title / Me / Message / Solo / Compare
+  - Default
+  - Title
+  - Me
+  - Message
+  - Solo
 - Markdown
 - Code blocks
 - Decoration blocks
@@ -27,30 +31,21 @@ date: 2026-05-07
 - nwyt props
 - Footnotes
 
-
-# Nun
+# へのへ Nun
 🌊me
 !fl~about
 !icon~[icon](/images/henohe-Nun.webp)
 
-A static SSG slide tool by [henohenon](https://github.com/henohenon/).
-
-- Markdown + custom syntax (`🌊` templates, `!` nwyt props)
-- Static-first: rendered at build, runtime JS minimal
+[へのへのん](https://github.com/henohenon)'s md2Slide tool
 - DOM that mirrors Markdown semantics
-
-!card~[GitHub](https://github.com/henohenon/henohe-Nun)
-
+- Responsive Rendering
 
 # Custom Syntax
 🌊solo
 
-
 # Scope
-🌊default
-
-Each scope spans from one heading to the next of equal or higher level.
-Anything before the first heading is the global default.
+heading から次の同レベル以上 heading までが 1 scope。
+最初の heading より上はグローバル default。
 
 ````md
 ---
@@ -67,393 +62,215 @@ Anything before the first heading is the global default.
 ---
 ````
 
+# 🌊Template
+scope 内に `🌊name` を 1 行 (heading 直下推奨)。
+省略時は `default`、 複数は後勝ち。
 
-# 🌊 Template
-🌊compare
-
-##
-🌊.window
-A `🌊name` line picks the template for the scope.
-Default is `default`. Last wins.
-
-##
-````md
-# Title page
+```markdown
+# スライドタイトル
 🌊title
 
-# Profile slide
+# プロフィール
 🌊me
-````
+```
 
+# nwyt
 
-# nwyt — prop
-🌊compare
-
-##
-🌊.window
-`!key~value` — assigns a property to the scope.
-
-##
-````md
-!fl~footer left text
-!sub~subtitle of title template
-````
-
-
-# nwyt — content
-🌊compare
-
-##
-🌊.window
-`!key[value]` — replaces the inline position with custom content.
-
-##
-````md
-inline !card[GitHub](https://github.com/...)
-becomes a card.
-````
-
+## prop
+`!key~value`のように書く。
+対応するscopeにプロパティを指定する。
+## content
+`!key[value]`のように書く。
+対応する位置を独自コンテンツで置き換える。
 
 # meta
-🌊compare
-
-##
-🌊.window
-Page metadata block (title / description / date / etc.).
-
-##
+Set meta data like this.
 ````md
 ~~~meta
-title: My Talk
-description: All-feature demo
-date: 2026-05-07
+title:
+description:
+date:
 ~~~
 ````
 
-
-# nwyt props — keys
+# nwyt props 一覧
 🌊default
 
-| key | role |
+| キー | 用途 |
 | --- | --- |
-| `!fl~text` | footer left |
-| `!fr~text` | footer right |
-| `!bg~[alt](url)` | background image |
-| `!sub~text` | subtitle (title template) |
-| `!icon~[alt](url)` | icon (me template) |
-| `!lead~text` | lead text (message template) |
-| `!fn~[id]` | footnote definition mark |
+| `!fl~text` | フッター左 |
+| `!fr~text` | フッター右 |
+| `!bg~[alt](url)` | 背景画像 |
+| `!sub~text` | title のサブタイトル |
+| `!icon~[alt](url)` | me のアイコン |
+| `!lead~text` | message のリード |
+| `!fn~[id]` | 脚注定義マーク |
 
-
-# Footnote — refs
+# 脚注
 🌊default
 
-A reference renders as a sup mark !fn[1].
+`!fn[id]` で上付きマーク !fn[1]。
+hover で tooltip、 click で定義スライドへ !fn[2]。 別スライドも参照可 !fn[3]。
 
-Hover for tooltip, click to jump to the definition slide !fn[2].
-
-Cross-slide definitions work too !fn[3].
-
-## Footnote 1
+## 脚注1
 !fn~[1]
+**脚注1** の本文。Markdown 可。
 
-**Footnote 1** body. Markdown is allowed.
-
-## Footnote 2
+## 脚注2
 !fn~[2]
+$e^{i\pi} + 1 = 0$ のような数式も。
 
-Math is allowed: $e^{i\pi} + 1 = 0$.
-
-
-# Footnote on a dedicated slide
+# 別ページに置く脚注定義
 !fn.head~[3]
 🌊default
 
-This whole slide is the body of footnote 3.
+`!fn~[id]` を h1 直下に書けば、 そのスライド全体が脚注定義になる。
+`.head` を付けると tooltip に heading も含まれる (default は body のみ)。
 
-`!fn~[id]` at section level (h1 scope) makes the slide itself the definition.
-`.head` includes the heading in the tooltip; default is body only.
-
-
-# `!bg~`
+# 背景画像 — `!bg~`
 !bg~[bg](/images/tgs.jpg)
 🌊default
 
-`!bg~[alt](url)` lays an image behind the slide.
+`!bg~[alt](url)` で section 全体に背景画像。
+URL は `[alt](url)` / 素のパスどちらも可。 グローバルで全 section に伝播。
 
-`[alt](url)` or a bare path; global setting propagates to all slides.
-
-
-# `!fbg~`
+# フッター背景 — `!fbg~`
 !fbg~[fbg](/images/tgs.jpg)
 🌊default
 
-`!fbg~[alt](url)` masks an image with the footer's SVG shapes (line + text).
-
-Only the footer line and text show through, framing the image.
-
+`!fbg~[alt](url)` で footer 形状 (line + text) を mask に画像を切り抜く。
+文字と線だけが「窓」になり背景が透ける。
 
 # Templates
 🌊solo
 
-
-# Templates — index
-🌊default
-
-| template | syntax | feature |
+# Index
+| テンプレート | 記法 | 特徴 |
 | --- | --- | --- |
-| default | `🌊default` | title + left body (standard) |
-| title | `🌊title` | center-left title + sub + fixed image |
-| me | `🌊me` | title + icon left + body right |
-| message | `🌊message` | title + centered body + lead |
-| solo | `🌊solo` | title only, centered, no body |
-| compare | `🌊compare` | two-column comparison (h2 articles side by side) |
+| default | `🌊default` | タイトル + 左寄せ body。通常スライド |
+| title | `🌊title` | 中央左タイトル + サブタイトル + 固定画像 |
+| me | `🌊me` | タイトル + アイコン左 + body 右 |
+| message | `🌊message` | タイトル + 中央寄せ body + リードテキスト |
+| solo | `🌊solo` | タイトルのみ中央寄せ、body なし |
 
 
 # Default
 🌊compare
 
-##
+## 
 🌊.window
-title + left body. The standard slide.
+preview
 
-##
-````md
+## 
+```md
 🌊default
-title + body
-````
+preview
+```
 
-
-# Title
-🌊compare
-
-##
-🌊.window
+# title テンプレート
 🌊title
-!sub~Subtitle text
 
-##
-````md
-🌊title
-!sub~Subtitle text
-````
+!sub~中央左にタイトル、その下にサブタイトル。固定画像付き
 
-
-# Me
-🌊compare
-
-##
-🌊.window
+# me テンプレート
 🌊me
+
 !icon~[icon](/henoheno.svg)
 
-icon left, body right.
+アイコン付き自己紹介スライド。
+- 左 icon / 右 body
+- `!icon~[alt](url)` でアイコン指定
 
-##
-````md
-🌊me
-!icon~[icon](/henoheno.svg)
-
-icon left, body right.
-````
-
-
-# Message
-🌊compare
-
-##
-🌊.window
+# message テンプレート
 🌊message
-!lead~Lead text below the body
 
-centered body.
+!lead~body の下に出るリードテキスト
 
-##
-````md
-🌊message
-!lead~Lead text below the body
+中央寄せのコールアウト用。 タイトル / 本文 / `!lead~` の 3 段。
 
-centered body.
-````
-
-
-# Solo
-🌊compare
-
-##
-🌊.window
-title only, centered.
-
-##
-````md
+# solo テンプレート
 🌊solo
-````
 
+# 基本 Markdown — テキスト装飾
+🌊default
 
-# Compare
-🌊compare
+**太字** / *斜体* / ***太字斜体***
 
-##
-🌊.window
-two h2 articles side by side.
+~~打ち消し線~~ / ==ハイライト==
 
-##
-````md
-🌊compare
+インラインコード `const x = 1`
 
-## h2 left
-left
+---
 
-## h2 right
-right
-````
+> 引用文
+>
+> 複数行の引用
 
+# 基本 Markdown — リスト
+🌊default
 
-# Markdown — text decoration
-🌊compare
+## 箇条書き・番号付き
 
-##
-🌊.window
-**bold** / *italic* / ***bold italic***
+- 箇条書き
+  - ネスト項目
+- 二番目
 
-~~strike~~ / ==mark==
+1. 番号付き
+2. リスト
 
-inline `const x = 1`
+## チェックリスト
 
-> quote
-> multi-line
+- [ ] 未完了タスク
+- [x] 完了タスク
 
-##
-````md
-**bold** / *italic* / ***bold italic***
+# 基本 Markdown — テーブル・リンク
+🌊default
 
-~~strike~~ / ==mark==
+## テーブル
 
-inline `const x = 1`
+| 左寄せ | 中央 | 右寄せ |
+| :----- | :---: | -----: |
+| apple  |  赤   |    100 |
+| banana |  黄   |     80 |
+| cherry |  赤   |    120 |
 
-> quote
-> multi-line
-````
+## リンク・画像
 
+[Nun リポジトリ](https://github.com/henohenon/henohe-Nun "GitHub") / [外部リンク](https://example.com)
 
-# Markdown — lists
-🌊compare
+![Nun ロゴ](/images/henohe-Nun.png "henohe-Nun")
 
-##
-🌊.window
-- bullet
-  - nested
-- second
+# コードブロック
+🌊default
 
-1. ordered
-2. list
+## 言語指定
 
-- [ ] open
-- [x] done
-
-##
-````md
-- bullet
-  - nested
-- second
-
-1. ordered
-2. list
-
-- [ ] open
-- [x] done
-````
-
-
-# Markdown — tables / links
-🌊compare
-
-##
-🌊.window
-| left | center | right |
-| :--- | :---: | ---: |
-| apple | red | 100 |
-| banana | yellow | 80 |
-
-[Nun repo](https://github.com/henohenon/henohe-Nun "GitHub")
-
-##
-````md
-| left | center | right |
-| :--- | :---: | ---: |
-| apple | red | 100 |
-| banana | yellow | 80 |
-
-[Nun repo](https://github.com/...)
-````
-
-
-# Code — language
-🌊compare
-
-##
-🌊.window
 ```js
-const greet = (n) => `Hi, ${n}!`;
+const greet = (name) => `Hello, ${name}!`;
 console.log(greet("Nun"));
 ```
 
-##
-`````md
-```js
-const greet = (n) => `Hi, ${n}!`;
-console.log(greet("Nun"));
-```
-`````
+## ファイル名・行番号
 
-
-# Code — filename / start line
-🌊compare
-
-##
-🌊.window
 ```ts:src/pipeline.ts#42
 export async function process(md: string) {
   return pipeline.process(md);
 }
 ```
 
-##
-`````md
-```ts:src/pipeline.ts#42
-export async function process(md: string) {
-  return pipeline.process(md);
-}
-```
-`````
+## diff
 
-
-# Code — diff
-🌊compare
-
-##
-🌊.window
 ```diff_ts
 -const value = "old";
 +const value = "new";
  console.log(value);
 ```
 
-##
-`````md
-```diff_ts
--const value = "old";
-+const value = "new";
- console.log(value);
-```
-`````
+# コードブロック — 埋め込み
+🌊default
 
+## embed_svg
 
-# Code — embed_svg
-🌊compare
-
-##
-🌊.window
 ```embed_svg
 <svg viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg">
   <rect width="240" height="60" rx="8" fill="#1e293b"/>
@@ -461,44 +278,18 @@ export async function process(md: string) {
 </svg>
 ```
 
-##
-`````md
-```embed_svg
-<svg viewBox="0 0 240 60" ...>
-  ...
-</svg>
-```
-`````
+## embed_html
 
-
-# Code — embed_html
-🌊compare
-
-##
-🌊.window
 ```embed_html
 <div style="display:flex;gap:12px;flex-wrap:wrap">
-  <div style="padding:12px 20px;background:#3b82f6;color:#fff;border-radius:8px">A</div>
-  <div style="padding:12px 20px;background:#10b981;color:#fff;border-radius:8px">B</div>
-  <div style="padding:12px 20px;background:#f59e0b;color:#fff;border-radius:8px">C</div>
+  <div style="padding:12px 20px;background:#3b82f6;color:#fff;border-radius:8px">Button A</div>
+  <div style="padding:12px 20px;background:#10b981;color:#fff;border-radius:8px">Button B</div>
+  <div style="padding:12px 20px;background:#f59e0b;color:#fff;border-radius:8px">Button C</div>
 </div>
 ```
 
-##
-`````md
-```embed_html
-<div style="...">
-  <div>A</div> <div>B</div> <div>C</div>
-</div>
-```
-`````
+## embed_mermaid
 
-
-# Code — embed_mermaid
-🌊compare
-
-##
-🌊.window
 ```embed_mermaid
 flowchart LR
   MD[Markdown] --> micro[micromark]
@@ -507,23 +298,8 @@ flowchart LR
   hast --> HTML[HTML]
 ```
 
-##
-`````md
-```embed_mermaid
-flowchart LR
-  MD --> micro
-  micro --> mdast
-  mdast --> hast
-  hast --> HTML
-```
-`````
+## embed_math
 
-
-# Code — embed_math
-🌊compare
-
-##
-🌊.window
 ```embed_math
 \begin{aligned}
   \nabla \cdot \mathbf{E} &= \frac{\rho}{\varepsilon_0} \\
@@ -531,112 +307,67 @@ flowchart LR
 \end{aligned}
 ```
 
-##
-`````md
-```embed_math
-\begin{aligned}
-  \nabla \cdot \mathbf{E} &= \frac{\rho}{\varepsilon_0} \\
-  \nabla \times \mathbf{B} &= \mu_0 \mathbf{J} + ...
-\end{aligned}
-```
-`````
-
-
-# Decoration blocks — kinds
+# 装飾ブロック — 種類
 🌊default
 
 :::note
-**note** — supplemental remark
+**note** — 補足・メモ
 :::
 
 :::info
-**info** — extra information
+**info** — 追加情報
 :::
 
 :::tip
-**tip** — recommendation
+**tip** — ヒント・推奨
 :::
 
 :::warning
-**warning** — caution
+**warning** — 注意
 :::
 
 :::alert
-**alert** — strong warning
+**alert** — 強い警告
 :::
 
+# 装飾ブロック — ネスト
+🌊default
 
-# Decoration blocks — nested
-🌊compare
-
-##
-🌊.window
-::::note Outer
-:::tip Inner
-Increase the colon count to nest.
+::::note 外側のブロック
+:::tip 内側のブロック
+装飾ブロックはコロンを増やすことでネストできる。
 :::
 ::::
 
-##
-````md
-::::note Outer
-:::tip Inner
-Increase the colon count to nest.
-:::
-::::
-````
+# 数式
+🌊default
 
+## インライン
 
-# Math
-🌊compare
+ピタゴラスの定理: $a^2 + b^2 = c^2$
 
-##
-🌊.window
-Pythagoras: $a^2 + b^2 = c^2$
+オイラーの等式: $e^{i\pi} + 1 = 0$
 
-Euler: $e^{i\pi} + 1 = 0$
+## ブロック
 
 $$
 \int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
 $$
 
-##
-````md
-Pythagoras: $a^2 + b^2 = c^2$
-
-Euler: $e^{i\pi} + 1 = 0$
-
 $$
-\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
 $$
-````
 
+# リンクカード
+🌊default
 
-# Card — horizontal
-🌊compare
+## 横型（デフォルト）
 
-##
-🌊.window
 !card[henohe-Nun](https://github.com/henohenon/henohe-Nun)
 
-##
-````md
-!card[henohe-Nun](https://github.com/henohenon/henohe-Nun)
-````
+## 縦型（`.v`）
 
-
-# Card — vertical (`.v`)
-🌊compare
-
-##
-🌊.window
 !card.v[henohe-Nun](https://github.com/henohenon/henohe-Nun)
-
-##
-````md
-!card.v[henohe-Nun](https://github.com/henohenon/henohe-Nun)
-````
-
 
 # FIN
 🌊solo
