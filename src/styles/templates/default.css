@@ -159,8 +159,12 @@ article.default > h6 {
    と、その scope 配下の blockquote が brand 色寄せになる。class 名は
    `.hierarchy` (heading 色階層) と同じ section 単位 opt-in パターン。 */
 .body blockquote {
-  border-left: 10px solid var(--border);
+  /* border / max-inline-size は cqmin / cqi で slide container にスケール
+     させる。 旧 (border-left: 10px / 全幅) より細く・短くなり、 視覚的に
+     blockquote と本文の対比が出やすい。 */
+  border-left: clamp(3px, 0.6cqmin, 8px) solid var(--border);
   padding-inline-start: 0.75em;
+  max-inline-size: 80cqi;
   color: var(--fg-mid);
   font-style: italic;
 }
