@@ -6,6 +6,10 @@ import { fromHtml } from 'hast-util-from-html'
 import { toString } from 'hast-util-to-string'
 import katex from 'katex'
 
+/** copy ボタンの初期表示ラベル。 client/copy.ts は click 時に "copied" に
+ *  差し替え、 1.5 秒後にこの初期値に戻す。 */
+const COPY_LABEL = 'copy'
+
 /**
  * rehype plugin that post-processes code blocks after shiki.
  *
@@ -158,7 +162,7 @@ function wrapInFigure(pre: Element, lang: string | undefined, name: string | und
   return h('figure.code-block', [
     h('figcaption', [
       h('span.lang', name ?? lang ?? ''),
-      h('button.copy', 'copy'),
+      h('button.copy', COPY_LABEL),
     ]),
     pre,
   ])
