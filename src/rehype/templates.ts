@@ -35,13 +35,21 @@ export function render(scope: Scope): Element {
   const templateFn = templates[scope.template]
   const el = templateFn(scope)
 
-  // 脚注定義: article に data-fn-def 属性、heading に [^id] マークを追加
+  // 脚注定義: article に data-fn-def 属性、 heading に [^id] マークを追加。
+  // heading 要素は collectFnBodies (resolve-footnotes.ts) からも tooltip 用に
+  // 参照されるため、 直接 mutate せず clone した複製を template 出力 (el)
+  // 側で差し替えて、 tooltip 側には素の heading を残す。
   if (scope.fnDef) {
     el.properties ??= {}
     el.properties['dataFnDef'] = scope.fnDef
     if (scope.heading) {
-      const mark = h('span.fn-def-mark', `[^${scope.fnDef}]`)
-      scope.heading.children.unshift(mark as ElementContent)
+      const idx = el.children.indexOf(scope.heading as ElementContent)
+      if (idx >= 0) {
+        const clonedHeading = JSON.parse(JSON.stringify(scope.heading)) as Element
+        const mark = h('span.fn-def-mark', `[^${scope.fnDef}]`)
+        clonedHeading.children.unshift(mark as ElementContent)
+        el.children[idx] = clonedHeading as ElementContent
+      }
     }
   }
 
