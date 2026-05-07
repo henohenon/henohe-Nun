@@ -31,6 +31,7 @@ export const templates: Record<TemplateName, TemplateFn> = {
   me: meTemplate,
   message: messageTemplate,
   solo: soloTemplate,
+  compare: compareTemplate,
 }
 
 /** Scope を再帰的にテンプレート適用して hast に変換 */
@@ -192,4 +193,17 @@ function soloTemplate(scope: Scope): Element {
   const children: ElementContent[] = []
   if (scope.heading) children.push(scope.heading)
   return h(`${scope.tag}.solo`, { className: scope.classes }, children)
+}
+
+/** compare: 左右 2 カラムで比較レイアウト。 body 配下の article (h2 単位) が
+ *  順に左右の列に配置される。 典型用途は「レンダリング結果」 vs 「ソース」 の
+ *  並列表示 (markdown プレビュー / コード等)。 article 数は 2 推奨だが任意 (3
+ *  以上は折り返して 2 行目に流れる)。 */
+function compareTemplate(scope: Scope): Element {
+  const children: ElementContent[] = []
+  if (scope.heading) children.push(scope.heading)
+  if (scope.body.length > 0) {
+    children.push(h('div.body', renderBody(scope.body)))
+  }
+  return h(`${scope.tag}.compare`, { className: scope.classes }, children)
 }

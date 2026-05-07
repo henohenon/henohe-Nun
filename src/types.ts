@@ -1,7 +1,7 @@
 import type { Element, ElementContent } from 'hast'
 import type { Position } from 'unist'
 
-export const TEMPLATE_NAMES = ['default', 'title', 'me', 'message', 'solo'] as const
+export const TEMPLATE_NAMES = ['default', 'title', 'me', 'message', 'solo', 'compare'] as const
 export type TemplateName = (typeof TEMPLATE_NAMES)[number]
 
 export type NwytProp = {
