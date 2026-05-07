@@ -41,6 +41,9 @@ section {
   --footer-font-size: clamp(10px, 4cqmin, 80px);
   --footer-line-height: clamp(5px, 2cqmin, 40px);
   --footer-pad-x: clamp(8px, 4cqmin, 80px);
+  /* Border radius — 角丸の統一トークン。 window / table / code-block 等
+     が共有する。 em ベースなので中身のテキスト size に応じて自動スケール。 */
+  --radius: 0.4em;
 }
 
 /* Theme presets (dark 等) は `utils/dark.css` に分離。 ここは baseline token

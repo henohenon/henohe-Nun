@@ -62,7 +62,7 @@
   width: 100%;
   margin-block-end: 0.4em;
   border: 1px solid var(--table-border-color);
-  border-radius: 0.4em;
+  border-radius: var(--radius);
   overflow: hidden;
 }
 .body th,

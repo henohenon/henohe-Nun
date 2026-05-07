@@ -9,14 +9,13 @@
 }
 
 /* ---- Code block (figure.code-block) ----
-   `--code-radius` を共有して、 figure 外形 / figcaption の上端 / pre の下端
-   それぞれが同じ角丸を持つよう個別に round 指定する。 これで figcaption
+   theme.css の `--radius` を共有して、 figure 外形 / figcaption の上端 / pre
+   の下端それぞれが同じ角丸を持つよう個別に round 指定する。 これで figcaption
    背景や pre 背景が figure の角丸からはみ出さない (`overflow: hidden` を
    使わずに済むので、 子要素の `position: absolute` 等が外に出せる)。 */
 figure.code-block {
-  --code-radius: 0.4em;
   border: 1px solid var(--border);
-  border-radius: var(--code-radius);
+  border-radius: var(--radius);
   font-size: 0.85em;
   background: var(--muted);
 }
@@ -28,7 +27,7 @@ figure.code-block > figcaption {
   padding: 0.3em 0.8em;
   background: var(--muted);
   border-bottom: 1px solid var(--border);
-  border-radius: var(--code-radius) var(--code-radius) 0 0;
+  border-radius: var(--radius) var(--radius) 0 0;
   font-family: var(--font-mono);
   font-size: 0.85em;
   min-height: 1.8em;
@@ -58,7 +57,7 @@ figure.code-block button.copy:hover {
 figure.code-block > pre {
   overflow-x: auto;
   padding: 0.75em 1em;
-  border-radius: 0 0 var(--code-radius) var(--code-radius);
+  border-radius: 0 0 var(--radius) var(--radius);
 }
 
 /* ---- Diff ---- */

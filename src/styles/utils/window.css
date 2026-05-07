@@ -8,7 +8,7 @@
    背景は `--base`、 border は `--border`、 影は `--shadow` で theme 追従。 */
 .window {
   border: 1px solid var(--border);
-  border-radius: clamp(4px, 0.6cqmin, 12px);
+  border-radius: var(--radius);
   padding: clamp(10px, 2cqmin, 40px);
   background-color: var(--base);
   box-shadow: 2px 3px 12px color-mix(in srgb, var(--shadow) 25%, transparent);
