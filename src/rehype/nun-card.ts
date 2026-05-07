@@ -5,6 +5,9 @@ import { h } from 'hastscript'
 import { toString } from 'hast-util-to-string'
 import ogs from 'open-graph-scraper'
 
+/** card 縦長レイアウト指定の class 名 (`!card.v~...` の `.v`) */
+const CARD_VERTICAL_CLASS = 'v'
+
 interface OgpData {
   title: string
   description: string
@@ -48,7 +51,7 @@ export const rehypeNunCard: Plugin<[], Root> = function () {
       const ogp = results[i]
       const url = node.properties?.dataNwytUrl as string | undefined
       const isVertical = Array.isArray(node.properties?.className)
-        ? (node.properties.className as string[]).includes('v')
+        ? (node.properties.className as string[]).includes(CARD_VERTICAL_CLASS)
         : false
 
       const card = buildCard(ogp, url ?? '#', isVertical)
@@ -101,7 +104,7 @@ function buildCard(ogp: OgpData, url: string, vertical: boolean): Element {
 
   return h('a', {
     href: url,
-    className: ['card', ...(vertical ? ['v'] : [])],
+    className: ['card', ...(vertical ? [CARD_VERTICAL_CLASS] : [])],
     target: '_blank',
     rel: 'noopener noreferrer',
   }, inner) as Element
