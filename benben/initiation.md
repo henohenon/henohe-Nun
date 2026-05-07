@@ -149,17 +149,24 @@ date:
 
 ## Preview
 🌊default.window
-- bullet
-- nested ・ items
-- standard layout
 
-## Source
+### Sub heading
+- bullet
+- nested
+- items
+
+paragraph text
+
+##
 ````md
 🌊default
 
+### Sub heading
 - bullet
-- nested ・ items
-- standard layout
+- nested
+- items
+
+paragraph text
 ````
 
 
@@ -171,7 +178,7 @@ date:
 🌊title.window
 !sub~Subtitle text
 
-## Source
+##
 ````md
 🌊title
 !sub~Subtitle text
@@ -189,7 +196,7 @@ date:
 - bullet
 - bullet
 
-## Source
+##
 ````md
 🌊me
 !icon~[icon](/henoheno.svg)
@@ -209,7 +216,7 @@ date:
 
 Body text
 
-## Source
+##
 ````md
 🌊message
 !lead~Lead text
@@ -225,7 +232,7 @@ Body text
 ## Preview
 🌊solo.window
 
-## Source
+##
 ````md
 🌊solo
 ````
@@ -244,7 +251,7 @@ A
 ### right
 B
 
-## Source
+##
 ````md
 🌊compare
 
