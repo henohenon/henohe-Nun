@@ -158,7 +158,7 @@ URL は `[alt](url)` / 素のパスどちらも可。 グローバルで全 sect
 🌊compare
 
 ## 
-🌊.window
+🌊default.window
 preview
 
 ## 
