@@ -1,12 +1,13 @@
 import { h } from 'hastscript'
 import type { Element, ElementContent } from 'hast'
-import type { Scope, NwytProp } from '../types.ts'
-import { parseNwytValue } from './templates.ts'
-import { findNwytInScope } from './nwyt-helpers.ts'
+import type { Scope, NwytProp } from '../../types.ts'
+import { parseNwytValue } from '../templates.ts'
+import { findNwytInScope } from '../nwyt-helpers.ts'
+import { footerShapeId } from './_ids.ts'
 
 /**
  * section レベルの Scope にフッターを追加する。
- * フッターは常に SVG（line + text）で描画する。
+ * フッターは常に SVG (line + text) で描画する。
  */
 export function appendFooter(
   el: Element,
@@ -18,7 +19,7 @@ export function appendFooter(
   const fr = findNwytInScope(scope, globalNwyts, 'fr')
 
   // footer 自体は fl / fr のどちらかが無いと出さない (テキストゼロのフッターは
-  // 罫線だけになり装飾過剰)。fbg は footer の SVG mask 経由で適用されるので
+  // 罫線だけになり装飾過剰)。 fbg は footer の SVG mask 経由で適用されるので
   // 必然的に footer と運命共同体。
   if (!fl && !fr) return
 
@@ -34,16 +35,14 @@ function buildFooter(
   fl: NwytProp | undefined,
   fr: NwytProp | undefined,
 ): Element {
-  const shapesId = `footer-shapes-${id}`
-
   const flNodes = fl ? hastToSvgContent(parseNwytValue('fl', fl.rawValue)) : []
   const frNodes = fr ? hastToSvgContent(parseNwytValue('fr', fr.rawValue)) : []
-  const shapeGroup  = h('g', { id: shapesId }, buildShapes(flNodes, frNodes));
+  const shapeGroup = h('g', { id: footerShapeId(id) }, buildShapes(flNodes, frNodes))
 
   const svg = h('svg.footer-svg', {
     xmlns: 'http://www.w3.org/2000/svg',
     'aria-hidden': 'true',
-  }, shapeGroup);
+  }, shapeGroup)
 
   return h('footer', svg)
 }
@@ -75,7 +74,7 @@ function buildShapes(
 
 /**
  * hast のインライン要素を SVG tspan ノードに変換する。
- * strong / em / del のみ対応（フッターで実用的な装飾範囲）。
+ * strong / em / del のみ対応 (フッターで実用的な装飾範囲)。
  */
 function hastToSvgContent(children: ElementContent[]): ElementContent[] {
   return children.flatMap(child => {
@@ -94,4 +93,3 @@ function hastToSvgContent(children: ElementContent[]): ElementContent[] {
     return [h('tspan', attrs, inner) as ElementContent]
   })
 }
-

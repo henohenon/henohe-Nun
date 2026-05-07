@@ -4,11 +4,10 @@ import type { Plugin } from 'unified'
 import { visit } from 'unist-util-visit'
 import { extractScopes } from './extract-scopes.ts'
 import { render } from './templates.ts'
-import { appendFooter } from './footer.ts'
 import { initVFileData } from '../types.ts'
 import type { VFileData, NwytProp, Scope } from '../types.ts'
 import { isScope } from '../types.ts'
-import {appendBackground, appendFooterBackground} from "./background.ts";
+import { appendBackground, appendFooter, appendFooterBackground } from './decorations/index.ts'
 
 type Options = {
   jsPath: string
