@@ -48,7 +48,7 @@ export function render(scope: Scope): Element {
 }
 
 /** body 内の要素を処理。子 Scope があれば再帰、hast ノードはそのまま */
-export function renderChildren(body: (ElementContent | Scope)[]): (Element | ElementContent)[] {
+export function renderBody(body: (ElementContent | Scope)[]): (Element | ElementContent)[] {
   return body.map(child =>
     isScope(child) ? render(child) : child
   )
@@ -103,7 +103,7 @@ function defaultTemplate(scope: Scope): Element {
   const children: ElementContent[] = []
   if (scope.heading) children.push(scope.heading)
   if (scope.body.length > 0) {
-    children.push(h('div.body', renderChildren(scope.body)))
+    children.push(h('div.body', renderBody(scope.body)))
   }
   return h(`${scope.tag}.default`, { className: scope.classes }, children)
 }
@@ -124,7 +124,7 @@ function meTemplate(scope: Scope): Element {
   children.push(
     h('div.container', [
       h('div.icon', icon ? [icon] : []),
-      h('div.body', renderChildren(scope.body)),
+      h('div.body', renderBody(scope.body)),
     ])
   )
   return h(`${scope.tag}.me`, { className: scope.classes }, children)
@@ -134,7 +134,7 @@ function messageTemplate(scope: Scope): Element {
   const children: ElementContent[] = []
   if (scope.heading) children.push(scope.heading)
   if (scope.body.length > 0) {
-    children.push(h('div.body', renderChildren(scope.body)))
+    children.push(h('div.body', renderBody(scope.body)))
   }
   const lead = resolveNwyt(scope, 'lead')
   if (lead) children.push(h('div.lead', [lead]))
