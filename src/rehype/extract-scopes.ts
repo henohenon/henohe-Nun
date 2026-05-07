@@ -143,19 +143,35 @@ function buildScope(
     sectionIndex.value++
   }
 
+  // body 内に depth+1 の heading があるか確認、 ある場合は最初の子 heading
+  // 直前で「自スコープ固有 (own)」 の範囲を打ち切る。 `🌊compare` 等を h1
+  // 直下に書きつつ、 子 article 内で `🌊default` を書いた時に、 後者が「last
+  // wins」 で h1 scope の template を上書きしてしまうのを防ぐ。
+  // (spec の「heading の行 〜 次の同レベル以上 heading の行」 を文字通り適用
+  // すると section が child article 内 template を吸ってしまう実装ハマり)
+  const hasSubHeadings = group.children.some(
+    node => getHeadingDepth(node) === depth + 1
+  )
+  let ownRangeEnd = range.end
+  if (hasSubHeadings && depth + 1 <= 6) {
+    const firstChild = group.children.find(
+      node => getHeadingDepth(node) === depth + 1
+    )
+    const firstChildLine = firstChild && 'position' in firstChild
+      ? firstChild.position?.start.line
+      : undefined
+    if (firstChildLine != null) ownRangeEnd = firstChildLine - 1
+  }
+  const ownRange: ScopeRange = { start: range.start, end: ownRangeEnd }
+
   // vfile.data から position ベースで template/nwyt を紐付け (pure)
-  const bound = bindScopeData(data, range)
+  const bound = bindScopeData(data, ownRange)
 
   // 脚注定義のページ位置を vfile.data に記録 (副作用)。
   // 探索結果 (bound.fnDef) を使うので bindScopeData の後に実行。
   if (bound.fnDef) {
     data.footnoteLocs[bound.fnDef] = { page: sectionIndex.value }
   }
-
-  // body 内に depth+1 の heading があるか確認
-  const hasSubHeadings = group.children.some(
-    node => getHeadingDepth(node) === depth + 1
-  )
 
   let body: Scope['body']
   if (hasSubHeadings && depth + 1 <= 6) {
