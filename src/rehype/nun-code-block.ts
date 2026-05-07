@@ -101,50 +101,67 @@ export const rehypeNunCodeBlock: Plugin<[], Root> = function () {
       const startRaw  = props['data-nun-start'] as string | undefined
       const startLine = startRaw != null ? parseInt(startRaw, 10) : undefined
 
-      // Add line numbers if startLine is set.
-      // 桁幅は code 全体の最大行番号で決まる: `--ln-width: <maxDigits>ch` を
-      // pre に inline style で乗せて、CSS 側で `.line-number` の min-width に
-      // 反映させる。これで 2 桁 / 3 桁 / 4 桁の deck で gap が均一にならず、
-      // 必要最小限の幅で揃う。 */
       if (startLine != null) {
-        const lineCount = code.children.filter(
-          c => c.type === 'element' && c.tagName === 'span'
-        ).length
-        const maxLine = startLine + lineCount - 1
-        const maxDigits = String(maxLine).length
-
-        let lineNum = startLine
-        for (const child of code.children) {
-          if (child.type === 'element' && child.tagName === 'span') {
-            const lineNumberSpan: Element = {
-              type: 'element',
-              tagName: 'span',
-              properties: { className: ['line-number'] },
-              children: [{ type: 'text', value: String(lineNum) } as Text],
-            }
-            child.children.unshift(lineNumberSpan)
-            lineNum++
-          }
-        }
-
-        // 既存 style に `--ln-width: <n>ch` を追記
-        const existingStyle = (node.properties?.['style'] as string | undefined) ?? ''
-        node.properties ??= {}
-        node.properties['style'] = `${existingStyle ? existingStyle.replace(/;?\s*$/, ';') : ''}--ln-width:${maxDigits}ch`
+        const maxDigits = addLineNumbers(code, startLine)
+        setLineNumberWidth(node, maxDigits)
       }
 
-      const figure = h('figure.code-block', [
-        h('figcaption', [
-          h('span.lang', name ?? lang ?? ''),
-          h('button.copy', 'copy'),
-        ]),
-        node,
-      ])
-
-      parent.children[index] = figure
+      parent.children[index] = wrapInFigure(node, lang, name)
       return [SKIP, index + 1] as const
     })
   }
+}
+
+/**
+ * 各 `.line` span の先頭に `<span.line-number>` を挿入し、 表示行番号を付与する。
+ * 戻り値は最大行番号の桁数 (line-number 最小幅計算で利用)。
+ */
+function addLineNumbers(code: Element, startLine: number): number {
+  const lineCount = code.children.filter(
+    c => c.type === 'element' && c.tagName === 'span',
+  ).length
+  const maxLine = startLine + lineCount - 1
+  const maxDigits = String(maxLine).length
+
+  let lineNum = startLine
+  for (const child of code.children) {
+    if (child.type === 'element' && child.tagName === 'span') {
+      const lineNumberSpan: Element = {
+        type: 'element',
+        tagName: 'span',
+        properties: { className: ['line-number'] },
+        children: [{ type: 'text', value: String(lineNum) } as Text],
+      }
+      child.children.unshift(lineNumberSpan)
+      lineNum++
+    }
+  }
+
+  return maxDigits
+}
+
+/**
+ * `<pre>` の inline style に `--ln-width: <maxDigits>ch` を追記する。
+ *
+ * CSS 側で `.line-number` の min-width に反映され、 2 / 3 / 4 桁の deck でも
+ * gap が均一にならず必要最小限の幅で揃う。 既存 style は保持する。
+ */
+function setLineNumberWidth(pre: Element, maxDigits: number) {
+  const existing = (pre.properties?.['style'] as string | undefined) ?? ''
+  const prefix = existing ? existing.replace(/;?\s*$/, ';') : ''
+  pre.properties ??= {}
+  pre.properties['style'] = `${prefix}--ln-width:${maxDigits}ch`
+}
+
+/** `<pre>` を `<figure class="code-block">` で wrap し、 figcaption に lang / copy ボタンを付与 */
+function wrapInFigure(pre: Element, lang: string | undefined, name: string | undefined): Element {
+  return h('figure.code-block', [
+    h('figcaption', [
+      h('span.lang', name ?? lang ?? ''),
+      h('button.copy', 'copy'),
+    ]),
+    pre,
+  ])
 }
 
 function getTextContent(node: Element): string {
