@@ -40,6 +40,11 @@ export function buildShell(sections: ElementContent[], meta: ShellMeta): Element
   const headChildren: ElementContent[] = [
     h('meta', { charset: 'utf-8' }),
     h('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }),
+    // favicon: ICO は universal fallback、 wave01.png は client/favicon-anim.ts が
+    // wave02-04.png に差し替えてループアニメ化する初期フレーム。 `data-anim`
+    // 属性で client 側が「自分が動かす対象」 を識別。
+    h('link', { rel: 'icon', sizes: 'any', href: '/favicon/favicon.ico' }),
+    h('link', { rel: 'icon', type: 'image/png', dataAnim: '', href: '/favicon/wave01.png' }),
   ]
 
   if (meta.title) {

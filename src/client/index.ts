@@ -5,6 +5,7 @@ import 'katex/dist/katex.min.css'
 import { initNavigation } from './navigation.ts'
 import { initCopyButtons } from './copy.ts'
 import { initFnTooltips } from './tooltip.ts'
+import { initFaviconAnimation } from './favicon-anim.ts'
 
 const sections = document.querySelectorAll<HTMLElement>('section')
 if (sections.length > 0) {
@@ -14,6 +15,8 @@ if (sections.length > 0) {
   initCopyButtons()
   initFnTooltips()
 }
+
+initFaviconAnimation()
 
 // Mermaid は build 時に `scripts/render-mermaid.ts` で SVG に静的化済みのため
 // client-side では何もしない。capture スクリプト用の互換性のため、
