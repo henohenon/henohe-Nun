@@ -1,11 +1,11 @@
 import type { ShikiTransformer } from 'shiki'
-import { decodeNunMeta } from './code-meta-codec.ts'
+import { decodeNunMeta } from './meta-codec.ts'
 
 /**
  * Shiki transformer that reads nun metadata from `meta.__raw` and transfers
  * it to `data-nun-*` attributes on the output `<pre>` element.
  *
- * encoding/decoding 仕様は `code-meta-codec.ts` を参照 (single source)。
+ * encoding/decoding 仕様は `./meta-codec.ts` を参照 (single source)。
  */
 export const nunShikiTransformer: ShikiTransformer = {
   name: 'nun',

@@ -12,12 +12,10 @@ import { remarkNunAdmonition } from './remark/nun-admonition.ts'
 import { remarkNunExtract } from './remark/nun-extract.ts'
 import { nunHandlers } from './remark/nun-handlers.ts'
 import { rehypeNunStructure } from './rehype/nun-structure.ts'
-import { rehypeNunCodePre } from './rehype/nun-code-pre.ts'
-import { rehypeNunCodeBlock } from './rehype/nun-code-block.ts'
+import { rehypeNunCodePre, rehypeNunCodeBlock, nunShikiTransformer } from './rehype/code/index.ts'
 import { rehypeNunCard } from './rehype/nun-card.ts'
 import { rehypeNunFnRef } from './rehype/nun-fn-ref.ts'
 import rehypeShiki from '@shikijs/rehype'
-import { nunShikiTransformer } from './rehype/nun-shiki-transformer.ts'
 
 export type ProcessOptions = {
   jsPath: string

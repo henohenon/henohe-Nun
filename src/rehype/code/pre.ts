@@ -1,7 +1,7 @@
 import type { Plugin } from 'unified'
 import type { Root, Element } from 'hast'
 import { visit } from 'unist-util-visit'
-import { encodeNunMeta } from './code-meta-codec.ts'
+import { encodeNunMeta } from './meta-codec.ts'
 
 /**
  * rehype plugin that pre-processes code blocks before shiki.
@@ -10,7 +10,7 @@ import { encodeNunMeta } from './code-meta-codec.ts'
  * Shiki preserves it via `meta.__raw` and `nunShikiTransformer` can
  * transfer it to `data-nun-*` attributes on the output `<pre>`.
  *
- * encoding/decoding 仕様は `code-meta-codec.ts` を参照 (single source)。
+ * encoding/decoding 仕様は `./meta-codec.ts` を参照 (single source)。
  */
 export const rehypeNunCodePre: Plugin<[], Root> = function () {
   return (tree: Root) => {
