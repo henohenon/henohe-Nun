@@ -95,17 +95,21 @@ type ShellMeta = {
   jsPath: string
 }
 
-/** {base}{deck}/thumb.webp を組み立て (capture スクリプトが生成するサムネ位置)。
+/** `{base}/{deck}/{suffix}` を組み立て。 base 末尾の `/` は剥がして二重 slash を避ける。
  *  base / deck が未設定の場合は空文字を返して呼び出し側でスキップ判定。 */
-function defaultOgImage(base: string, deck: string): string {
+function joinDeckPath(base: string, deck: string, suffix: string): string {
   if (!base || !deck) return ''
-  return `${base.replace(/\/$/, '')}/${deck}/thumb.webp`
+  return `${base.replace(/\/$/, '')}/${deck}/${suffix}`
 }
 
-/** {base}{deck}/ を組み立て。og:url と canonical link 用。 */
+/** capture スクリプトが生成するサムネ画像の URL */
+function defaultOgImage(base: string, deck: string): string {
+  return joinDeckPath(base, deck, 'thumb.webp')
+}
+
+/** og:url と canonical link 用の deck root URL */
 function defaultOgUrl(base: string, deck: string): string {
-  if (!base || !deck) return ''
-  return `${base.replace(/\/$/, '')}/${deck}/`
+  return joinDeckPath(base, deck, '')
 }
 
 /**
