@@ -77,8 +77,22 @@ Default is `default`. Last wins.
 ## prop
 `!key~value` — assign a property to the surrounding scope.
 
+```md
+# Slide
+🌊default
+!fl~footer left
+!bg~[bg](/img.png)
+
+body
+```
+
 ## content
 `!key[value]` — replace the inline position with custom content.
+
+```md
+inline !card[GitHub](https://github.com/...)
+or refs like !fn[1] become sup marks
+```
 
 
 # meta
@@ -115,7 +129,16 @@ date:
 
 
 # Templates
-🌊solo
+🌊default
+
+| template | feature |
+| --- | --- |
+| [`🌊default`](#12) | title + left body (standard) |
+| [`🌊title`](#13) | center-left title + sub + fixed image |
+| [`🌊me`](#14) | icon left + body right |
+| [`🌊message`](#15) | centered body + lead |
+| [`🌊solo`](#16) | title only, centered, no body |
+| `🌊compare` | two-column comparison (h2 articles) |
 
 
 # Default
