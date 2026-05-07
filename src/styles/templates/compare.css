@@ -28,15 +28,3 @@ section.compare > .body > article > h2 {
   font-size: clamp(13px, 4.5cqmin, 90px);
   margin-block-end: 0.3em;
 }
-
-/* `.window` opt-in (`🌊.window` で 1 article に付与): preview コンテンツを
-   browser window 風の枠で囲む。 「これがレンダリング結果」 を視覚的に明示
-   する用途。 compare の preview 側に付ける典型パターンだが、 article に汎用
-   適用できる。 */
-article.window {
-  border: 1px solid var(--border);
-  border-radius: clamp(4px, 0.6cqmin, 12px);
-  padding: clamp(10px, 2cqmin, 40px);
-  background-color: var(--base);
-  box-shadow: 0 2px 12px color-mix(in srgb, var(--shadow) 25%, transparent);
-}

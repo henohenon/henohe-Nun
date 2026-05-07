@@ -1,0 +1,15 @@
+/* `.window` opt-in: 中身を browser window 風の枠で囲む。
+   `🌊.window` (template 指定なし、 class のみ) で article / section に付与。
+
+   typical 用途は compare template の preview 側 (rendered 結果) に付けて
+   「これがレンダリング結果」 を視覚化することだが、 任意の article / section
+   で再利用できる汎用装飾なので templates/ ではなく styles/ 直下に置く。
+
+   背景は `--base`、 border は `--border`、 影は `--shadow` で theme 追従。 */
+.window {
+  border: 1px solid var(--border);
+  border-radius: clamp(4px, 0.6cqmin, 12px);
+  padding: clamp(10px, 2cqmin, 40px);
+  background-color: var(--base);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--shadow) 25%, transparent);
+}
