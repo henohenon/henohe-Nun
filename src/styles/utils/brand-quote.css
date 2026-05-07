@@ -1,0 +1,8 @@
+/* `.brand-quote` opt-in: scope 配下の blockquote を brand 色寄せに切り替える。
+   通常は `--border` と `--fg-mid` の控えめトーン (default.css 側に baseline)、
+   ここでは border-left + 本文色を brand 系に塗り直す。 section / article 単位
+   で `🌊name.brand-quote` 付与する想定。 */
+.brand-quote .body blockquote {
+  border-left-color: var(--brand);
+  color: var(--main);
+}

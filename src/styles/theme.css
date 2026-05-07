@@ -43,22 +43,5 @@ section {
   --footer-pad-x: clamp(8px, 4cqmin, 80px);
 }
 
-/* Theme preset: dark. Flips the 5 core tokens, then tightens the derived
-   mix ratios — human lightness perception is logarithmic, so the same
-   mix percentage that's invisible on white becomes a glaring lift on
-   near-black. Scoped so it works on either :root (deck-wide via
-   @theme>dark in preamble) or section (per-slide). */
-:root[data-theme="dark"],
-section[data-theme="dark"] {
-  --base: #0f0f10;
-  --main: #e6e6e6;
-  --sub: #888888;
-  --strong: #ffffff;
-  --muted: color-mix(in srgb, var(--base) 97%, var(--main));
-  --border: color-mix(in srgb, var(--base) 82%, var(--sub));
-  --overlay: color-mix(in srgb, var(--main) 5%, transparent);
-  /* Diff tints need a lighter base against the dark canvas so they stay
-     legible at the same perceived intensity as the light theme. */
-  --diff-add: color-mix(in srgb, #4b70ff 8%, transparent);
-  --diff-del: color-mix(in srgb, #ff4b75 8%, transparent);
-}
+/* Theme presets (dark 等) は `utils/dark.css` に分離。 ここは baseline token
+   定義のみに専念する。 */

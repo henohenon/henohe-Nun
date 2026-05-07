@@ -50,16 +50,8 @@ article.default > h6 {
   margin-block-end: 0.15em;
 }
 
-/* ---- Heading color hierarchy (opt-in via .hierarchy class) ----
-   デフォルトは brand 統一の落ち着いたトーン。`.hierarchy` をセクション
-   (`🌊default.hierarchy`) や global scope (`.hierarchy` 単独行) に付けると
-   h1=brand / h2=strong / h3=main / h4-6=fg-mid の 4 段階配色に切り替わる。
-   global propagation により全 section に伝播するため deck 全体トグルも可。 */
-.hierarchy article.default > h2 { color: var(--strong); }
-.hierarchy article.default > h3 { color: var(--main); }
-.hierarchy article.default > h4,
-.hierarchy article.default > h5,
-.hierarchy article.default > h6 { color: var(--fg-mid); }
+/* `.hierarchy` (heading 4 段階配色 opt-in) は `utils/hierarchy.css` に分離。
+   こちらは default template の baseline 配色のみ。 */
 
 /* article.default > .body には min-height/overflow を付けない。
    ここで body を 0 まで圧縮可能にすると article 全体が h2 のみのサイズに
@@ -153,25 +145,16 @@ article.default > h6 {
   font-weight: 600;
 }
 
-/* Blockquote
-   デフォルトは控えめ (border-color: --border, text: --fg-mid)。
-   `.brand-quote` を section/article (`🌊default.brand-quote`) に付ける
-   と、その scope 配下の blockquote が brand 色寄せになる。class 名は
-   `.hierarchy` (heading 色階層) と同じ section 単位 opt-in パターン。 */
+/* Blockquote baseline: 控えめ (border: --border, text: --fg-mid)。
+   `.brand-quote` opt-in (brand 色寄せ) は `utils/brand-quote.css` に分離。
+   border / max-inline-size は cqmin / cqi で slide container にスケール
+   させる (旧 border-left: 10px / 全幅 より細く・短く、 本文との対比強化)。 */
 .body blockquote {
-  /* border / max-inline-size は cqmin / cqi で slide container にスケール
-     させる。 旧 (border-left: 10px / 全幅) より細く・短くなり、 視覚的に
-     blockquote と本文の対比が出やすい。 */
   border-left: clamp(3px, 0.6cqmin, 8px) solid var(--border);
   padding-inline-start: 0.75em;
   max-inline-size: 80cqi;
   color: var(--fg-mid);
   font-style: italic;
-}
-
-.brand-quote .body blockquote {
-  border-left-color: var(--brand);
-  color: var(--main);
 }
 
 /* HR */

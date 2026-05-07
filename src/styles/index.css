@@ -7,10 +7,14 @@
 @import './footnote.css';
 @import './card.css';
 @import './cursor-jack.css';
-@import './window.css';
 @import './templates/default.css';
 @import './templates/title.css';
 @import './templates/me.css';
 @import './templates/message.css';
 @import './templates/solo.css';
 @import './templates/compare.css';
+/* utility / modifier classes は最後に置いて override 優先度を持たせる */
+@import './utils/dark.css';
+@import './utils/hierarchy.css';
+@import './utils/brand-quote.css';
+@import './utils/window.css';

@@ -1,0 +1,10 @@
+/* `.hierarchy` opt-in: heading 配色を 4 段階に分ける (h1=brand / h2=strong /
+   h3=main / h4-6=fg-mid)。 default の brand 統一トーンより視覚的階層が出る。
+   section / global scope に付与すると配下の article.default に伝播。
+   現状 article.default 専用 (default.css の h2-h6 sizing と coupled、 他
+   template に拡張する時は selector を見直す)。 */
+.hierarchy article.default > h2 { color: var(--strong); }
+.hierarchy article.default > h3 { color: var(--main); }
+.hierarchy article.default > h4,
+.hierarchy article.default > h5,
+.hierarchy article.default > h6 { color: var(--fg-mid); }
