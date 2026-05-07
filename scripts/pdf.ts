@@ -100,16 +100,11 @@ async function main(): Promise<void> {
           clipPath.setAttribute('id', clipId)
           clipPath.setAttribute('clipPathUnits', 'userSpaceOnUse')
 
-          // shape を class 付きで clone すると footer.css の `.footer-rule { y: ... }` /
-          // `.footer-fr { x: 100% }` / `.footer-fl { translate: ... }` 等が再 match して
-          // SVG attribute 値を上書きしてしまう (CSS 値は presentation attribute より強い)。
-          // class を持たない fresh な要素を作って attribute と inline style だけで完結させる。
           Array.from(shapesG.children).forEach(shape => {
             const r = shape.getBoundingClientRect()
             const x = r.x - secRect.x
             const y = r.y - secRect.y
             const tag = shape.tagName.toLowerCase()
-            const cs = window.getComputedStyle(shape)
             if (tag === 'rect') {
               const rect = document.createElementNS(NS, 'rect')
               rect.setAttribute('x', String(x))
@@ -118,6 +113,7 @@ async function main(): Promise<void> {
               rect.setAttribute('height', String(r.height))
               clipPath.appendChild(rect)
             } else if (tag === 'text') {
+              const cs = window.getComputedStyle(shape)
               const anchor = cs.textAnchor || 'start'
               const tx = anchor === 'end' ? r.right - secRect.x
                 : anchor === 'middle' ? (r.left + r.right) / 2 - secRect.x
@@ -125,8 +121,9 @@ async function main(): Promise<void> {
               // dominant-baseline: alphabetic で y はおおよそ bbox.bottom (descender 無視)。
               // footer text は日付/タイトル等 ASCII 中心で descender が少ないので近似で許容。
               const ty = r.bottom - secRect.y
-              // text 子要素 (text node + tspan) のみ移植、 元 element の class / 属性は破棄。
-              const text = document.createElementNS(NS, 'text')
+              const text = shape.cloneNode(true) as Element
+              text.removeAttribute('style')
+              text.removeAttribute('transform')
               text.setAttribute('x', String(tx))
               text.setAttribute('y', String(ty))
               text.setAttribute('text-anchor', anchor)
@@ -134,10 +131,9 @@ async function main(): Promise<void> {
               text.setAttribute('font-family', cs.fontFamily)
               text.setAttribute('font-size', cs.fontSize)
               text.setAttribute('font-weight', cs.fontWeight)
-              if (cs.fontStyle && cs.fontStyle !== 'normal') {
-                text.setAttribute('font-style', cs.fontStyle)
-              }
-              Array.from(shape.childNodes).forEach(c => text.appendChild(c.cloneNode(true)))
+              // CSS 由来の translate / transform を打ち消す (SVG attribute 側は除去済みだが
+              // CSS rule が再 match しないようにインライン style で完全 override)
+              text.setAttribute('style', 'transform: none !important; translate: none !important;')
               clipPath.appendChild(text)
             }
           })
