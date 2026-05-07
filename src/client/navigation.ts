@@ -69,6 +69,14 @@ export function initNavigation(sections: NodeListOf<HTMLElement>): void {
     } else if (e.key === 'End') {
       e.preventDefault()
       location.hash = `#${sections.length}`
+    } else if (e.key === 'Enter') {
+      // Enter で全画面トグル (presenter 操作の最頻出 1 キー)
+      e.preventDefault()
+      if (document.fullscreenElement) {
+        document.exitFullscreen()
+      } else {
+        document.documentElement.requestFullscreen()
+      }
     }
   })
 
@@ -99,13 +107,14 @@ export function initNavigation(sections: NodeListOf<HTMLElement>): void {
     }
   }, { passive: true })
 
-  // Fullscreen click
+  // Fullscreen click: 左半分 → 戻る、 右半分 → 進む。 中点はビューポート幅基準
   document.addEventListener('click', (e) => {
     if (!document.fullscreenElement) return
     const target = e.target as HTMLElement
     // Don't navigate on interactive elements
     if (target.closest('a, button, details, input, select, textarea')) return
-    navigate(1)
+    const isRight = e.clientX > window.innerWidth / 2
+    navigate(isRight ? 1 : -1)
   })
 
   // Resize → re-fit current slide

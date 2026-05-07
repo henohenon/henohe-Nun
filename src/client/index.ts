@@ -6,6 +6,7 @@ import { initNavigation } from './navigation.ts'
 import { initCopyButtons } from './copy.ts'
 import { initFnTooltips } from './tooltip.ts'
 import { initFaviconAnimation } from './favicon-anim.ts'
+import { initCursorJack } from './cursor-jack.ts'
 
 const sections = document.querySelectorAll<HTMLElement>('section')
 if (sections.length > 0) {
@@ -14,6 +15,7 @@ if (sections.length > 0) {
   initNavigation(sections)
   initCopyButtons()
   initFnTooltips()
+  initCursorJack()
 }
 
 initFaviconAnimation()

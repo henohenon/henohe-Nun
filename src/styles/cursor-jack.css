@@ -1,0 +1,23 @@
+/* Cursor jack: 全画面時のみ可視化される brand 半透明円。
+   `client/cursor-jack.ts` が mousemove で left/top を更新する。 */
+
+.cursor-jack {
+  position: fixed;
+  pointer-events: none;
+  width: clamp(32px, 4cqmin, 96px);
+  height: clamp(32px, 4cqmin, 96px);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--brand) 45%, transparent);
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: none;
+}
+
+/* 全画面中のみ native cursor を消して cursor-jack を表示 */
+:where(:fullscreen) {
+  cursor: none;
+}
+
+:where(:fullscreen) .cursor-jack {
+  display: block;
+}
