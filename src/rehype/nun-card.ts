@@ -4,6 +4,7 @@ import { visit, SKIP } from 'unist-util-visit'
 import { h } from 'hastscript'
 import { toString } from 'hast-util-to-string'
 import ogs from 'open-graph-scraper'
+import { unwrapSingleChildParagraph } from './utils.ts'
 
 /** card 縦長レイアウト指定の class 名 (`!card.v~...` の `.v`) */
 const CARD_VERTICAL_CLASS = 'v'
@@ -58,21 +59,13 @@ export const rehypeNunCard: Plugin<[], Root> = function () {
       parent.children.splice(index, 1, card)
     }
 
-    // card は内部に <div> を含むため、親が <p> のままだと
-    // ブラウザの adoption agency が走り a タグが分裂する。
-    // card だけを含む <p> は card で unwrap する。
-    visit(tree, 'element', (pNode: Element, pIndex, pParent: any) => {
-      if (pNode.tagName !== 'p' || !pParent || pIndex == null) return
-      const meaningful = (pNode.children as ElementContent[]).filter(c =>
-        !(c.type === 'text' && /^\s*$/.test(c.value))
-      )
-      if (meaningful.length !== 1) return
-      const only = meaningful[0]
-      if (only.type !== 'element' || only.tagName !== 'a') return
+    // card は内部に <div> を含むため、 親が <p> のままだとブラウザの
+    // adoption agency が走り a タグが分裂する。 card だけを含む <p> は
+    // card で unwrap する。
+    unwrapSingleChildParagraph(tree, (only) => {
+      if (only.tagName !== 'a') return false
       const cls = only.properties?.className
-      if (!Array.isArray(cls) || !cls.includes('card')) return
-      pParent.children.splice(pIndex, 1, only)
-      return [SKIP, pIndex] as const
+      return Array.isArray(cls) && cls.includes('card')
     })
   }
 }
