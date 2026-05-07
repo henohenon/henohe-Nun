@@ -181,6 +181,25 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 
 ---
 
+## やらない判断 (recorded)
+
+### fbg の PDF 互換 (screen 専用と確定 — 2026-05-07)
+
+`!fbg~` (footer background image) を PDF 出力でも screen と同じ見た目に焼きたかったが、 Chromium PDF backend のバグ群が複合して **構造選択でも DOM swap でも fix できない**と検証で確定。 fbg は **screen 専用装飾**として割り切る。
+
+検証で却下された 4 アプローチ (再挑戦時は memory `project_fbg_pdf_strategy.md` 必読):
+
+1. `<svg class="fbg-layer">` + `<image mask=url(#m)>` + cross-svg `<use href>` (`0e0579b`) — Chromium PDF backend が cross-svg `<use href>` を resolve しない既知バグ
+2. mask 内 shape を inline 化 + CSS transform で位置調整 (`b8dfe0a`) — mask 内の indirectly-rendered 要素への CSS transform は PDF backend で適用されない
+3. PDF 時に `display: none` で fbg を隠す — 思想として却下、 「逃げ過ぎ」 判断
+4. `scripts/pdf.ts` の `page.evaluate()` で fbg DOM を `<svg>` + `<clipPath>` + `<image clip-path>` 構造に swap (`b0670be` / `3e27ddd`) — mask は適用されたが visual がズレ / 不正、 検証で 「ダメ」 確定
+
+screen 側は `<div class="fbg-layer">` + `<img class="fbg-img">` + `<svg class="fbg-svg">` + CSS `mask-image: url(#fragment)` で確定 (`53eb5c2`)。 bg-layer と画像 CSS 共通化、 dark theme 対応 (`--shape-fill: white` 固定)。
+
+PDF 出力時の fbg は仕様外 (PDF では fbg が真っ黒 / 表示されない / ズレる等の現象が発生し得るが、 仕様として受け入れる)。 将来 Chromium PDF backend が SVG mask / clip-path resolution を改善したら再挑戦の余地あり。
+
+---
+
 ## 完了基準
 
 - 全スライド (light/dark 両方) のキャプチャを並べて見て、**読めない/崩れているスライドが 0**
