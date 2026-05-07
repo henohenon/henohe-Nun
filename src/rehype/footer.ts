@@ -2,6 +2,7 @@ import { h } from 'hastscript'
 import type { Element, ElementContent } from 'hast'
 import type { Scope, NwytProp } from '../types.ts'
 import { parseNwytValue } from './templates.ts'
+import { findNwytInScope } from './nwyt-helpers.ts'
 
 /**
  * section レベルの Scope にフッターを追加する。
@@ -13,8 +14,8 @@ export function appendFooter(
   globalNwyts: NwytProp[],
   sectionId: string,
 ): void {
-  const fl  = findNwyt(scope.nwyts, 'fl')  ?? findNwyt(globalNwyts, 'fl')
-  const fr  = findNwyt(scope.nwyts, 'fr')  ?? findNwyt(globalNwyts, 'fr')
+  const fl = findNwytInScope(scope, globalNwyts, 'fl')
+  const fr = findNwytInScope(scope, globalNwyts, 'fr')
 
   // footer 自体は fl / fr のどちらかが無いと出さない (テキストゼロのフッターは
   // 罫線だけになり装飾過剰)。fbg は footer の SVG mask 経由で適用されるので
@@ -94,10 +95,3 @@ function hastToSvgContent(children: ElementContent[]): ElementContent[] {
   })
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function findNwyt(nwyts: NwytProp[], key: string): NwytProp | undefined {
-  return nwyts.find(n => n.key === key)
-}

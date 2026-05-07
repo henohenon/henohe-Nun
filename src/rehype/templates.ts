@@ -8,6 +8,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeKatex from 'rehype-katex'
 import type { Scope, NwytProp, TemplateName } from '../types.ts'
 import { isScope } from '../types.ts'
+import { parseImageNwytValue } from './nwyt-helpers.ts'
 
 // 本体パイプラインと同じ拡張セットで lead/sub/fl/fr のインライン記法を処理する。
 // インライン抽出 (root > p > children) で block 系は捨てられるので、
@@ -66,16 +67,11 @@ export function resolveNwyt(scope: Scope, key: string): Element | null {
 
 /** rawValue を key に応じてパース */
 export function parseNwytValue(key: string, raw: string): ElementContent[] {
-  // bg, fbg, icon: 画像として扱う
-  // nwyt の `!` 自体が syntax marker なので、value 側は link 風の
-  // `[alt](url)` で書く慣例 (Markdown 画像 `![alt](url)` の `!` を二重に
-  // しない)。両形式 + 素のパスを受け付ける。
+  // bg, fbg, icon: 画像として扱う (parseImageNwytValue が `[alt](url)` /
+  // `![alt](url)` / 素のパスを受け付ける、 詳細は nwyt-helpers.ts)
   if (key === 'bg' || key === 'fbg' || key === 'icon') {
-    const imgMatch = raw.match(/!?\[([^\]]*)\]\(([^)]+)\)/)
-    if (imgMatch) {
-      return [h('img', { src: imgMatch[2], alt: imgMatch[1] }) as ElementContent]
-    }
-    return [h('img', { src: raw.trim(), alt: '' }) as ElementContent]
+    const parsed = parseImageNwytValue(raw) ?? { src: '', alt: '' }
+    return [h('img', parsed) as ElementContent]
   }
 
   // fl, fr, sub, lead: Markdown インラインとしてパース
