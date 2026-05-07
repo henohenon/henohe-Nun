@@ -72,6 +72,13 @@ export const rehypeNunCodePre: Plugin<[], Root> = function () {
   }
 }
 
-function setMeta(code: Element, meta: string) {
-  code.data = { ...(code.data ?? {}), meta }
+function setMeta(code: Element, meta: string): void {
+  // ElementData は hast-util-from-parse5 が `position: {...}` を required と
+  // して augment する (実用上は parse5 verbose mode のみ set されるが型は
+  // 必須化される)。 新規作成パスでは空 object で初期化して型条件を満たす。
+  if (code.data) {
+    code.data.meta = meta
+    return
+  }
+  code.data = { meta, position: {} }
 }

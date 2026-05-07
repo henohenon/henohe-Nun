@@ -30,5 +30,9 @@ declare module 'micromark-util-types' {
     nunAdmonitionType: 'nunAdmonitionType'
     nunAdmonitionTitle: 'nunAdmonitionTitle'
     nunAdmonitionBody: 'nunAdmonitionBody'
+    nunMark: 'nunMark'
+    nunMarkSequence: 'nunMarkSequence'
+    nunMarkSequenceTemporary: 'nunMarkSequenceTemporary'
+    nunMarkText: 'nunMarkText'
   }
 }
