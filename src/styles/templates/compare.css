@@ -7,11 +7,10 @@
    流れる (重要なら markdown 側で 2 つに整理する)。 */
 
 section.compare > .body {
-  display: grid;
+  /* display:grid / min-height:0 は base.css の baseline */
   grid-template-columns: 1fr 1fr;
   align-content: start;
   gap: clamp(8px, 3cqmin, 60px);
-  min-height: 0;
 }
 
 /* 各 article は自然な高さ、 内側に grid を持つ場合 (default の入れ子等) は

@@ -59,15 +59,25 @@ section.active {
 }
 
 /* ---- Slide title (`section > h1`) baseline ----
-   全 template 共通の見た目 (font / color / line-height) はここに集約し、
+   全 template 共通の見た目 (font / color / line-height / margin) はここに集約。
    各 template ファイルでは差分のみ override する。
-   - title: `color: var(--strong)` + `line-height: 1.05`
-   - solo:  `text-align: center` + `max-width`
-   - default / me / message: `margin-block-end` のみ追加 */
+   - title: `color: var(--strong)` + `line-height: 1.05` + `max-width`
+   - solo:  `text-align: center` + `max-width` (margin-block-end はリセット可)
+   - me:    `margin-block-end: 0.35em` (default/message は baseline 0.3em のまま) */
 section > h1 {
   font-size: var(--text-h1);
   color: var(--brand);
   line-height: 1.1;
+  margin-block-end: 0.3em;
+}
+
+/* ---- Slide body (`section > .body`) baseline ----
+   各 template は grid 直系で本文をレイアウトする。 共通プロパティを集約、
+   template 固有の grid-template / align-content / gap / max-width 等は
+   templates/ 側で override する。 */
+section > .body {
+  display: grid;
+  min-height: 0;
 }
 
 /* ---- Inline elements ---- */

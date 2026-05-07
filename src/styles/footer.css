@@ -34,6 +34,6 @@ section > footer {
 
 .footer-fr {
   x: 100%;
-  translate: calc(-1 * var(--footer-pad-x)) var(--footer-font-size);
+  translate: calc(100% - var(--footer-pad-x)) var(--footer-font-size);
   text-anchor: end;
 }

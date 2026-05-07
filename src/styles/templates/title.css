@@ -26,8 +26,8 @@ section.title > .sub {
    `currentColor` を使う path に CSS `color` が効くので、 brand 色で塗れる。 */
 section.title > .henoheno {
   position: absolute;
-  right: var(--slide-pad-x);
-  bottom: var(--slide-pad-bottom);
+  right: -10%;
+  bottom: -70%;
   width: 80%;
   height: auto;
   color: var(--brand);

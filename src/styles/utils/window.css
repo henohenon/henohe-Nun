@@ -11,5 +11,5 @@
   border-radius: clamp(4px, 0.6cqmin, 12px);
   padding: clamp(10px, 2cqmin, 40px);
   background-color: var(--base);
-  box-shadow: 0 2px 12px color-mix(in srgb, var(--shadow) 25%, transparent);
+  box-shadow: 2px 3px 12px color-mix(in srgb, var(--shadow) 25%, transparent);
 }

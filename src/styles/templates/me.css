@@ -1,11 +1,14 @@
 /* ---- me template ---- */
+
+/* h1: baseline (margin-block-end: 0.3em) より僅かに広いマージン。 icon を
+   下に持つレイアウトとの間隔バランス調整。 */
 section.me > h1 {
   margin-block-end: 0.35em;
 }
 
 section.me > .container {
   display: grid;
-  grid-template-columns: clamp(60px, 20cqmin, 360px) 1fr;
+  grid-template-columns: clamp(120px, 40cqmin, 720px) 1fr;
   gap: clamp(16px, 5cqmin, 100px);
   align-items: start;
   min-height: 0;
@@ -15,8 +18,6 @@ section.me > .container {
 section.me > .container > .icon img {
   width: 100%;
   height: auto;
-  border-radius: 50%;
-  aspect-ratio: 1;
   object-fit: cover;
   display: block;
 }

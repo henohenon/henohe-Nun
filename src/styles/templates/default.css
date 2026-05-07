@@ -1,33 +1,30 @@
-/* ---- default template ---- */
+/* ---- default template ----
+   タイトル + 左寄せ body の通常スライド。 baseline は base.css の
+   `section > h1` / `section > .body` と body.css の `.body *` typography に
+   集約済みなので、 default は h2-h6 サイズ階層 + body の grid-auto-rows /
+   align-content / gap のみ持つ。 `.hierarchy` (h1-h6 4 段階配色 opt-in) は
+   utils/hierarchy.css へ。 */
+
 article.default {
   display: grid;
   grid-template-rows: auto auto;
   /* min-height/overflow は付けない (zoom-fit が overflow を検知できなくなる) */
 }
 
-/* Section title (差分のみ; baseline は base.css の `section > h1`) */
-section.default > h1 {
-  margin-block-end: 0.3em;
-}
-
-/* Section body — zoom-fit target */
+/* Section body — zoom-fit target。 grid 既定 align-content (stretch) は
+   table 行などを余白で stretch するので start 固定 + gap を持たせる。 */
 section.default > .body {
-  display: grid;
   grid-auto-rows: auto;
-  /* grid の既定 align-content (stretch) だと track が container 高さに
-     引き伸ばされ、table 行などが余白で stretch される。start 固定で
-     コンテンツは自然サイズ + 余りは下に。zoom-fit はそのまま機能。 */
   align-content: start;
   gap: clamp(4px, 1cqmin, 20px);
-  min-height: 0;
-  /* overflow: hidden は撤廃。tooltip 等の position:absolute 要素が body
-     端からはみ出して表示できるようにする。section 自体は overflow:hidden
-     なので slide 端を超える分は引き続きクランプされる。 */
+  /* overflow: hidden は撤廃。 tooltip 等の position:absolute が body 端から
+     はみ出して表示できるようにする。 section 自体は overflow:hidden なので
+     slide 端を超える分は引き続きクランプされる。 */
 }
 
-/* Article headings — h2/h3 のサイズ差を広げて視覚的階層を強調。
-   font-size は theme.css の `--text-hN` token を参照、 line-height /
-   margin / color のみ default 固有の調整。 */
+/* Article headings — h2/h3 のサイズ差を広げて視覚的階層を強調。 font-size は
+   theme.css の `--text-hN` token を参照、 line-height / margin / color のみ
+   default 固有の調整。 */
 article.default > h2 {
   font-size: var(--text-h2);
   color: var(--brand);
@@ -50,116 +47,9 @@ article.default > h6 {
   margin-block-end: 0.15em;
 }
 
-/* `.hierarchy` (heading 4 段階配色 opt-in) は `utils/hierarchy.css` に分離。
-   こちらは default template の baseline 配色のみ。 */
-
 /* article.default > .body には min-height/overflow を付けない。
    ここで body を 0 まで圧縮可能にすると article 全体が h2 のみのサイズに
-   潰れ、本文が section.body の overflow:hidden で hidden され、
+   潰れ、 本文が section.body の overflow:hidden で hidden され、
    zoom-fit も overflow を検知できず縮小しない (= 本文が消える)。
    article > .body は素直に natural content height を持たせて、
    overflow 制御は外側 (section > .body) と zoom-fit に任せる。 */
-
-/* ---- Body content typography (shared across all templates) ---- */
-.body p {
-  line-height: 1.65;
-  margin-block-end: 0.4em;
-}
-.body p:last-child { margin-block-end: 0; }
-
-.body ul,
-.body ol {
-  /* padding を使って marker の reservoir 位置を統一 (margin だと
-     ul の `•` と ol の数字で marker 表示位置が揃わない)。 */
-  padding-inline-start: 1.4em;
-  margin-inline-start: 0;
-  margin-block-end: 0.35em;
-  line-height: 1.6;
-}
-.body li { margin-block-end: 0.1em; }
-.body li:last-child { margin-block-end: 0; }
-
-/* Checklist — `appearance: none` でカスタム描画し、本文サイズと釣り合わせる */
-.body li:has(> input[type="checkbox"]) {
-  list-style: none;
-  margin-inline-start: -1.4em;
-}
-.body input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 0.95em;
-  height: 0.95em;
-  border: 2px solid var(--brand);
-  border-radius: 0.2em;
-  background-color: transparent;
-  vertical-align: -0.1em;
-  margin-inline-end: 0.4em;
-  cursor: pointer;
-  display: inline-block;
-  flex-shrink: 0;
-}
-.body input[type="checkbox"]:checked {
-  background-color: var(--brand);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M3 8 L7 12 L13 4'/></svg>");
-  background-size: 80%;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-/* Table — table 用の罫線色を local 変数化。`--border` よりも main 寄りで
-   table を強めに見せ、code-block 等の他の `--border` 利用者は影響なし。
-   border-collapse: separate + overflow: hidden で角丸を有効化する。 */
-.body table {
-  --table-border-color: color-mix(in srgb, var(--main) 30%, var(--base));
-  border-collapse: separate;
-  border-spacing: 0;
-  width: 100%;
-  margin-block-end: 0.4em;
-  border: 1px solid var(--table-border-color);
-  border-radius: 0.4em;
-  overflow: hidden;
-}
-.body th,
-.body td {
-  border-right: 1px solid var(--table-border-color);
-  border-bottom: 1px solid var(--table-border-color);
-  padding: 0.3em 0.6em;
-  text-align: left;
-}
-/* Markdown の `|:---:|` `|---:|` で出力される HTML `align` 属性を尊重する。
-   (`text-align: left` ルールが UA stylesheet を上書きしてしまうため明示) */
-.body th[align="center"],
-.body td[align="center"] { text-align: center; }
-.body th[align="right"],
-.body td[align="right"] { text-align: right; }
-.body th:last-child,
-.body td:last-child {
-  border-right: 0;
-}
-.body tr:last-child > th,
-.body tr:last-child > td {
-  border-bottom: 0;
-}
-.body th {
-  background: var(--muted);
-  font-weight: 600;
-}
-
-/* Blockquote baseline: 控えめ (border: --border, text: --fg-mid)。
-   `.brand-quote` opt-in (brand 色寄せ) は `utils/brand-quote.css` に分離。
-   border / max-inline-size は cqmin / cqi で slide container にスケール
-   させる (旧 border-left: 10px / 全幅 より細く・短く、 本文との対比強化)。 */
-.body blockquote {
-  border-left: clamp(3px, 0.6cqmin, 8px) solid var(--border);
-  padding-inline-start: 0.75em;
-  max-inline-size: 80cqi;
-  color: var(--fg-mid);
-  font-style: italic;
-}
-
-/* HR */
-.body hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin-block: 0.5em;
-}
