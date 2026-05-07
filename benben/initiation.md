@@ -14,7 +14,6 @@ date: 2026-05-07
 
 
 # Index
-!fl~index
 
 - [About](#3)
 - [Custom Syntax](#4)
@@ -27,7 +26,6 @@ date: 2026-05-07
 
 # へのへ Nun
 🌊me
-!fl~about
 !icon~[icon](/images/henohe-Nun.webp)
 
 [へのへのん](https://github.com/henohenon)'s md2Slide tool
@@ -40,6 +38,7 @@ date: 2026-05-07
 
 
 # Scope
+!fl~Custom Syntax
 A scope spans from one heading to the next of equal or higher level.
 Anything before the first heading is the global default.
 
@@ -60,6 +59,7 @@ Anything before the first heading is the global default.
 
 
 # 🌊Template
+!fl~Custom Syntax
 Pick a template per scope with `🌊name` on its own line (right under the heading).
 Default is `default`. Last wins.
 
@@ -73,6 +73,7 @@ Default is `default`. Last wins.
 
 
 # nwyt
+!fl~Custom Syntax
 
 ## prop
 `!key~value` — assign a property to the surrounding scope.
@@ -96,6 +97,7 @@ or refs like !fn[1] become sup marks
 
 
 # meta
+!fl~Custom Syntax
 Page meta block (title / description / date / etc.).
 ````md
 ~~~meta
@@ -108,6 +110,7 @@ date:
 
 # nwyt list
 🌊default
+!fl~Custom Syntax
 
 | key | kind | role |
 | --- | --- | --- |
@@ -143,6 +146,7 @@ date:
 
 # Default
 🌊compare
+!fl~Templates
 
 ## 
 🌊default.window
@@ -157,6 +161,7 @@ preview
 
 # Title
 🌊compare
+!fl~Templates
 
 ##
 🌊title.window
@@ -171,6 +176,7 @@ preview
 
 # Me
 🌊compare
+!fl~Templates
 
 ##
 🌊me.window
@@ -189,6 +195,7 @@ Profile-style slide. icon left, body right.
 
 # Message
 🌊compare
+!fl~Templates
 
 ##
 🌊message.window
@@ -207,6 +214,7 @@ Centered callout body.
 
 # Solo
 🌊compare
+!fl~Templates
 
 ##
 🌊solo.window
@@ -223,6 +231,7 @@ Centered callout body.
 
 # Markdown — text decoration
 🌊default
+!fl~Basic Markdown
 
 **bold** / *italic* / ***bold italic***
 
@@ -239,6 +248,7 @@ inline `const x = 1`
 
 # Markdown — lists
 🌊default
+!fl~Basic Markdown
 
 ## bullet / ordered
 
@@ -257,6 +267,7 @@ inline `const x = 1`
 
 # Markdown — tables / links
 🌊default
+!fl~Basic Markdown
 
 ## table
 
@@ -275,6 +286,7 @@ inline `const x = 1`
 
 # Code block
 🌊default
+!fl~Basic Markdown
 
 ## language
 
@@ -302,6 +314,7 @@ export async function process(md: string) {
 
 # Code block — embed
 🌊default
+!fl~Basic Markdown
 
 ## embed_svg
 
@@ -344,6 +357,7 @@ flowchart LR
 
 # Decoration block — kinds
 🌊default
+!fl~Basic Markdown
 
 :::note
 **note** — supplemental remark
@@ -368,6 +382,7 @@ flowchart LR
 
 # Decoration block — nested
 🌊default
+!fl~Basic Markdown
 
 ::::note Outer
 :::tip Inner
@@ -378,6 +393,7 @@ Add more colons to nest.
 
 # Math
 🌊default
+!fl~Basic Markdown
 
 ## inline
 
@@ -402,6 +418,7 @@ $$
 
 # Footnote
 🌊default
+!fl~Custom Content
 
 `!fn[id]` renders a sup mark !fn[1].
 Hover for tooltip, click to jump !fn[2]. Cross-slide refs work too !fn[3].
@@ -418,6 +435,7 @@ Math is allowed too: $e^{i\pi} + 1 = 0$.
 # Footnote on a dedicated slide
 !fn.head~[3]
 🌊default
+!fl~Custom Content
 
 `!fn~[id]` at h1 scope makes the whole slide the body of the footnote.
 `.head` includes the heading in the tooltip (default: body only).
@@ -426,6 +444,7 @@ Math is allowed too: $e^{i\pi} + 1 = 0$.
 # Background — `!bg~`
 !bg~[bg](/images/tgs.jpg)
 🌊default
+!fl~Custom Content
 
 `!bg~[alt](url)` lays an image behind the slide.
 `[alt](url)` or a bare path. Global setting propagates to all slides.
@@ -434,6 +453,7 @@ Math is allowed too: $e^{i\pi} + 1 = 0$.
 # Footer background — `!fbg~`
 !fbg~[fbg](/images/tgs.jpg)
 🌊default
+!fl~Custom Content
 
 `!fbg~[alt](url)` masks an image with the footer's SVG shapes (line + text).
 Only the line and text show through, framing the image.
@@ -441,6 +461,7 @@ Only the line and text show through, framing the image.
 
 # Link card
 🌊default
+!fl~Custom Content
 
 ## horizontal (default)
 
