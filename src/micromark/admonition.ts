@@ -6,6 +6,7 @@ import type {
 } from 'micromark-util-types'
 import type { Extension as FromMarkdownExtension } from 'mdast-util-from-markdown'
 import { fromMarkdown } from 'mdast-util-from-markdown'
+import { DEFAULT_TITLES } from '../admonition.ts'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -14,14 +15,6 @@ import { fromMarkdown } from 'mdast-util-from-markdown'
 const CODE_COLON = 58 // `:`
 const CODE_SPACE = 32 // ` `
 const CODE_TAB = 9
-
-const DEFAULT_TITLES: Record<string, string> = {
-  note: 'Note',
-  info: 'Info',
-  tip: 'Tip',
-  warning: 'Warning',
-  alert: 'Alert',
-}
 
 // ---------------------------------------------------------------------------
 // Token types

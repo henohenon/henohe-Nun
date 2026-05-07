@@ -1,14 +1,7 @@
 import type { Plugin } from 'unified'
 import type { Root, Paragraph, RootContent } from 'mdast'
 import { fromMarkdown } from 'mdast-util-from-markdown'
-
-const DEFAULT_TITLES: Record<string, string> = {
-  note: 'Note',
-  info: 'Info',
-  tip: 'Tip',
-  warning: 'Warning',
-  alert: 'Alert',
-}
+import { DEFAULT_TITLES } from '../admonition.ts'
 
 // 3コロン以上 + 種別名 (ネスト時は4+コロン)
 const OPEN_RE = /^:{3,}([a-zA-Z]+)\s*(.*)$/
