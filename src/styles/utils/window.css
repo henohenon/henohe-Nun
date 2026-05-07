@@ -12,4 +12,5 @@
   padding: clamp(10px, 2cqmin, 40px);
   background-color: var(--base);
   box-shadow: 2px 3px 12px color-mix(in srgb, var(--shadow) 25%, transparent);
+  overflow: hidden;
 }
