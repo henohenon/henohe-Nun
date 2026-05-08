@@ -85,6 +85,9 @@ export const rehypeNunStructure: Plugin<[Options], Root, Root> = function (optio
       },
     )
 
-    tree.children = [shell]
+    // doctype 必須: 欠落すると Chromium が quirks mode に入り `<table>` が color
+    // 継承を破壊する (table 内 td/th が body の color を直接拾い、 section の
+    // `color: var(--main)` が伝播せず dark theme で text が黒のまま読めなくなる)。
+    tree.children = [{ type: 'doctype' }, shell]
   }
 }
