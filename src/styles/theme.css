@@ -14,8 +14,11 @@
   /* shadow は 「光の不在」 概念で theme-independent。 `--main` 連動だと dark
      theme で `--main: #e6e6e6` が canvas より明るくなり 「光るような halo」
      になってしまう。 black 基準にして light/dark どちらも canvas より暗い
-     drop shadow が出るように固定する。 */
-  --shadow: color-mix(in srgb, #000 50%, transparent);
+     drop shadow が出るように固定する。
+     dark canvas (`#0f0f10`) 上で差が出るように 70% (alpha 0.7) で持ち上げる
+     — 50% だと dark canvas との明度差が小さすぎて影が見えなかった。 light も
+     許容範囲、 50% より僅か濃い (主張すぎず). */
+  --shadow: color-mix(in srgb, #000 70%, transparent);
 
   /* Exceptions --------------------------------------------------------- */
   --code-accent: #d6336c; /* inline code highlight */
