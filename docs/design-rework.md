@@ -148,9 +148,9 @@ dark theme の baseline 整備に着手 (Polish P4 系の続き)。 fbg PDF を 
 - diff highlight 修復 (`e9264fb`) — shiki dual theme で `.shiki span { background-color }` を全 span に当てたため `.line.diff-add/del` の line bg が上書きされ消えていた。 `.shiki` 自体にだけ bg を当てる方向で修正、 dark の `--diff-add/del` を 8%→18% に上げ light と統一
 - `.code-bare` opt-in (`2cfaf9e`) — 新規 `utils/code-bare.css`。 scope (section / article) に `.code-bare` で配下 `figure.code-block > figcaption` (lang label + copy ボタン) を非表示、 figure 枠は維持。 「コードを主役にしたいスライド」 用、 `.brand-quote` / `.window` / `.hierarchy` 同様の opt-in パターン
 - shadow を black 基準に (`7e98af4` `393f22c`) — `--shadow` を `var(--main) 50%` から black 基準に変更。 `--main` 連動だと dark で「白い halo」 になっていた。 50% は dark canvas で識別不能だったため 70% (`393f22c`) に持ち上げた状態。 dark canvas 上で shadow を見せる本質的難しさは継続課題
+- shadow を `--main` 連動に戻して 40% へ (`4a35c8c`) — user 指示 「`--main` 連動のまま比率を下げたい」 を受けて theme 連動 (light=黒系 / dark=白系) に復帰、 過去 50% で halo が強すぎた分を 40% まで絞った。 18% / 30% は弱すぎ、 40% で OK 判断 (initiation slide 12 で確認)
 
 **進行中 / 未確定**:
-- shadow の dark 表示 (`393f22c` で 70% 黒だが、 「dark canvas に黒影」 は本質的に難しいテーマ。 別アプローチ — 例えば surface elevation で `.window` bg を canvas より一段明るくする、 brand-color glow 化、 border 強化 — を検討する余地)
 - 全 32 dark スライドの目視 audit は未完 (table / code / mark / shadow 周りの修正後の確認は 2-3 枚分のみ、 残り 28 枚は次セッション)
 - `.code-bare` の audit pending list 追加 (`project_class_audit_pending.md` に既存 `.hierarchy`/`.brand-quote`/`.window`/`.v`/`.head` と同列で)
 
@@ -172,6 +172,10 @@ allow に `Bash(bunx tsx *)` と `Bash(rm -f scripts/_debug*)` を narrow patter
 ## 残作業
 
 優先度・トピック別に再構築。
+
+### 全体レビュー
+
+- [ ] **全体のデザインを手で見直す** — 個別の修正タスクは「報告された問題への反応」 ベースで進めてきたが、 一度全 slide を通して目視で違和感や改善余地を拾う必要がある。 light / dark 両 theme で 32 slide 流して、 ここまでの局所修正が想定外の副作用を生んでないか、 全体としてのトーン (色階層 / spacing / shadow / typography) が整ってるかを user の感覚でチェック
 
 ### コンテナ・レイアウト
 
