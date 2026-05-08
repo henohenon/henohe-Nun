@@ -35,6 +35,7 @@ export function appendFooterBackground(
     parsed.alt || fbg.key,
     footerMaskId(sectionId),
     footerShapeId(sectionId),
+    fbg.classes,
   )
   el.children.push(elem)
   return true
@@ -45,6 +46,7 @@ function buildFooterBackground(
   alt: string,
   maskId: string,
   shapeId: string,
+  classes: string[],
 ): ElementContent {
   const mask = h('mask', { id: maskId }, [
     h('use', { href: `#${shapeId}` }),
@@ -56,6 +58,7 @@ function buildFooterBackground(
 
   const img = h('img.fbg-img', {
     src, alt,
+    className: classes,
     style: `-webkit-mask-image: url(#${maskId}); mask-image: url(#${maskId});`,
   }) as ElementContent
 

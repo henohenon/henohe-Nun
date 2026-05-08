@@ -86,7 +86,9 @@ const tokenize: Tokenizer = function (effects, ok, nok) {
   }
 
   const classRest: State = function (code) {
-    if (isAlphanumeric(code)) {
+    // class 名は `[a-zA-Z0-9_-]` 許可 (UnoCSS の `object-bottom` `rounded-lg`
+    // 等で `-` `_` 必須)。 nwyt-content.ts と挙動を揃える。
+    if (isAlphanumeric(code) || code === 45 /* - */ || code === 95 /* _ */) {
       effects.consume(code)
       return classRest
     }

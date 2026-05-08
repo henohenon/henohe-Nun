@@ -18,9 +18,9 @@
   pointer-events: none;
 }
 
-/* `<img>` 系のみ object-fit */
-.bg-layer,
-.fbg-img {
+/* `<img>` 系のみ object-fit。 `:where()` で specificity を 0 に下げ、
+   user の `!bg.object-bottom~` 等で UnoCSS class 経由の上書きを許可する。 */
+:where(.bg-layer, .fbg-img) {
   object-fit: cover;
   object-position: center;
 }

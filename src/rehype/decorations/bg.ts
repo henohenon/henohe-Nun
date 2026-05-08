@@ -19,10 +19,10 @@ export function appendBackground(
   if (!bg) return false
   const parsed = parseImageNwytValue(bg.rawValue)
   if (!parsed) return false
-  el.children.unshift(buildBackground(parsed.src, parsed.alt || bg.key))
+  el.children.unshift(buildBackground(parsed.src, parsed.alt || bg.key, bg.classes))
   return true
 }
 
-function buildBackground(src: string, alt: string): ElementContent {
-  return h('img.bg-layer', { src, alt }) as ElementContent
+function buildBackground(src: string, alt: string, classes: string[]): ElementContent {
+  return h('img.bg-layer', { src, alt, className: classes }) as ElementContent
 }

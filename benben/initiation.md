@@ -504,12 +504,13 @@ Math is allowed too: $e^{i\pi} + 1 = 0$.
 
 
 # Background — `!bg~`
-!bg~[bg](/images/tgs.jpg)
+!bg.object-bottom~[bg](/images/tgs.jpg)
 🌊default
 !fl~Custom Content
 
 `!bg~[alt](url)` lays an image behind the slide.
 `[alt](url)` or a bare path. Global setting propagates to all slides.
+`.class` で UnoCSS class を上乗せ可 (`!bg.object-bottom~` で下端寄せ等)。
 
 
 # Footer background — `!fbg~`
