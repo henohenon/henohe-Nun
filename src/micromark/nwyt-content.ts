@@ -53,6 +53,8 @@ export function nunNwytContentSyntax(): Extension {
     }
 
     const keyStart: State = function (code) {
+      // `!.class[alt](url)` — key 省略の image 専用形 (handler 側で `<img>` に変換)
+      if (code === 46) return classStart(code)
       // Key must start with alphanumeric
       if (!isAlphanumeric(code)) return nok(code)
       effects.enter(T.nwytContentKey)

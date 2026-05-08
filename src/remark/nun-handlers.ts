@@ -13,6 +13,12 @@ export const nunHandlers: Record<string, Handler> = {
 
   nwytContent(state: State, node: any): Element {
     const { key, classes, url } = node.data ?? {}
+    // key 省略形 (`!.class[alt](url)`) は class 付き <img> として出力する。
+    // alt は children 先頭のテキスト value、 src は url。
+    if (!key && url) {
+      const alt = (node.children?.[0] as any)?.value ?? ''
+      return h('img', { className: classes ?? [], src: url, alt })
+    }
     const children = state.all(node)
     const classNames = ['nwyt-' + (key ?? 'unknown'), ...(classes ?? [])]
     const props: Record<string, string> = { 'data-nwyt': key ?? '' }

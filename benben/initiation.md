@@ -321,6 +321,8 @@ inline `const x = 1`
 
 ![Nun logo](/images/henohe-Nun.png "henohe-Nun")
 
+!.rounded-lg.shadow-xl[Nun logo with class](/images/henohe-Nun.png)
+
 
 # Code block
 🌊default

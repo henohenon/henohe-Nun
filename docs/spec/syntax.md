@@ -348,6 +348,16 @@ E = mc^2
 
 画像は `public/` ディレクトリに配置し、`/` 始まりの絶対パスで参照する。
 
+#### クラス指定（nwyt 拡張）
+
+`!.class1.class2[alt](url)` で class 属性付きの `<img>` を出力する。 標準の markdown image (`![alt](url)`) に対して `.class` 部分を挟む形。 UnoCSS class や独自 CSS class を直接当てたい時に使う。
+
+```Markdown
+!.rounded-lg.shadow-xl[ロゴ](/logo.png)
+```
+
+class 名に使える文字は `[a-zA-Z0-9_-]` のみ。 UnoCSS の高度な記法 (`bg-[#5932ff]` の `[` `]`、 `lg:hover:text-blue-500` の `:`、 `w-1/2` の `/` 等) は未対応。 必要なら CSS 側で当てるかカスタム class を介する。
+
 ### テーブル
 
 ```Markdown
