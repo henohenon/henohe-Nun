@@ -15,6 +15,9 @@ const slideFilter = args.values['slide'] ? parseInt(args.values['slide'], 10) : 
 const width = parseInt(args.values['width'] ?? (isThumb ? '1200' : '1920'), 10)
 const height = parseInt(args.values['height'] ?? (isThumb ? '630' : '1080'), 10)
 const quality = parseInt(args.values['quality'] ?? (isThumb ? '75' : '85'), 10)
+// `--theme dark` 指定時は <html data-theme="dark"> を inject してから capture、
+// 出力先も `dist/captures/<deck>/dark/N.webp` に振り分ける。 light 時は従来通り。
+const theme = args.values['theme']
 
 async function main(): Promise<void> {
   await ensureBuild()
@@ -31,6 +34,11 @@ async function main(): Promise<void> {
   try {
     for (const deck of decks) {
       const page = await openDeck(browser, preview.baseUrl, deck, { width, height })
+      if (theme) {
+        await page.evaluate((t) => {
+          document.documentElement.setAttribute('data-theme', t)
+        }, theme)
+      }
       const total = await countSlides(page)
 
       const slides = isThumb
@@ -39,6 +47,7 @@ async function main(): Promise<void> {
           ? [slideFilter]
           : Array.from({ length: total }, (_, i) => i + 1)
 
+      const themeDir = theme ? `${theme}/` : ''
       for (const n of slides) {
         await gotoSlide(page, n)
         const png = await page.screenshot({ type: 'png' })
@@ -46,7 +55,7 @@ async function main(): Promise<void> {
 
         const outPath = isThumb
           ? join('dist', deck, 'thumb.webp')
-          : join('dist', 'captures', deck, `${n}.webp`)
+          : join('dist', 'captures', deck, themeDir, `${n}.webp`)
         ensureDir(join(outPath, '..'))
         await writeFile(outPath, webp)
         console.log(`captured ${outPath} (${(webp.byteLength / 1024).toFixed(1)} KB)`)

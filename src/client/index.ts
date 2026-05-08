@@ -7,6 +7,15 @@ import { initFnTooltips } from './tooltip.ts'
 import { initFaviconAnimation } from './favicon-anim.ts'
 import { initCursorJack } from './cursor-jack.ts'
 
+// `?theme=dark` 等の URL query で data-theme を root に流し込む。 capture や
+// preview の入口、 deploy 済みサイトでも dark を URL だけで見るための入口。
+// 値の妥当性チェックはせず素通し (CSS 側で対応する theme 名のみ反応)、 未指定時
+// は何もしないので default (light) になる。
+const themeParam = new URLSearchParams(location.search).get('theme')
+if (themeParam) {
+  document.documentElement.setAttribute('data-theme', themeParam)
+}
+
 const sections = document.querySelectorAll<HTMLElement>('section')
 if (sections.length > 0) {
   // Navigation は内部で showSlide → fitSlide を呼ぶので、
