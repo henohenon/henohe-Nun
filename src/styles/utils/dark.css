@@ -19,12 +19,11 @@ section[data-theme="dark"] {
   --diff-del: color-mix(in srgb, #ff4b75 18%, transparent);
 }
 
-/* mark の brand 30% bg は light で十分目立つが、 dark では brand 紫が
-   暗い canvas に沈んで highlight 効果が弱い。 dark 専用に 50% へ持ち上げ
-   て contrast を確保しつつ、 内側 text を `--strong` (= white) で pure
-   白くして 「光ってる感」 を強める。 */
+/* dark の mark は text を `--strong` (= white) で固定。 bg は light と同じ
+   30% を維持し、 「白文字が legibility を担い bg 比率は light と統一」 で
+   light/dark 対称な highlight 強度に揃える (white 文字が contrast を稼ぐ分
+   bg を持ち上げる必要がない)。 */
 :root[data-theme="dark"] mark,
 section[data-theme="dark"] mark {
-  background: color-mix(in srgb, var(--brand) 50%, transparent);
   color: var(--strong);
 }

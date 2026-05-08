@@ -11,7 +11,11 @@
   --fg-mid: color-mix(in srgb, var(--main) 50%, var(--sub)); /* secondary text (blockquote, subtitle, description) */
   --border: color-mix(in srgb, var(--base) 70%, var(--sub)); /* dividers (table, hr, code-block) */
   --overlay: color-mix(in srgb, var(--main) 10%, transparent); /* hover wash for small controls (copy-btn etc.) */
-  --shadow: color-mix(in srgb, var(--main) 50%, transparent); /* drop-shadow filter */
+  /* shadow は 「光の不在」 概念で theme-independent。 `--main` 連動だと dark
+     theme で `--main: #e6e6e6` が canvas より明るくなり 「光るような halo」
+     になってしまう。 black 基準にして light/dark どちらも canvas より暗い
+     drop shadow が出るように固定する。 */
+  --shadow: color-mix(in srgb, #000 50%, transparent);
 
   /* Exceptions --------------------------------------------------------- */
   --code-accent: #d6336c; /* inline code highlight */
