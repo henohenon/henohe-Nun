@@ -134,6 +134,32 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 - `design.md` ↔ 実装ドリフト 3 件の更新 (footer position:absolute / .fn-tooltip overflow / .body overflow:hidden 撤廃)
 - title の固定画像位置/サイズ仕様明文化
 
+## 2026-05-08 セッション進捗メモ
+
+dark theme の baseline 整備に着手 (Polish P4 系の続き)。 fbg PDF を 「やらない判断」 として確定 (`project_fbg_pdf_strategy.md` 参照)、 並行して dark capture で複数バグを特定・修正。
+
+このセッションで片付いたもの (時系列):
+- fbg PDF 「やらない判断」 確定 (`6eca283`) — 4 アプローチ全敗、 screen 専用装飾と確定。 swap 実装 (`b0670be` `3e27ddd`) は revert (`7721753` `26a8b22`)
+- URL query / capture `--theme dark` 入口 (`153a11e`) — `?theme=dark` で root に `data-theme` を立てる、 capture 側に `--theme dark` flag、 `dist/captures/<deck>/dark/N.webp` に振り分け
+- body bg 修正 (`84ebee3`) — `body { background: var(--base) }` を追加。 元 token は定義のみで誰も使ってなかった、 dark theme 時に背景白のままになっていたため修正
+- doctype 追加 (`58aeb93`) — `nun-structure.ts` の hast tree 先頭に `{ type: 'doctype' }` ノード追加。 doctype 欠落で Chromium が quirks mode に入り、 `<table>` の color 継承が壊れて dark で table text が真っ黒になっていた。 strict mode 復帰で全要素正常継承
+- mark dark 強調化 → 統一 (`a5222a7` `7e98af4`) — 一旦 brand 50% に bump したが、 white 文字との合わせ技で overshoot 気味、 最終的に 「light と同じ 30% bg + white 文字」 で対称な強度に統一
+- shiki dual theme + mark white (`4b722f5`) — `themes: { light, dark }` + `defaultColor: false` に切替、 code-block.css で `[data-theme="dark"]` 配下で dark 側の var に切替。 light は github-light、 dark は github-dark
+- diff highlight 修復 (`e9264fb`) — shiki dual theme で `.shiki span { background-color }` を全 span に当てたため `.line.diff-add/del` の line bg が上書きされ消えていた。 `.shiki` 自体にだけ bg を当てる方向で修正、 dark の `--diff-add/del` を 8%→18% に上げ light と統一
+- `.code-bare` opt-in (`2cfaf9e`) — 新規 `utils/code-bare.css`。 scope (section / article) に `.code-bare` で配下 `figure.code-block > figcaption` (lang label + copy ボタン) を非表示、 figure 枠は維持。 「コードを主役にしたいスライド」 用、 `.brand-quote` / `.window` / `.hierarchy` 同様の opt-in パターン
+- shadow を black 基準に (`7e98af4` `393f22c`) — `--shadow` を `var(--main) 50%` から black 基準に変更。 `--main` 連動だと dark で「白い halo」 になっていた。 50% は dark canvas で識別不能だったため 70% (`393f22c`) に持ち上げた状態。 dark canvas 上で shadow を見せる本質的難しさは継続課題
+
+**進行中 / 未確定**:
+- shadow の dark 表示 (`393f22c` で 70% 黒だが、 「dark canvas に黒影」 は本質的に難しいテーマ。 別アプローチ — 例えば surface elevation で `.window` bg を canvas より一段明るくする、 brand-color glow 化、 border 強化 — を検討する余地)
+- 全 32 dark スライドの目視 audit は未完 (table / code / mark / shadow 周りの修正後の確認は 2-3 枚分のみ、 残り 28 枚は次セッション)
+- `.code-bare` の audit pending list 追加 (`project_class_audit_pending.md` に既存 `.hierarchy`/`.brand-quote`/`.window`/`.v`/`.head` と同列で)
+
+**bun (Windows) + Playwright の注意 (`feedback_run_scripts_via_npm.md`)**:
+script を `bun run scripts/foo.ts` 直走させると Windows で fd 3/4 継承失敗で必ず timeout する。 必ず `bun run capture` / `bun run pdf` 等 package.json 経由 (tsx / node-based) で実行。
+
+**permission 拡張 (`.claude/settings.local.json`、 gitignore 済 local-only)**:
+allow に `Bash(bunx tsx *)` と `Bash(rm -f scripts/_debug*)` を narrow pattern で追記。 broad な `bunx *` / `rm *` は引き続き ask 維持。
+
 **進行中 (tmp commit `d686295`) — 詳細**:
 - 既知バグ修正済 (確実に動く): `extractImageSrc` 正規表現 (`!\[` → `!?\[`)、`appendFooter` 早期 return 順 (bg を fl/fr 不在でも適用)、2 重 `<use>` 削除
 - レイヤー化: `<section>` の inline style → `<img class="bg-layer">` 子要素、`<footer>` の inline style → `<img class="fbg-layer">` 子要素 + SVG defs (mask)。共通 CSS は `position:absolute; inset:0; width/height:100%; object-fit:cover; pointer-events:none`、`section > .bg-layer { z-index:-1 }`
