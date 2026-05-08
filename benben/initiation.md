@@ -322,6 +322,9 @@ inline `const x = 1`
 ![Nun logo](/images/henohe-Nun.png "henohe-Nun")
 
 !.rounded-lg.shadow-xl[Nun logo with class](/images/henohe-Nun.png)
+!.opacity-50[半透明](/images/henohe-Nun.png)
+!.grayscale[モノクロ](/images/henohe-Nun.png)
+!.hue-rotate-180[色相反転](/images/henohe-Nun.png)
 
 
 # Code block
