@@ -98,14 +98,22 @@ figure.code-block > pre {
    しているため、 shiki は span 各 token に `--shiki-light` / `--shiki-dark`
    (色) を inline 焼くだけで自前の color 適用は行わない。 こちらで light
    default + dark theme 切替の cascade を持つ。
+
+   bg は `.shiki` (= `<code>`) 自体にだけ当てる。 span 全体に bg を当てると
+   `.line.diff-add` / `.diff-del` の line bg も上書きしてしまい diff
+   ハイライトが消える (CSS specificity 同等で後勝ち)。
    font-style 等は shiki がインライン style で直書きするのでここでは扱わない。 */
-.shiki,
-.shiki span {
+.shiki {
   color: var(--shiki-light);
   background-color: var(--shiki-light-bg);
 }
-:root[data-theme="dark"] .shiki,
-:root[data-theme="dark"] .shiki span {
+.shiki span {
+  color: var(--shiki-light);
+}
+:root[data-theme="dark"] .shiki {
   color: var(--shiki-dark);
   background-color: var(--shiki-dark-bg);
+}
+:root[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark);
 }

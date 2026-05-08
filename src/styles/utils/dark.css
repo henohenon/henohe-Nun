@@ -12,10 +12,11 @@ section[data-theme="dark"] {
   --muted: color-mix(in srgb, var(--base) 97%, var(--main));
   --border: color-mix(in srgb, var(--base) 82%, var(--sub));
   --overlay: color-mix(in srgb, var(--main) 5%, transparent);
-  /* Diff tints need a lighter base against the dark canvas so they stay
-     legible at the same perceived intensity as the light theme. */
-  --diff-add: color-mix(in srgb, #4b70ff 8%, transparent);
-  --diff-del: color-mix(in srgb, #ff4b75 8%, transparent);
+  /* diff tint は dark canvas 上だと 8% では識別不能だった (元々 「light と同じ
+     perceived intensity になる」 想定で抑えたが、 実機検証で line bg がほぼ
+     見えなかったため). light と揃えて 18% で可視化する。 */
+  --diff-add: color-mix(in srgb, #4b70ff 18%, transparent);
+  --diff-del: color-mix(in srgb, #ff4b75 18%, transparent);
 }
 
 /* mark の brand 30% bg は light で十分目立つが、 dark では brand 紫が
