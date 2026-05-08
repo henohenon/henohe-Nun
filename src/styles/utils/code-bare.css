@@ -1,0 +1,19 @@
+/* `.code-bare` opt-in: scope 配下の `figure.code-block` から figcaption
+   (lang label + copy ボタン) を消し、 pre 本体だけを見せる。
+   figure の border / bg / 角丸 / padding は維持する (元の chrome 削除でなく
+   identity 残しつつ heading だけ取る、 visual X)。
+   per-block 単位の混在は想定しない: scope 内 code block 全体が一貫して head
+   無しになる。 個別に head 有り / 無しを混ぜたい場合は別 mechanism を後付け。
+
+   `.brand-quote` / `.window` / `.hierarchy` 同様、 section / article 単位の
+   opt-in (`🌊default.code-bare` 等) で section / article に class が付く。 */
+
+.code-bare figure.code-block > figcaption {
+  display: none;
+}
+
+/* figcaption が消えると、 pre が figure の上端まで来るので pre の上端も
+   border-radius 必要 (元は figcaption が上端 round を担当)。 */
+.code-bare figure.code-block > pre {
+  border-radius: var(--radius);
+}
