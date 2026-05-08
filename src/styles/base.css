@@ -18,6 +18,9 @@ body {
   height: 100%;
   height: 100dvh;
   font-family: var(--font-body);
+  /* page canvas の base 色 (theme token と連動)。 section / body 自体は
+     bg を持たないと dark theme で背景が browser-default (白) のままになる。 */
+  background: var(--base);
   overflow: hidden;
 }
 
