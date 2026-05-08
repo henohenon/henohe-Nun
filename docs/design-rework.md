@@ -177,7 +177,7 @@ allow に `Bash(bunx tsx *)` と `Bash(rm -f scripts/_debug*)` を narrow patter
 
 - [ ] **footer text clipping** (Critical C7 残) — text-anchor / padding 見直し / SVG overflow visible
 - [ ] **footer (mobile) 1px 白帯** — `html`/`body` の `height` と `100dvh` の subpixel 差で下地が露出。`html { height: 100dvh }` (`043444f`) と `html/body { background: var(--base) }` (`3d16b81`) を試したがどちらも効かず revert (`2846d9c`)。実機ローカルで再調査予定
-- [ ] **テーブルの中央寄せが効いてない** — Markdown の `|---:|` (右寄せ) や `|:---:|` (中央) のアライメント指定が CSS で打ち消されてる。`.body td[align="center"]` 等の対応が必要
+- [x] **テーブルの中央寄せが効いてない** (`3fd4631`) — `<th align="center">` 等の HTML 属性は remark-gfm が出していたが、 `.body th, .body td { text-align: left }` が UA stylesheet の align 属性マッピングを上書きしていた。 `.body th[align="center"]` / `[align="right"]` 属性セレクタで明示的に text-align を指定して解決 (`body.css:94-97`)。 サンプル: `benben/initiation.md:312-316` の table ページに left/center/right 3 カラム例あり
 - [x] **コードブロックのコピーボタン padding-l** (`b071062`) — copy ボタンのボーダー撤廃 (`border: 0`)、hover bg だけで浮かす形に。あわせて copy 動作 (改行落ち / 行番号 prefix 混入 / diff `+`/`-` 混入) を全て `extractCleanCode` で吸収
 
 ### スクリプト・出力品質
