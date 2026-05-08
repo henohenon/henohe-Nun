@@ -151,7 +151,7 @@ dark theme の baseline 整備に着手 (Polish P4 系の続き)。 fbg PDF を 
 - shadow を `--main` 連動に戻して 40% へ (`4a35c8c`) — user 指示 「`--main` 連動のまま比率を下げたい」 を受けて theme 連動 (light=黒系 / dark=白系) に復帰、 過去 50% で halo が強すぎた分を 40% まで絞った。 18% / 30% は弱すぎ、 40% で OK 判断 (initiation slide 12 で確認)
 
 **進行中 / 未確定**:
-- 全 32 dark スライドの目視 audit は未完 (table / code / mark / shadow 周りの修正後の確認は 2-3 枚分のみ、 残り 28 枚は次セッション)
+- 全 34 dark スライドの capture は取得済 (shadow 40% 反映後)。 通し目視 audit は 「全体レビュー」 タスク側に移譲
 - `.code-bare` の audit pending list 追加 (`project_class_audit_pending.md` に既存 `.hierarchy`/`.brand-quote`/`.window`/`.v`/`.head` と同列で)
 
 **bun (Windows) + Playwright の注意 (`feedback_run_scripts_via_npm.md`)**:
@@ -186,7 +186,7 @@ allow に `Bash(bunx tsx *)` と `Bash(rm -f scripts/_debug*)` を narrow patter
 
 ### スクリプト・出力品質
 
-- [ ] **ダークテーマで全 23 スライド再キャプチャ** (Polish P4 残) — Phase D/E/F の色階層・muted・accent 等の dark 時挙動確認
+- [x] **ダークテーマで全 34 スライド再キャプチャ** (Polish P4 残、 `1b908b7` 後 / 2026-05-08) — `bun run capture --theme dark` で `dist/captures/initiation/dark/{1..34}.webp` を取得。 capture 自体は完了 (Discord に 4 batch で共有済)、 通し audit は 「全体レビュー」 タスクで実施
 - [x] **mermaid 描画完了待ち** (Spec S2 残) — そもそも client-side mermaid を撤廃し、build 時に Playwright で SVG 静的化する SSG 化で根治 (`ad0854f`)。capture 側の `mermaidReady` 属性待機は SSG 互換のために残置 (`b7e620d`)。bundle / modulepreload からも mermaid 関連 chunks が消える副次効果あり
 - [x] **OGP meta 確認・追加** (Spec S3 残) — `nun-structure.ts` の shell 生成を拡充。`og:title` / `og:description` / `<meta name=description>` / `og:type=website` / `og:url` / `og:image` / `twitter:card=summary_large_image` を出力。`og:url` と `og:image` は Vite `base` + deck 名から自動派生 (`{base}{deck}/` と `{base}{deck}/thumb.webp`)、`meta.url` / `meta.image` / `meta.ogImage` で個別上書き可
 
