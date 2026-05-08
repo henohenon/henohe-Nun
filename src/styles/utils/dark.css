@@ -20,8 +20,10 @@ section[data-theme="dark"] {
 
 /* mark の brand 30% bg は light で十分目立つが、 dark では brand 紫が
    暗い canvas に沈んで highlight 効果が弱い。 dark 専用に 50% へ持ち上げ
-   て contrast を確保する。 */
+   て contrast を確保しつつ、 内側 text を `--strong` (= white) で pure
+   白くして 「光ってる感」 を強める。 */
 :root[data-theme="dark"] mark,
 section[data-theme="dark"] mark {
   background: color-mix(in srgb, var(--brand) 50%, transparent);
+  color: var(--strong);
 }

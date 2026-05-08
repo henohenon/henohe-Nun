@@ -38,7 +38,14 @@ export function createProcessor(options: ProcessOptions) {
     .use(remarkRehype, { handlers: nunHandlers })
     .use(rehypeMathjax)         // 数式 → inline SVG (build 時静的化、 runtime fetch なし)
     .use(rehypeNunCodePre)      // code block pre-processing (diff, embed, name/startLine)
-    .use(rehypeShiki, { theme: 'github-light', transformers: [nunShikiTransformer] })
+    // dual theme で出力 → CSS var (`--shiki-light` / `--shiki-dark` 等) として
+    // 両 theme の色が span 各 token に inline で焼かれる。 `[data-theme="dark"]`
+    // 配下では code-block.css で dark 側の var に切替。
+    .use(rehypeShiki, {
+      themes: { light: 'github-light', dark: 'github-dark' },
+      defaultColor: false,
+      transformers: [nunShikiTransformer],
+    })
     .use(rehypeNunCodeBlock)    // code block post-processing (embed, diff classes, figure wrapper)
     .use(rehypeNunCard)          // !card → OGP fetch → card 要素
     .use(rehypeNunFnRef)        // !fn[id] → <sup data-fn="id">
