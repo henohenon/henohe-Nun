@@ -67,13 +67,21 @@ section.active {
 }
 
 /* ---- Stage (heading + content の wrapper) ----
-   section / article の主領域 layout 容器。 slide の安全領域 (footer / 装飾を
-   除く) を表す。 padding は section から stage に移譲。 grid baseline は
-   heading auto / content 1fr、 template 側で override する。 */
+   section / article の主領域 layout 容器。 grid baseline は heading auto /
+   content 1fr、 template 側で override する。 padding は **section.stage の
+   みに適用** — article.stage は section.content の内側に grid item として
+   並ぶので、 padding 持たせると二重インセットで過剰余白になる。 */
 .stage {
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 0;
+}
+
+/* slide 全体の安全領域 padding。 section.stage のみに適用 (article.stage は
+   section の content area 内なので追加 padding 不要)。 padding を section
+   からここに移譲することで、 footer (section の最終 grid 行) は section 端で
+   edge-to-edge を保つ。 */
+section > .stage {
   padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
 }
 
