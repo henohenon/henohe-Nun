@@ -100,6 +100,17 @@ fbg mask の `<use y="calc(100% - var(...))">` が iOS で効かない件。 SVG
   <line x1="calc(100% - 1em)" y1="0" x2="calc(100% - 1em)" y2="100%" />
   <text x="100%" y="22" text-anchor="end" font-size="14" font-family="monospace" fill="#5932ff" transform="translate(-4 0)">T11: calc(100% - 1em)</text>
 </svg>
+
+<p style="font-size: 13px; margin-block: 12px 4px;">T7-T11 で calc + 何かは全滅判明。 calc 抜きの literal 単位 (em / cqmin) を最後に試す。 縦線が <strong>左 (x=0) 以外</strong> に出れば その単位は動く。</p>
+
+<svg viewBox="0 0 400 32" preserveAspectRatio="none" class="calctest">
+  <line x1="2em" y1="0" x2="2em" y2="100%" />
+  <text x="100%" y="22" text-anchor="end" font-size="14" font-family="monospace" fill="#5932ff" transform="translate(-4 0)">T12: x=2em (literal、 calc 無し)</text>
+</svg>
+<svg viewBox="0 0 400 32" preserveAspectRatio="none" class="calctest">
+  <line x1="5cqmin" y1="0" x2="5cqmin" y2="100%" />
+  <text x="100%" y="22" text-anchor="end" font-size="14" font-family="monospace" fill="#5932ff" transform="translate(-4 0)">T13: x=5cqmin (literal、 calc 無し)</text>
+</svg>
 ```
 
 判定:
@@ -108,5 +119,7 @@ fbg mask の `<use y="calc(100% - var(...))">` が iOS で効かない件。 SVG
 - **T9 (cqmin calc)** 効くなら → cqmin 経由で responsive 維持可能
 - **T10 (var calc)** 効くなら → var() route も生きてる
 - **T11 (em calc)** 効くなら → em で font-size 連動 fix 可能
+- **T12 (em literal、 calc 無し)** 効くなら → em だけ生きてる ⇒ 構造変えて (例: `<svg y="100%">` + `<use y="-1.5em">`) calc 回避できる
+- **T13 (cqmin literal、 calc 無し)** 効くなら → cqmin だけ生きてる ⇒ 同じく回避路線可
 
 どれかが効けば fbg の use y を **その route に書き換えて JS 撤廃** できる。 全滅なら JS が唯一の解 (= 現状維持)。
