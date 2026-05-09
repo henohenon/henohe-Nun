@@ -1,13 +1,15 @@
 /* ---- me template ----
-   selector は `.me` (element 非依存) で section / article 両方に適用。 */
+   selector は `.me` (element 非依存) で section / article 両方に適用。
+   stage refactor 後: `.me > .stage` が grid 容器、 中に heading + container。
+   container の中に icon + content (= 旧 .body)。 */
 
 /* heading: baseline (h1 0.3em / h2 0.2em) より僅かに広いマージン。 icon /
    container との間隔バランス調整。 article 中の h2 にも同じ調整を適用 */
-.me > :is(h1, h2) {
+.me > .stage > :is(h1, h2) {
   margin-block-end: 0.35em;
 }
 
-.me > .container {
+.me > .stage > .container {
   display: grid;
   grid-template-columns: clamp(120px, 40cqmin, 720px) 1fr;
   gap: clamp(16px, 5cqmin, 100px);
@@ -16,20 +18,20 @@
   overflow: hidden;
 }
 
-.me > .container > .icon {
-  /* container は align-items: start (= body 上端揃え) だが、 icon だけは
-     縦方向中央に配置して body との視覚バランスを取る。 */
+.me > .stage > .container > .icon {
+  /* container は align-items: start (= content 上端揃え) だが、 icon だけは
+     縦方向中央に配置して content との視覚バランスを取る。 */
   align-self: center;
 }
 
-.me > .container > .icon img {
+.me > .stage > .container > .icon img {
   width: 100%;
   height: auto;
   object-fit: cover;
   display: block;
 }
 
-.me > .container > .body {
+.me > .stage > .container > .content {
   overflow: hidden;
   min-width: 0;
 }

@@ -1,8 +1,9 @@
 /* ---- title template ----
    selector は `.title` (element 非依存) で section / article 両方に適用。
-   compare の preview 列等で article として使う場面でも視覚を再現できる。 */
+   compare の preview 列等で article として使う場面でも視覚を再現できる。
+   stage refactor 後: `.title > .stage` が grid 容器、 中に heading + sub。 */
 
-.title {
+.title > .stage {
   /* base.css の auto 1fr を上書き。 auto auto にすることで残り空間が
      生まれ、 align-content: center が効くようになる。 */
   grid-template-rows: auto auto;
@@ -12,14 +13,14 @@
 
 /* h1 (section) / h2 (article in compare 等) どちらでも title の視覚を再現する
    ため `:is(h1, h2)` で両対応。 */
-.title > :is(h1, h2) {
+.title > .stage > :is(h1, h2) {
   /* baseline (base.css) からの差分: 強調色 + 詰めた line-height + 折り返し制御 */
   color: var(--strong);
   line-height: 1.05;
   max-width: 65%;
 }
 
-.title > .sub {
+.title > .stage > .sub {
   font-size: clamp(12px, 4cqmin, 80px);
   color: var(--fg-mid);
   margin-block-start: 0.5em;
@@ -28,8 +29,9 @@
 }
 
 /* henoheno は build 時に SVG を inline 化 (templates.ts:readHenohenoSvg)。
-   `currentColor` を使う path に CSS `color` が効くので、 brand 色で塗れる。 */
-.title > .henoheno {
+   `currentColor` を使う path に CSS `color` が効くので、 brand 色で塗れる。
+   stage 内に absolute 配置 — stage が position: relative なので stage 基点。 */
+.title > .stage > .henoheno {
   position: absolute;
   right: -10%;
   bottom: -70%;
@@ -39,7 +41,7 @@
   pointer-events: none;
 }
 
-.title > .henoheno > svg {
+.title > .stage > .henoheno > svg {
   width: 100%;
   height: auto;
   display: block;

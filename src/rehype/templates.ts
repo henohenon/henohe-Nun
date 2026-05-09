@@ -43,16 +43,19 @@ export function render(scope: Scope): Element {
   // heading 要素は collectFnBodies (resolve-footnotes.ts) からも tooltip 用に
   // 参照されるため、 直接 mutate せず clone した複製を template 出力 (el)
   // 側で差し替えて、 tooltip 側には素の heading を残す。
+  // heading は stage wrapper の中に入るので、 lookup は stage.children を見る
+  // (stage は template 出力の最初の child として常に存在)。
   if (scope.fnDef) {
     el.properties ??= {}
     el.properties['dataFnDef'] = scope.fnDef
     if (scope.heading) {
-      const idx = el.children.indexOf(scope.heading as ElementContent)
+      const stage = el.children[0] as Element
+      const idx = stage.children.indexOf(scope.heading as ElementContent)
       if (idx >= 0) {
         const clonedHeading = JSON.parse(JSON.stringify(scope.heading)) as Element
         const mark = h('span.fn-def-mark', `[^${scope.fnDef}]`)
         clonedHeading.children.unshift(mark as ElementContent)
-        el.children[idx] = clonedHeading as ElementContent
+        stage.children[idx] = clonedHeading as ElementContent
       }
     }
   }
@@ -107,23 +110,36 @@ function parseInlineMarkdown(raw: string): ElementContent[] {
   return root.children as ElementContent[] ?? [{ type: 'text', value: raw }]
 }
 
+/**
+ * Template 出力の共通ラッパ。 全 template が `<X.template> > <div.stage> > [...]`
+ * の形を取る。 stage は heading + content (+ template-specific 要素) の
+ * layout 容器、 stage の sibling は section level の装飾レイヤ (footer / bg /
+ * fbg) のみ。 stage は section の padding を継承し、 footer は section 端
+ * (edge-to-edge) に貼る設計。
+ */
+function wrapStage(scope: Scope, templateName: string, stageChildren: ElementContent[]): Element {
+  return h(`${scope.tag}.${templateName}`, { className: scope.classes }, [
+    h('div.stage', stageChildren) as ElementContent,
+  ])
+}
+
 function defaultTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
+  const stage: ElementContent[] = []
+  if (scope.heading) stage.push(scope.heading)
   if (scope.body.length > 0) {
-    children.push(h('div.body', renderBody(scope.body)))
+    stage.push(h('div.content', renderBody(scope.body)))
   }
-  return h(`${scope.tag}.default`, { className: scope.classes }, children)
+  return wrapStage(scope, 'default', stage)
 }
 
 function titleTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
+  const stage: ElementContent[] = []
+  if (scope.heading) stage.push(scope.heading)
   const sub = resolveNwyt(scope, 'sub')
-  if (sub) children.push(h('div.sub', [sub]))
+  if (sub) stage.push(h('div.sub', [sub]))
   const henoheno = readHenohenoSvg()
-  if (henoheno) children.push(h('div.henoheno', [henoheno]))
-  return h(`${scope.tag}.title`, { className: scope.classes }, children)
+  if (henoheno) stage.push(h('div.henoheno', [henoheno]))
+  return wrapStage(scope, 'title', stage)
 }
 
 // ---------------------------------------------------------------------------
@@ -166,33 +182,33 @@ function readHenohenoSvg(): Element | null {
 }
 
 function meTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
   const icon = resolveNwyt(scope, 'icon')
-  children.push(
+  const stage: ElementContent[] = []
+  if (scope.heading) stage.push(scope.heading)
+  stage.push(
     h('div.container', [
       h('div.icon', icon ? [icon] : []),
-      h('div.body', renderBody(scope.body)),
+      h('div.content', renderBody(scope.body)),
     ])
   )
-  return h(`${scope.tag}.me`, { className: scope.classes }, children)
+  return wrapStage(scope, 'me', stage)
 }
 
 function messageTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
+  const stage: ElementContent[] = []
+  if (scope.heading) stage.push(scope.heading)
   if (scope.body.length > 0) {
-    children.push(h('div.body', renderBody(scope.body)))
+    stage.push(h('div.content', renderBody(scope.body)))
   }
   const lead = resolveNwyt(scope, 'lead')
-  if (lead) children.push(h('div.lead', [lead]))
-  return h(`${scope.tag}.message`, { className: scope.classes }, children)
+  if (lead) stage.push(h('div.lead', [lead]))
+  return wrapStage(scope, 'message', stage)
 }
 
 function soloTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
-  return h(`${scope.tag}.solo`, { className: scope.classes }, children)
+  const stage: ElementContent[] = []
+  if (scope.heading) stage.push(scope.heading)
+  return wrapStage(scope, 'solo', stage)
 }
 
 /** compare: 左右 2 カラムで比較レイアウト。 body 配下の article (h2 単位) が
@@ -200,10 +216,10 @@ function soloTemplate(scope: Scope): Element {
  *  並列表示 (markdown プレビュー / コード等)。 article 数は 2 推奨だが任意 (3
  *  以上は折り返して 2 行目に流れる)。 */
 function compareTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
+  const stage: ElementContent[] = []
+  if (scope.heading) stage.push(scope.heading)
   if (scope.body.length > 0) {
-    children.push(h('div.body', renderBody(scope.body)))
+    stage.push(h('div.content', renderBody(scope.body)))
   }
-  return h(`${scope.tag}.compare`, { className: scope.classes }, children)
+  return wrapStage(scope, 'compare', stage)
 }

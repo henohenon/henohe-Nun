@@ -1,33 +1,36 @@
 /* ---- default template ----
    selector は `.default` (element 非依存) で section / article 両方に適用。
-   baseline は base.css の `section > h1` / `section > .body` と body.css の
-   `.body *` typography に集約済みなので、 default は h2-h6 サイズ階層 +
-   body の grid-auto-rows / align-content / gap のみ持つ。 `.hierarchy`
-   (h1-h6 4 段階配色 opt-in) は utils/hierarchy.css へ。 */
+   stage refactor 後: `.default > .stage` が grid 容器、 中に heading + content。
+   baseline は base.css の `.stage` / `.stage > h1-h6` / `.stage > .content` に
+   集約済みなので、 default 固有の override のみ持つ。 */
 
-article.default {
-  display: grid;
+article.default > .stage {
+  /* section.default は base.css の `.stage` 既定 (auto 1fr) を継承。
+     article.default は body 高さを 1fr で取らず 「natural content height」 で
+     済ませるため auto auto に override (列内 zoom-fit と相性が良い)。 */
   grid-template-rows: auto auto;
   /* min-height/overflow は付けない (zoom-fit が overflow を検知できなくなる) */
 }
 
-/* Body — zoom-fit target。 grid 既定 align-content (stretch) は
-   table 行などを余白で stretch するので start 固定 + gap を持たせる。 */
-.default > .body {
+/* Content — zoom-fit target。 grid 既定 align-content (stretch) は table 行
+   などを余白で stretch するので start 固定 + gap を持たせる。 overflow: hidden
+   は付けない (zoom-fit が children の offsetTop+offsetHeight で overflow を
+   検知するので、 hidden で clip すると detection が壊れて縮小発動しなくなる)。
+   tooltip 等の position:absolute も body 端からはみ出して表示できるように
+   visible のまま。 section 自体の overflow:hidden で slide 端を超えた分は
+   引き続きクランプされる。 */
+.default > .stage > .content {
   grid-auto-rows: auto;
   align-content: start;
   gap: clamp(4px, 1cqmin, 20px);
-  /* overflow: hidden は撤廃。 tooltip 等の position:absolute が body 端から
-     はみ出して表示できるようにする。 section 自体は overflow:hidden なので
-     slide 端を超える分は引き続きクランプされる。 */
 }
 
-/* heading 配色 / サイズは base.css の `article > h2` と body.css の `.body h3-h6`
-   に集約。 default は配色 baseline 通りで個別 override 不要。 */
+/* heading 配色 / サイズは base.css の `.stage > h1-h6` baseline に集約。
+   default は配色 baseline 通りで個別 override 不要。 */
 
-/* article.default > .body には min-height/overflow を付けない。
-   ここで body を 0 まで圧縮可能にすると article 全体が h2 のみのサイズに
-   潰れ、 本文が section.body の overflow:hidden で hidden され、
+/* article.default > .stage > .content には min-height/overflow を付けない。
+   ここで content を 0 まで圧縮可能にすると article 全体が h2 のみのサイズに
+   潰れ、 本文が section.content の overflow:hidden で hidden され、
    zoom-fit も overflow を検知できず縮小しない (= 本文が消える)。
-   article > .body は素直に natural content height を持たせて、
-   overflow 制御は外側 (section > .body) と zoom-fit に任せる。 */
+   article > .stage > .content は素直に natural content height を持たせて、
+   overflow 制御は外側 (section > .stage > .content) と zoom-fit に任せる。 */

@@ -1,7 +1,7 @@
+/* footer は section の row 2 (auto) に grid item として配置。 section は
+   padding 0 で .stage が padding 持つ設計なので、 footer は section 端で
+   edge-to-edge になる。 高さは font + line の合算で固定。 */
 section > footer {
-  position: absolute;
-  inset-block-end: 0;
-  inset-inline: 0;
   height: calc(var(--footer-font-size) + var(--footer-line-height));
   padding: 0;
 }

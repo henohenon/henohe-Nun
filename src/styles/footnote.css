@@ -24,9 +24,8 @@ sup[data-fn] a {
   border: 1px solid var(--border);
   border-radius: 0.4em;
   padding: 0.5em 0.8em;
-  min-width: 16em;
   max-width: 50em;
-  width: max-content;
+  overflow: hidden;
   box-shadow: 0 1px 3px color-mix(in srgb, var(--shadow) 40%, transparent);
   z-index: 100;
   font-size: 0.8em;

@@ -6,9 +6,10 @@
    article 数は 2 推奨。 1 つだけなら左 1 列、 3 つ以上は折り返して 2 行目に
    流れる (重要なら markdown 側で 2 つに整理する)。
 
-   selector は `.compare` (element 非依存) で section / article 両方に適用。 */
+   selector は `.compare` (element 非依存) で section / article 両方に適用。
+   stage refactor 後: `.compare > .stage > .content` が 2-col grid 容器。 */
 
-.compare > .body {
+.compare > .stage > .content {
   /* display:grid / min-height:0 は base.css の baseline */
   grid-template-columns: 1fr 1fr;
   align-content: start;
@@ -18,10 +19,10 @@
 /* 各 article は自然な高さ、 内側に grid を持つ場合 (default の入れ子等) は
    そのレイアウトを尊重。 列内の content overflow は zoom-fit (slide 全体)
    経由で吸収される。
-   article-level h2 (列タイトル) のサイズは base.css `article > h2` baseline
+   article-level h2 (列タイトル) のサイズは base.css `.stage > h2` baseline
    をそのまま使う。 「compare context だけ縮小」 というハードコードは中途半端
    (本来は zoom 等で全体をスケールすべき) なので採らない。 */
-.compare > .body > article {
+.compare > .stage > .content > article {
   min-width: 0;
   min-height: 0;
 }

@@ -1,36 +1,36 @@
-/* ---- Slide body content typography ----
-   `.body` 配下の Markdown レンダリング要素 (段落 / リスト / テーブル / 引用 /
+/* ---- Slide content typography ----
+   `.content` 配下の Markdown レンダリング要素 (段落 / リスト / テーブル / 引用 /
    hr / checkbox 等) の baseline。 全テンプレート共通なので templates/ 配下
-   ではなく独立 file に置く (旧 default.css に同居していたが、 selector が
-   `.body p` 等で template 非依存だったため箇所移動)。 */
+   ではなく独立 file に置く。 stage refactor 後は `.body` から `.content` に
+   rename されたが、 file 名は body.css のまま (history 維持目的)。 */
 
-/* --- Nested heading (h3-h6 inside `.body`) ---
-   article 配下の `<div class="body">` 内に書かれた h3 以下の見出し。
-   article 直下の h2 (列タイトル等) は base.css `article > h2` baseline 側、
+/* --- Nested heading (h3-h6 inside `.content`) ---
+   article 配下の `<div class="content">` 内に書かれた h3 以下の見出し。
+   article 直下の h2 (列タイトル等) は base.css `.stage > h2` baseline 側、
    こちらは本文中の sub heading 用。 */
-.body h3 {
+.content h3 {
   font-size: var(--text-h3);
   color: var(--brand);
   line-height: 1.15;
   margin-block-end: 0.2em;
 }
 
-.body :is(h4, h5, h6) {
+.content :is(h4, h5, h6) {
   font-size: var(--text-h4);
   color: var(--brand);
   margin-block-end: 0.15em;
 }
 
 /* --- Paragraph --- */
-.body p {
+.content p {
   line-height: 1.65;
   margin-block-end: 0.4em;
 }
-.body p:last-child { margin-block-end: 0; }
+.content p:last-child { margin-block-end: 0; }
 
 /* --- Lists --- */
-.body ul,
-.body ol {
+.content ul,
+.content ol {
   /* padding を使って marker の reservoir 位置を統一 (margin だと ul の `•` と
      ol の数字で marker 表示位置が揃わない)。 */
   padding-inline-start: 1.4em;
@@ -38,15 +38,15 @@
   margin-block-end: 0.35em;
   line-height: 1.6;
 }
-.body li { margin-block-end: 0.1em; }
-.body li:last-child { margin-block-end: 0; }
+.content li { margin-block-end: 0.1em; }
+.content li:last-child { margin-block-end: 0; }
 
 /* --- Checklist (carry custom check from default checkbox) --- */
-.body li:has(> input[type="checkbox"]) {
+.content li:has(> input[type="checkbox"]) {
   list-style: none;
   margin-inline-start: -1.4em;
 }
-.body input[type="checkbox"] {
+.content input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
   width: 0.95em;
@@ -60,7 +60,7 @@
   display: inline-block;
   flex-shrink: 0;
 }
-.body input[type="checkbox"]:checked {
+.content input[type="checkbox"]:checked {
   background-color: var(--brand);
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M3 8 L7 12 L13 4'/></svg>");
   background-size: 80%;
@@ -72,7 +72,7 @@
 /* table 用の罫線色を local 変数化。 `--border` よりも main 寄りで table を
    強めに見せ、 code-block 等の他の `--border` 利用者は影響なし。
    border-collapse: separate + overflow: hidden で角丸を有効化する。 */
-.body table {
+.content table {
   --table-border-color: color-mix(in srgb, var(--main) 30%, var(--base));
   border-collapse: separate;
   border-spacing: 0;
@@ -82,8 +82,8 @@
   border-radius: var(--radius);
   overflow: hidden;
 }
-.body th,
-.body td {
+.content th,
+.content td {
   border-right: 1px solid var(--table-border-color);
   border-bottom: 1px solid var(--table-border-color);
   padding: 0.3em 0.6em;
@@ -91,15 +91,15 @@
 }
 /* Markdown の `|:---:|` `|---:|` で出力される HTML `align` 属性を尊重する。
    (`text-align: left` ルールが UA stylesheet を上書きしてしまうため明示) */
-.body th[align="center"],
-.body td[align="center"] { text-align: center; }
-.body th[align="right"],
-.body td[align="right"] { text-align: right; }
-.body th:last-child,
-.body td:last-child { border-right: 0; }
-.body tr:last-child > th,
-.body tr:last-child > td { border-bottom: 0; }
-.body th {
+.content th[align="center"],
+.content td[align="center"] { text-align: center; }
+.content th[align="right"],
+.content td[align="right"] { text-align: right; }
+.content th:last-child,
+.content td:last-child { border-right: 0; }
+.content tr:last-child > th,
+.content tr:last-child > td { border-bottom: 0; }
+.content th {
   background: var(--muted);
   font-weight: 600;
 }
@@ -107,9 +107,8 @@
 /* --- Blockquote ---
    baseline: 控えめ (border: --border, text: --fg-mid)。 brand 寄せは
    utils/brand-quote.css の `.brand-quote` で opt-in。
-   border / max-inline-size は cqmin / cqi で slide container にスケール
-   (旧 border-left: 10px / 全幅 より細く・短く、 本文との対比強化)。 */
-.body blockquote {
+   border / max-inline-size は cqmin / cqi で slide container にスケール。 */
+.content blockquote {
   border-left: clamp(3px, 0.6cqmin, 8px) solid var(--border);
   padding-inline-start: 0.75em;
   max-inline-size: 80cqi;
@@ -118,7 +117,7 @@
 }
 
 /* --- HR --- */
-.body hr {
+.content hr {
   border: none;
   border-top: 1px solid var(--border);
   margin-block: 0.5em;
