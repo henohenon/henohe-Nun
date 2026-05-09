@@ -229,7 +229,7 @@ design.md ↔ 実装ドリフト 3 件の整理から開始、 そのまま **st
 
 ### Spec
 
-- [ ] **title の固定画像位置/サイズ仕様を spec に明文化** (Spec S1 残) — `docs/spec/structure.md` の title テンプレート節に書き、実装と整合確認
+- [x] **title の固定画像位置/サイズ仕様を spec に明文化** (Spec S1 残) — `docs/spec/structure.md` の title テンプレート節に明記 (現状の `right: -10% / bottom: -70% / width: 80% / z-index: -1` を暫定値として記録)。 全体デザイン見直し時に再検討する旨も併記
 
 ### docs ドリフト (`design.md` ↔ 実装)
 

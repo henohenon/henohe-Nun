@@ -97,8 +97,16 @@ section の `.stage > .content` が溢れた場合、CSS `zoom` で自動 fit �
    - titleの下に左寄せbody。通常の
    - 空白や`🌊`だけなど省略もこれ。
 - title
-  - 中央左にtitle、その下にsub。
+  - 中央左にtitle (h1)、その下にsub (`!sub~text` で指定)
   - bodyはなく、代わりに固定画像（`/henoheno.svg`）が1枚表示される（差し替え不可、意図的な固定）
+  - 固定画像 (henoheno) の配置:
+    - `<div class="henoheno">` 内に SVG を inline 化 (build 時に `templates.ts:readHenohenoSvg` が読む)
+    - `.title > .stage` 内に `position: absolute` で配置 (基点は stage、 stage は `position: relative`)
+    - `right: -10%` / `bottom: -70%` で右下端から外側にはみ出すように
+    - `width: 80%; height: auto` で stage 幅の 8 割
+    - `color: var(--brand)` で SVG 内 `currentColor` path を brand 色に塗る
+    - `z-index: -1` で stage 内 stacking context の負 z 層 (h1/sub の背後、 ただし stage は section 内 z auto なので bg-layer の上層)
+    - 暫定値、 全体デザイン見直し時に再検討予定
 - me
   - titleが上、その下に独自コンテナ
   - 独自コンテナ左にicon
