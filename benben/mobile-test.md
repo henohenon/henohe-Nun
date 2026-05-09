@@ -5,7 +5,8 @@ description: cqmin / container-type / calc / color-mix が iOS Chrome で機能�
 
 # Mobile diagnostic
 🌊default
-!fl~mobile-diag
+!fl~mobile-diag (fl)
+!fr~2026/05/09 (fr)
 
 各 bar の幅・色を比較。 期待値は **100px (ref) と 5cqmin と 5vmin が iPhone portrait でほぼ同じ幅** (画面幅の 5%、 ~20px 前後)。 もし cqmin だけ消えて見えない / clamp と calc が 50px (floor) で固定されてたら **container queries が機能していない**。
 
