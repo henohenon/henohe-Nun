@@ -160,12 +160,12 @@ script を `bun run scripts/foo.ts` 直走させると Windows で fd 3/4 継承
 **permission 拡張 (`.claude/settings.local.json`、 gitignore 済 local-only)**:
 allow に `Bash(bunx tsx *)` と `Bash(rm -f scripts/_debug*)` を narrow pattern で追記。 broad な `bunx *` / `rm *` は引き続き ask 維持。
 
-**進行中 (tmp commit `d686295`) — 詳細**:
-- 既知バグ修正済 (確実に動く): `extractImageSrc` 正規表現 (`!\[` → `!?\[`)、`appendFooter` 早期 return 順 (bg を fl/fr 不在でも適用)、2 重 `<use>` 削除
-- レイヤー化: `<section>` の inline style → `<img class="bg-layer">` 子要素、`<footer>` の inline style → `<img class="fbg-layer">` 子要素 + SVG defs (mask)。共通 CSS は `position:absolute; inset:0; width/height:100%; object-fit:cover; pointer-events:none`、`section > .bg-layer { z-index:-1 }`
-- **未確認**: fbg-layer の visual。CSS `mask-image: url(#footer-mask-N)` が拾えてない可能性 (CSS bg 路線で「白で覆われてる」現象あり、img 路線後は目視未確認)
-- サンプル: `benben/sample.md` slide 22 (`# 背景画像 — !bg~`) と slide 23 (`# フッター背景 — !fbg~`)、両方 `/images/tgs.jpg`
-- 残課題: **bg と fbg を同じクロップで揃える** (section-aspect cover) — `background-attachment: fixed` 路線挫折、`object-fit: cover` でも footer アスペクトに引っ張られる。section の bg と同じ位置で footer の fbg を出すには「footer 内の img を section サイズで配置 + footer 領域でクリップ」要、別タスクとして残置
+**bg / fbg 動作確認済 (2026-05-09)**:
+- 既知バグ修正済: `extractImageSrc` 正規表現 (`!\[` → `!?\[`)、`appendFooter` 早期 return 順 (bg を fl/fr 不在でも適用)、2 重 `<use>` 削除
+- レイヤー化完了: `<img class="bg-layer">` (section 直下、 absolute z:-1) と `<div class="fbg-layer"> > [<img class="fbg-img">, <svg class="fbg-svg" mask>]` (section 直下、 absolute) の構成で確定 (`53eb5c2`)
+- bg/fbg class propagation 追加 (`0395003`) — `!bg.class~` `!fbg.class~` で nwyt prop の class が img の className に流れる。 `:where(.bg-layer, .fbg-img)` で specificity 下げて UnoCSS class 上書き許可、 `nwyt-prop.ts` parser bug (`-` `_` 弾き) も修正
+- visual: 直近 capture (slide 31/32) で動作確認、 user confirm 済 (2026-05-09)
+- **残課題 (別タスク)**: bg と fbg を同じクロップで揃える (section-aspect cover)。 `object-fit: cover` だと fbg が footer アスペクトに引っ張られて section の bg とクロップ位置がズレる。 「footer 内の img を section サイズで配置 + footer 領域でクリップ」 が必要、 別 session で対応
 
 —
 
@@ -209,8 +209,9 @@ design.md ↔ 実装ドリフト 3 件の整理から開始、 そのまま **st
 
 ### コンテナ・レイアウト
 
-- [ ] **footer text clipping** (Critical C7 残) — text-anchor / padding 見直し / SVG overflow visible
-- [ ] **footer (mobile) 1px 白帯** — `html`/`body` の `height` と `100dvh` の subpixel 差で下地が露出。`html { height: 100dvh }` (`043444f`) と `html/body { background: var(--base) }` (`3d16b81`) を試したがどちらも効かず revert (`2846d9c`)。実機ローカルで再調査予定
+- [x] **footer text clipping** (Critical C7 残) — `.footer-svg { overflow: visible }` 適用 + `text-anchor: end` で fl/fr の clipping は解消済。 直近 capture (slide 1/12/21 等) で全スライド fl/fr 表示確認、 task は stale だった (具体的 clip 例の repro なしで stale 判定、 2026-05-09)
+- [~] **footer (mobile) 1px 白帯** — 暫定的に **deprioritize** (2026-05-09 user confirm)。 1px 白帯自体は気にしないで OK との判断
+- [ ] **mobile で calc / clamp / cqmin が効いてない疑惑** (新規 / 致命) — 2026-05-09 user 報告: mobile で CSS `calc()` 系が機能してない。 影響範囲不明だが、 `--text-body: clamp(14px, 5cqmin, 100px)` 等の typography token が壊れると全 slide が floor 値 (= 14px 等の最小値) に潰れて読めなくなる致命系。 要 repro & 調査 — どの browser / どの値が機能してないかから
 - [x] **テーブルの中央寄せが効いてない** (`3fd4631`) — `<th align="center">` 等の HTML 属性は remark-gfm が出していたが、 `.body th, .body td { text-align: left }` が UA stylesheet の align 属性マッピングを上書きしていた。 `.body th[align="center"]` / `[align="right"]` 属性セレクタで明示的に text-align を指定して解決 (`body.css:94-97`)。 サンプル: `benben/initiation.md:312-316` の table ページに left/center/right 3 カラム例あり
 - [x] **コードブロックのコピーボタン padding-l** (`b071062`) — copy ボタンのボーダー撤廃 (`border: 0`)、hover bg だけで浮かす形に。あわせて copy 動作 (改行落ち / 行番号 prefix 混入 / diff `+`/`-` 混入) を全て `extractCleanCode` で吸収
 
