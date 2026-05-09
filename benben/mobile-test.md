@@ -66,3 +66,47 @@ footer 重なりの原因切り分け。 各 box の text が **右端** に来�
 ```
 
 判定: T1/T6 が右端なら SVG attribute は OK。 T2-T5 のうち左端 / 重なるのが iOS で壊れる手法 → footer fix で避けるべき構成。
+
+# SVG attribute calc test
+🌊default
+!fl~svg-attr-calc (fl)
+!fr~2026/05/09 (fr)
+
+fbg mask の `<use y="calc(100% - var(...))">` が iOS で効かない件。 SVG attribute での calc バリエーションを切り分ける。 各 box の **垂直方向の縦線** が **右側 (x= 期待値) に出る** か確認。 **左端 (x=0) なら calc が効いてない**。
+
+```embed_html
+<style>
+  .calctest { display: block; width: 100%; height: 32px; border: 1px solid #5932ff; margin-block: 6px; background: #f8f8f8; --p: 8px; }
+  .calctest line { stroke: #5932ff; stroke-width: 2; }
+</style>
+
+<svg viewBox="0 0 400 32" preserveAspectRatio="none" class="calctest">
+  <line x1="100%" y1="0" x2="100%" y2="100%" />
+  <text x="100%" y="22" text-anchor="end" font-size="14" font-family="monospace" fill="#5932ff" transform="translate(-4 0)">T7: x1=100% (基準、 右端の縦線)</text>
+</svg>
+<svg viewBox="0 0 400 32" preserveAspectRatio="none" class="calctest">
+  <line x1="calc(100% - 50px)" y1="0" x2="calc(100% - 50px)" y2="100%" />
+  <text x="100%" y="22" text-anchor="end" font-size="14" font-family="monospace" fill="#5932ff" transform="translate(-4 0)">T8: calc(100% - 50px)</text>
+</svg>
+<svg viewBox="0 0 400 32" preserveAspectRatio="none" class="calctest">
+  <line x1="calc(100% - 5cqmin)" y1="0" x2="calc(100% - 5cqmin)" y2="100%" />
+  <text x="100%" y="22" text-anchor="end" font-size="14" font-family="monospace" fill="#5932ff" transform="translate(-4 0)">T9: calc(100% - 5cqmin)</text>
+</svg>
+<svg viewBox="0 0 400 32" preserveAspectRatio="none" class="calctest">
+  <line x1="calc(100% - var(--p))" y1="0" x2="calc(100% - var(--p))" y2="100%" />
+  <text x="100%" y="22" text-anchor="end" font-size="14" font-family="monospace" fill="#5932ff" transform="translate(-4 0)">T10: calc(100% - var(--p))</text>
+</svg>
+<svg viewBox="0 0 400 32" preserveAspectRatio="none" class="calctest">
+  <line x1="calc(100% - 1em)" y1="0" x2="calc(100% - 1em)" y2="100%" />
+  <text x="100%" y="22" text-anchor="end" font-size="14" font-family="monospace" fill="#5932ff" transform="translate(-4 0)">T11: calc(100% - 1em)</text>
+</svg>
+```
+
+判定:
+- **T7** (基準) — 右端 line が見える、 SVG attr の % 自体は OK
+- **T8 (literal px calc)** 効くなら → calc + 純 literal 単位は OK
+- **T9 (cqmin calc)** 効くなら → cqmin 経由で responsive 維持可能
+- **T10 (var calc)** 効くなら → var() route も生きてる
+- **T11 (em calc)** 効くなら → em で font-size 連動 fix 可能
+
+どれかが効けば fbg の use y を **その route に書き換えて JS 撤廃** できる。 全滅なら JS が唯一の解 (= 現状維持)。
