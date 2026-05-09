@@ -6,7 +6,6 @@ import { initCopyButtons } from './copy.ts'
 import { initFnTooltips } from './tooltip.ts'
 import { initFaviconAnimation } from './favicon-anim.ts'
 import { initCursorJack } from './cursor-jack.ts'
-import { initFbgMask } from './fbg-mask.ts'
 
 // `?theme=dark` 等の URL query で data-theme を root に流し込む。 capture や
 // preview の入口、 deploy 済みサイトでも dark を URL だけで見るための入口。
@@ -25,7 +24,6 @@ if (sections.length > 0) {
   initCopyButtons()
   initFnTooltips()
   initCursorJack()
-  initFbgMask()
 }
 
 initFaviconAnimation()
