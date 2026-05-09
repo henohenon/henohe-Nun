@@ -117,11 +117,17 @@ export function initNavigation(sections: NodeListOf<HTMLElement>): void {
     navigate(isRight ? 1 : -1)
   })
 
-  // Resize → re-fit current slide
-  window.addEventListener('resize', () => {
-    const page = currentPage()
-    if (sections[page - 1]) fitSlide(sections[page - 1])
+  // Resize → re-fit。 旧 `window.resize` listener より精度高い ResizeObserver で
+  // 各 section 自体の size 変化を直接 watch する。 viewport / orientation /
+  // mobile の URL バー collapse 等で section が re-flow された timing で確実に
+  // 発火する (window.resize は viewport が完全 settle する前に飛ぶことがあり、
+  // 古い dimension で fit してしまう iOS Safari の bug を回避できる)。
+  const sectionObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      fitSlide(entry.target as HTMLElement)
+    }
   })
+  sections.forEach(s => sectionObserver.observe(s))
 
   // Print → fit all slides
   window.addEventListener('beforeprint', () => {
