@@ -42,6 +42,5 @@ section > .bg-layer {
   pointer-events: none;
 }
 
-.fbg-svg > mask > use {
-  y: calc(100% - var(--footer-line-height) - var(--footer-font-size));
-}
+/* `<use>` の y 位置は SVG attribute で直接付与する (`fbg.ts` 参照)。
+   iOS Safari は SVG `<use>` への CSS `y` を無視するため、 ここでは指定しない。 */

@@ -50,6 +50,7 @@ section {
      section が可視領域より高くなり、 footer が画面外に押し出される。 dvh で
      動的ビューポートに追随させる (旧ブラウザは vh にフォールバック)。 */
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   position: relative;
   display: none;

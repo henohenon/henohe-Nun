@@ -48,8 +48,16 @@ function buildFooterBackground(
   shapeId: string,
   classes: string[],
 ): ElementContent {
+  // <use> の y 位置は SVG attribute で直接付与する。 footer.ts と同じく、
+  // iOS Safari は SVG `<use>` への CSS `y` も無視するため (fbg mask の y shift
+  // が効かず mask cutout が top に出る現象が iPhone で確認された)。
+  // calc(100% - footer-height) で section 下端から footer 高さ分だけ上、 つまり
+  // footer-top の位置に mask shape を配置する。
   const mask = h('mask', { id: maskId }, [
-    h('use', { href: `#${shapeId}` }),
+    h('use', {
+      href: `#${shapeId}`,
+      y: 'calc(100% - var(--footer-line-height) - var(--footer-font-size))',
+    }),
   ])
   const svg = h('svg.fbg-svg', {
     xmlns: 'http://www.w3.org/2000/svg',
