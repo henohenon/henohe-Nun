@@ -129,6 +129,14 @@ export function initNavigation(sections: NodeListOf<HTMLElement>): void {
   })
   sections.forEach(s => sectionObserver.observe(s))
 
+  // Font load 完了後 全 slide 再 fit。 webfont (IBM Plex Sans JP 等) は async
+  // load で、 load 前の text 幅は fallback font ベースの近似値。 load 完了で
+  // text dimensions が変わって content の natural size が増減するため、
+  // 確定したタイミングで再計算する。
+  document.fonts?.ready?.then(() => {
+    sections.forEach(fitSlide)
+  })
+
   // Print → fit all slides
   window.addEventListener('beforeprint', () => {
     sections.forEach(fitSlide)
