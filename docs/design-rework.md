@@ -224,6 +224,55 @@ user から 「mobile で calc 効いてない」 報告を受け、 mobile-test
 
 —
 
+### 2026-05-09 後半: zoom-fit 改善 (進行中、 中断)
+
+iPhone landscape で content cutoff (slide 2 で T5/T6 が footer 下に押し出される、 一般 slide も似た症状) への対処として zoom-fit の改善着手。 user と算法整理 + 4 つの改善 step を提案、 順次 commit して iPhone で iter 検証する流れで進めた。
+
+**zoom-fit の現状理解** (整理):
+- target = `:scope > .stage > .content` の direct children を見る
+- 計測: 各 child の `offsetTop + offsetHeight` を max 取って container.offsetTop を引いたもの = 必要 height
+- container.offsetWidth/Height は section の dvh から footer / heading / stage padding を引いた 1fr 値
+- scale = container size / 必要 size、 < 1 なら CSS zoom 適用
+- 再帰最大 10 iter (CSS zoom が children サイズも変えるので)
+
+**呼び出し起点 (改修前)**:
+- 初期表示 / hashchange / window.resize / beforeprint
+
+**抜けてた起点 (= 仮説 bug source)**:
+- font load 完了後の再 fit (webfont 確定で text 幅変わる)
+- image load 完了後の再 fit (`<img>` 0×0 → 実 size grow)
+- ResizeObserver による精密検出 (window.resize は viewport settle 前の race あり)
+- DOM 動的変化 (Nun は SSG 中心なので skip)
+
+**4 step 改善計画**:
+1. **scrollHeight 切替** (`1f0296a`) — 計測を `child.offsetTop + offsetHeight` per から `container.scrollHeight` 直読みに変更。 last child の margin-block-end 漏れ解消。 軽微効果だが概念クリーン
+2. **ResizeObserver** (`9eeb40d`) — `window.resize` listener を `ResizeObserver` で section 自体を watch する形に置換。 rotation / URL バー collapse の race 回避目的
+3. **font load 完了 trigger** (`97c821e`) — `document.fonts.ready.then(() => sections.forEach(fitSlide))` で webfont 確定後に全 slide 再 fit
+4. **image load 完了 trigger** (未実装) — 各 `<img>` の `load` / `error` event で section 再 fit
+
+**検証結果**:
+- step 1 (scrollHeight): user 「よかろ」 = 視認問題なし
+- step 2 (ResizeObserver): user 「はい」 = 視認問題なし
+- step 3 (font load): user **「ダメみたい」** + IMG_1904 (slide 3 portrait)
+  - 症状: T7-T13 box が大半消失 (1 個 thin line のみ)、 判定 list の bold item が異様に巨大、 全体が 1 画面に詰まり overflow
+  - 俺の仮説 (scrollHeight feedback loop): user 否定 (step 1 単独では問題なかった)
+  - debug 機構を追加 (`14f4f37`、 `?debug` URL query で on-screen overlay + console.log) → iPhone 実値計測待ち
+
+**中断時点の状況**:
+- working tree clean、 `14f4f37` (debug overlay) が HEAD
+- iPhone Chrome で `https://henohenon.github.io/henohe-Nun/mobile-test/?debug` 開いて画面上端の overlay 数値 (offsetW/H、 scrollW/H、 scale、 zoom の iter ごと推移) を screenshot で投げてもらえれば真因切り分け再開可
+- 仮説候補 (再確認):
+  - feedback loop (CSS zoom 適用後の measure 値が zoomed で報告される iOS bug): debug log で iter ごとの値を見れば即判定
+  - 別 bug: log の値が想定と違う場合 (例: scrollHeight が 0、 offsetHeight が壊れる、 etc.)
+  - step 3 の font.ready trigger 自体が問題 (例: ready resolve 時の DOM state で scrollHeight 異常値)
+
+**次セッションでやること**:
+- iPhone から debug overlay screenshot もらって 数値解析
+- 真因確定後、 各 step の revert / 改修判断 (revert step 3 → step 2 まで戻る or zoom-fit 再帰条件の修正 or 全 revert + 別 approach)
+- 解決後、 image load step (step 4) の追加検討
+
+—
+
 ## 残作業
 
 優先度・トピック別に再構築。
@@ -237,7 +286,7 @@ user から 「mobile で calc 効いてない」 報告を受け、 mobile-test
 - [x] **footer text clipping** (Critical C7 残) — `.footer-svg { overflow: visible }` 適用 + `text-anchor: end` で fl/fr の clipping は解消済。 直近 capture (slide 1/12/21 等) で全スライド fl/fr 表示確認、 task は stale だった (具体的 clip 例の repro なしで stale 判定、 2026-05-09)
 - [~] **footer (mobile) 1px 白帯** — 暫定的に **deprioritize** (2026-05-09 user confirm)。 1px 白帯自体は気にしないで OK との判断
 - [x] **mobile で calc 効いてない疑惑** (2026-05-09、 真因確定) — 真因は **iOS Safari での SVG 位置決め** に集約。 typography (clamp/cqmin) は実は機能しており影響なし。 footer の SVG text と fbg mask の `<use>` が CSS / SVG attribute 経由の位置決めで失敗 → 視覚的に 「calc 効いてない」 と誤認されてた。 mobile-test deck (T1-T13) で isolated test を構築、 iOS の SVG 制約を完全切り分けた上で fix 適用 (`61a0495` `d9f34c4` `40a4ba0`)
-- [ ] **iPhone landscape での width / zoom-fit 違和感** (新規、 2026-05-09) — landscape orientation で width が短く感じる + zoom-fit が見切れる (slide 2 で T5/T6 が footer 下に押し出される) と user 報告。 真因未調査。 rotation 時の zoom-fit 再計算タイミング or font load 前の measure / dvh 計算と stage の grid-template-rows interaction 等の仮説あり。 portrait/landscape の比較 screenshot + fullscreen mode test 必要
+- [~] **iPhone landscape での width / zoom-fit 違和感** (進行中、 2026-05-09 着手 / 2026-05-10 中断) — zoom-fit の改善 step 1-3 を順次 commit + push したが、 step 3 後の検証で「test boxes 消失 + bullet bold 巨大化」 の regression 出現。 user 仮説否定で debug overlay (`14f4f37`) 仕込み、 iPhone での実値計測待ちで session 中断。 詳細は下の 「2026-05-09 後半 zoom-fit 改善」 節参照
 - [x] **テーブルの中央寄せが効いてない** (`3fd4631`) — `<th align="center">` 等の HTML 属性は remark-gfm が出していたが、 `.body th, .body td { text-align: left }` が UA stylesheet の align 属性マッピングを上書きしていた。 `.body th[align="center"]` / `[align="right"]` 属性セレクタで明示的に text-align を指定して解決 (`body.css:94-97`)。 サンプル: `benben/initiation.md:312-316` の table ページに left/center/right 3 カラム例あり
 - [x] **コードブロックのコピーボタン padding-l** (`b071062`) — copy ボタンのボーダー撤廃 (`border: 0`)、hover bg だけで浮かす形に。あわせて copy 動作 (改行落ち / 行番号 prefix 混入 / diff `+`/`-` 混入) を全て `extractCleanCode` で吸収
 
