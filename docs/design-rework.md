@@ -193,9 +193,34 @@ design.md ↔ 実装ドリフト 3 件の整理から開始、 そのまま **st
   - title の henoheno に `z-index: -1` を付与 (`f1082b2`、 layer 順序: bg < henoheno < (h1/sub) < footer < fbg)
 
 **残課題**:
-- design.md §4.5 (footer placement) / §11 (overflow management) を stage refactor 後の実装に合わせて更新
-- structure.md の DOM 構造記述を `section > [stage > [h, content], footer]` に更新
-- title の固定画像 (henoheno) 位置/サイズの spec 明文化 (Spec S1 残のまま — design.md update 時に併記する形)
+- design.md §4.5 (footer placement) / §11 (overflow management) を stage refactor 後の実装に合わせて更新 (済、 `660e206`)
+- structure.md の DOM 構造記述を `section > [stage > [h, content], footer]` に更新 (済、 `660e206`)
+- title の固定画像 (henoheno) 位置/サイズの spec 明文化 (Spec S1) (済、 `3f784e1`)
+
+—
+
+### iPhone Chrome 対応の調査・修正 (2026-05-09 後半)
+
+user から 「mobile で calc 効いてない」 報告を受け、 mobile-test deck を新設して isolated test (T1-T13) で iOS Safari の SVG 制約を切り分けた。 結果以下の特性が判明:
+
+**iOS Safari (= iPhone Chrome、 engine 強制 WebKit) の SVG 制約**:
+- ✗ CSS `x` / `y` property を SVG geometry 要素 (`<text>` / `<rect>` / `<use>`) に適用しても **機能しない**
+- ✗ CSS `translate` / `transform` の `%` を SVG 要素に対して計算する route (`transform-box: view-box` 明示しても) **機能しない**
+- ✗ SVG attribute (`x` / `y` / `dx` / `dy`) の `calc()` は **どんな単位 (var / em / cqmin / literal px) を入れても機能しない**
+- ✓ SVG attribute literal `100%` / `Xem` / `Xpx` (calc 抜き) は機能する
+- ✓ SVG attribute `transform="translate(X Y)"` は user units (calc 抜き literal) で機能する
+
+**確定した fix 群** (全部静的、 JS 不使用):
+- `61a0495` footer fl/fr text を CSS positioning から SVG attribute (`x="0.6em"` / `x="100%" dx="-0.6em"` / `y="1em"` / `text-anchor="end"` 等の literal) に書き換え
+- `d9f34c4` section の `height: 100vh` → `100vh; 100dvh;` で URL バー込みでなく visible viewport に追随
+- `40a4ba0` (= `52393de` 等価) fbg mask の `<use>` 位置決めを **nested svg + 負 em literal** で表現: `<svg y="100%" overflow="visible"><use href="#shape" y="-1.2em" /></svg>`。 calc も var() も使わない構造で iOS 対応。 1.2em (body 基準) ≈ 6cqmin ≈ footer height で近似
+
+**この調査用に追加された資産**:
+- `benben/mobile-test.md` — 3 slide 構成の diagnostic deck
+  - slide 1: cqmin / calc / color-mix / @supports の bar 比較
+  - slide 2: SVG text 位置決め T1-T6 (CSS x / CSS translate / SVG attribute)
+  - slide 3: SVG attribute calc バリエーション T7-T13 (literal px / cqmin / var / em の組み合わせ)
+- `https://henohenon.github.io/henohe-Nun/mobile-test/` で deploy 済、 将来の iOS regression check に流用可
 
 —
 
@@ -211,7 +236,8 @@ design.md ↔ 実装ドリフト 3 件の整理から開始、 そのまま **st
 
 - [x] **footer text clipping** (Critical C7 残) — `.footer-svg { overflow: visible }` 適用 + `text-anchor: end` で fl/fr の clipping は解消済。 直近 capture (slide 1/12/21 等) で全スライド fl/fr 表示確認、 task は stale だった (具体的 clip 例の repro なしで stale 判定、 2026-05-09)
 - [~] **footer (mobile) 1px 白帯** — 暫定的に **deprioritize** (2026-05-09 user confirm)。 1px 白帯自体は気にしないで OK との判断
-- [ ] **mobile で calc / clamp / cqmin が効いてない疑惑** (新規 / 致命) — 2026-05-09 user 報告: mobile で CSS `calc()` 系が機能してない。 影響範囲不明だが、 `--text-body: clamp(14px, 5cqmin, 100px)` 等の typography token が壊れると全 slide が floor 値 (= 14px 等の最小値) に潰れて読めなくなる致命系。 要 repro & 調査 — どの browser / どの値が機能してないかから
+- [x] **mobile で calc 効いてない疑惑** (2026-05-09、 真因確定) — 真因は **iOS Safari での SVG 位置決め** に集約。 typography (clamp/cqmin) は実は機能しており影響なし。 footer の SVG text と fbg mask の `<use>` が CSS / SVG attribute 経由の位置決めで失敗 → 視覚的に 「calc 効いてない」 と誤認されてた。 mobile-test deck (T1-T13) で isolated test を構築、 iOS の SVG 制約を完全切り分けた上で fix 適用 (`61a0495` `d9f34c4` `40a4ba0`)
+- [ ] **iPhone landscape での width / zoom-fit 違和感** (新規、 2026-05-09) — landscape orientation で width が短く感じる + zoom-fit が見切れる (slide 2 で T5/T6 が footer 下に押し出される) と user 報告。 真因未調査。 rotation 時の zoom-fit 再計算タイミング or font load 前の measure / dvh 計算と stage の grid-template-rows interaction 等の仮説あり。 portrait/landscape の比較 screenshot + fullscreen mode test 必要
 - [x] **テーブルの中央寄せが効いてない** (`3fd4631`) — `<th align="center">` 等の HTML 属性は remark-gfm が出していたが、 `.body th, .body td { text-align: left }` が UA stylesheet の align 属性マッピングを上書きしていた。 `.body th[align="center"]` / `[align="right"]` 属性セレクタで明示的に text-align を指定して解決 (`body.css:94-97`)。 サンプル: `benben/initiation.md:312-316` の table ページに left/center/right 3 カラム例あり
 - [x] **コードブロックのコピーボタン padding-l** (`b071062`) — copy ボタンのボーダー撤廃 (`border: 0`)、hover bg だけで浮かす形に。あわせて copy 動作 (改行落ち / 行番号 prefix 混入 / diff `+`/`-` 混入) を全て `extractCleanCode` で吸収
 
