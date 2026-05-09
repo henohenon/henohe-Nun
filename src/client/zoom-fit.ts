@@ -11,39 +11,37 @@
  * 直下 stage 経由の content (`:scope > .stage > .content`) のみ対象とし、
  * me 等の nested .content は親 stage 側の zoom が伝播することで間接的に
  * スケールされる。 nested .content への直接 zoom はチェーン重複で潰れる。
+ *
+ * 計測には container の `scrollHeight` / `scrollWidth` を使う (= 自然 content
+ * size、 margin / overflow 含む)。 旧実装の child.offsetTop+offsetHeight per
+ * 集約方式は last child の margin-block-end が欠落する罠があった。
  */
 
 const MAX_ITERATIONS = 10
 
 function adjustZoom(
   container: HTMLElement,
-  children: HTMLElement[],
   iteration: number,
   currentZoom: number,
 ): void {
   if (iteration >= MAX_ITERATIONS) return
-  const csx = Math.max(
-    ...children.map(c => c.offsetLeft + c.offsetWidth - container.offsetLeft), 0,
-  )
-  const csy = Math.max(
-    ...children.map(c => c.offsetTop + c.offsetHeight - container.offsetTop), 0,
-  )
-  if (csx === 0 || csy === 0) return
-  const sx = container.offsetWidth / csx
-  const sy = container.offsetHeight / csy
+  const naturalW = container.scrollWidth
+  const naturalH = container.scrollHeight
+  if (naturalW === 0 || naturalH === 0) return
+  const sx = container.offsetWidth / naturalW
+  const sy = container.offsetHeight / naturalH
   const scale = Math.min(sx, sy)
   if (scale >= 1 && currentZoom >= 1) return
   const newZoom = currentZoom * scale
   container.style.zoom = String(newZoom)
-  adjustZoom(container, children, iteration + 1, newZoom)
+  adjustZoom(container, iteration + 1, newZoom)
 }
 
 /** slide の `.content` (stage 直下) を必要に応じて zoom 縮小して、 はみ出しを抑える。 */
 export function fitSlide(slide: HTMLElement): void {
   for (const content of slide.querySelectorAll<HTMLElement>(':scope > .stage > .content')) {
-    const children = Array.from(content.children) as HTMLElement[]
-    if (children.length === 0) continue
+    if (content.children.length === 0) continue
     content.style.zoom = ''
-    adjustZoom(content, children, 0, 1)
+    adjustZoom(content, 0, 1)
   }
 }
