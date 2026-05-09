@@ -30,7 +30,10 @@
 
 /* henoheno は build 時に SVG を inline 化 (templates.ts:readHenohenoSvg)。
    `currentColor` を使う path に CSS `color` が効くので、 brand 色で塗れる。
-   stage 内に absolute 配置 — stage が position: relative なので stage 基点。 */
+   stage 内に absolute 配置 — stage が position: relative なので stage 基点。
+   z-index: -1 で stage 内 stacking context の負 z 層に押し下げ、 h1/sub の
+   背後に回す (stage は section 内 z auto なので bg-layer の上は維持)。
+   layer 順序: bg < henoheno < (h1/sub) < footer < fbg。 */
 .title > .stage > .henoheno {
   position: absolute;
   right: -10%;
@@ -39,6 +42,7 @@
   height: auto;
   color: var(--brand);
   pointer-events: none;
+  z-index: -1;
 }
 
 .title > .stage > .henoheno > svg {
