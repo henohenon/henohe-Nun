@@ -59,11 +59,19 @@ function buildShapes(
 ): ElementContent[] {
   const items: ElementContent[] = []
   items.push(h('rect.footer-rule') as ElementContent)
+  // text 要素の位置は **SVG attribute** で直接付与する。 CSS で `x` / `translate`
+  // を当てる経路は iOS Safari (= iPhone Chrome) で機能しない (T1-T6 検証済、
+  // mobile-test slide 2):
+  //   - CSS `x: 100%` → text 完全消失 (T2)
+  //   - CSS `translate: calc(100% - X) Y` → 左端寄り (T3-T5)
+  //   - SVG attr `x="100%"` + SVG `transform` attribute → ✅ 期待通り右端 (T1/T6)
+  // ここでは em 単位で font-size 相対の padding を表現 (--footer-font-size と
+  // --footer-pad-x は両方 ~4cqmin ベースなので em で近似可能)。
   if (flNodes.length > 0) {
-    items.push(h('text.footer-fl', flNodes) as ElementContent)
+    items.push(h('text.footer-fl', { x: '0.6em', y: '1em' }, flNodes) as ElementContent)
   }
   if (frNodes.length > 0) {
-    items.push(h('text.footer-fr', frNodes) as ElementContent)
+    items.push(h('text.footer-fr', { x: '100%', y: '1em', dx: '-0.6em', textAnchor: 'end' }, frNodes) as ElementContent)
   }
   return items
 }

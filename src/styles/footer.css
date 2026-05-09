@@ -28,12 +28,8 @@ section > footer {
   font-family: var(--font-body);
 }
 
-.footer-fl {
-  translate: var(--footer-pad-x) var(--footer-font-size);
-}
-
-.footer-fr {
-  x: 100%;
-  translate: calc(100% - var(--footer-pad-x)) var(--footer-font-size);
-  text-anchor: end;
-}
+/* fl/fr の位置 (x / y / dx / text-anchor) は SVG attribute で直接付与する
+   (`footer.ts` 参照)。 iOS Safari は SVG `<text>` への CSS `x` / CSS `translate`
+   を spec 通りに解決しないため、 ここでは font / fill 等の見た目だけを CSS
+   で扱い、 位置決めは SVG 側に寄せる。 padding は dx="±0.6em" で font-size
+   相対に表現 (--footer-pad-x との誤差は許容、 em で responsive 維持)。 */
