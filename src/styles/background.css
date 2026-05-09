@@ -42,5 +42,5 @@ section > .bg-layer {
   pointer-events: none;
 }
 
-/* `<use>` の y 位置は SVG attribute で直接付与する (`fbg.ts` 参照)。
-   iOS Safari は SVG `<use>` への CSS `y` を無視するため、 ここでは指定しない。 */
+/* fbg mask shape の y 位置は SVG 構造側で完結 (`fbg.ts` 参照、 nested svg +
+   負 em literal)。 ここでは指定しない。 */
