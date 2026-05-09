@@ -169,6 +169,36 @@ allow に `Bash(bunx tsx *)` と `Bash(rm -f scripts/_debug*)` を narrow patter
 
 —
 
+## 2026-05-09 セッション進捗メモ
+
+design.md ↔ 実装ドリフト 3 件の整理から開始、 そのまま **stage wrapper 構造改革** に発展。 DOM 構造を `<section.X> > [<div.stage> > [<h1>, <div.content>], <footer>]` に再設計し、 footer を absolute から grid item に移行、 旧 `.body` を `.content` に rename した。
+
+このセッションで片付いたもの (時系列):
+- 画像 class 指定 `!.class[alt](url)` 構文追加 (`d11f902` `ffd2c11`) — 既存 nwyt content の自然な拡張として key 省略 + class のみで `<img class="..." src=u alt=v>` を吐く。 UnoCSS が markdown source の class を scan するので utility 直書き OK (rounded-lg / opacity-50 / grayscale / hue-rotate-180 等で検証)
+- bg/fbg の class propagation (`0395003`) — `!bg.class~[]()` `!fbg.class~[]()` で nwyt prop の class が `<img class="bg-layer ...">` に流れる。 並行して 2 件の前提整備 — `nwyt-prop.ts` classRest が `[a-zA-Z0-9]` のみで `-` `_` 弾いてた parser bug 修正、 `.bg-layer { object-position: center }` → `:where(.bg-layer, .fbg-img)` で specificity 下げて UnoCSS class 上書きを許可
+- shadow 40% 確定 (`4a35c8c`) — `--main` 連動のまま 50% → 40% に絞る。 black 基準路線 (`7e98af4` `393f22c`) は user 意図と外れていたので revert
+- design.md ドリフト 3 件解消 (`9efc9a2`):
+  - drift 1 (footer absolute): **stage wrapper 構造改革** で解消。 section grid を `1fr auto` (stage / footer) に簡素化、 padding を section → `section > .stage` に移譲して footer の edge-to-edge を grid 内で達成
+  - drift 2 (.fn-tooltip overflow): design.md 通り `overflow: hidden; max-width: 50em` に戻す (`width: max-content / min-width` 撤廃)
+  - drift 3 (.content overflow:hidden): **却下**。 zoom-fit が `offsetTop+offsetHeight` 方式で overflow 検知してるので overflow:hidden で clip すると検知壊れて縮小発動しない。 design.md §11 側を 「visible 維持、 zoom-fit 経由で縮小」 に更新予定
+- stage refactor 詳細 (`9efc9a2` `7578186` `f1082b2`):
+  - templates.ts: 全 6 template の出力に `wrapStage` ヘルパで `<div class="stage">` を導入
+  - base.css: section grid `1fr auto`、 stage baseline (display:grid / auto 1fr / min-height:0)、 heading selectors を `section/article > h*` から `.stage > h*` に移行
+  - footer.css: `position: absolute` 撤廃、 grid item 化
+  - body.css: 全 `.body X` selector を `.content X` に rename
+  - utils/brand-quote.css: `.brand-quote .body` → `.brand-quote .content`
+  - 全 template CSS: `.X >` から `.X > .stage >` に書き換え
+  - zoom-fit.ts: target を `:scope > .body` から `:scope > .stage > .content` に変更
+  - article.stage の padding を 0 に (`section > .stage` のみに padding 限定、 二重インセット解消) (`7578186`)
+  - title の henoheno に `z-index: -1` を付与 (`f1082b2`、 layer 順序: bg < henoheno < (h1/sub) < footer < fbg)
+
+**残課題**:
+- design.md §4.5 (footer placement) / §11 (overflow management) を stage refactor 後の実装に合わせて更新
+- structure.md の DOM 構造記述を `section > [stage > [h, content], footer]` に更新
+- title の固定画像 (henoheno) 位置/サイズの spec 明文化 (Spec S1 残のまま — design.md update 時に併記する形)
+
+—
+
 ## 残作業
 
 優先度・トピック別に再構築。
@@ -203,11 +233,11 @@ allow に `Bash(bunx tsx *)` と `Bash(rm -f scripts/_debug*)` を narrow patter
 
 ### docs ドリフト (`design.md` ↔ 実装)
 
-`design.md` は CSS 設計の道標として書かれた aspiration だが、実装過程で別解に倒れた箇所がある。要追従または design.md 側を更新。
+`design.md` は CSS 設計の道標として書かれた aspiration。 2026-05-09 の stage refactor で 3 件全部解消 (一部は実装側、 一部は design.md 側で着地)。
 
-- [ ] **footer の `position: absolute`** — `design.md` 4.5 / 11 は「footer は section grid の最終 auto 行に置く、position:absolute を使うな」だが、実装は `footer.css:3` で `position: absolute; inset-block-end: 0` を採用 (mobile dvh 問題対応の流れで)。grid 行に戻すか、design.md を「実装事情で absolute 採用」に修正するか
-- [ ] **`.fn-tooltip` の overflow と max-width** — `design.md` 11 は「`overflow: hidden + max-width` で可変長を制御」だが、実装は `width: max-content / max-width: 50em` ベース (overflow 設定なし)。design.md 側を実装に合わせる
-- [ ] **`section.default > .body { overflow: hidden }`** — `design.md` 11 「.body は `min-height:0; overflow: hidden`」だったが、tooltip overflow 対応で `overflow: hidden` を撤廃 (`templates/default.css`)。design.md 側を更新
+- [x] **footer の `position: absolute`** (`9efc9a2`) — stage wrapper 導入で解消。 section grid を `1fr auto` (stage / footer) に再設計、 padding を section → `section > .stage` に移譲することで footer は section 端で edge-to-edge を維持しつつ in-flow grid item として配置可能に。 design.md §4.5 の grid 配置原則に実装が追従
+- [x] **`.fn-tooltip` の overflow と max-width** (`9efc9a2`) — design.md §11 通りに `overflow: hidden; max-width: 50em` に戻した (`width: max-content / min-width` 撤廃)。 tooltip 内 block 要素の表示は `<template data-fn>` 路線で別途解決済 (`856d4d8`) なので overflow:hidden で問題なし
+- [x] **`section.default > .body { overflow: hidden }`** — **却下**。 適用すると zoom-fit が破壊される (zoom-fit は `offsetTop+offsetHeight` で content overflow を検知する方式、 overflow:hidden で clip すると detection が壊れて縮小発動しない、 検証済 `9efc9a2`)。 design.md §11 を 「`.content` は overflow:visible 維持、 zoom-fit が overflow を検知して縮小するポリシー」 に更新する形 (本 commit 後に design.md 側修正)
 
 ---
 

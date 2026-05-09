@@ -15,28 +15,30 @@
 
 ```html
 <section>
-   <h1>Page1</h1>
-   <div>
-      <article>
-         <h2>Article1</h2>
-         <div>
-            <article>
-               <h3>Article2</h3>
-            </article>
-            <article>
-               <h3>Article3</h3>
-            </article>
-         </div>
-      </article>
-      <article>
-         <h2>Article4</h2>
-      </article>
+   <div class="stage">
+      <h1>Page1</h1>
+      <div class="content">
+         <article>
+            <div class="stage">
+               <h2>Article1</h2>
+               <div class="content">
+                  <article><div class="stage"><h3>Article2</h3></div></article>
+                  <article><div class="stage"><h3>Article3</h3></div></article>
+               </div>
+            </div>
+         </article>
+         <article>
+            <div class="stage"><h2>Article4</h2></div>
+         </article>
+      </div>
    </div>
 </section>
 <section>
-   <h1>Page2</h1>
+   <div class="stage"><h1>Page2</h1></div>
 </section>
 ```
+
+各 scope (section / article) は `<div class="stage">` で wrap される。 stage の中に heading + `<div class="content">` (h2 以下の article を含む本文コンテナ) が並ぶ。 section 直下の sibling は `.stage` と `<footer>` (および `.bg-layer` / `.fbg-layer` 等の装飾 layer) のみで、 footer は absolute ではなく grid item として section の最終 row に配置される。
 
 heading の前にあるコンテンツは、見出しなしの暗黙的な article として扱われる。
 テンプレートやキー指定は heading スコープに属するため、暗黙 article ではなく親に適用される。暗黙 article 自体に指定したい場合は、空 heading（`##` 等）で明示的に区切る。
@@ -49,14 +51,16 @@ heading の前にあるコンテンツは、見出しなしの暗黙的な artic
 
 ```html
 <section>
-   <h1>Page1</h1>
-   <div>
-      <article>
-         ここはh2の前のコンテンツ
-      </article>
-      <article>
-         <h2>Article1</h2>
-      </article>
+   <div class="stage">
+      <h1>Page1</h1>
+      <div class="content">
+         <article>
+            <div class="stage">ここはh2の前のコンテンツ</div>
+         </article>
+         <article>
+            <div class="stage"><h2>Article1</h2></div>
+         </article>
+      </div>
    </div>
 </section>
 ```
@@ -72,19 +76,21 @@ heading が空白のみの場合でも区切りとして機能する。この場
 
 ```html
 <section>
-   <div>
-      <article>
-         装飾だけのページ
-      </article>
-      <article>
-         見出しなしのarticle
-      </article>
+   <div class="stage">
+      <div class="content">
+         <article>
+            <div class="stage">装飾だけのページ</div>
+         </article>
+         <article>
+            <div class="stage">見出しなしのarticle</div>
+         </article>
+      </div>
    </div>
 </section>
 ```
 
 ## 自動フィット
-section の body（h2 以下の要素を含むコンテナ）が溢れた場合、zoom で自動 fit される。対象は section 直下の body のみで、ネストした article 内の個別 fit は行わない。zoom 適用後の再レイアウトで収束しない場合があるため、最大10回繰り返し実行する。10回で収束しない場合はその時点の zoom 値をそのまま使用する。
+section の `.stage > .content` が溢れた場合、CSS `zoom` で自動 fit される。対象は section 直下の `.stage > .content` のみで、ネストした article 内の個別 fit は行わない (article は親 section 側 zoom で間接スケール)。`.content` 自体は `overflow: visible` のまま — `overflow: hidden` を付けると zoom-fit の overflow 検知 (`offsetTop+offsetHeight` ベース) が壊れて縮小発動しなくなるため。zoom 適用後の再レイアウトで収束しない場合があるため、最大10回繰り返し実行する。10回で収束しない場合はその時点の zoom 値をそのまま使用する。
 
 ## テンプレート一覧
 - default
@@ -124,7 +130,13 @@ nwyt prop で設定可能。レイヤーは下から `!bg` → フッター → 
 
 理由: Nun の pipeline は markdown → document semantic を DOM に投影する設計で、`Scope.nwyts` に保持される装飾 prop は scope (= section) に属する。これを DOM 上でも parent-child 包含関係として表現することで、思想と DOM 構造が一致する。wrapper 案は presentation-first (Keynote / Figma 的) な思想転換が前提となり、Nun の content-first 哲学と乖離するため採用しない。
 
-実装上の代償として bg / fbg / footer の `position: absolute` + `z-index` choreography が section 内に残るが、これは思想一貫性とのトレードオフとして許容する。
+section 直下の sibling 配置は以下:
+- `.bg-layer` (position: absolute, `z-index: -1`) — 最背面の背景画像
+- `.stage` (in-flow grid item, 1fr) — heading + content の layout 容器、 padding を持つ
+- `<footer>` (in-flow grid item, auto) — section 端 (edge-to-edge) に貼る装飾線 + 両端テキスト
+- `.fbg-layer` (position: absolute) — footer 形状で抜いた前面画像
+
+bg / fbg は absolute、 stage / footer は in-flow grid item。 stage が padding を持つことで footer は section padding に巻き込まれず edge-to-edge を維持できる (section 自体の padding は 0)。
 
 ### テーマ
 スライドの配色は少数のCSS変数で制御する。

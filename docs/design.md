@@ -262,18 +262,52 @@ section { display: flex; flex-direction: column; }
 
 Place the footer in the final `auto` row of the section's Grid. **Do not use `position: absolute`.**
 
+The slide's content area lives inside a `<div class="stage">` wrapper (see §4.6) so the section's Grid is just `stage` (1fr) and `footer` (auto). Padding is applied to `section > .stage` (not section), so the footer naturally extends edge-to-edge at the section's bottom border.
+
 ```css
 section {
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  /* footer naturally settles into the last row */
+  grid-template-rows: 1fr auto;
+  /* stage / footer */
+}
+section > .stage {
+  padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
+}
+section > footer {
+  /* in-flow grid item, edge-to-edge because section has no padding */
 }
 ```
 
 Benefits:
-- No `padding-bottom` needed on `.body` to avoid overlap
+- Footer is in the layout flow (CUBE-aligned, no `position: absolute` for layout)
+- No `padding-bottom` needed on `.content` to avoid overlap
 - Body and footer never overlap
 - No stacking context issues from `position: absolute`
+- Footer remains edge-to-edge despite being a grid item
+
+### 4.6 Stage / Content Wrapper
+
+Each scope (section or article) wraps its heading and body content in a `<div class="stage">`. The stage is a grid container (default `auto 1fr`: heading row + content row). The content itself lives in `<div class="content">` inside the stage.
+
+```html
+<section class="default">
+  <div class="stage">
+    <h1>Slide title</h1>
+    <div class="content">
+      <p>Body content...</p>
+    </div>
+  </div>
+  <footer>...</footer>
+</section>
+```
+
+Why this two-level wrapper:
+- **stage** = the layout container that holds the scope's heading + body. Templates override stage's grid (`grid-template-rows`, `align-content`) to position content per template type (centered for title/solo, top-aligned for default).
+- **content** = the prose container holding paragraphs/lists/tables/cards/etc. (what was historically called `.body`; renamed to avoid confusion with the HTML `<body>` element).
+- Template-specific elements (`.sub`, `.lead`, `.icon`, `.container`, `.henoheno`) live inside the stage as siblings of the heading and content.
+- Decoration layers (`.bg-layer`, `.fbg-layer`, `<footer>`) are siblings of the stage at the section level — they're outside the stage's layout flow.
+
+Padding is only on `section > .stage` (not on `article.stage`). Articles are placed inside the section's content area; their stage doesn't need additional padding because the slide-pad is already inset by the section's stage.
 
 ---
 
@@ -472,15 +506,19 @@ Because slides switch via `display: none` ↔ `display: grid`, the JS side calls
 
 ## 11. Overflow Management
 
-Slides are viewport-sized with `overflow: hidden`.
-When content overflows, the client-side zoom-fit (`zoom` property) scales it down.
+Slides are viewport-sized with `overflow: hidden` on the `<section>`.
+When content inside the slide overflows, the client-side zoom-fit (`zoom` property) scales the `.content` down to fit.
 
 **Do not add `overflow: auto` or `overflow: scroll` to content areas.**
 Scroll regions break the zoom-fit calculation.
 
+**`.content` itself must keep `overflow: visible`** (the default). zoom-fit detects overflow by reading `child.offsetTop + child.offsetHeight` against `container.offsetHeight`. If `.content` is given `overflow: hidden`, children get clipped to the container's box and their natural overflow disappears from `offsetTop+offsetHeight` calculations — zoom-fit then sees no overflow and never triggers, leaving the bottom portion of the slide silently cut off.
+
+The actual clip boundary is `<section>` itself (`overflow: hidden`), so anything that escapes the slide via `position: absolute` (tooltips, decorations) is still clamped at the slide edge.
+
 Exceptions:
 - `pre > code`: horizontal scroll is acceptable (`overflow-x: auto`)
-- `.fn-tooltip`: uses `overflow: hidden` + `max-width` to control variable-length content
+- `.fn-tooltip`: uses `overflow: hidden` + `max-width` to control variable-length content (the tooltip itself is small enough that hidden clipping is the desired behavior, not a problem)
 
 ### When `min-height: 0` Is Required
 
@@ -488,10 +526,12 @@ The default `min-height` for Grid/Flex items is `auto` (content-based minimum).
 A `1fr` allocation will still overflow if the content is taller.
 
 ```css
-/* Fix for .body overflowing its grid track */
-section.default > .body {
-  min-height: 0; /* allows the grid item to shrink */
-  overflow: hidden;
+/* `.stage` and `.content` need min-height: 0 so they shrink within their
+   grid track. Without this, content can push the parent grid item to be
+   taller than its track allocation. */
+.stage,
+.stage > .content {
+  min-height: 0;
 }
 ```
 
