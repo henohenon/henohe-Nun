@@ -1,8 +1,11 @@
 ~~~meta
 title: Quaver
 description: QRコードから音声とエフェクトがでるやつ
+date: 2026-05-11
 ~~~
 
+!fl~Quaver
+!fr~2026/05/11
 !fbg~[](/images/quaver/quaver-mark.svg)
 
 # Quaver
