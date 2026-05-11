@@ -18,11 +18,6 @@ export function appendFooter(
   const fl = findNwytInScope(scope, globalNwyts, 'fl')
   const fr = findNwytInScope(scope, globalNwyts, 'fr')
 
-  // footer 自体は fl / fr のどちらかが無いと出さない (テキストゼロのフッターは
-  // 罫線だけになり装飾過剰)。 fbg は footer の SVG mask 経由で適用されるので
-  // 必然的に footer と運命共同体。
-  if (!fl && !fr) return
-
   el.children.push(buildFooter(sectionId, fl, fr) as ElementContent)
 }
 
