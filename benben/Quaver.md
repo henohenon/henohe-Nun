@@ -22,7 +22,9 @@ description: QRコードから音声とエフェクトがでるやつ
 動体検知とかすればいけそうな気はしないでもないが、もうちょい絞るか
 
 ## QRローダー
-!card[](https://aidn.jp/dotvoice/)
+
+!card[dotvoice](https://aidn.jp/dotvoice/)
+
 コレとかみてて思いついた。今日の1時ぐらいから稼働開始。
 クソ雑な仕様書aiに書かせてclaude codeに投げた。
 なんか比較的それっぽくなった！
