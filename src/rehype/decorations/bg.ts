@@ -4,11 +4,13 @@ import { h } from 'hastscript'
 import { findNwytInScope, parseImageNwytValue } from '../nwyt-helpers.ts'
 
 /**
- * section に `<img class="bg-layer">` を背景レイヤーとして追加する。
+ * section に `<div class="bg-layer"><img class="bg-img"></div>` を背景レイヤー
+ * として追加する。
  *
- * `<div + bg-image>` ではなく実 `<img>` を使うことで「画像である」が DOM 上で
- * explicit になり、 inspect / src 確認が容易。 CSS は `object-fit: cover` で
- * 同等表現。 fbg と実装パターンを揃える。
+ * wrapper 構造は fbg と揃えるため (fbg は wrapper div に mask を当てる必要が
+ * あるので、 bg も symmetric な div>img 構造にして CSS 共有 + 概念統一)。
+ * 内側に実 `<img>` を置くことで「画像である」が DOM 上で explicit になり
+ * inspect / src 確認が容易、 UnoCSS class も img 本体に効く。
  */
 export function appendBackground(
   el: Element,
@@ -24,5 +26,6 @@ export function appendBackground(
 }
 
 function buildBackground(src: string, alt: string, classes: string[]): ElementContent {
-  return h('img.bg-layer', { src, alt, className: classes }) as ElementContent
+  const img = h('img.bg-img', { src, alt, className: classes })
+  return h('div.bg-layer', [img]) as ElementContent
 }

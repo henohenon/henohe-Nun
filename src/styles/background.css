@@ -1,17 +1,27 @@
 /* Background image layers (`!bg~` / `!fbg~`).
-   bg は section 直下の `<img class="bg-layer">`、 fbg は section 直下の
-   `<div class="fbg-layer">` 内に `<img class="fbg-img">` (mask 適用) と
-   `<svg class="fbg-svg">` (mask 定義) を持つ。 実 `<img>` を使うことで src が
-   DOM に explicit に出る + inspect が容易、 bg-layer と画像取り回し CSS を
-   共通化できる。 `pointer-events: none` で操作干渉を避ける。 `z-index: -1`
-   で本文・footer より背面に下げる (bg のみ; fbg は footer 形状で見せるので前面)。 */
+   bg / fbg どちらも section 直下の `<div class="bg-layer">` `<div class="fbg-layer">`
+   wrapper に `<img class="bg-img">` `<img class="fbg-img">` を持つ symmetric な
+   div > img 構造。 fbg は wrapper に CSS `mask-image` で footer 形状を適用、
+   bg は mask なし。 wrapper を section 全体覆いにすることで mask の reference
+   frame を section 基準に保ち、 中の `<img>` がサイズ位置を変えても mask は
+   section bottom の footer 位置で安定する。 `pointer-events: none` で操作干渉
+   を避ける。 bg のみ `z-index: -1` で本文・footer より背面に下げる
+   (fbg は footer 形状で見せるので前面)。 */
 
-/* 装飾レイヤーは操作対象ではないので pointer-events: none で本文側の
-   クリック / hover を干渉しない。 */
-/* default: section の min(w,h) の 80%、 右寄せ bottom -10% (下に 10% はみ出す)。
-   .object-cover-full 等の UnoCSS class で個別 slide が override 可能。 */
+/* container layer (wrapper div): section 全体覆い、 mask 適用先。 サイズ位置
+   は触らず、 中の `<img>` でレイアウト調整する。 */
 .bg-layer,
 .fbg-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* default: 中の `<img>` を section min(w,h) の 80%、 右寄せ bottom -10%
+   (下に 10% はみ出す) で配置。 個別 slide で全体覆いに戻したい場合は
+   `!bg.inset-0~` `!fbg.w-full~` 等の UnoCSS class で override。 */
+.bg-img,
+.fbg-img {
   position: absolute;
   right: 0;
   bottom: -10%;
@@ -20,20 +30,9 @@
   pointer-events: none;
 }
 
-/* fbg-img は .fbg-layer の中で全体フィット (= 縮小された 80cqmin box 内)。
-   mask coordinate もこの box 基準で評価されるため、 fbg 内の footer 形状も
-   box 下端付近にスケールダウンして描画される (物理 footer 位置とは独立)。 */
-.fbg-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
 /* `<img>` 系のみ object-fit。 `:where()` で specificity を 0 に下げ、
    user の `!bg.object-cover~` 等で UnoCSS class 経由の上書きを許可する。 */
-:where(.bg-layer, .fbg-img) {
+:where(.bg-img, .fbg-img) {
   object-fit: contain;
   object-position: center;
 }

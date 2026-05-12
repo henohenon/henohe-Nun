@@ -77,8 +77,12 @@ function buildFooterBackground(
   const img = h('img.fbg-img', {
     src, alt,
     className: classes,
-    style: `-webkit-mask-image: url(#${maskId}); mask-image: url(#${maskId});`,
   }) as ElementContent
 
-  return h('div.fbg-layer', [img, svg]) as ElementContent
+  // mask は wrapper の `.fbg-layer` (section 全体覆い) に当てる。 これで mask の
+  // 座標系 reference が section 基準で安定し、 内側の `.fbg-img` がどんなサイズ /
+  // 位置でも footer 形状の描画位置は変わらない。
+  return h('div.fbg-layer', {
+    style: `-webkit-mask-image: url(#${maskId}); mask-image: url(#${maskId});`,
+  }, [img, svg]) as ElementContent
 }
