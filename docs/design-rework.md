@@ -273,6 +273,83 @@ iPhone landscape で content cutoff (slide 2 で T5/T6 が footer 下に押し�
 
 —
 
+### 2026-05-11/12: bg/fbg default 縮小 + Quaver deck 整備 (進行中、 中断)
+
+Quaver LT deck (`benben/Quaver.md`) を新規追加 (`c87d183`) した際に発覚した複数の問題への対応を順次進めたが、 最後の bg/fbg default 変更で **fbg が表示されない regression** が出て session 中断。
+
+**完了した修正**:
+
+1. **card 崩れ** (`36b4a5a fix(quaver)`) — `benben/Quaver.md` 側の書き方問題、 2 重原因:
+   - `!card[](...)` の label が空 → OGP fetch 失敗時の fallback title が空文字 → `.card-title` 空表示
+   - card 直後に空行無く後続 text と同 paragraph に居て `unwrapSingleChildParagraph` (card 単独 `<p>` のみ unwrap する仕様、 `src/rehype/nun-card.ts:65`) の対象外 → `<p>` 内に `display:flex` の `<a.card>` が混在 → layout 崩壊
+   - fix: label を `[dotvoice]` に + card 行前後に空行
+
+2. **fl/fr 両方なし時の footer 早期 return 撤廃** (`f0dff1e feat(footer)`) — `src/rehype/decorations/footer.ts` の早期 return ガード (「テキストゼロのフッターは罫線だけになり装飾過剰」 という旧仕様) を user 指示で撤廃。 fbg のみ指定したい slide でも footer 形状 (= fbg の mask 源) が出るようになる
+
+3. **bg/fbg default の縮小 + 右下配置** (`f595957 feat(bg/fbg)`) — `src/styles/background.css`:
+   - 旧: `.bg-layer, .fbg-layer, .fbg-img { inset: 0; width: 100%; height: 100%; object-fit: cover }` (section 全体覆い)
+   - 新: `.bg-layer, .fbg-layer { right: 0; bottom: -10%; width: 80cqmin; height: 80cqmin; object-fit: contain }` (section の min(w,h) 80% の正方形 box を右下に置き、 下に 10% はみ出す形)
+   - `.fbg-img` は `.fbg-layer` 内で `inset:0; width/height:100%` 維持 (= 縮小された 80cqmin box 内で全体フィット)
+   - 個別 slide で section 全体覆いに戻したい場合は UnoCSS class (`!bg.object-cover~` 等) で override する想定
+
+4. **Quaver deck の内容整備** (`e339343` typo / `55fc6bf` 次手追加 / `35816a6` 所感 article 分割 / `c89767f` ぷろだくと article 追加 / `a6c7060` meta date + global fl/fr 設定)
+
+**fbg 表示されない regression (中断時点)**:
+
+user 報告: 「fbg が、 動いてないっ」 (2026-05-11、 commit `a6c7060` 後)
+
+build した `dist/Quaver/index.html` で DOM 構造を確認 → 想定通り出力されている:
+
+```html
+<footer><svg class="footer-svg"><g id="footer-shapes-1">
+  <rect class="footer-rule"></rect>
+  <text class="footer-fl" ...>Quaver</text>
+  <text class="footer-fr" ...>2026/05/11</text>
+</g></svg></footer>
+<div class="fbg-layer">
+  <img class="fbg-img" src="/.../quaver-mark.svg" alt="fbg"
+       style="mask-image: url(#footer-mask-1); ...">
+  <svg class="fbg-svg">
+    <mask id="footer-mask-1">
+      <svg y="100%" overflow="visible">
+        <use href="#footer-shapes-1" y="-1.2em"></use>
+      </svg>
+    </mask>
+  </svg>
+</div>
+```
+
+**仮説** (未検証): `.fbg-layer` の `bottom: -10%` で box 全体が section 下端から 10% はみ出した結果、 mask 内 `<svg y="100%">` 由来の coordinate origin (box 下端) も section の外側に移動 → `<use y="-1.2em">` で持ち上がっても **mask shape が section visible 領域の下端ギリギリより外側に来ている**可能性。 結果 fbg-img が mask alpha=black (透過) の領域だけになり全消失する。
+
+別の可能性:
+- iOS 以外の Chrome / Firefox でも全消失なのか、 mobile だけなのか未確認
+- mask 自体は機能してて、 単に「縮小されすぎて見えてない」 だけかもしれない (80cqmin box 内に 1.2em の footer 形状 → 視認できないサイズ)
+
+**ユーザーへの確認待ち** (`1503329582298693642` で投げて未回答):
+1. 「全く見えない」 vs 「画像見えるが footer 形状で抜かれてない」 どちら?
+2. 修正方針:
+   - A) `bottom: 0` にして box を section 内に収める (画像下端 = section 下端、 -10% はみ出し諦め)
+   - B) `bottom: -10%` 維持 + mask shape の y を box 内 90% に補正 (画像はみ出し維持、 mask は section 下端で footer と整合)
+   - C) fbg は元の section 全体覆い設計に戻す、 bg だけ 80cqmin / bottom -10%
+
+**中断時点の状況**:
+- working tree clean、 `a6c7060` が HEAD で push 済
+- user は `https://henohenon.github.io/henohe-Nun/Quaver/` で見え方確認できる状態
+- 次セッションは user の 1/2 回答待ち、 その後 A/B/C いずれかで `src/styles/background.css` と (B の場合) `src/rehype/decorations/fbg.ts` の mask 構造を再調整
+
+**今回 commit 群** (`c87d183` → `a6c7060` の 8 commit):
+- `c87d183` feat: add quaver
+- `36b4a5a` fix(quaver): card 表記を修正
+- `f0dff1e` feat(footer): fl/fr 両方無くても footer を描画
+- `f595957` feat(bg/fbg): default を section min(w,h) 80% / 右下 -10% / contain に
+- `e339343` fix(quaver): typo / 閉じカッコ
+- `55fc6bf` feat(quaver): 「次」 を所感に追加 (後続 commit で再構成)
+- `35816a6` feat(quaver): 所感を よかった / はんせい に分割
+- `c89767f` feat(quaver): ぷろだくと article 追加
+- `a6c7060` feat(quaver): meta date / global fl / fr を設定
+
+—
+
 ## 残作業
 
 優先度・トピック別に再構築。
@@ -287,6 +364,7 @@ iPhone landscape で content cutoff (slide 2 で T5/T6 が footer 下に押し�
 - [~] **footer (mobile) 1px 白帯** — 暫定的に **deprioritize** (2026-05-09 user confirm)。 1px 白帯自体は気にしないで OK との判断
 - [x] **mobile で calc 効いてない疑惑** (2026-05-09、 真因確定) — 真因は **iOS Safari での SVG 位置決め** に集約。 typography (clamp/cqmin) は実は機能しており影響なし。 footer の SVG text と fbg mask の `<use>` が CSS / SVG attribute 経由の位置決めで失敗 → 視覚的に 「calc 効いてない」 と誤認されてた。 mobile-test deck (T1-T13) で isolated test を構築、 iOS の SVG 制約を完全切り分けた上で fix 適用 (`61a0495` `d9f34c4` `40a4ba0`)
 - [~] **iPhone landscape での width / zoom-fit 違和感** (進行中、 2026-05-09 着手 / 2026-05-10 中断) — zoom-fit の改善 step 1-3 を順次 commit + push したが、 step 3 後の検証で「test boxes 消失 + bullet bold 巨大化」 の regression 出現。 user 仮説否定で debug overlay (`14f4f37`) 仕込み、 iPhone での実値計測待ちで session 中断。 詳細は下の 「2026-05-09 後半 zoom-fit 改善」 節参照
+- [~] **bg/fbg default 縮小後の fbg 非表示 regression** (進行中、 2026-05-11 着手 / 2026-05-12 中断) — bg/fbg を `80cqmin / 右下 bottom -10% / object-fit:contain` の default に変更後 (`f595957`)、 fbg が表示されない報告。 build 確認で DOM は想定通り、 仮説は mask coordinate が `bottom:-10%` 起因で section 外に出ている可能性。 user の症状確認 + 修正方針 (A/B/C) 回答待ちで session 中断。 詳細は下の 「2026-05-11/12」 節参照
 - [x] **テーブルの中央寄せが効いてない** (`3fd4631`) — `<th align="center">` 等の HTML 属性は remark-gfm が出していたが、 `.body th, .body td { text-align: left }` が UA stylesheet の align 属性マッピングを上書きしていた。 `.body th[align="center"]` / `[align="right"]` 属性セレクタで明示的に text-align を指定して解決 (`body.css:94-97`)。 サンプル: `benben/initiation.md:312-316` の table ページに left/center/right 3 カラム例あり
 - [x] **コードブロックのコピーボタン padding-l** (`b071062`) — copy ボタンのボーダー撤廃 (`border: 0`)、hover bg だけで浮かす形に。あわせて copy 動作 (改行落ち / 行番号 prefix 混入 / diff `+`/`-` 混入) を全て `extractCleanCode` で吸収
 
