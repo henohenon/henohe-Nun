@@ -127,15 +127,45 @@ function parseInlineMarkdown(raw: string): ElementContent[] {
   return root.children as ElementContent[] ?? [{ type: 'text', value: raw }]
 }
 
+/** var inline (escape hatch) 対応 prefix。 `!color-brand~#fff` のような nwyt key を
+ *  CSS 変数 `--brand: #fff` として scope の style に流す。 spec docs/spec/syntax.md
+ *  の 「var inline (escape hatch)」 節参照。 */
+const VAR_INLINE_PREFIXES = new Set(['color', 'size'])
+
+/** scope の nwyts から var inline (`<prefix>-<name>~value`) を CSS 宣言に変換。
+ *  非対応 prefix や value 空のものは skip。 value 内の `;` `{` `}` は injection 防止
+ *  のため除去 (CSS rule 境界破壊回避)。 */
+function extractVarStyle(nwyts: NwytProp[]): string | undefined {
+  const decls: string[] = []
+  for (const n of nwyts) {
+    const dash = n.key.indexOf('-')
+    if (dash < 1) continue
+    const prefix = n.key.slice(0, dash)
+    if (!VAR_INLINE_PREFIXES.has(prefix)) continue
+    const name = n.key.slice(dash + 1)
+    if (!name) continue
+    const value = (n.rawValue ?? '').replace(/[;{}]/g, '').trim()
+    if (!value) continue
+    decls.push(`--${name}: ${value}`)
+  }
+  return decls.length > 0 ? decls.join('; ') : undefined
+}
+
 /**
  * Template 出力の共通ラッパ。 全 template が `<X.template> > <div.stage> > [...]`
  * の形を取る。 stage は heading + content (+ template-specific 要素) の
  * layout 容器、 stage の sibling は section level の装飾レイヤ (footer / bg /
  * fbg) のみ。 stage は section の padding を継承し、 footer は section 端
  * (edge-to-edge) に貼る設計。
+ *
+ * var inline (`!color-brand~#fff` 等) は scope の style 属性に CSS 変数として
+ * 反映、 CSS の cascade で配下要素に伝播する。
  */
 function wrapStage(scope: Scope, templateName: string, stageChildren: ElementContent[]): Element {
-  return h(`${scope.tag}.${templateName}`, { className: scope.classes }, [
+  const props: Properties = { className: scope.classes }
+  const style = extractVarStyle(scope.nwyts)
+  if (style) props.style = style
+  return h(`${scope.tag}.${templateName}`, props, [
     h('div.stage', stageChildren) as ElementContent,
   ])
 }

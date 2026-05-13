@@ -49,7 +49,11 @@ const tokenize: Tokenizer = function (effects, ok, nok) {
   }
 
   const keyRest: State = function (code) {
-    if (isAlphanumeric(code)) {
+    // key 名は `[a-zA-Z0-9_-]` 許可 (class と同じ char set)。 var inline syntax
+    // (`!color-brand~#fff` `!size-radius~12px` 等) を支えるために `-` `_` 解禁。
+    // 既存 key (bg / fbg / fl / fr / icon / sub / lead / fn / card) は alphanumeric
+    // のみなので互換性維持。
+    if (isAlphanumeric(code) || code === 45 /* - */ || code === 95 /* _ */) {
       effects.consume(code)
       return keyRest
     }
