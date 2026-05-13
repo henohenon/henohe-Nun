@@ -440,8 +440,54 @@ headingタグ階層(以下、階層)のルート要素に指定されたクラ�
 複数を繋げて指定可能`🌊default.my-class.another-class`。
 
 その階層のルート要素にクラスが指定される。内部のbodyのみに指定したい場合は`.body-row`のように指定することを想定。
-CSS変数もクラス経由でCSSファイルで指定する。
+CSS変数もクラス経由でCSSファイルで指定するのが原則。1 回限りの例外として nwyt の var inline syntax (`!<prefix>-<name>~<value>`, 下記参照) を用意。
 UnoCSSクラスは一応指定できるが、基本非推奨。
+
+### クラス名前空間ルール
+
+クラスは指定する mechanism (= 適用 target) によって 4 つの名前空間に分かれる。
+
+| mechanism | syntax | 適用 target | 命名規則 |
+|---|---|---|---|
+| **img-direct** | `!.<class>[alt](url)` | `<img>` 直接 | simple short 名 (image utility namespace) |
+| **bg/fbg** | `!bg.<class>~[alt](url)` / `!fbg.<class>~[alt](url)` | `<div.bg-layer>` / `<div.fbg-layer>` | 同上 (img-direct と共通) |
+| **scope** | `🌊<name>.<class>` | section / article 容器 | semantic descriptive (`.hierarchy` `.window` 等) |
+| **var inline** | `!<prefix>-<name>~<value>` | scope の CSS var を直接 set | category prefix (`color-*` `size-*`) |
+
+#### image utility class (統一 namespace)
+
+img-direct / bg / fbg / icon の全 image-mechanism で **同一 class が同一概念**。例:
+- `!.cover[](url)` → `<img class="cover">` で 親要素全面
+- `!bg.cover~[](url)` → `<div class="bg-layer cover">` で section 全面
+- `!icon.round~[](url)` → me template icon が 角丸
+
+| カテゴリ | classes | 効果 |
+|---|---|---|
+| Layout (排他) | `.cover` / `.center` / `.corner-{tl,tr,bl,br}` / `.edge-{t,b,l,r}` | 親要素内での位置 |
+| Size (排他) | `.sm` / `.md` / `.lg` / `.xl` | 40 / 60 / 80 / 100 cqmin (bg/fbg default は `.lg`) |
+| Inset (排他) | `.inside` / `.bleed` | 親内収まり / 端からはみ出し (bg/fbg default は `.bleed` = bottom -10%) |
+| Shape | `.round` / `.circle` | 角丸 / 円形クロップ |
+| Aspect (排他) | `.aspect-{square,video,portrait}` | aspect-ratio 1:1 / 16:9 / 9:16 |
+| Effects (複合可) | `.dim` / `.haze` / `.mono` / `.invert` / `.fade` / `.shadow` / `.frame` / `.tint-brand` / `.flip-{h,v}` | filter / blend / transform 系 |
+
+#### scope class
+
+section / article 容器に付与、 配下に効く。 既存と新規:
+
+- `.dark` — `data-theme="dark"` で token swap (section / global)
+- `.hierarchy` — h1-h6 を 4 段配色
+- `.window` — 枠 + 影 (browser window 風)
+- `.brand-quote` — scope 内 blockquote を brand 色寄せ
+- `.code-bare` — code block の figcaption (lang label + copy ボタン) を削除
+- `.no-footer` — この slide だけ footer / fbg を非表示 (global `!fl/!fr` 継承を抜く)
+- `.table-zebra` — scope 内 table をストライプ装飾
+- `.table-bordered` — scope 内 table の全 cell に罫線
+
+semantic descriptive な命名、 `🌊<template>.<class>` で適用。
+
+#### UnoCSS class
+
+UnoCSS の単純 numeric (`opacity-30` `w-80` `text-2xl`) は parser 制約 `[a-zA-Z0-9_-]` を通る。角括弧記法 (`bg-[#5932ff]`)、 高度修飾子 (`lg:hover:foo`)、 fraction (`w-1/2`) は parser reject。 ad-hoc な fine-tuning 用、 通常は image utility / scope class を使う。
 
 ## nwyt（キー指定拡張）
 `!key` で始まる記法の総称。prop と content の2種がある。
@@ -469,6 +515,26 @@ section テンプレートで使用:
 article レベルで使用:
 - `!fn~[id]` — この scope (section / article) を脚注 id の定義としてマークする
   - `.head` クラス指定 (`!fn.head~[id]`) で tooltip に scope の heading も含める。デフォルトは body のみ
+
+### var inline (escape hatch — CSS 変数の inline 指定)
+
+`!<prefix>-<name>~<value>` 形式で、 scope の CSS 変数を markdown から直接設定する。 通常は scope class 経由 (上記「クラス名前空間ルール」) を推奨、 var inline は **1 回限り** の例外用 escape hatch。
+
+```Markdown
+!color-brand~#ff0000
+!size-radius~12px
+```
+
+prefix で top-level namespace の圧迫を回避する設計 (`!brand` `!base` 等の予約語化を避ける)。
+
+対応 prefix:
+
+| prefix | 例 | 効果 |
+|---|---|---|
+| `color-*` | `!color-brand~#ff0000` `!color-base~#0a0a0a` `!color-main~` `!color-sub~` `!color-strong~` `!color-border~` `!color-muted~` `!color-overlay~` | CSS 変数 `--<name>` を scope に override |
+| `size-*` | `!size-radius~12px` | `--radius` 等 |
+
+このメカニズムは markdown を CSS の playground 化しないための制約として、 **「通常は class 経由、 var inline は例外」** の階層付けで運用する。
 
 ### content（`!key[value]`）
 コンテンツとして残る（消費されない）。本文中のインラインマーカー。
