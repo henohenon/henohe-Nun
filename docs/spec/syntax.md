@@ -482,7 +482,6 @@ section / article 容器に付与、 配下に効く。 既存と新規:
 - `.no-footer` — この slide だけ footer / fbg を非表示 (global `!fl/!fr` 継承を抜く)
 - `.table-zebra` — scope 内 table をストライプ装飾
 - `.table-bordered` — scope 内 table の全 cell に罫線
-- `.bg-from-fbg` — bg を `!bg~` 個別指定せず fbg の値を mirror (`!bg~[](url)` の重複記述を避けるための shortcut、 section 単位適用)
 
 semantic descriptive な命名、 `🌊<template>.<class>` で適用。
 
@@ -504,6 +503,7 @@ nwyt prop はグローバル指定で全 section・全 article に継承され�
 
 section テンプレートで使用:
 - `!bg~[alt](url)` — 背景画像
+  - 値 reference 構文 `!bg~=<key>` で他 nwyt (典型的には fbg) の値を mirror できる (例: `!bg~=fbg` で fbg の URL を bg にも使う、 同 URL を 2 回書かない shortcut)。 chain (=A → =B) は無効 (depth 0)、 自己参照も無効
 - `!fbg~[alt](url)` — フッター背景画像
 - `!fl~テキスト` — フッター左テキスト
 - `!fr~テキスト` — フッター右テキスト

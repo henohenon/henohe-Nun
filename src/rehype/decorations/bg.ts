@@ -17,18 +17,34 @@ export function appendBackground(
   scope: Scope,
   globalNwyts: NwytProp[],
 ): boolean {
-  let bg = findNwytInScope(scope, globalNwyts, 'bg')
-  // .bg-from-fbg: bg が個別指定されていない場合、 fbg の値を mirror して
-  // bg としても使う。 title slide で「fbg と同じ画像を bg にも使いたい」 を
-  // `!bg~` 重複指定なしに表現するための shortcut。 spec syntax.md 参照。
-  if (!bg && scope.classes.includes('bg-from-fbg')) {
-    bg = findNwytInScope(scope, globalNwyts, 'fbg')
-  }
+  const bg = findNwytInScope(scope, globalNwyts, 'bg')
   if (!bg) return false
-  const parsed = parseImageNwytValue(bg.rawValue)
+  // 値 reference 構文 `!bg~=<key>`: bg の値を別の nwyt (典型的には fbg) の値で
+  // 解決する。 title slide 等で fbg と bg が同 URL になる場合の `!bg~[](url)`
+  // 重複記述を避ける shortcut。 spec docs/spec/syntax.md の 「値 reference 構文」
+  // 節参照。 chain (=fbg → =bg) は depth 0 で refuse (循環防止)。
+  const resolved = resolveValueRef(bg, scope, globalNwyts)
+  if (!resolved) return false
+  const parsed = parseImageNwytValue(resolved.rawValue)
   if (!parsed) return false
   el.children.unshift(buildBackground(parsed.src, parsed.alt || bg.key, bg.classes))
   return true
+}
+
+/** 値が `=<key>` 形式なら同 scope (または global) の `<key>` nwyt を返す。
+ *  そうでなければ元の nwyt をそのまま返す。 解決不能 / 自己参照 / chain は null。 */
+function resolveValueRef(
+  nwyt: NwytProp,
+  scope: Scope,
+  globalNwyts: NwytProp[],
+): NwytProp | null {
+  if (!nwyt.rawValue.startsWith('=')) return nwyt
+  const refKey = nwyt.rawValue.slice(1).trim()
+  if (!refKey || refKey === nwyt.key) return null
+  const ref = findNwytInScope(scope, globalNwyts, refKey)
+  if (!ref) return null
+  if (ref.rawValue.startsWith('=')) return null
+  return ref
 }
 
 function buildBackground(src: string, alt: string, classes: string[]): ElementContent {
