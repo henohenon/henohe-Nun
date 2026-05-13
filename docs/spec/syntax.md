@@ -482,6 +482,7 @@ section / article 容器に付与、 配下に効く。 既存と新規:
 - `.no-footer` — この slide だけ footer / fbg を非表示 (global `!fl/!fr` 継承を抜く)
 - `.table-zebra` — scope 内 table をストライプ装飾
 - `.table-bordered` — scope 内 table の全 cell に罫線
+- `.bg-from-fbg` — bg を `!bg~` 個別指定せず fbg の値を mirror (`!bg~[](url)` の重複記述を避けるための shortcut、 section 単位適用)
 
 semantic descriptive な命名、 `🌊<template>.<class>` で適用。
 

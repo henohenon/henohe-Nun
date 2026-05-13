@@ -17,7 +17,13 @@ export function appendBackground(
   scope: Scope,
   globalNwyts: NwytProp[],
 ): boolean {
-  const bg = findNwytInScope(scope, globalNwyts, 'bg')
+  let bg = findNwytInScope(scope, globalNwyts, 'bg')
+  // .bg-from-fbg: bg が個別指定されていない場合、 fbg の値を mirror して
+  // bg としても使う。 title slide で「fbg と同じ画像を bg にも使いたい」 を
+  // `!bg~` 重複指定なしに表現するための shortcut。 spec syntax.md 参照。
+  if (!bg && scope.classes.includes('bg-from-fbg')) {
+    bg = findNwytInScope(scope, globalNwyts, 'fbg')
+  }
   if (!bg) return false
   const parsed = parseImageNwytValue(bg.rawValue)
   if (!parsed) return false
