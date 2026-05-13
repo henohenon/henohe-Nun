@@ -27,7 +27,13 @@ export function appendBackground(
   if (!resolved) return false
   const parsed = parseImageNwytValue(resolved.rawValue)
   if (!parsed) return false
-  el.children.unshift(buildBackground(parsed.src, parsed.alt || bg.key, bg.classes))
+  // class 継承ルール: bg 自身に class が無く value ref 経由の場合は ref 元 (fbg 等)
+  // の class も継承する (= 「fbg の設定全部を bg にも」 という user 意図に沿う)。
+  // bg に独自 class があれば そちら優先 (override)。
+  const usedClasses = bg.classes.length > 0
+    ? bg.classes
+    : (resolved !== bg ? resolved.classes : bg.classes)
+  el.children.unshift(buildBackground(parsed.src, parsed.alt || bg.key, usedClasses))
   return true
 }
 

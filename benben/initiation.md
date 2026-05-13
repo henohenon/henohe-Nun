@@ -5,12 +5,12 @@ date: 2026-05-07
 ~~~
 
 !fr~2026/05/07
-!fbg~[fbg](/images/henohe-Nun.png)
+!fbg.corner-bl.sm~[fbg](/images/henohe-Nun.png)
 
 # Initiation
 🌊title
 !sub~へのへNun's all demo
-!bg~[bg](/images/henohe-Nun.png)
+!bg~=fbg
 
 
 # Index
@@ -520,6 +520,65 @@ Math is allowed too: $e^{i\pi} + 1 = 0$.
 
 `!fbg~[alt](url)` masks an image with the footer's SVG shapes (line + text).
 Only the line and text show through, framing the image.
+
+
+# Class — image utility (統一 namespace)
+🌊default
+!fl~Class
+
+img-direct / bg / fbg / icon の **全 image-mechanism で同一 class が同一概念**。
+`!.<class>[alt](url)` で `<img class="..." />` を生成、 `!bg.<class>~` や `!icon.<class>~` でも同じ class が効く。
+
+| カテゴリ | 例 |
+| --- | --- |
+| Layout | `.cover` / `.center` / `.corner-{tl,tr,bl,br}` / `.edge-{t,b,l,r}` |
+| Size | `.sm` / `.md` / `.lg` / `.xl` |
+| Shape | `.round` / `.circle` |
+| Aspect | `.aspect-{square,video,portrait}` |
+| Effects | `.dim` / `.haze` / `.mono` / `.invert` / `.fade` / `.shadow` / `.frame` / `.tint-brand` / `.flip-{h,v}` |
+
+!.round[round](/images/henohe-Nun.png)
+!.mono[mono](/images/henohe-Nun.png)
+!.dim[dim](/images/henohe-Nun.png)
+
+
+# Class — scope (`.no-footer` / `.table-zebra` 等)
+🌊default.table-zebra
+!fl~Class
+
+scope (section / article) に付ける class。 この slide は `🌊default.table-zebra` で table がストライプ装飾。
+
+| col 1 | col 2 | col 3 |
+| --- | --- | --- |
+| apple | red | 100 |
+| banana | yellow | 80 |
+| cherry | red | 120 |
+| date | brown | 60 |
+
+他: `.dark` / `.hierarchy` / `.window` / `.brand-quote` / `.code-bare` / `.no-footer` / `.table-bordered`
+
+
+# Custom — 値 ref + var inline
+🌊default
+!fl~Class
+!color-brand~#ff00ff
+
+**値 reference `!bg~=<key>`**: 別 nwyt の値を mirror。 同 URL の重複記述回避。
+
+```md
+!fbg~[](/img/example.png)
+!bg~=fbg     # fbg の URL + class を mirror
+```
+
+**var inline (escape hatch) `!<prefix>-<name>~<value>`**: CSS 変数を scope に直接 set。 この slide は `!color-brand~#ff00ff` で `--brand` を マゼンタに override。
+
+```md
+!color-brand~#ff00ff
+!color-base~#0a0a0a
+!size-radius~12px
+```
+
+通常は scope class (`!color-brand` の代わりに `.crimson-deck` 等 CSS で定義) を推奨、 var inline は **1 回限り** 例外用 escape hatch。
 
 
 # Link card

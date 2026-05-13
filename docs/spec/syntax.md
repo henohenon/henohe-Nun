@@ -504,6 +504,7 @@ nwyt prop はグローバル指定で全 section・全 article に継承され�
 section テンプレートで使用:
 - `!bg~[alt](url)` — 背景画像
   - 値 reference 構文 `!bg~=<key>` で他 nwyt (典型的には fbg) の値を mirror できる (例: `!bg~=fbg` で fbg の URL を bg にも使う、 同 URL を 2 回書かない shortcut)。 chain (=A → =B) は無効 (depth 0)、 自己参照も無効
+  - class 継承: `!bg~=fbg` のように bg 自身に class が無い場合、 参照先 (fbg) の class も継承する (= fbg の設定全部を bg にも適用)。 bg 独自 class があれば そちら優先 (`!bg.cover~=fbg` で URL は fbg、 class は `.cover`)
 - `!fbg~[alt](url)` — フッター背景画像
 - `!fl~テキスト` — フッター左テキスト
 - `!fr~テキスト` — フッター右テキスト
