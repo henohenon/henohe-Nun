@@ -5,6 +5,7 @@ dist
 *.log
 .claude/
 .idea/
+.tmp/
 public/thumbs/
 benben/private/*
 src/assets/**/private/*
