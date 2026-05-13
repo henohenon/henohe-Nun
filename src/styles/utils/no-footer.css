@@ -1,0 +1,16 @@
+/* `.no-footer` opt-in: scope に付与すると section の footer と fbg-layer を非表示にする。
+ * global `!fl~` `!fr~` 等の継承で全 slide に footer が出る default 設定下で、
+ * 特定 slide だけ footer / fbg を抜きたい時に使う。
+
+ * 適用先パターン 2 種:
+ *   - section 直接 (`🌊title.no-footer` 等): 第 1 selector ペアでカバー
+ *   - article 内 (`🌊default.no-footer` 等): :has() で section に効かせる、 第 2 ペア
+ *
+ * footer に依存する fbg-layer も同時に消す (footer 形状で抜く mask が機能しないため、
+ * fbg だけ残しても意味がない)。 bg-layer は背景画像であり footer と独立、 残す。 */
+.no-footer footer,
+.no-footer .fbg-layer,
+section:has(.no-footer) footer,
+section:has(.no-footer) .fbg-layer {
+  display: none;
+}

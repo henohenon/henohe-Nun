@@ -1,0 +1,24 @@
+/* table 装飾の opt-in クラス群。 baseline (`body.css` の `.content table`) は罫線 +
+ * padding のシンプル指向、 これらは 「もう少し賑やかな表」 を 1 slide 単位で表現
+ * したい時の class 経由 opt-in。
+
+ * `.table-zebra` — 偶数行 (tbody) を muted bg で帯状に塗る、 行数が多い表で 行追跡を
+ * 助ける。 thead は別 (背景色既設) なので影響なし。
+
+ * `.table-bordered` — 全 cell の 4 辺に罫線を引く、 baseline の right-bottom only から
+ * 「方眼」 寄りの強い罫線視覚に切替。 baseline の `tr:last-child border-bottom: 0` /
+ * `th/td:last-child border-right: 0` は specificity 同等で source order により override
+ * (utils/ は import 末尾)。
+ */
+
+/* === .table-zebra === */
+.table-zebra .content tbody tr:nth-child(2n) > td,
+.table-zebra .content tbody tr:nth-child(2n) > th {
+  background: var(--overlay);
+}
+
+/* === .table-bordered === */
+.table-bordered .content th,
+.table-bordered .content td {
+  border: 1px solid var(--table-border-color, color-mix(in srgb, var(--main) 30%, var(--base)));
+}
