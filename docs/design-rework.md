@@ -391,6 +391,81 @@ CF Pages は domain なしでも `*.pages.dev` で edge functions 含む全機�
 
 —
 
+## 2026-05-13 (II): util class catalog + 命名規則策定
+
+mobile 分岐棚上げに続き、 util class 整備に着手。 当初テーマは bg/fbg 位置 + 効果、 画像系の整理、 CSS 変数 inline 設定 syntax の有無。 結論として以下を策定 (catalog の visual 一覧は `.tmp/nun-catalog.png`、 session 内 artifact)。
+
+### 4 mechanism × 統一命名規則
+
+| mechanism | syntax | target | 命名規則 |
+|---|---|---|---|
+| img-direct | `!.<class>[alt](url)` | `<img>` 直接 | simple short 名 (image utility namespace) |
+| bg/fbg | `!bg.<class>~` `!fbg.<class>~` | `<div.bg-layer>` `<div.fbg-layer>` | 同上 (img-direct と共通) |
+| scope | `🌊<name>.<class>` | section / article | semantic descriptive (`.hierarchy` `.window` 等) |
+| var inline | `!<prefix>-<name>~<value>` | scope の CSS var | category prefix (`color-*` `size-*`) |
+
+### 画像 class 統一 namespace (核心決定)
+
+img-direct / bg / fbg / icon の全 image-mechanism で **同一 class が同一概念**。 `!.cover[](url)` `!bg.cover~[](url)` `!icon.round~[](url)` で同名・同動作。 当初 `.full` (img) と `.cover` (bg) で別名問題が出ていたが user 指摘で統一。
+
+6 サブカテゴリ構成:
+- **Layout** (相互排他): `.cover` / `.center` / `.corner-tl/tr/bl/br` / `.edge-t/b/l/r`
+- **Size** (相互排他): `.sm` / `.md` / `.lg` / `.xl` (bg/fbg default は lg = 80cqmin)
+- **Inset** (相互排他): `.inside` / `.bleed` (bg/fbg default は bleed = bottom -10%)
+- **Shape**: `.round` / `.circle`
+- **Aspect** (相互排他): `.aspect-square` / `.aspect-video` / `.aspect-portrait`
+- **Effects** (複合可): `.dim` / `.haze` / `.mono` / `.invert` / `.fade` / `.shadow` / `.frame` / `.tint-brand` / `.flip-h` / `.flip-v`
+
+### scope class 追加 (限定 3 個)
+
+実 deck (`benben/*.md`) light 調査結果: scope class の現実需要は ほぼ `.window` のみ (initiation の spec demo 用途)。 当初提案の `.hero / .note / .compact / .flat-heads / .mono-heads / .tight-heads / .full-bleed / .split-2/3` は 「無い問題に答えてた」 と user 指摘で全撤回。 grounded で残せた 3 個:
+
+- `.no-footer` — この slide だけ footer / fbg 非表示
+- `.table-zebra` — table ストライプ装飾
+- `.table-bordered` — table 全 cell 罫線
+
+text size 系 (`.text-sm` `.text-lg` `.text-xl`) は一度提案したが user 即撤回、 理由は下記 text philosophy。
+
+### var inline syntax (escape hatch)
+
+CSS 変数の inline 設定 syntax は現状なし (`syntax.md:443` 「CSS変数もクラス経由でCSSファイルで指定する」 = class-based のみ)。 これは 「markdown を CSS から守る防壁」 design principle 由来。
+
+one-off customization 用の escape hatch として **`!<prefix>-<name>~<value>`** (B 案 with prefix) を採用:
+
+- `!color-brand~#ffffff` `!color-base~#0a0a0a` 等 (color-* 8 個、 token 完備)
+- `!size-radius~12px` (size-* 1 個)
+- prefix で top-level namespace 圧迫回避 (`!brand` `!base` を予約語化しない)
+
+通常は scope class 推奨、 var inline は 「1 回限り」 例外用。
+
+### text philosophy 確立
+
+`.text-sm/.text-lg/.text-xl` 提案 → 即撤回。 理由: 「スライドの text は **大きいほど・少ないほど** 優秀、 縮小して fit させるごまかしは却下」 という core design principle (memory `project_text_philosophy.md`)。
+
+派生議論: zoom-fit も同 philosophy 緊張下にあるが、 Phase A2 で 「想定オーバーの保険」 と framing 済、 safety net として残置。 将来 「(a) safety net 維持」 vs 「(b) 廃止して overflow=slide 失敗扱い」 は別議論。
+
+### 実装順 (Nun 流: spec → 実装)
+
+| step | 内容 | 規模 |
+|---|---|---|
+| **1** | `docs/spec/syntax.md` 更新 — 名前空間ルール sub-section + image utility class 一覧 + var inline syntax 明文化 | 中 |
+| **2** | 画像 class 統一実装 — 新 `src/styles/utils/image.css` + 既存 `background.css` リファクタ + img-direct / bg / fbg / icon の selector 統一 | 大 |
+| **3** | scope class 3 個実装 — `src/styles/utils/no-footer.css` + `src/styles/utils/table.css` | 小 |
+| **4** | var inline parser 実装 — nwyt parser に `!<prefix>-<name>~<value>` 認識追加、 CSS var として section style に流す | 中-大 |
+
+各 step 独立 commit、 `benben/Quaver.md` 等で動作確認。
+
+### 本セッションで追加 / 更新した memory
+
+- `project_mobile_branching_deferred.md` (新規、 mobile 分岐保留)
+- `project_future_embed_video.md` (新規、 動画 / iframe 埋め込み idea)
+- `feedback_discord_visuals_png.md` (新規、 Discord visual は PNG default)
+- `feedback_project_local_temp.md` (新規、 temp / scratch は `.tmp/` 配下)
+- `project_text_philosophy.md` (新規、 text philosophy)
+- `project_fbg_pdf_strategy.md` (既存を 「2026-05-12 wrapper div 化で概ね解消」 に update)
+
+—
+
 ## 残作業
 
 優先度・トピック別に再構築。
