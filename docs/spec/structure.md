@@ -146,6 +146,8 @@ section 直下の sibling 配置は以下:
 
 bg / fbg は absolute、 stage / footer は in-flow grid item。 stage が padding を持つことで footer は section padding に巻き込まれず edge-to-edge を維持できる (section 自体の padding は 0)。
 
+bg / fbg の **wrapper (`.bg-layer` / `.fbg-layer`) は section 全体を覆う固定 container** (positioning + (fbg のみ) mask 適用先)。 user が `!bg.<class>~` `!fbg.<class>~` で指定する image utility class は wrapper でなく **inner `<img class="bg-img">` / `<img class="fbg-img">` に付与される**、 つまり class は wrapper 内の img の位置 / サイズ / 効果を制御する。 fbg の場合 mask は wrapper 固定なので、 inner img を `.corner-bl` 等で動かすと mask 領域 (footer 形状) と img 領域 (動いた先) の **交差部分**しか可視にならない (image utility class の振る舞いとしては正、 fbg 全体を動かしたい場合は mask 構築 (`fbg.ts`) の改修が必要)。
+
 ### テーマ
 スライドの配色は少数のCSS変数で制御する。
 

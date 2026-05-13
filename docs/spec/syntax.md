@@ -450,16 +450,20 @@ UnoCSSクラスは一応指定できるが、基本非推奨。
 | mechanism | syntax | 適用 target | 命名規則 |
 |---|---|---|---|
 | **img-direct** | `!.<class>[alt](url)` | `<img>` 直接 | simple short 名 (image utility namespace) |
-| **bg/fbg** | `!bg.<class>~[alt](url)` / `!fbg.<class>~[alt](url)` | `<div.bg-layer>` / `<div.fbg-layer>` | 同上 (img-direct と共通) |
+| **bg/fbg** | `!bg.<class>~[alt](url)` / `!fbg.<class>~[alt](url)` | wrapper 内の `<img.bg-img>` / `<img.fbg-img>` | 同上 (img-direct と共通) |
 | **scope** | `🌊<name>.<class>` | section / article 容器 | semantic descriptive (`.hierarchy` `.window` 等) |
 | **var inline** | `!<prefix>-<name>~<value>` | scope の CSS var を直接 set | category prefix (`color-*` `size-*`) |
 
 #### image utility class (統一 namespace)
 
-img-direct / bg / fbg / icon の全 image-mechanism で **同一 class が同一概念**。例:
-- `!.cover[](url)` → `<img class="cover">` で 親要素全面
-- `!bg.cover~[](url)` → `<div class="bg-layer cover">` で section 全面
-- `!icon.round~[](url)` → me template icon が 角丸
+img-direct / bg / fbg / icon の全 image-mechanism で **同一 class が同一概念**。 適用先は常に `<img>` 要素 (wrapper の `<div.bg-layer>` 等ではなく、 その中の `<img>` 本体)。 例:
+- `!.cover[](url)` → `<img class="cover">` (body 内、 親要素を覆う)
+- `!bg.cover~[](url)` → `<div class="bg-layer"><img class="bg-img cover"></div>` (section 内 inner img を覆う)
+- `!icon.round~[](url)` → me template の icon img が 角丸
+
+**bg/fbg の注意**: class は **wrapper でなく inner img を動かす**。 wrapper (`<div.bg-layer>` / `<div.fbg-layer>`) は section 全体を覆う固定の positioning context (mask 適用先) で位置を変えない。 これにより:
+- bg では `.corner-bl.sm` で img が section 内 bottom-left の 40cqmin 区画に表示 (期待通り)
+- fbg では mask が wrapper (= section bottom の footer 形状領域) に固定なので、 inner img を `.corner-bl.sm` で動かすと **mask 領域と img 領域の交差部分**だけ可視になる (footer の中の特定部分しか塗られない)。 fbg の visible area 自体を動かしたい場合は mask 構築の改修が必要 (現状 scope 外)
 
 | カテゴリ | classes | 効果 |
 |---|---|---|
