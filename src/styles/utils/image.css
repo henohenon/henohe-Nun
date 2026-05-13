@@ -1,0 +1,127 @@
+/* Image utility class — img-direct / bg / fbg / icon の全 image-mechanism で
+ * 同一 class が同一概念。 適用形:
+ *   `!.cover[](url)`         → <img class="cover" ...>             (img-direct)
+ *   `!bg.cover~[](url)`      → <img class="bg-img cover" ...>      (bg、 decorations/bg.ts)
+ *   `!fbg.cover~[](url)`     → <img class="fbg-img cover" ...>     (fbg、 decorations/fbg.ts)
+ *   `!icon.cover~[](url)`    → <img class="cover" ...>             (icon、 templates.ts resolveNwyt)
+ *
+ * 全 case で `<img>` 要素に class が直接付くため、 selector は `img.<class>` で
+ * uniform に当たる (spec 0,1,1 で `.bg-img` 等の default 0,1,0 を override)。
+ *
+ * 位置決め系 (Layout) は positioning context (= absolutely positioned ancestor)
+ * を前提とする。 bg/fbg は `.bg-layer / .fbg-layer { position:absolute; inset:0 }`
+ * が context、 icon は me template の `.icon` 容器が context、 img-direct は body
+ * 内 paragraph で context なし → Layout class は効かない / 効かせるには user 側で
+ * 親に position:relative 付与が必要。 詳細は docs/spec/syntax.md 参照。 */
+
+/* === Layout (相互排他、 親要素内での位置) === */
+
+img.cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+img.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+}
+
+img.corner-tl { position: absolute; top: 0; left: 0; right: auto; bottom: auto; }
+img.corner-tr { position: absolute; top: 0; right: 0; left: auto; bottom: auto; }
+img.corner-bl { position: absolute; bottom: 0; left: 0; top: auto; right: auto; }
+img.corner-br { position: absolute; bottom: 0; right: 0; top: auto; left: auto; }
+
+img.edge-t {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translateX(-50%);
+}
+img.edge-b {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  right: auto;
+  top: auto;
+  transform: translateX(-50%);
+}
+img.edge-l {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  transform: translateY(-50%);
+}
+img.edge-r {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: auto;
+  bottom: auto;
+  transform: translateY(-50%);
+}
+
+/* === Size (相互排他、 cqmin baseline) === */
+
+img.sm { width: 40cqmin; height: 40cqmin; }
+img.md { width: 60cqmin; height: 60cqmin; }
+img.lg { width: 80cqmin; height: 80cqmin; }
+img.xl { width: 100cqmin; height: 100cqmin; }
+
+/* === Inset (相互排他、 overflow 制御) ===
+ * bg/fbg default = bleed (bottom: -10%)。 .inside は default を打ち消し
+ * 親内収まりに、 .bleed は明示的に bleed 動作を declare (default 値と同等)。 */
+
+img.inside { inset: 0; }
+img.bleed { bottom: -10%; }
+
+/* === Shape === */
+
+img.round { border-radius: var(--radius); }
+img.circle { border-radius: 50%; }
+
+/* === Aspect (相互排他) === */
+
+img.aspect-square { aspect-ratio: 1 / 1; }
+img.aspect-video { aspect-ratio: 16 / 9; }
+img.aspect-portrait { aspect-ratio: 9 / 16; }
+
+/* === Effects (複合可) === */
+
+img.dim { filter: brightness(0.4); }
+img.haze { filter: blur(8px); }
+img.mono { filter: grayscale(1); }
+img.invert { filter: invert(1); }
+
+/* .fade: gradient mask で fade out。 fbg は既存 mask-image を持つので併用すると
+ * 上書きで footer 形状が失われる、 fbg では併用不可。 bg / icon / img-direct で有効。 */
+img.fade {
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}
+
+img.shadow { filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--shadow) 30%, transparent)); }
+
+img.frame {
+  padding: 4px;
+  background: var(--base);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--shadow) 20%, transparent);
+}
+
+/* .tint-brand: mix-blend-mode で brand 色を画像に乗せる。 効果が出るためには
+ * 背後に色のあるレイヤが必要 (CSS background か別 layer)、 単独 img では
+ * 視覚的に変化しない場合あり。 bg/fbg では section bg と blend する。 */
+img.tint-brand { mix-blend-mode: multiply; }
+
+img.flip-h { transform: scaleX(-1); }
+img.flip-v { transform: scaleY(-1); }

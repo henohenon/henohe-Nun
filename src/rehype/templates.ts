@@ -70,11 +70,28 @@ export function renderBody(body: (ElementContent | Scope)[]): (Element | Element
   )
 }
 
+/** image-only nwyt keys: クラス指定を inner `<img>` に直接乗せる (span wrapper を介さない)。
+ *  bg/fbg は decorations/bg.ts /fbg.ts で別経路、 ここでは template から resolveNwyt 経由で
+ *  来るもののみ対象。 image utility class を `img.<class>` selector で uniform に当てるための統一。 */
+const IMAGE_ONLY_NWYT_KEYS = new Set(['icon'])
+
 /** nwyt prop を key で検索し、hast 化 */
 export function resolveNwyt(scope: Scope, key: string): Element | null {
   const nwyt = scope.nwyts.find(n => n.key === key)
   if (!nwyt) return null
   const children = parseNwytValue(nwyt.key, nwyt.rawValue)
+
+  // image-only key (icon 等): class を inner <img> に直接乗せて span wrapper を省く
+  if (IMAGE_ONLY_NWYT_KEYS.has(key) && children.length === 1) {
+    const first = children[0] as Element
+    if (first.type === 'element' && first.tagName === 'img') {
+      if (nwyt.classes.length > 0) {
+        first.properties = { ...(first.properties ?? {}), className: nwyt.classes }
+      }
+      return first
+    }
+  }
+
   // クラス未指定時は class="" を出さない
   const props: Properties = nwyt.classes.length > 0 ? { className: nwyt.classes } : {}
   return h('span', props, children)
