@@ -350,6 +350,47 @@ build した `dist/Quaver/index.html` で DOM 構造を確認 → 想定通り�
 
 —
 
+## 2026-05-13: mobile 分岐 方針整理 (棚上げ判断)
+
+iOS Safari の SVG attribute calc 全滅対応で導入した nested svg + 負 em hack (`fbg.ts` の `<mask><svg y="100%"><use y="-1.2em">` 系 + 同等の footer fl/fr 位置決め) について、 user から 「DOM 構造、 SVG nest キツい、 mobile 用分岐できる既存パターン無いか?」 と再相談。 検討結果は **当面 hack 維持、 cleanup は CF Pages 移行 + domain 取得まで保留**。
+
+### 検討した分岐手段
+
+| 手段 | 仕組み | iOS calc 問題に効くか | コスト |
+|---|---|---|---|
+| **CSS `@media` / `@supports`** | 1 HTML、 device 別に CSS 切替 | △ (DOM 構造分岐不可、 値のみ) | ゼロ |
+| **`<picture>` / `<source media>` 系** | HTML native の media 分岐 | ✗ (画像 / video 専用、 任意 DOM 不可) | ゼロ |
+| **build 時 UA 分割** (Astro adapter / Next.js middleware) | 2 種 HTML 出力、 edge で振り分け | ✓ | output 2 倍 + hosting 依存 |
+| **runtime JS DOM swap** | 1 HTML load 時に書換 | ✓ | 容量微増、 SSG 思想逸脱 |
+
+lib 候補も列挙: modernizr (specific bug 検出は自作) / WURFL・DeviceAtlas (enterprise 向け重量級) / bowser・ua-parser-js (軽量 UA parser、 build 時利用) / Astro `client:media` (hydration 分岐、 DOM 分岐ではない)。 **mobile 分岐は枯れた問題で、 「新 framework 導入で解決」 みたいな魔法は無い**、 全部上記 4 種の組合せ。
+
+### Nun の具体的選択肢 3 案
+
+| 案 | 内容 | 結論 |
+|---|---|---|
+| **A: ship 両方 + CSS で hide** | desktop 用 `<g class="shape-modern"><use y="calc(100% - 1.2em)"></g>` と iOS 用 `<g class="shape-ios"><svg y="100%"><use y="-1.2em"></svg></g>` を両方出力、 `@supports (-webkit-touch-callout: none) { .shape-modern { display:none } }` で切替 | **却下**。 SVG bloat ~100 bytes は微小だが、 complexity が template / CSS / 読む人の認知の 3 箇所に分散し、 hack の局所性 (現状 1-2 ファイル閉込め) を捨てる trade。 `@supports` での iOS 検出は将来 Safari の他 OS 対応で脆い |
+| **B: build 時 2 出力 + edge UA 振り分け** | vite plugin で `index.html` と `ios.html` 出力、 hosting (CF Workers / Netlify Edge / Vercel Edge) で UA 振り分け | **採用候補、 ただし保留**。 GitHub Pages では実現不可、 CF Pages 等への移行が前提。 移行は domain 購入と pair でやらないと hosting 名分散 (`*.pages.dev`) が残る |
+| **C: universal hack 維持 (現状)** | nested svg + 負 em hack を全 device に配り続ける | **採用 (短期)**。 hack 箇所は `fbg.ts:50-71` と footer 系の 1-2 ファイル、 コメント + memory `project_ios_svg_constraints.md` で documentation 化済、 触らない限り顔出さない |
+
+### 棚上げの決定要因 (ドメイン分散 / 収入源)
+
+案 B の前提となる CF Pages 移行 + domain 購入について user 発言:
+- 現状 GitHub Pages に Nun + portfolio + 他 product 全集約 (`henohenon.github.io/*`)
+- 「cfpages に全移行したい気持ちもあるが、 まだドメイン買ってない」
+- 「ドメイン分散がなぁ ~ 自分のドメイン買えよって話なんですけれども」 = 自覚あり、 ただ動機が SVG hack cleanup 単独では弱い
+- 「**収入源安定したら買う、 今年の目標**」 = ドメイン購入トリガーは経済的安定、 2026 年内目標
+
+CF Pages は domain なしでも `*.pages.dev` で edge functions 含む全機能使えるが、 OGP / share URL の branding 観点で半端、 全 product 移行と domain 購入を pair でやるのが意味的に正しい。 動機 2 個以上 (branding / multi-product 統合 / CF 余技 / vendor lock-in 緩和 / SVG hack cleanup) が揃った瞬間が踏み切り時。
+
+### 落とし所
+
+- **今**: 案 C 維持、 SVG hack はそのまま、 触らない、 「クソだけど触らない区域」 として封印 (memory + コメント済)
+- **将来 (収入源安定 + 動機累積タイミング)**: ドメイン購入 + CF Pages 全 product 移行 + edge routing で UA 分岐 + SVG hack 削除を **1 PR (multiple wins)** で実施
+- 単独動機 (= SVG hack 直したいだけ) では着手しない、 これを memory `project_mobile_branching_deferred.md` に明文化済
+
+—
+
 ## 残作業
 
 優先度・トピック別に再構築。
@@ -364,7 +405,7 @@ build した `dist/Quaver/index.html` で DOM 構造を確認 → 想定通り�
 - [~] **footer (mobile) 1px 白帯** — 暫定的に **deprioritize** (2026-05-09 user confirm)。 1px 白帯自体は気にしないで OK との判断
 - [x] **mobile で calc 効いてない疑惑** (2026-05-09、 真因確定) — 真因は **iOS Safari での SVG 位置決め** に集約。 typography (clamp/cqmin) は実は機能しており影響なし。 footer の SVG text と fbg mask の `<use>` が CSS / SVG attribute 経由の位置決めで失敗 → 視覚的に 「calc 効いてない」 と誤認されてた。 mobile-test deck (T1-T13) で isolated test を構築、 iOS の SVG 制約を完全切り分けた上で fix 適用 (`61a0495` `d9f34c4` `40a4ba0`)
 - [~] **iPhone landscape での width / zoom-fit 違和感** (進行中、 2026-05-09 着手 / 2026-05-10 中断) — zoom-fit の改善 step 1-3 を順次 commit + push したが、 step 3 後の検証で「test boxes 消失 + bullet bold 巨大化」 の regression 出現。 user 仮説否定で debug overlay (`14f4f37`) 仕込み、 iPhone での実値計測待ちで session 中断。 詳細は下の 「2026-05-09 後半 zoom-fit 改善」 節参照
-- [~] **bg/fbg default 縮小後の fbg 非表示 regression** (進行中、 2026-05-11 着手 / 2026-05-12 中断) — bg/fbg を `80cqmin / 右下 bottom -10% / object-fit:contain` の default に変更後 (`f595957`)、 fbg が表示されない報告。 build 確認で DOM は想定通り、 仮説は mask coordinate が `bottom:-10%` 起因で section 外に出ている可能性。 user の症状確認 + 修正方針 (A/B/C) 回答待ちで session 中断。 詳細は下の 「2026-05-11/12」 節参照
+- [x] **bg/fbg default 縮小後の fbg 非表示 regression** (2026-05-11 着手 / 2026-05-12 解消、 `a5378db`) — bg/fbg を `80cqmin / 右下 bottom -10% / object-fit:contain` default に変更後 (`f595957`) に fbg 非表示 regression。 fix: bg/fbg を **`<div.*-layer><img.*-img>` の wrapper + img 構造に統一**、 fbg mask の適用先を `<img>` から wrapper `<div.fbg-layer>` に移動。 mask の reference frame が wrapper (= section 全体) 基準で安定、 footer 形状で抜かれた fbg-img が想定通り表示。 **副次的に PDF 出力でも概ね機能するようになった** (1px ズレは残るが許容範囲、 詳細は下の 「やらない判断」 fbg PDF 節 + memory `project_fbg_pdf_strategy.md` 参照)
 - [x] **テーブルの中央寄せが効いてない** (`3fd4631`) — `<th align="center">` 等の HTML 属性は remark-gfm が出していたが、 `.body th, .body td { text-align: left }` が UA stylesheet の align 属性マッピングを上書きしていた。 `.body th[align="center"]` / `[align="right"]` 属性セレクタで明示的に text-align を指定して解決 (`body.css:94-97`)。 サンプル: `benben/initiation.md:312-316` の table ページに left/center/right 3 カラム例あり
 - [x] **コードブロックのコピーボタン padding-l** (`b071062`) — copy ボタンのボーダー撤廃 (`border: 0`)、hover bg だけで浮かす形に。あわせて copy 動作 (改行落ち / 行番号 prefix 混入 / diff `+`/`-` 混入) を全て `extractCleanCode` で吸収
 
@@ -397,20 +438,24 @@ build した `dist/Quaver/index.html` で DOM 構造を確認 → 想定通り�
 
 ## やらない判断 (recorded)
 
-### fbg の PDF 互換 (screen 専用と確定 — 2026-05-07)
+### fbg の PDF 互換 (2026-05-07 一旦 やらない判断 → 2026-05-12 概ね解消)
 
-`!fbg~` (footer background image) を PDF 出力でも screen と同じ見た目に焼きたかったが、 Chromium PDF backend のバグ群が複合して **構造選択でも DOM swap でも fix できない**と検証で確定。 fbg は **screen 専用装飾**として割り切る。
+**2026-05-12 update**: bg/fbg の wrapper div 統一 (`a5378db`) で **PDF 出力でも fbg が概ね機能するようになった**。 1px 程度のズレ残るが許容範囲、 user 確認で 「大半動いてる」 判断 (2026-05-13)。 残ズレは別 motivation と組合せて着手予定、 単独優先度は低。 詳細経緯と現状構造は memory `project_fbg_pdf_strategy.md` 参照。
 
-検証で却下された 4 アプローチ (再挑戦時は memory `project_fbg_pdf_strategy.md` 必読):
+以下は 2026-05-07 時点の 「やらない判断」 経緯記録 (再挑戦防止の歴史として残置)。
+
+---
+
+`!fbg~` (footer background image) を PDF 出力でも screen と同じ見た目に焼きたかったが、 Chromium PDF backend のバグ群が複合して **構造選択でも DOM swap でも fix できない**と検証で確定 (当時)。 fbg は **screen 専用装飾**として割り切る判断だった。
+
+検証で却下された 4 アプローチ (これらに戻すのは NG、 再挑戦時は memory `project_fbg_pdf_strategy.md` 必読):
 
 1. `<svg class="fbg-layer">` + `<image mask=url(#m)>` + cross-svg `<use href>` (`0e0579b`) — Chromium PDF backend が cross-svg `<use href>` を resolve しない既知バグ
 2. mask 内 shape を inline 化 + CSS transform で位置調整 (`b8dfe0a`) — mask 内の indirectly-rendered 要素への CSS transform は PDF backend で適用されない
 3. PDF 時に `display: none` で fbg を隠す — 思想として却下、 「逃げ過ぎ」 判断
 4. `scripts/pdf.ts` の `page.evaluate()` で fbg DOM を `<svg>` + `<clipPath>` + `<image clip-path>` 構造に swap (`b0670be` / `3e27ddd`) — mask は適用されたが visual がズレ / 不正、 検証で 「ダメ」 確定
 
-screen 側は `<div class="fbg-layer">` + `<img class="fbg-img">` + `<svg class="fbg-svg">` + CSS `mask-image: url(#fragment)` で確定 (`53eb5c2`)。 bg-layer と画像 CSS 共通化、 dark theme 対応 (`--shape-fill: white` 固定)。
-
-PDF 出力時の fbg は仕様外 (PDF では fbg が真っ黒 / 表示されない / ズレる等の現象が発生し得るが、 仕様として受け入れる)。 将来 Chromium PDF backend が SVG mask / clip-path resolution を改善したら再挑戦の余地あり。
+**画期点となった変更 (2026-05-12)**: 上記 4 アプローチとは独立した方向で、 bg/fbg 全体を `<div.*-layer><img.*-img>` の wrapper 構造に統一し、 fbg mask の適用先を `<img>` から wrapper `<div.fbg-layer>` に変更 (`a5378db`)。 cross-svg `<use href>` を含む SVG 構造自体は変えていないが、 mask 適用先が HTML element (`<div>`) になったことで Chromium PDF backend の処理パスが変わり、 PDF でも fbg が描画されるようになった (推測)。 副作用として screen 側の mask reference frame も section 基準で安定 (bg/fbg 縮小 regression の fix 経路と一体)。
 
 ---
 
