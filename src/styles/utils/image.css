@@ -14,7 +14,15 @@
  * 内 paragraph で context なし → Layout class は効かない / 効かせるには user 側で
  * 親に position:relative 付与が必要。 詳細は docs/spec/syntax.md 参照。 */
 
-/* === Layout (相互排他、 親要素内での位置) === */
+/* === Layout (相互排他、 親要素内での位置) ===
+ * inset 4 値の 0/auto pattern が dir letter と対応:
+ *   2 辺 anchor → corner (tl/tr/bl/br)
+ *   3 辺 anchor + margin auto → edge 中央 (t/b/l/r)
+ *   4 辺 anchor + margin auto → 中央 (c)
+ * transform は使わず、 余白側を margin auto で均等分配して中央化する。
+ * これにより UnoCSS `translate-*` (transform 経由) がそのまま乗る。
+ *
+ * cover は full-bleed sizing 用途で別 namespace 扱い (Layout の at-* と排他)。 */
 
 img.cover {
   position: absolute;
@@ -24,52 +32,17 @@ img.cover {
   object-fit: cover;
 }
 
-img.center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  right: auto;
-  bottom: auto;
-  transform: translate(-50%, -50%);
-}
+img.at-tl { position: absolute; inset: 0    auto auto 0;    }
+img.at-tr { position: absolute; inset: 0    0    auto auto; }
+img.at-bl { position: absolute; inset: auto auto 0    0;    }
+img.at-br { position: absolute; inset: auto 0    0    auto; }
 
-img.corner-tl { position: absolute; top: 0; left: 0; right: auto; bottom: auto; }
-img.corner-tr { position: absolute; top: 0; right: 0; left: auto; bottom: auto; }
-img.corner-bl { position: absolute; bottom: 0; left: 0; top: auto; right: auto; }
-img.corner-br { position: absolute; bottom: 0; right: 0; top: auto; left: auto; }
+img.at-t  { position: absolute; inset: 0    0    auto 0;    margin-inline: auto; width:  fit-content; }
+img.at-b  { position: absolute; inset: auto 0    0    0;    margin-inline: auto; width:  fit-content; }
+img.at-l  { position: absolute; inset: 0    auto 0    0;    margin-block:  auto; height: fit-content; }
+img.at-r  { position: absolute; inset: 0    0    0    auto; margin-block:  auto; height: fit-content; }
 
-img.edge-t {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  right: auto;
-  bottom: auto;
-  transform: translateX(-50%);
-}
-img.edge-b {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  right: auto;
-  top: auto;
-  transform: translateX(-50%);
-}
-img.edge-l {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: auto;
-  bottom: auto;
-  transform: translateY(-50%);
-}
-img.edge-r {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  left: auto;
-  bottom: auto;
-  transform: translateY(-50%);
-}
+img.at-c  { position: absolute; inset: 0;                   margin: auto;        width:  fit-content; height: fit-content; }
 
 /* === Size (相互排他、 cqmin baseline) === */
 
@@ -77,13 +50,6 @@ img.sm { width: 40cqmin; height: 40cqmin; }
 img.md { width: 60cqmin; height: 60cqmin; }
 img.lg { width: 80cqmin; height: 80cqmin; }
 img.xl { width: 100cqmin; height: 100cqmin; }
-
-/* === Inset (相互排他、 overflow 制御) ===
- * bg/fbg default = bleed (bottom: -10%)。 .inside は default を打ち消し
- * 親内収まりに、 .bleed は明示的に bleed 動作を declare (default 値と同等)。 */
-
-img.inside { inset: 0; }
-img.bleed { bottom: -10%; }
 
 /* === Shape === */
 

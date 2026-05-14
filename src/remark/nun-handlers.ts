@@ -1,6 +1,7 @@
 import type { State, Handler } from 'mdast-util-to-hast'
 import { h } from 'hastscript'
-import type { Element } from 'hast'
+import type { Element, Properties } from 'hast'
+import { extractImageStyles } from '../image-style-hoist.ts'
 
 /**
  * remark-rehype handlers for custom mdast node types.
@@ -17,7 +18,11 @@ export const nunHandlers: Record<string, Handler> = {
     // alt は children 先頭のテキスト value、 src は url。
     if (!key && url) {
       const alt = (node.children?.[0] as any)?.value ?? ''
-      return h('img', { className: classes ?? [], src: url, alt })
+      const { classes: cls, style } = extractImageStyles(classes ?? [])
+      const props: Properties = { src: url, alt }
+      if (cls.length > 0) props.className = cls
+      if (style) props.style = style
+      return h('img', props)
     }
     const children = state.all(node)
     const classNames = ['nwyt-' + (key ?? 'unknown'), ...(classes ?? [])]

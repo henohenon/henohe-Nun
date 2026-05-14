@@ -12,6 +12,7 @@ import { resolve } from 'node:path'
 import type { Scope, NwytProp, TemplateName } from '../types.ts'
 import { isScope } from '../types.ts'
 import { parseImageNwytValue } from './nwyt-helpers.ts'
+import { extractImageStyles } from '../image-style-hoist.ts'
 
 // 本体パイプラインと同じ拡張セットで lead/sub/fl/fr のインライン記法を処理する。
 // インライン抽出 (root > p > children) で block 系は捨てられるので、
@@ -86,13 +87,18 @@ export function resolveNwyt(scope: Scope, key: string): Element | null {
     const first = children[0] as Element
     if (first.type === 'element' && first.tagName === 'img') {
       if (nwyt.classes.length > 0) {
-        first.properties = { ...(first.properties ?? {}), className: nwyt.classes }
+        const { classes: cls, style } = extractImageStyles(nwyt.classes)
+        const next: Properties = { ...(first.properties ?? {}) }
+        if (cls.length > 0) next.className = cls
+        if (style) next.style = style
+        first.properties = next
       }
       return first
     }
   }
 
-  // クラス未指定時は class="" を出さない
+  // span wrapper (icon 以外の image key、 もしくは class なし icon): translate token
+  // は image utility 専用なので、 ここでは hoist せず通常 class として残す。
   const props: Properties = nwyt.classes.length > 0 ? { className: nwyt.classes } : {}
   return h('span', props, children)
 }

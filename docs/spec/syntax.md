@@ -356,7 +356,7 @@ E = mc^2
 !.rounded-lg.shadow-xl[ロゴ](/logo.png)
 ```
 
-class 名に使える文字は `[a-zA-Z0-9_-]` のみ。 UnoCSS の高度な記法 (`bg-[#5932ff]` の `[` `]`、 `lg:hover:text-blue-500` の `:`、 `w-1/2` の `/` 等) は未対応。 必要なら CSS 側で当てるかカスタム class を介する。
+class 名に使える文字は `[a-zA-Z0-9_%-]` のみ。 `%` は image utility の Nudge token (`tx-10%` `ty--50%`、 詳細は下記「image utility class」 節) 用に許可。 UnoCSS の高度な記法 (`bg-[#5932ff]` の `[` `]`、 `lg:hover:text-blue-500` の `:`、 `w-1/2` の `/` 等) は未対応。 必要なら CSS 側で当てるかカスタム class を介する。
 
 ### テーブル
 
@@ -462,17 +462,37 @@ img-direct / bg / fbg / icon の全 image-mechanism で **同一 class が同一
 - `!icon.round~[](url)` → me template の icon img が 角丸
 
 **bg/fbg の注意**: class は **wrapper でなく inner img を動かす**。 wrapper (`<div.bg-layer>` / `<div.fbg-layer>`) は section 全体を覆う固定の positioning context (mask 適用先) で位置を変えない。 これにより:
-- bg では `.corner-bl.sm` で img が section 内 bottom-left の 40cqmin 区画に表示 (期待通り)
-- fbg では mask が wrapper (= section bottom の footer 形状領域) に固定なので、 inner img を `.corner-bl.sm` で動かすと **mask 領域と img 領域の交差部分**だけ可視になる (footer の中の特定部分しか塗られない)。 fbg の visible area 自体を動かしたい場合は mask 構築の改修が必要 (現状 scope 外)
+- bg では `.at-bl.sm` で img が section 内 bottom-left の 40cqmin 区画に表示 (期待通り)
+- fbg では mask が wrapper (= section bottom の footer 形状領域) に固定なので、 inner img を `.at-bl.sm` で動かすと **mask 領域と img 領域の交差部分**だけ可視になる (footer の中の特定部分しか塗られない)。 fbg の visible area 自体を動かしたい場合は mask 構築の改修が必要 (現状 scope 外)
+
+`.at-*` は `position: absolute` + `inset` の 0/auto pattern + `margin: auto` で位置決め。 transform を使わないので CSS `translate` プロパティ枠が空いており、 `.tx-*` / `.ty-*` (下記 Nudge) で微調整できる。
 
 | カテゴリ | classes | 効果 |
 |---|---|---|
-| Layout (排他) | `.cover` / `.center` / `.corner-{tl,tr,bl,br}` / `.edge-{t,b,l,r}` | 親要素内での位置 |
-| Size (排他) | `.sm` / `.md` / `.lg` / `.xl` | 40 / 60 / 80 / 100 cqmin (bg/fbg default は `.lg`) |
-| Inset (排他) | `.inside` / `.bleed` | 親内収まり / 端からはみ出し (bg/fbg default は `.bleed` = bottom -10%) |
+| Layout (排他) | `.cover` / `.at-{tl,t,tr,l,c,r,bl,b,br}` | 親要素内での位置 (cover = 全面、 at-* = 9 セル grid) |
+| Nudge (複合可) | `.tx-<n><unit>` / `.ty-<n><unit>` | translate で位置微調整 (`.at-*` 上に乗せる) |
+| Opacity | `.op-<n>` | `opacity: n/100` (n = 0-100 integer、 Tailwind 互換) |
+| Size (排他) | `.sm` / `.md` / `.lg` / `.xl` | 40 / 60 / 80 / 100 cqmin |
 | Shape | `.round` / `.circle` | 角丸 / 円形クロップ |
 | Aspect (排他) | `.aspect-{square,video,portrait}` | aspect-ratio 1:1 / 16:9 / 9:16 |
 | Effects (複合可) | `.dim` / `.haze` / `.mono` / `.invert` / `.fade` / `.shadow` / `.frame` / `.tint-brand` / `.flip-{h,v}` | filter / blend / transform 系 |
+
+##### Nudge / Opacity hoist 詳細
+
+`.tx-` / `.ty-` / `.op-` token は class ではなく inline `style` 属性へ hoist される (`src/image-style-hoist.ts`)。 任意 value (単位 / 0-100 range) を class 名前空間制約 (`[a-zA-Z0-9_%-]`) に縛られず使えるようにするための変換層。
+
+**Nudge (`.tx-` / `.ty-`)**: `.at-*` の 9 セル positioning の上から CSS `translate` で微調整。 値部分は `<n><unit>` 形式で、 単位は `%` `px` `em` `rem` `cqmin` `cqmax` `vh` `vw` 等を直書きできる。 負号は token 先頭 `-` (例: `.ty--50%`)。 片軸のみ指定可 (他軸 0 暗黙)、 同軸重複は後勝ち。
+
+**Opacity (`.op-`)**: `op-<n>` で n = 0-100 integer (Tailwind 互換)、 `opacity: n/100` として出力 (`.op-30` → `opacity: 0.3`)。 0-100 範囲外は class として残る (UnoCSS `opacity-*` 等に委譲)。
+
+```Markdown
+!bg.at-br.tx--10px.ty--10px~[bg](/img.png)
+!fbg.at-br.ty-20%~[fbg](/img.png)
+!.at-c.ty--2cqmin.op-50[icon](/icon.png)
+```
+
+- 形式不正 (`tx-abc` `op-200` 等) は通常 class として残る (UnoCSS 等に委譲)
+- class 名前空間ルールの「単位 `%` 許可」 は `.tx-/.ty-` token のためだけの例外
 
 #### scope class
 
@@ -491,7 +511,7 @@ semantic descriptive な命名、 `🌊<template>.<class>` で適用。
 
 #### UnoCSS class
 
-UnoCSS の単純 numeric (`opacity-30` `w-80` `text-2xl`) は parser 制約 `[a-zA-Z0-9_-]` を通る。角括弧記法 (`bg-[#5932ff]`)、 高度修飾子 (`lg:hover:foo`)、 fraction (`w-1/2`) は parser reject。 ad-hoc な fine-tuning 用、 通常は image utility / scope class を使う。
+UnoCSS の単純 numeric (`opacity-30` `w-80` `text-2xl`) は parser 制約 `[a-zA-Z0-9_%-]` を通る。角括弧記法 (`bg-[#5932ff]`)、 高度修飾子 (`lg:hover:foo`)、 fraction (`w-1/2`) は parser reject。 ad-hoc な fine-tuning 用、 通常は image utility / scope class を使う。
 
 ## nwyt（キー指定拡張）
 `!key` で始まる記法の総称。prop と content の2種がある。

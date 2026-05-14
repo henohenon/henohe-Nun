@@ -1,7 +1,8 @@
-import type { Element, ElementContent } from 'hast'
+import type { Element, ElementContent, Properties } from 'hast'
 import type { NwytProp, Scope } from '../../types.ts'
 import { h } from 'hastscript'
 import { findNwytInScope, parseImageNwytValue } from '../nwyt-helpers.ts'
+import { extractImageStyles } from '../../image-style-hoist.ts'
 
 /**
  * section に `<div class="bg-layer"><img class="bg-img"></div>` を背景レイヤー
@@ -54,6 +55,10 @@ function resolveValueRef(
 }
 
 function buildBackground(src: string, alt: string, classes: string[]): ElementContent {
-  const img = h('img.bg-img', { src, alt, className: classes })
+  const { classes: cls, style } = extractImageStyles(classes)
+  const props: Properties = { src, alt }
+  if (cls.length > 0) props.className = cls
+  if (style) props.style = style
+  const img = h('img.bg-img', props)
   return h('div.bg-layer', [img]) as ElementContent
 }

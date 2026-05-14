@@ -408,13 +408,14 @@ mobile 分岐棚上げに続き、 util class 整備に着手。 当初テーマ
 
 img-direct / bg / fbg / icon の全 image-mechanism で **同一 class が同一概念**。 `!.cover[](url)` `!bg.cover~[](url)` `!icon.round~[](url)` で同名・同動作。 当初 `.full` (img) と `.cover` (bg) で別名問題が出ていたが user 指摘で統一。
 
-6 サブカテゴリ構成:
-- **Layout** (相互排他): `.cover` / `.center` / `.corner-tl/tr/bl/br` / `.edge-t/b/l/r`
-- **Size** (相互排他): `.sm` / `.md` / `.lg` / `.xl` (bg/fbg default は lg = 80cqmin)
-- **Inset** (相互排他): `.inside` / `.bleed` (bg/fbg default は bleed = bottom -10%)
+5 サブカテゴリ構成:
+- **Layout** (相互排他): `.cover` / `.at-{tl,t,tr,l,c,r,bl,b,br}` (cover = 全面、 at-* = 9 セル grid。 inset 0/auto pattern + margin auto で位置決め、 transform は使わないので UnoCSS `translate-*` で微調整可)
+- **Size** (相互排他): `.sm` / `.md` / `.lg` / `.xl` (40 / 60 / 80 / 100 cqmin)
 - **Shape**: `.round` / `.circle`
 - **Aspect** (相互排他): `.aspect-square` / `.aspect-video` / `.aspect-portrait`
 - **Effects** (複合可): `.dim` / `.haze` / `.mono` / `.invert` / `.fade` / `.shadow` / `.frame` / `.tint-brand` / `.flip-h` / `.flip-v`
+
+bg/fbg の default は「class 無し = wrapper 全面に伸びて `object-fit: contain` で letterbox」 のみ (旧 `.bleed` (bottom -10%) や `.lg` (80cqmin square) の暗黙 default は廃止)。 size / 位置を明示したい場合は上記 class または UnoCSS で。
 
 ### scope class 追加 (限定 3 個)
 

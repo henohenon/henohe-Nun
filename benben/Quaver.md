@@ -6,12 +6,12 @@ date: 2026-05-11
 
 !fl~Quaver
 !fr~2026/05/11
-!fbg~[](/images/quaver/quaver-mark.svg)
+!fbg.at-b.lg.ty-8%.tx-20%.op-30~[](/images/quaver/quaver-mark.svg)
 
 # Quaver
 🌊title
 !sub~QRコードでなんか音を出すやつ
-!bg~[](/images/quaver/quaver-mark.svg)
+!bg.op-100~=fbg
 
 # 経緯
 ## キッカケ

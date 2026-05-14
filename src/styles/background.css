@@ -17,16 +17,14 @@
   pointer-events: none;
 }
 
-/* default: 中の `<img>` を section min(w,h) の 80%、 右寄せ bottom -10%
-   (下に 10% はみ出す) で配置。 個別 slide で全体覆いに戻したい場合は
-   `!bg.inset-0~` `!fbg.w-full~` 等の UnoCSS class で override。 */
+/* default: 中の `<img>` は section 全体に伸びて `object-fit: contain` で
+   letterbox 表示 (下の :where ルールで指定)。 位置 / サイズを変えたい場合は
+   `!bg.at-tl~` 等の Layout class や `!bg.lg~` 等の Size class、 任意 size は
+   UnoCSS の `w-*` `h-*` で override。 */
 .bg-img,
 .fbg-img {
   position: absolute;
-  right: 0;
-  bottom: -10%;
-  width: 80cqmin;
-  height: 80cqmin;
+  inset: 0;
   pointer-events: none;
 }
 

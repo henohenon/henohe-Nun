@@ -82,7 +82,15 @@ export function nunNwytContentSyntax(): Extension {
     }
 
     const classBody: State = function (code) {
-      if (isAlphanumeric(code) || code === 45 /* - */ || code === 95 /* _ */) {
+      // class 名は `[a-zA-Z0-9_%-]` 許可。 `-` `_` は UnoCSS の `object-bottom`
+      // `rounded-lg` 等で必須、 `%` は image-utility 微調整 token `tx-10%` / `ty--50%`
+      // (translate-class.ts) の単位文字として許可。 nwyt-prop.ts と挙動を揃える。
+      if (
+        isAlphanumeric(code) ||
+        code === 45 /* - */ ||
+        code === 95 /* _ */ ||
+        code === 37 /* % */
+      ) {
         effects.consume(code)
         return classBody
       }

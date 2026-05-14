@@ -5,7 +5,7 @@ date: 2026-05-07
 ~~~
 
 !fr~2026/05/07
-!fbg.corner-bl.sm~[fbg](/images/henohe-Nun.png)
+!fbg.at-br.ty-8%.lg.mono~[fbg](/images/henohe-Nun.png)
 
 # Initiation
 🌊title
@@ -531,7 +531,9 @@ img-direct / bg / fbg / icon の **全 image-mechanism で同一 class が同一
 
 | カテゴリ | 例 |
 | --- | --- |
-| Layout | `.cover` / `.center` / `.corner-{tl,tr,bl,br}` / `.edge-{t,b,l,r}` |
+| Layout | `.cover` / `.at-{tl,t,tr,l,c,r,bl,b,br}` |
+| Nudge | `.tx-<n><unit>` / `.ty-<n><unit>` (translate 微調整、 単位 `%` `px` `em` `cqmin` 等、 負号は先頭 `-`) |
+| Opacity | `.op-<n>` (n = 0-100、 `opacity: n/100`) |
 | Size | `.sm` / `.md` / `.lg` / `.xl` |
 | Shape | `.round` / `.circle` |
 | Aspect | `.aspect-{square,video,portrait}` |
@@ -540,6 +542,9 @@ img-direct / bg / fbg / icon の **全 image-mechanism で同一 class が同一
 !.round[round](/images/henohe-Nun.png)
 !.mono[mono](/images/henohe-Nun.png)
 !.dim[dim](/images/henohe-Nun.png)
+!.tx-20%.ty--20%[nudged](/images/henohe-Nun.png)
+!.op-30[op30](/images/henohe-Nun.png)
+!.tx-10%.op-50[combined](/images/henohe-Nun.png)
 
 
 # Class — scope (`.no-footer` / `.table-zebra` 等)

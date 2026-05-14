@@ -1,8 +1,9 @@
-import type { Element, ElementContent } from 'hast'
+import type { Element, ElementContent, Properties } from 'hast'
 import type { NwytProp, Scope } from '../../types.ts'
 import { h } from 'hastscript'
 import { findNwytInScope, parseImageNwytValue } from '../nwyt-helpers.ts'
 import { footerMaskId, footerShapeId } from './_ids.ts'
+import { extractImageStyles } from '../../image-style-hoist.ts'
 
 /**
  * section に `<div class="fbg-layer">` を fbg (footer 形状で抜いた背景画像)
@@ -74,10 +75,11 @@ function buildFooterBackground(
     'aria-hidden': 'true',
   }, mask)
 
-  const img = h('img.fbg-img', {
-    src, alt,
-    className: classes,
-  }) as ElementContent
+  const { classes: cls, style } = extractImageStyles(classes)
+  const imgProps: Properties = { src, alt }
+  if (cls.length > 0) imgProps.className = cls
+  if (style) imgProps.style = style
+  const img = h('img.fbg-img', imgProps) as ElementContent
 
   // mask は wrapper の `.fbg-layer` (section 全体覆い) に当てる。 これで mask の
   // 座標系 reference が section 基準で安定し、 内側の `.fbg-img` がどんなサイズ /
