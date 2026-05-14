@@ -78,13 +78,25 @@ export function nunNwytContentSyntax(): Extension {
       // code is `.` (46)
       effects.enter(T.nwytContentClass)
       effects.consume(code)
-      return classBody
+      return classFirstChar
+    }
+
+    const classFirstChar: State = function (code) {
+      // 先頭文字は alphanumeric または `^` (subtract prefix、 `!.^mono[](url)` で
+      // 継承 class list から `mono` を抜く、 image-style-hoist.ts で処理)
+      if (isAlphanumeric(code) || code === 94 /* ^ */) {
+        effects.consume(code)
+        return classBody
+      }
+      // 先頭文字必須、 何もなければ unterminated
+      return nok(code)
     }
 
     const classBody: State = function (code) {
-      // class 名は `[a-zA-Z0-9_%-]` 許可。 `-` `_` は UnoCSS の `object-bottom`
+      // 2 文字目以降は `[a-zA-Z0-9_%-]` 許可。 `-` `_` は UnoCSS の `object-bottom`
       // `rounded-lg` 等で必須、 `%` は image-utility 微調整 token `tx-10%` / `ty--50%`
-      // (translate-class.ts) の単位文字として許可。 nwyt-prop.ts と挙動を揃える。
+      // (image-style-hoist.ts) の単位文字として許可。 `^` は先頭のみ意味があるので
+      // 受け付けない。 nwyt-prop.ts と挙動を揃える。
       if (
         isAlphanumeric(code) ||
         code === 45 /* - */ ||
@@ -94,7 +106,6 @@ export function nunNwytContentSyntax(): Extension {
         effects.consume(code)
         return classBody
       }
-      // Class must have at least one character after the dot
       effects.exit(T.nwytContentClass)
       if (code === 46) return classStart(code) // another `.class`
       if (code === 91) return valueOpen(code) // `[`

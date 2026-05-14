@@ -356,7 +356,7 @@ E = mc^2
 !.rounded-lg.shadow-xl[ロゴ](/logo.png)
 ```
 
-class 名に使える文字は `[a-zA-Z0-9_%-]` のみ。 `%` は image utility の Nudge token (`tx-10%` `ty--50%`、 詳細は下記「image utility class」 節) 用に許可。 UnoCSS の高度な記法 (`bg-[#5932ff]` の `[` `]`、 `lg:hover:text-blue-500` の `:`、 `w-1/2` の `/` 等) は未対応。 必要なら CSS 側で当てるかカスタム class を介する。
+class 名に使える文字は `[a-zA-Z0-9_%-]` のみ。 `%` は image utility の Nudge token (`tx-10%` `ty--50%`、 詳細は下記「image utility class」 節) 用に許可。 先頭文字は alphanumeric または `^` (subtract prefix、 `^mono` で継承 class list から `mono` を抜く)。 UnoCSS の高度な記法 (`bg-[#5932ff]` の `[` `]`、 `lg:hover:text-blue-500` の `:`、 `w-1/2` の `/` 等) は未対応。 必要なら CSS 側で当てるかカスタム class を介する。
 
 ### テーブル
 
@@ -472,27 +472,31 @@ img-direct / bg / fbg / icon の全 image-mechanism で **同一 class が同一
 | Layout (排他) | `.cover` / `.at-{tl,t,tr,l,c,r,bl,b,br}` | 親要素内での位置 (cover = 全面、 at-* = 9 セル grid) |
 | Nudge (複合可) | `.tx-<n><unit>` / `.ty-<n><unit>` | translate で位置微調整 (`.at-*` 上に乗せる) |
 | Opacity | `.op-<n>` | `opacity: n/100` (n = 0-100 integer、 Tailwind 互換) |
+| Subtract | `.^<class>` | 継承 class list から `<class>` を除去 (global 上書きしたい時) |
 | Size (排他) | `.sm` / `.md` / `.lg` / `.xl` | 40 / 60 / 80 / 100 cqmin |
 | Shape | `.round` / `.circle` | 角丸 / 円形クロップ |
 | Aspect (排他) | `.aspect-{square,video,portrait}` | aspect-ratio 1:1 / 16:9 / 9:16 |
 | Effects (複合可) | `.dim` / `.haze` / `.mono` / `.invert` / `.fade` / `.shadow` / `.frame` / `.tint-brand` / `.flip-{h,v}` | filter / blend / transform 系 |
 
-##### Nudge / Opacity hoist 詳細
+##### Nudge / Opacity hoist + Subtract 詳細
 
-`.tx-` / `.ty-` / `.op-` token は class ではなく inline `style` 属性へ hoist される (`src/image-style-hoist.ts`)。 任意 value (単位 / 0-100 range) を class 名前空間制約 (`[a-zA-Z0-9_%-]`) に縛られず使えるようにするための変換層。
+`.tx-` / `.ty-` / `.op-` token は class ではなく inline `style` 属性へ hoist され、 `^<name>` token は継承 class list から `<name>` を除去する (`src/image-style-hoist.ts`)。 任意 value (単位 / 0-100 range) を class 名前空間制約 (`[a-zA-Z0-9_%-]`) に縛られず使えるようにし、 また global / value-ref で継承された class の打ち消しを可能にするための変換層。
 
 **Nudge (`.tx-` / `.ty-`)**: `.at-*` の 9 セル positioning の上から CSS `translate` で微調整。 値部分は `<n><unit>` 形式で、 単位は `%` `px` `em` `rem` `cqmin` `cqmax` `vh` `vw` 等を直書きできる。 負号は token 先頭 `-` (例: `.ty--50%`)。 片軸のみ指定可 (他軸 0 暗黙)、 同軸重複は後勝ち。
 
 **Opacity (`.op-`)**: `op-<n>` で n = 0-100 integer (Tailwind 互換)、 `opacity: n/100` として出力 (`.op-30` → `opacity: 0.3`)。 0-100 範囲外は class として残る (UnoCSS `opacity-*` 等に委譲)。
 
+**Subtract (`^<class>`)**: 継承 class list (global → scope merge や value-ref `=fbg` で集まったもの) から指定 class を除去。 例: global `!fbg.at-br.lg.mono~[](url)` の上で scope `!fbg.^mono~` を書くと `mono` だけ消えて他は維持。 対象 class が無くても error 無し (no-op)。 `^<class>` 自体も出力に残らない。 hoist token (`^tx-...` 等) は組合せ無効 (token 名が一致しないため落ちる)。
+
 ```Markdown
 !bg.at-br.tx--10px.ty--10px~[bg](/img.png)
 !fbg.at-br.ty-20%~[fbg](/img.png)
 !.at-c.ty--2cqmin.op-50[icon](/icon.png)
+!fbg.^mono~                                 # global fbg から mono のみ抜く
 ```
 
 - 形式不正 (`tx-abc` `op-200` 等) は通常 class として残る (UnoCSS 等に委譲)
-- class 名前空間ルールの「単位 `%` 許可」 は `.tx-/.ty-` token のためだけの例外
+- class 名前空間ルールの「単位 `%` 許可」 は `.tx-/.ty-` token のためだけの例外、 「先頭 `^` 許可」 は subtract token のためだけの例外
 
 #### scope class
 

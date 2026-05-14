@@ -82,8 +82,9 @@ const tokenize: Tokenizer = function (effects, ok, nok) {
   }
 
   const classStart: State = function (code) {
-    // Class must start with alphanumeric
-    if (!isAlphanumeric(code)) return nok(code)
+    // Class must start with alphanumeric or `^` (subtract prefix、 `!fbg.^mono~`
+    // で継承 class list から `mono` を抜く、 image-style-hoist.ts で処理)
+    if (!isAlphanumeric(code) && code !== 94 /* ^ */) return nok(code)
     effects.enter('nunNwytPropClass')
     effects.consume(code)
     return classRest
@@ -92,7 +93,9 @@ const tokenize: Tokenizer = function (effects, ok, nok) {
   const classRest: State = function (code) {
     // class 名は `[a-zA-Z0-9_%-]` 許可。 `-` `_` は UnoCSS の `object-bottom`
     // `rounded-lg` 等で必須、 `%` は image-utility 微調整 token `tx-10%` / `ty--50%`
-    // (translate-class.ts) の単位文字として許可。 nwyt-content.ts と挙動を揃える。
+    // (image-style-hoist.ts) の単位文字として許可。 `^` は class 先頭でのみ意味を
+    // 持つので classRest では受け付けない (mid-class `^` は class 終端扱い)。
+    // nwyt-content.ts と挙動を揃える。
     if (
       isAlphanumeric(code) ||
       code === 45 /* - */ ||
@@ -107,10 +110,11 @@ const tokenize: Tokenizer = function (effects, ok, nok) {
   }
 
   const valueStart: State = function (code) {
-    // Value can be empty (EOL right after ~)
+    // 空 value (`!fbg.^mono~` 等、 `~` 直後が EOL) は token を作らない:
+    // micromark の sliceSerialize は zero-length token を扱えず crash する。
+    // fromMarkdown 側の rawValue default は空文字なので、 token 不在 = 空 value
+    // でそのまま伝わる。
     if (code === null || code === -3 || code === -4 || code === -5) {
-      effects.enter('nunNwytPropValue')
-      effects.exit('nunNwytPropValue')
       effects.exit('nunNwytProp')
       return ok(code)
     }

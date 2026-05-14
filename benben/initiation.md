@@ -10,7 +10,7 @@ date: 2026-05-07
 # Initiation
 🌊title
 !sub~へのへNun's all demo
-!fbg.not-mono~[fbg](/images/henohe-Nun.png)
+!fbg.^mono~
 !bg~=fbg
 
 
@@ -535,6 +535,7 @@ img-direct / bg / fbg / icon の **全 image-mechanism で同一 class が同一
 | Layout | `.cover` / `.at-{tl,t,tr,l,c,r,bl,b,br}` |
 | Nudge | `.tx-<n><unit>` / `.ty-<n><unit>` (translate 微調整、 単位 `%` `px` `em` `cqmin` 等、 負号は先頭 `-`) |
 | Opacity | `.op-<n>` (n = 0-100、 `opacity: n/100`) |
+| Subtract | `.^<class>` (継承 list から指定 class を除去、 例 `.^mono`) |
 | Size | `.sm` / `.md` / `.lg` / `.xl` |
 | Shape | `.round` / `.circle` |
 | Aspect | `.aspect-{square,video,portrait}` |
