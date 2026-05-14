@@ -10,6 +10,7 @@ date: 2026-05-07
 # Initiation
 🌊title
 !sub~へのへNun's all demo
+!fbg.not-mono~[fbg](/images/henohe-Nun.png)
 !bg~=fbg
 
 

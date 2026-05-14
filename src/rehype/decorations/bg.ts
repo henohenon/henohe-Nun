@@ -28,12 +28,13 @@ export function appendBackground(
   if (!resolved) return false
   const parsed = parseImageNwytValue(resolved.rawValue)
   if (!parsed) return false
-  // class 継承ルール: bg 自身に class が無く value ref 経由の場合は ref 元 (fbg 等)
-  // の class も継承する (= 「fbg の設定全部を bg にも」 という user 意図に沿う)。
-  // bg に独自 class があれば そちら優先 (override)。
-  const usedClasses = bg.classes.length > 0
-    ? bg.classes
-    : (resolved !== bg ? resolved.classes : bg.classes)
+  // class 継承ルール (value ref `=fbg` 時): `[...ref.classes, ...bg.classes]` で
+  // 連結、 bg の自前 class は後ろに置く → image-style-hoist の token (`op-`/
+  // `tx-`/`ty-`) は後勝ちで scope による override が成立する。 非 hoist class
+  // (`at-*` `lg` 等) は両方残るが、 CSS 側 selector 順序で最終値が決まる。
+  const usedClasses = resolved !== bg
+    ? [...resolved.classes, ...bg.classes]
+    : bg.classes
   el.children.unshift(buildBackground(parsed.src, parsed.alt || bg.key, usedClasses))
   return true
 }
