@@ -226,6 +226,7 @@ function readHenohenoSvg(): Element | null {
       ...svg.properties,
       role: 'img',
       'aria-label': '巨大なへのへのもへじ',
+      preserveAspectRatio: 'xMaxYMid meet',
     }
     henohenoCache = { mtimeMs: stat.mtimeMs, element: svg }
     return svg
