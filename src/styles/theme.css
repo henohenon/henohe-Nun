@@ -37,8 +37,7 @@ section {
   --text-h4: clamp(12px, 4cqmin, 80px);     /* h4 / h5 / h6 共通 */
   /* Layout spacing */
   --slide-pad-x: clamp(16px, 8cqmin, 180px);
-  --slide-pad-top: clamp(16px, 8cqmin, 180px);
-  --slide-pad-bottom: clamp(16px, 10cqmin, 200px);
+  --slide-pad-y: clamp(16px, 8cqmin, 180px);
   /* Footer */
   --footer-font-size: clamp(10px, 4cqmin, 80px);
   --footer-line-height: clamp(5px, 2cqmin, 40px);

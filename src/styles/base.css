@@ -79,11 +79,10 @@ section.active {
 }
 
 /* slide 全体の安全領域 padding。 section.stage のみに適用 (article.stage は
-   section の content area 内なので追加 padding 不要)。 padding を section
-   からここに移譲することで、 footer (section の最終 grid 行) は section 端で
-   edge-to-edge を保つ。 */
+   section の content area 内なので追加 padding 不要)。 bottom は --slide-pad-y
+   から --footer-font-size を引いて上下の視覚バランスを揃える。 */
 section > .stage {
-  padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
+  padding: var(--slide-pad-y) var(--slide-pad-x) calc(var(--slide-pad-y) - var(--footer-font-size));
 }
 
 /* ---- Slide / Article heading baseline ----
