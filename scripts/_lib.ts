@@ -1,6 +1,6 @@
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
-import { existsSync, mkdirSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { preview as vitePreview } from 'vite'
 
@@ -8,6 +8,24 @@ export { findDecks } from '../src/plugin/decks.ts'
 
 export function ensureDir(path: string): void {
   if (!existsSync(path)) mkdirSync(path, { recursive: true })
+}
+
+export function loadEnvFile(path: string): void {
+  const content = readFileSync(path, 'utf-8')
+  for (const line of content.split('\n')) {
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith('#')) continue
+    const eqIdx = trimmed.indexOf('=')
+    if (eqIdx === -1) continue
+    const key = trimmed.slice(0, eqIdx).trim()
+    const raw = trimmed.slice(eqIdx + 1).trim()
+    const q = raw[0]
+    const end = (q === '"' || q === "'") ? raw.indexOf(q, 1) : -1
+    const val = end !== -1
+      ? raw.slice(1, end)
+      : raw.replace(/\s+#.*$/, '').trim()
+    if (key && !(key in process.env)) process.env[key] = val
+  }
 }
 
 export async function ensureBuild(): Promise<void> {
@@ -28,9 +46,7 @@ export interface PreviewServer {
 }
 
 export async function startPreview(port = 5176): Promise<PreviewServer> {
-  // ビルド成果物は base = '/henohe-Nun/' で焼き込まれているので
-  // preview もそのベースで明示的に上げる (vite.config の base は serve 時 '/' になる)
-  const base = '/henohe-Nun/'
+  const base = process.env.NUN_BASE ?? '/henohe-Nun/'
   const server = await vitePreview({
     base,
     preview: { port, strictPort: true },
