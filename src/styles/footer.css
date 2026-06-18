@@ -25,7 +25,7 @@ section > footer {
   dominant-baseline: alphabetic;
   fill: var(--shape-fill);
   font-size: var(--footer-font-size);
-  font-family: var(--font-body);
+  font-family: var(--text);
 }
 
 /* fl/fr の位置 (x / y / dx / text-anchor) は SVG attribute で直接付与する

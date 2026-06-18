@@ -133,26 +133,15 @@ function parseInlineMarkdown(raw: string): ElementContent[] {
   return root.children as ElementContent[] ?? [{ type: 'text', value: raw }]
 }
 
-/** var inline (escape hatch) 対応 prefix。 `!color-brand~#fff` のような nwyt key を
- *  CSS 変数 `--brand: #fff` として scope の style に流す。 spec docs/spec/syntax.md
- *  の 「var inline (escape hatch)」 節参照。 */
-const VAR_INLINE_PREFIXES = new Set(['color', 'size'])
-
-/** scope の nwyts から var inline (`<prefix>-<name>~value`) を CSS 宣言に変換。
- *  非対応 prefix や value 空のものは skip。 value 内の `;` `{` `}` は injection 防止
- *  のため除去 (CSS rule 境界破壊回避)。 */
+/** scope の nwyts から var inline (`!<key>~<value>`) を CSS 宣言に変換。
+ *  key にハイフンを含むもののみ対象。value 内の `;` `{` `}` は injection 防止のため除去。 */
 function extractVarStyle(nwyts: NwytProp[]): string | undefined {
   const decls: string[] = []
   for (const n of nwyts) {
-    const dash = n.key.indexOf('-')
-    if (dash < 1) continue
-    const prefix = n.key.slice(0, dash)
-    if (!VAR_INLINE_PREFIXES.has(prefix)) continue
-    const name = n.key.slice(dash + 1)
-    if (!name) continue
+    if (!n.key.includes('-')) continue
     const value = (n.rawValue ?? '').replace(/[;{}]/g, '').trim()
     if (!value) continue
-    decls.push(`--${name}: ${value}`)
+    decls.push(`--${n.key}: ${value}`)
   }
   return decls.length > 0 ? decls.join('; ') : undefined
 }
@@ -164,7 +153,7 @@ function extractVarStyle(nwyts: NwytProp[]): string | undefined {
  * fbg) のみ。 stage は section の padding を継承し、 footer は section 端
  * (edge-to-edge) に貼る設計。
  *
- * var inline (`!color-brand~#fff` 等) は scope の style 属性に CSS 変数として
+ * var inline (`!brand~#fff` 等) は scope の style 属性に CSS 変数として
  * 反映、 CSS の cascade で配下要素に伝播する。
  */
 function wrapStage(scope: Scope, templateName: string, stageChildren: ElementContent[]): Element {

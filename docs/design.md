@@ -176,8 +176,8 @@ clamp(MIN, PREFERRED, MAX)
 
 | Token | Value |
 |-------|-------|
-| `--font-body` | `"IBM Plex Sans JP"`, system fallbacks |
-| `--font-mono` | `"Consolas"`, `"Monaco"`, `"Menlo"`, monospace |
+| `--text` | `"IBM Plex Sans JP"`, system fallbacks |
+| `--code` | `"Consolas"`, `"Monaco"`, `"Menlo"`, monospace |
 
 Font sizes are specified via scale tokens. Never write `font-size: 16px` directly.
 

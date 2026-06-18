@@ -431,11 +431,12 @@ text size 系 (`.text-sm` `.text-lg` `.text-xl`) は一度提案したが user �
 
 CSS 変数の inline 設定 syntax は現状なし (`syntax.md:443` 「CSS変数もクラス経由でCSSファイルで指定する」 = class-based のみ)。 これは 「markdown を CSS から守る防壁」 design principle 由来。
 
-one-off customization 用の escape hatch として **`!<prefix>-<name>~<value>`** (B 案 with prefix) を採用:
+one-off customization 用の escape hatch として **`!<varname>~<value>`** を採用:
 
-- `!color-brand~#ffffff` `!color-base~#0a0a0a` 等 (color-* 8 個、 token 完備)
-- `!size-radius~12px` (size-* 1 個)
-- prefix で top-level namespace 圧迫回避 (`!brand` `!base` を予約語化しない)
+- `!brand~#ffffff` `!base~#0a0a0a` 等
+- `!radius~12px`
+- `!text~"Noto Sans JP"` `!code~"JetBrains Mono"` 等
+- キー名 = CSS 変数名（`--` なし）、ハイフン含む key が対象
 
 通常は scope class 推奨、 var inline は 「1 回限り」 例外用。
 

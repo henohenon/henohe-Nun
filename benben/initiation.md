@@ -568,7 +568,7 @@ scope (section / article) に付ける class。 この slide は `🌊default.ta
 # Custom — 値 ref + var inline
 🌊default
 !fl~Class
-!color-brand~#ff00ff
+!brand~#ff00ff
 
 **値 reference `!bg~=<key>`**: 別 nwyt の値を mirror。 同 URL の重複記述回避。
 
@@ -577,15 +577,15 @@ scope (section / article) に付ける class。 この slide は `🌊default.ta
 !bg~=fbg     # fbg の URL + class を mirror
 ```
 
-**var inline (escape hatch) `!<prefix>-<name>~<value>`**: CSS 変数を scope に直接 set。 この slide は `!color-brand~#ff00ff` で `--brand` を マゼンタに override。
+**var inline (escape hatch) `!<varname>~<value>`**: CSS 変数を scope に直接 set。 この slide は `!brand~#ff00ff` で `--brand` を マゼンタに override。
 
 ```md
-!color-brand~#ff00ff
-!color-base~#0a0a0a
-!size-radius~12px
+!brand~#ff00ff
+!base~#0a0a0a
+!radius~12px
 ```
 
-通常は scope class (`!color-brand` の代わりに `.crimson-deck` 等 CSS で定義) を推奨、 var inline は **1 回限り** 例外用 escape hatch。
+通常は scope class (`!brand` の代わりに `.crimson-deck` 等 CSS で定義) を推奨、 var inline は **1 回限り** 例外用 escape hatch。
 
 
 # Link card
