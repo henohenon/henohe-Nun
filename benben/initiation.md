@@ -565,10 +565,9 @@ scope (section / article) に付ける class。 この slide は `🌊default.ta
 他: `.dark` / `.hierarchy` / `.window` / `.brand-quote` / `.code-bare` / `.no-footer` / `.table-bordered`
 
 
-# Custom — 値 ref + var inline
+# Custom — 値 ref
 🌊default
 !fl~Class
-!brand~#ff00ff
 
 **値 reference `!bg~=<key>`**: 別 nwyt の値を mirror。 同 URL の重複記述回避。
 
@@ -577,22 +576,65 @@ scope (section / article) に付ける class。 この slide は `🌊default.ta
 !bg~=fbg     # fbg の URL + class を mirror
 ```
 
-**var inline (escape hatch) `!<varname>~<value>`**: CSS 変数を scope に直接 set。 この slide は `!brand~#ff00ff` で `--brand` をマゼンタに override。
 
-```md
+# var inline
+🌊compare
+!fl~Class
+
+## 結果
+🌊default.window
 !brand~#ff00ff
-!radius~12px
+!radius~2em
+
+### ブランドカラーと角丸が変わっている
+
+`inline code` のスタイルも角丸に連動。
+
+##
+`!<varname>~<value>` で CSS 変数を scope に直接 set する escape hatch。通常は class 推奨、1 回限りの例外用。
+
+````md
+!brand~#ff00ff
+!radius~2em
+````
+
+
+# var inline — フォント
+🌊compare
+!fl~Class
+
+## 結果
+🌊default.window
 !text~Georgia, serif
 !code~"Courier New", monospace
-```
 
-通常は scope class (`!brand` の代わりに `.crimson-deck` 等 CSS で定義) を推奨、 var inline は **1 回限り** 例外用 escape hatch。
+### 見出しも serif になる
 
-## font override の例
+`inline code` は Courier New。
+
+##
+フォント変数は `--text`（本文）と `--code`（等幅）。グローバルスコープに書けばデッキ全体に継承される。
+
+````md
 !text~Georgia, serif
 !code~"Courier New", monospace
+````
 
-このテキストは `!text~Georgia, serif` で serif フォント。`inline code` は Courier New。
+
+# var inline — CSS 変数
+🌊default
+!fl~Class
+
+| 変数 | 用途 | 例 |
+|---|---|---|
+| `--brand` | アクセント色 | `!brand~#ff0000` |
+| `--base` | 背景色 | `!base~#1a1a2e` |
+| `--main` | 本文色 | `!main~#e0e0e0` |
+| `--sub` | サブテキスト色 | `!sub~#aaaaaa` |
+| `--strong` | 強調色 | `!strong~#ffffff` |
+| `--radius` | 角丸 | `!radius~0` |
+| `--text` | 本文フォント | `!text~Georgia, serif` |
+| `--code` | 等幅フォント | `!code~"Courier New", monospace` |
 
 
 # Link card

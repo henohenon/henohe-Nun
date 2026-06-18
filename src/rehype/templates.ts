@@ -134,11 +134,10 @@ function parseInlineMarkdown(raw: string): ElementContent[] {
 }
 
 /** scope の nwyts から var inline (`!<key>~<value>`) を CSS 宣言に変換。
- *  key にハイフンを含むもののみ対象。value 内の `;` `{` `}` は injection 防止のため除去。 */
+ *  value 内の `;` `{` `}` は injection 防止のため除去。 */
 function extractVarStyle(nwyts: NwytProp[]): string | undefined {
   const decls: string[] = []
   for (const n of nwyts) {
-    if (!n.key.includes('-')) continue
     const value = (n.rawValue ?? '').replace(/[;{}]/g, '').trim()
     if (!value) continue
     decls.push(`--${n.key}: ${value}`)
