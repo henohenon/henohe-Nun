@@ -46,13 +46,30 @@
 
 `font-display: swap` + `navigation.ts` の Font load 完了後 re-fit 対策で問題なし。
 
-## 実装タスク
+## 実装ログ
 
-1. `src/rehype/templates.ts` — `extractVarStyle` の prefix stripping 廃止、フルキーをそのまま CSS 変数名に使う
-2. `src/styles/theme.css` — `--font-body` → `--text`、`--font-mono` → `--code` 改名
-3. `src/styles/base.css` 等 — `var(--font-body)` → `var(--text)`、`var(--font-mono)` → `var(--code)` 置換
-4. `benben/initiation.md` — `!color-brand~` → `!brand~`、`!size-radius~` → `!radius~` 等の使用箇所更新
-5. `docs/spec/syntax.md` — var inline の仕様記述を更新
+### `201f0e4` refactor(var-inline): prefix stripping 廃止・フォント変数を --text/--code に改名
+
+- `src/rehype/templates.ts` — `VAR_INLINE_PREFIXES` と prefix stripping を廃止。`!<key>~<value>` → `--<key>` に統一
+- `src/styles/theme.css` / `base.css` / `footer.css` / `code-block.css` — `--font-body` → `--text`、`--font-mono` → `--code`
+- `benben/initiation.md` — `!color-brand~` → `!brand~`、`!size-radius~` → `!radius~` に更新
+- `docs/spec/syntax.md` / `design.md` / `design-rework.md` — var inline の仕様記述を更新
+
+**追加発覚バグ**: 最初の実装でハイフンなしキー（`!brand~` 等）が skip される条件を入れてしまった。
+
+### `17383a1` feat(var-inline): ハイフン制約を撤廃、initiation に compare デモ追加
+
+- `extractVarStyle` のハイフン制約を撤廃（`!brand~` `!radius~` 等が正しく動くように）
+- `benben/initiation.md`: var inline セクションを以下の4ページに分割
+  - `# Custom — 値 ref`（値 reference の説明のみ）
+  - `# var inline`（compare: 色・角丸デモ）
+  - `# var inline — フォント`（compare: --text / --code デモ）
+  - `# var inline — CSS 変数`（リファレンス表）
+
+### `f6c2e7b` docs(initiation): Index を更新
+
+- Class（33/34）・Custom var inline（35–38）・Link card（39）を追加
+- ページ番号を修正
 
 ## 検討過程メモ
 
