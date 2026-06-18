@@ -7,17 +7,18 @@ import { findDecks, buildIndex } from './decks.ts'
 
 const JS_PATH = '/src/client/index.ts'
 
-/** Vite の `config` フック: deck 毎の input を rollupOptions に追加 */
-export function buildConfig(): UserConfig {
-  const decks = findDecks()
+/** Vite の `config` フック: deck 毎の input を rollupOptions に追加。
+ *  `deployDeck` を指定した場合はその1デッキのみビルド（index.html なし）。 */
+export function buildConfig(deployDeck?: string): UserConfig {
+  const input: Record<string, string> = deployDeck
+    ? { [deployDeck]: `${deployDeck}/index.html` }
+    : {
+        index: 'index.html',
+        ...Object.fromEntries(findDecks().map(d => [d, `${d}/index.html`])),
+      }
   return {
     build: {
-      rollupOptions: {
-        input: {
-          index: 'index.html',
-          ...Object.fromEntries(decks.map(d => [d, `${d}/index.html`])),
-        },
-      },
+      rollupOptions: { input },
     },
   }
 }
