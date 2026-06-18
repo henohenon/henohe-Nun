@@ -15,9 +15,7 @@ const deck = values['deck']
 
 const projectName = process.env['CF_PROJECT_NAME']
 // --deck 指定時はタイムスタンプブランチ → ブランチURLが推測不可能になる
-const branch = deck
-  ? `d-${Date.now()}`
-  : (process.env['CF_BRANCH'] ?? 'preview')
+const branch = deck ? `d-${Date.now()}` : 'production'
 
 if (!projectName) {
   console.error('CF_PROJECT_NAME が .env.deploy に設定されていません。')
