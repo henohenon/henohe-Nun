@@ -36,9 +36,9 @@
    layer 順序: bg < henoheno < (h1/sub) < footer < fbg。 */
 .title > .stage > .henoheno {
   position: absolute;
-  right: 0;
-  bottom: -5%;
-  transform: translate(0%, 10%);
+  right: -10px;
+  bottom: 3%;
+  transform: translate(0%, 30%);
   transform-origin: 95% 80%;
   width: 80%;
   height: auto;
@@ -50,6 +50,6 @@
 .title > .stage > .henoheno > svg {
   width: 100%;
   height: auto;
-  max-height: 200cqh;
+  max-height: 250cqh;
   display: block;
 }
