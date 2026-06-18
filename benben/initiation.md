@@ -23,7 +23,10 @@ date: 2026-05-07
 - [Showcase](#10)
   - [Templates](#11) — [Default](#12) / [Title](#13) / [Me](#14) / [Message](#15) / [Solo](#16) / [Compare](#17)
   - [Basic Markdown](#18) — [Text](#19) / [Lists](#20) / [Tables](#21) / [Code](#22) / [Embed](#23) / [Decoration](#24) / [Nested](#25) / [Math](#26)
-  - [Custom Content](#27) — [nwyt list](#28) / [Footnote](#29) / [Footnote dedicated](#30) / [Background](#31) / [Footer bg](#32) / [Card](#33)
+  - [Custom Content](#27) — [nwyt list](#28) / [Footnote](#29) / [Footnote dedicated](#30) / [Background](#31) / [Footer bg](#32)
+  - [Class](#33) — [image utility](#33) / [scope utils](#34)
+  - [Custom](#35) — [値 ref](#35) / [var inline](#36) / [フォント](#37) / [CSS 変数](#38)
+- [Link card](#39)
 
 
 # へのへ Nun
