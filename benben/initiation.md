@@ -569,7 +569,6 @@ scope (section / article) に付ける class。 この slide は `🌊default.ta
 🌊default
 !fl~Class
 !brand~#ff00ff
-!text~Georgia, serif
 
 **値 reference `!bg~=<key>`**: 別 nwyt の値を mirror。 同 URL の重複記述回避。
 
@@ -578,17 +577,22 @@ scope (section / article) に付ける class。 この slide は `🌊default.ta
 !bg~=fbg     # fbg の URL + class を mirror
 ```
 
-**var inline (escape hatch) `!<varname>~<value>`**: CSS 変数を scope に直接 set。 この slide は `!brand~#ff00ff` で `--brand` を マゼンタに、 `!text~Georgia, serif` でフォントを serif に override。
+**var inline (escape hatch) `!<varname>~<value>`**: CSS 変数を scope に直接 set。 この slide は `!brand~#ff00ff` で `--brand` をマゼンタに override。
 
 ```md
 !brand~#ff00ff
-!base~#0a0a0a
 !radius~12px
 !text~Georgia, serif
 !code~"Courier New", monospace
 ```
 
 通常は scope class (`!brand` の代わりに `.crimson-deck` 等 CSS で定義) を推奨、 var inline は **1 回限り** 例外用 escape hatch。
+
+## font override の例
+!text~Georgia, serif
+!code~"Courier New", monospace
+
+このテキストは `!text~Georgia, serif` で serif フォント。`inline code` は Courier New。
 
 
 # Link card
