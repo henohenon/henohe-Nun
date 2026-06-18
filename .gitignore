@@ -9,3 +9,4 @@ dist
 public/thumbs/
 benben/private/*
 src/assets/**/private/*
+.env.deploy
