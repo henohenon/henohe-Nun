@@ -17,7 +17,7 @@ section > footer {
   width: 100%;
   fill: var(--shape-fill);
   y: var(--footer-font-size);
-  height: var(--footer-line-height);
+  height: calc(var(--footer-line-height) * 2);
 }
 
 .footer-fl,
