@@ -7,6 +7,7 @@ dist
 .idea/
 .tmp/
 public/thumbs/
+public/fonts/
 benben/private/*
 src/assets/**/private/*
 .env.deploy
