@@ -63,6 +63,13 @@ section {
   font-size: var(--text-body);
 }
 
+/* article で --text を上書きしたとき font-family を再評価させる。
+   section の font-family は計算済み値として継承されるため、
+   article 自身に var(--text) 宣言がないと上書きが反映されない。 */
+article {
+  font-family: var(--text);
+}
+
 section.active {
   display: grid;
 }
