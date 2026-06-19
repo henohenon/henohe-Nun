@@ -20,7 +20,6 @@
 | Serif | `Georgia` | `Times New Roman` |
 | Japanese | `Hiragino Sans` | `Yu Gothic` |
 | Japanese | `Meiryo` | `Noto Sans JP` |
-| Mono | `Courier New` | `Consolas` |
 
 ## 人気フォント系
 🌊default
@@ -32,9 +31,29 @@
 | Japanese | `BIZ UDPGothic` | `Zen Kaku Gothic New` |
 | Japanese | `M PLUS Rounded 1c` | `Klee One` |
 | Japanese Serif | `Noto Serif JP` | — |
-| **推奨スタック** | `Inter + BIZ UDPGothic` | — |
-| 変わり種 | `BestTen-DOT` | `BestTen-CRT` |
+| **推奨スタック** | `Inter + BIZ UDPGothic` ⭐ | — |
+
+## コードフォント系
+🌊default
+
+| カテゴリ | A | B |
+| --- | --- | --- |
+| デフォルト | `Courier New` | `Consolas` |
+| Popular | `JetBrains Mono` ⭐ | `Fira Code` |
+| Clean | `Source Code Pro` | `IBM Plex Mono` |
+| Variants | `Inconsolata` | `Roboto Mono` / `Space Mono` |
+
+## 変わり種・彫刻
+🌊default
+
+| カテゴリ | A | B |
+| --- | --- | --- |
+| ドットフォント | `BestTen-DOT` | `BestTen-CRT` |
 | 彫刻 | `f.k 機械彫刻 TTF` | — |
+
+
+# デフォルト系
+🌊solo
 
 
 # system-ui vs ui-sans-serif
@@ -199,152 +218,7 @@
 0 1 2 3 4 5 6 7 8 9　·　#$%&
 
 
-# Courier New vs Consolas
-🌊compare
-!fl~Monospace
-
-## Courier New
-!code~"Courier New", Courier, monospace
-
-コードブロック内フォントの比較。
-
-```js
-const greet = (name) => {
-  console.log(`Hello, ${name}!`);
-  return 0x1F4A7; // 0123456789
-};
-```
-
-## Consolas
-!code~Consolas, "Lucida Console", monospace
-
-コードブロック内フォントの比較。
-
-```js
-const greet = (name) => {
-  console.log(`Hello, ${name}!`);
-  return 0x1F4A7; // 0123456789
-};
-```
-
-
-# Inter vs Inter+BIZ vs Noto Sans JP
-🌊compare
-!fl~推奨スタック検証
-
-## Inter のみ
-!text~Inter, sans-serif
-
-### 見出し — Heading Text
-
-段落：日本語と English の混植。**ボールド**と*イタリック*。
-
-あいうえお　カキクケコ　漢字変換　ABCDEFG
-
-0 1 2 3 4 5 6 7 8 9　·　#$%&
-
-※ 日本語は OS fallback
-
-## Inter + BIZ UDPGothic
-!text~Inter, "BIZ UDPGothic", sans-serif
-
-### 見出し — Heading Text
-
-段落：日本語と English の混植。**ボールド**と*イタリック*。
-
-あいうえお　カキクケコ　漢字変換　ABCDEFG
-
-0 1 2 3 4 5 6 7 8 9　·　#$%&
-
-## Noto Sans JP
-!text~"Noto Sans JP", sans-serif
-
-### 見出し — Heading Text
-
-段落：日本語と English の混植。**ボールド**と*イタリック*。
-
-あいうえお　カキクケコ　漢字変換　ABCDEFG
-
-0 1 2 3 4 5 6 7 8 9　·　#$%&
-
-
-# 変わり種フォント
-🌊solo
-
-
-# BestTen-DOT vs BestTen-CRT
-🌊compare
-!fl~ドットフォント
-
-## BestTen-DOT
-!text~"BestTenDOT", monospace
-
-### 見出し — Heading Text
-
-段落：日本語と English の混植。**ボールド**と*イタリック*。
-
-あいうえお　カキクケコ　漢字変換　ABCDEFG
-
-0 1 2 3 4 5 6 7 8 9　·　#$%&
-
-## BestTen-CRT
-!text~"BestTen-CRT", monospace
-
-### 見出し — Heading Text
-
-段落：日本語と English の混植。**ボールド**と*イタリック*。
-
-あいうえお　カキクケコ　漢字変換　ABCDEFG
-
-0 1 2 3 4 5 6 7 8 9　·　#$%&
-
-
-# 彫刻フォント
-🌊solo
-
-
-# f.k 機械彫刻 TTF
-🌊default
-!text~"f.k Kikai Chokoku TTF", sans-serif
-!fl~彫刻フォント
-
-### 見出し — Heading Text
-
-段落：日本語と English の混植。**ボールド**と*イタリック*。
-
-あいうえお　カキクケコ　漢字変換　ABCDEFG
-
-0 1 2 3 4 5 6 7 8 9　·　#$%&
-
-
-# 機械彫刻 vs デフォルト
-🌊compare
-!fl~彫刻フォント
-
-## f.k 機械彫刻 TTF
-!text~"f.k Kikai Chokoku TTF", sans-serif
-
-### 見出し — Heading Text
-
-段落：日本語と English の混植。**ボールド**と*イタリック*。
-
-あいうえお　カキクケコ　漢字変換　ABCDEFG
-
-0 1 2 3 4 5 6 7 8 9　·　#$%&
-
-## Inter + BIZ UDPGothic
-!text~Inter, "BIZ UDPGothic", sans-serif
-
-### 見出し — Heading Text
-
-段落：日本語と English の混植。**ボールド**と*イタリック*。
-
-あいうえお　カキクケコ　漢字変換　ABCDEFG
-
-0 1 2 3 4 5 6 7 8 9　·　#$%&
-
-
-# Popular Fonts
+# 人気フォント系
 🌊solo
 
 
@@ -460,6 +334,249 @@ const greet = (name) => {
 🌊default
 !text~"Noto Serif JP", serif
 !fl~Popular · Japanese Serif
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+
+# Inter vs Inter+BIZ vs Noto Sans JP
+🌊compare
+!fl~推奨スタック検証
+
+## Inter のみ
+!text~Inter, sans-serif
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+※ 日本語は OS fallback
+
+## Inter + BIZ UDPGothic
+!text~Inter, "BIZ UDPGothic", sans-serif
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+## Noto Sans JP
+!text~"Noto Sans JP", sans-serif
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+
+# コードフォント系
+🌊solo
+
+
+# Courier New vs Consolas
+🌊compare
+!fl~Monospace
+
+## Courier New
+!code~"Courier New", Courier, monospace
+
+コードブロック内フォントの比較。
+
+```js
+// 0O 1lI| {}[]()
+const isValid = (id) => id !== null;
+if (isValid(0x1F4A7)) {
+  console.log(`result => ${true}`);
+}
+```
+
+## Consolas
+!code~Consolas, "Lucida Console", monospace
+
+コードブロック内フォントの比較。
+
+```js
+// 0O 1lI| {}[]()
+const isValid = (id) => id !== null;
+if (isValid(0x1F4A7)) {
+  console.log(`result => ${true}`);
+}
+```
+
+
+# JetBrains Mono vs Fira Code
+🌊compare
+!fl~Code · Popular
+
+## JetBrains Mono
+!code~"JetBrains Mono", monospace
+
+```js
+// 0O 1lI| {}[]()
+const isValid = (id) => id !== null;
+if (isValid(0x1F4A7)) {
+  console.log(`result => ${true}`);
+}
+```
+
+## Fira Code
+!code~"Fira Code", monospace
+
+```js
+// 0O 1lI| {}[]()
+const isValid = (id) => id !== null;
+if (isValid(0x1F4A7)) {
+  console.log(`result => ${true}`);
+}
+```
+
+
+# Source Code Pro vs IBM Plex Mono
+🌊compare
+!fl~Code · Clean
+
+## Source Code Pro
+!code~"Source Code Pro", monospace
+
+```js
+// 0O 1lI| {}[]()
+const isValid = (id) => id !== null;
+if (isValid(0x1F4A7)) {
+  console.log(`result => ${true}`);
+}
+```
+
+## IBM Plex Mono
+!code~"IBM Plex Mono", monospace
+
+```js
+// 0O 1lI| {}[]()
+const isValid = (id) => id !== null;
+if (isValid(0x1F4A7)) {
+  console.log(`result => ${true}`);
+}
+```
+
+
+# Inconsolata vs Roboto Mono vs Space Mono
+🌊compare
+!fl~Code · Variants
+
+## Inconsolata
+!code~Inconsolata, monospace
+
+```js
+// 0O 1lI| {}[]()
+const isValid = (id) => id !== null;
+if (isValid(0x1F4A7)) {
+  console.log(`result => ${true}`);
+}
+```
+
+## Roboto Mono
+!code~"Roboto Mono", monospace
+
+```js
+// 0O 1lI| {}[]()
+const isValid = (id) => id !== null;
+if (isValid(0x1F4A7)) {
+  console.log(`result => ${true}`);
+}
+```
+
+## Space Mono
+!code~"Space Mono", monospace
+
+```js
+// 0O 1lI| {}[]()
+const isValid = (id) => id !== null;
+if (isValid(0x1F4A7)) {
+  console.log(`result => ${true}`);
+}
+```
+
+
+# 変わり種・彫刻
+🌊solo
+
+
+# BestTen-DOT vs BestTen-CRT
+🌊compare
+!fl~ドットフォント
+
+## BestTen-DOT
+!text~"BestTenDOT", monospace
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+## BestTen-CRT
+!text~"BestTen-CRT", monospace
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+
+# 彫刻フォント
+🌊solo
+
+
+# f.k 機械彫刻 TTF
+🌊default
+!text~"f.k Kikai Chokoku TTF", sans-serif
+!fl~彫刻フォント
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+
+# 機械彫刻 vs デフォルト
+🌊compare
+!fl~彫刻フォント
+
+## f.k 機械彫刻 TTF
+!text~"f.k Kikai Chokoku TTF", sans-serif
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+## Inter + BIZ UDPGothic
+!text~Inter, "BIZ UDPGothic", sans-serif
 
 ### 見出し — Heading Text
 
