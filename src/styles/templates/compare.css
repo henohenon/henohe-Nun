@@ -11,7 +11,7 @@
 
 .compare > .stage > .content {
   /* display:grid / min-height:0 は base.css の baseline */
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   align-content: start;
   gap: clamp(8px, 3cqmin, 60px);
 }
