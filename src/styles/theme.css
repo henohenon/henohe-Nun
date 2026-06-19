@@ -1,9 +1,10 @@
 /* デフォルトフォント読み込み */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=BIZ+UDPGothic:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap");
 
 /* フォント比較 (benben/fonts.md) 用。不要になったら削除可。 */
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;700&family=Poppins:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;700&family=Klee+One:wght@400;600&family=Noto+Serif+JP:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Source+Code+Pro:wght@400;700&family=IBM+Plex+Mono:wght@400;700&family=Inconsolata:wght@400;700&family=Roboto+Mono:wght@400;700&family=Space+Mono:wght@400;700&display=swap");
 
 /* ローカルフォント — フォント比較 (benben/fonts.md) 用。public/fonts/ は .gitignore 済み。 */
 @font-face {
@@ -50,7 +51,7 @@
   /* Typography --------------------------------------------------------- */
   --text:
     Inter, "BIZ UDPGothic", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif;
-  --code: "Consolas", "Monaco", "Menlo", monospace;
+  --code: "JetBrains Mono", "Consolas", "Monaco", "Menlo", monospace;
 }
 
 /* Slide-scoped tokens — requires container-type: size on section */
