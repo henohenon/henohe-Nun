@@ -32,6 +32,9 @@
 | Japanese | `BIZ UDPGothic` | `Zen Kaku Gothic New` |
 | Japanese | `M PLUS Rounded 1c` | `Klee One` |
 | Japanese Serif | `Noto Serif JP` | — |
+| **推奨スタック** | `Inter + BIZ UDPGothic` | — |
+| 変わり種 | `BestTen-DOT` | `BestTen-CRT` |
+| 彫刻 | `f.k 機械彫刻 TTF` | — |
 
 
 # system-ui vs ui-sans-serif
@@ -225,6 +228,46 @@ const greet = (name) => {
 ```
 
 
+# Inter vs Inter+BIZ vs Noto Sans JP
+🌊compare
+!fl~推奨スタック検証
+
+## Inter のみ
+!text~Inter, sans-serif
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+※ 日本語は OS fallback
+
+## Inter + BIZ UDPGothic
+!text~Inter, "BIZ UDPGothic", sans-serif
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+## Noto Sans JP
+!text~"Noto Sans JP", sans-serif
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+
 # 変わり種フォント
 🌊solo
 
@@ -274,7 +317,7 @@ const greet = (name) => {
 0 1 2 3 4 5 6 7 8 9　·　#$%&
 
 
-# 機械彫刻 vs Inter
+# 機械彫刻 vs デフォルト
 🌊compare
 !fl~彫刻フォント
 
@@ -289,8 +332,8 @@ const greet = (name) => {
 
 0 1 2 3 4 5 6 7 8 9　·　#$%&
 
-## Inter
-!text~Inter, sans-serif
+## Inter + BIZ UDPGothic
+!text~Inter, "BIZ UDPGothic", sans-serif
 
 ### 見出し — Heading Text
 
