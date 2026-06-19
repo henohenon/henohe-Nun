@@ -78,3 +78,71 @@
 - CSS 変数を `--color-brand` 等にフルキー化する案 → `--brand` の短さを失いたくないため却下
 - `--body` / `--mono` に改名する案 → `--body` が曖昧すぎる
 - **採用**: `--text` / `--code` + prefix stripping 廃止
+
+---
+
+## フォント選定セッション (後半)
+
+`benben/fonts.md` を作って実際に目で見ながら選定。
+
+### 決定フォント
+
+| 変数 | 値 |
+|------|-----|
+| `--text` | `Inter, "BIZ UDPGothic", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif` |
+| `--code` | `"JetBrains Mono", "Consolas", "Monaco", "Menlo", monospace` |
+
+### `--text` の選定根拠
+
+CSS font stack はグリフ単位でフォールバックするため、`Inter, "BIZ UDPGothic"` と並べると Inter が Latin/数字を担当し、Inter にグリフがない日本語は BIZ UDPGothic が自動的に担当する。
+
+- **Inter**: ラテン文字・数字に特化した画面向け設計。x-height が高く小サイズでの視認性が高い
+- **BIZ UDPGothic**: UD (ユニバーサルデザイン) 設計で判別しやすさ最優先。Windows 10+ にシステムフォントとして同梱されているため Google Fonts 未接続時のフォールバックにもなる
+- `-apple-system` 以降は macOS/iOS フォールバック
+
+**没になった候補**:
+- `Noto Sans JP` 単体: 次点。Latin/Japanese が同一ファミリーでメトリクスが揃うが、Latin が Inter に劣る
+- `Plus Jakarta Sans + Zen Kaku Gothic New`: 個性あり、代替として有効
+- `Poppins`: 日本語グリフなし、混植で OS fallback が露骨に見える
+- `M PLUS Rounded 1c` / `Klee One`: カジュアルすぎてプレゼン向きでない
+- `f.k 機械彫刻 TTF`: 見やすいが「見やすい ≠ 頭に入る」。フォント自体が目立ちすぎてコンテンツの邪魔をする。数字のメトリクスが cqmin ベースのスケールと相性が悪い
+
+### `--code` の選定根拠
+
+- **JetBrains Mono**: 読みやすいリガチャあり（`=>` `!=` 等）、x-height が高め、プレゼン投影向き。コーディングで日常使いしているので評価が安定している
+- **Fira Code**: JetBrains Mono と同じくリガチャあり。甲乙つけがたいが JetBrains Mono をすでに使っているため JetBrains Mono に統一
+
+### 技術的な修正
+
+**CSS cascade バグ修正** (`src/styles/base.css`):
+
+`section { font-family: var(--text) }` は section レベルで `var(--text)` を評価した**計算済み文字列**を継承する。そのため article で `!text~` で `--text` を上書きしても `font-family` には反映されなかった。`article { font-family: var(--text) }` を追加することで article 自身が `var(--text)` を再評価するようになった。
+
+`!code~` が動いていたのは `code { font-family: var(--code) }` が base.css にすでにあり、code 要素が自分で `var(--code)` を参照していたため。
+
+**compare テンプレート auto-fit** (`src/styles/templates/compare.css`):
+
+`grid-template-columns: 1fr 1fr` → `repeat(auto-fit, minmax(0, 1fr))` に変更。h2 の数がそのまま列数になる（2列でも3列でも自動対応）。
+
+**CSS `@import` の順序ルール**:
+
+`@font-face` を `@import url()` より前に書くと CSS が無効になる。`@import` はファイルの先頭に置く必要がある（他のルールが何もない状態）。今回 2 回この罠を踏んだ。
+
+### PDF とフォントの関係
+
+| 状況 | フォントの挙動 |
+|------|---------------|
+| `bun run dev` / `bun run build` (HTML) | ブラウザがレンダリング時にネットワーク or ローカルサーバーからフォントを取得。Google Fonts はネット接続が必要 |
+| PDF 生成 (Playwright/Chromium) | Chromium が自動でフォントをサブセット埋め込み。生成後の PDF は完全自己完結。ローカルフォント・Google Fonts ともに PDF 内に埋め込まれる |
+
+### ローカルフォントのライセンス対応
+
+`f.k 機械彫刻 TTF`（font.kim）・`BestTen-DOT` / `BestTen-CRT`（BOOTH）はフォントファイルの再配布にライセンス上の制約があるため `public/fonts/` を `.gitignore` に追加した。ローカルでの使用は問題なく、別マシンでは手動配置が必要。
+
+### 実装ログ
+
+- `src/styles/base.css` — `article { font-family: var(--text) }` 追加（cascade バグ修正）
+- `src/styles/theme.css` — `@import` 順序修正、ローカル `@font-face` 追加、`--text`/`--code` 最終値を設定
+- `src/styles/templates/compare.css` — auto-fit に変更
+- `.gitignore` — `public/fonts/` 追加
+- `benben/fonts.md` — フォント比較デッキ作成
