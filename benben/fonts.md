@@ -225,6 +225,37 @@ const greet = (name) => {
 ```
 
 
+# 変わり種フォント
+🌊solo
+
+
+# BestTen-DOT vs BestTen-CRT
+🌊compare
+!fl~ドットフォント
+
+## BestTen-DOT
+!text~"BestTenDOT", monospace
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+## BestTen-CRT
+!text~"BestTen-CRT", monospace
+
+### 見出し — Heading Text
+
+段落：日本語と English の混植。**ボールド**と*イタリック*。
+
+あいうえお　カキクケコ　漢字変換　ABCDEFG
+
+0 1 2 3 4 5 6 7 8 9　·　#$%&
+
+
 # 彫刻フォント
 🌊solo
 
