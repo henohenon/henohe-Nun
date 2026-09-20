@@ -75,7 +75,16 @@ section.active {
 .stage {
   display: grid;
   grid-template-rows: auto 1fr;
+  min-width: 0;
   min-height: 0;
+}
+
+/* 空 heading (`#` のみ) の scope は heading 要素自体が生成されないため、
+   `auto 1fr` のままだと .content が heading 行 (auto) に入り 1fr 行が余る
+   (= 図版 1 枚のページで下部に死に領域ができる)。 heading を持たない stage は
+   1 行構成にして .content に全高を渡す。 */
+.stage:not(:has(> :is(h1, h2, h3, h4, h5, h6))) {
+  grid-template-rows: 1fr;
 }
 
 /* slide 全体の安全領域 padding。 section.stage のみに適用 (article.stage は
@@ -83,7 +92,10 @@ section.active {
    からここに移譲することで、 footer (section の最終 grid 行) は section 端で
    edge-to-edge を保つ。 */
 section > .stage {
-  padding: var(--slide-pad-top) var(--slide-pad-x) var(--slide-pad-bottom);
+  padding:
+    var(--slide-pad-top)
+    var(--slide-pad-x)
+    calc(var(--slide-pad-bottom) - var(--footer-font-size) - var(--footer-line-height));
 }
 
 /* ---- Slide / Article heading baseline ----
@@ -126,6 +138,7 @@ section > .stage {
    templates/ 側で override する。 */
 .stage > .content {
   display: grid;
+  min-width: 0;
   min-height: 0;
 }
 

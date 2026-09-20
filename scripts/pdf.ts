@@ -25,13 +25,21 @@ async function main(): Promise<void> {
   }
 
   const decks = deckFilter ? [deckFilter] : findDecks()
+  console.log(`[pdf] targets: ${decks.join(', ')}`)
 
+  console.log('[pdf] starting preview server...')
   const preview = await startPreview()
+  console.log(`[pdf] preview at ${preview.baseUrl}`)
+
+  console.log('[pdf] launching browser...')
   const browser = await launchBrowser()
+  console.log('[pdf] browser ready')
 
   try {
     for (const deck of decks) {
+      console.log(`[pdf] opening ${deck}...`)
       const page = await openDeck(browser, preview.baseUrl, deck, { width, height })
+      console.log(`[pdf] ${deck} loaded, rendering...`)
 
       // 全 section を強制表示 + page-break で 1 枚 = 1 ページ化。
       // CSS の section は display: grid; .active で表示する設計なので、

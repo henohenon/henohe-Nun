@@ -34,8 +34,17 @@ export function createNunMiddleware(
     }
 
     // /<deck-name> → スライドページ
-    const name = url.replace(/^\//, '').replace(/\/?(index\.html)?(\?.*)?$/, '')
-    if (!name) {
+    // 日本語等の非 ASCII deck 名は percent-encoded で届くので decode してから
+    // benben/ のファイル名と突き合わせる。
+    const encoded = url.replace(/^\//, '').replace(/\/?(index\.html)?(\?.*)?$/, '')
+    if (!encoded) {
+      next()
+      return
+    }
+    let name: string
+    try {
+      name = decodeURIComponent(encoded)
+    } catch {
       next()
       return
     }

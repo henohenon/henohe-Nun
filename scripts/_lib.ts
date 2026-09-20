@@ -58,7 +58,9 @@ export async function openDeck(
     Object.defineProperty(document, 'startViewTransition', { value: undefined, writable: false })
   })
   await page.goto(`${baseUrl}/${deck}/`)
-  await page.waitForLoadState('networkidle')
+  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {
+    console.warn(`[warn] ${deck}: networkidle timeout (15s), continuing anyway`)
+  })
   await page.evaluate(() => (document as any).fonts?.ready)
   // mermaid は client で動的 import → 非同期描画 → 完了で
   // `document.documentElement.dataset.mermaidReady` を立てる (`src/client/index.ts`)。

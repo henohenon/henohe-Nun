@@ -14,3 +14,10 @@ section:has(.no-footer) footer,
 section:has(.no-footer) .fbg-layer {
   display: none;
 }
+
+/* footer 非表示時は section > .stage の padding-bottom 減算分を戻す
+   (base.css の section > .stage が footer 高分を差し引いているため)。 */
+.no-footer > .stage,
+section:has(.no-footer) > .stage {
+  padding-bottom: var(--slide-pad-bottom);
+}
