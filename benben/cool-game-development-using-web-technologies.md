@@ -273,14 +273,12 @@ date: 2026-09-20
 - Unity
   - UnityPackage Manager
 - Phaser
-  - pnpm, VSCode, `pnpm create @phaserjs/game@latest`
-  - 5~10分
+  - pnpm
 - DXライブラリ
-  - VisualStudio, DxLib_VC3_25a.zip
+  - 
   - 1時間
 - 今回の
-  - pnpm, VSCode, package.json + `pnpm i`
-  - 5~30分
+  - pnpm
 
 ## 速度
 
