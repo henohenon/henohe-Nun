@@ -1,0 +1,71 @@
+/* @theme nun */
+/* @size landscape 1280px 720px */
+/* @size portrait 720px 1280px */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap");
+
+section {
+  --base: #ffffff;
+  --main: #1a1a1a;
+  --sub: #888888;
+  --strong: #000000;
+  --brand: #5932ff;
+  width: 1280px;
+  height: 720px;
+  padding: 56px 72px 88px;
+  background: var(--base);
+  color: var(--main);
+  font-family: Inter, "BIZ UDPGothic", sans-serif;
+  font-size: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+section.dark { --base: #111; --main: #eee; --strong: #fff; }
+
+h1 { font-size: 52px; color: var(--strong); margin: 0 0 24px; }
+h1:empty { display: none; }
+mark { background: color-mix(in srgb, var(--brand) 25%, transparent); color: inherit; }
+table { border-collapse: collapse; font-size: 24px; }
+th, td { border-bottom: 1px solid #ccc; padding: 6px 14px; }
+
+/* footer: 黒線 + 両端テキスト。 fl = footer (左), fr = header を下右に移動 */
+section::after { display: none; } /* pagination 不使用 */
+section > footer, section > header {
+  position: absolute;
+  bottom: 18px;
+  font-size: 18px;
+  color: var(--strong);
+}
+section > footer { left: 72px; }
+section > header { right: 72px; top: auto; }
+section::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 48px;
+  border-top: 3px solid var(--strong);
+}
+section.no-footer::before { display: none; }
+
+/* templates */
+section.title { justify-content: center; }
+section.title h1 { font-size: 72px; }
+section.title p { color: var(--sub); }
+section.solo { justify-content: center; align-items: center; }
+section.solo h1 { font-size: 64px; }
+section.message > p.lead { position: absolute; bottom: 80px; left: 0; right: 0; text-align: center; color: var(--sub); }
+
+/* admonition */
+.admonition { border-left: 6px solid var(--brand); background: #f4f2ff; padding: 8px 20px; margin: 12px 0; }
+.admonition > .admonition-title { font-weight: 700; margin: 0; }
+.admonition.warning { border-color: #d99a2b; background: #fff7e8; }
+
+/* code block header */
+figure.code { margin: 12px 0; }
+figure.code > figcaption { font: 16px "JetBrains Mono", monospace; color: var(--sub); }
+
+/* card */
+a.card { display: flex; gap: 16px; border: 1px solid #ccc; border-radius: 8px; padding: 12px 16px; text-decoration: none; color: inherit; font-size: 22px; }
+a.card .card-desc { color: var(--sub); font-size: 18px; }
+
+/* footnote */
+sup.fn a { color: var(--brand); text-decoration: none; }

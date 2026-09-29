@@ -1,5 +1,7 @@
 # 競合比較・技術選定メモ
 
+> **2026-09-29 再評価**: heading 階層の撤廃を前提に Marp / Slidev を再検討し、本書の Marp 評価の一部 (Sass 前提、Web 部分は範囲外、得られるのは PDF/PPTX のみ 等) を訂正した。詳細は `docs/journal-2026-09-29-marp.md`、試作は `docs/research/marp-spike/`。
+
 ## 競合ツール比較
 
 | ツール | スライド区切り | ネスト | Web ファースト | カスタム記法 | 出力 |
