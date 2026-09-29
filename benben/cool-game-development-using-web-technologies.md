@@ -11,10 +11,11 @@ date: 2026-09-20
 
 # 普段、どんな技術でゲームを作りますか？
 🌊solo
+!fl~茶番
 
 #
 🌊default
-!fl~Intro
+!fl~茶番
 
 ```embed_svg
 <svg viewBox="0 0 1000 699" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
@@ -25,7 +26,7 @@ date: 2026-09-20
 
 #
 🌊default
-!fl~Intro
+!fl~茶番
 
 ```embed_svg
 <svg viewBox="0 0 1000 699" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
@@ -37,7 +38,7 @@ date: 2026-09-20
 
 #
 🌊default
-!fl~Intro
+!fl~茶番
 
 ```embed_svg
 <svg viewBox="0 0 1000 699" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
@@ -52,7 +53,7 @@ date: 2026-09-20
 
 #
 🌊default
-!fl~Intro
+!fl~茶番
 
 ```embed_svg
 <svg viewBox="0 0 1000 699" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
@@ -70,7 +71,7 @@ date: 2026-09-20
 
 #
 🌊default
-!fl~Intro
+!fl~茶番
 
 ```embed_svg
 <svg viewBox="0 0 1000 699" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
@@ -94,7 +95,7 @@ date: 2026-09-20
 
 #
 🌊default
-!fl~Intro
+!fl~茶番
 
 ```embed_svg
 <svg viewBox="0 0 1000 699" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
@@ -127,7 +128,7 @@ date: 2026-09-20
 
 #
 🌊default
-!fl~Intro
+!fl~茶番
 
 ```embed_svg
 <svg viewBox="0 0 1000 699" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
@@ -166,7 +167,7 @@ date: 2026-09-20
 
 #
 🌊default
-!fl~Intro
+!fl~茶番
 
 ```embed_svg
 <svg viewBox="0 0 1000 699" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
@@ -212,21 +213,22 @@ date: 2026-09-20
 
 # イチオシ
 🌊default
-!fl~今回は
+!fl~今回の
 
 ```embed_svg
 <svg viewBox="0 0 1000 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
-  <a href="https://threejs.org" target="_blank" rel="noopener noreferrer" aria-label="Three.js" style="text-decoration:none"><title>Three.js</title><image href="/images/engines/threejs-wm.png" x="185" y="80" width="230" height="61" preserveAspectRatio="xMidYMid meet"/><text x="300" y="215" text-anchor="middle" font-size="24" fill="var(--sub)" style="text-decoration:none">Three.js</text></a>
-  <a href="https://pixijs.com" target="_blank" rel="noopener noreferrer" aria-label="PixiJS" style="text-decoration:none"><title>PixiJS</title><image href="/images/engines/pixijs.svg" x="580" y="70" width="240" height="94" preserveAspectRatio="xMidYMid meet"/><text x="700" y="215" text-anchor="middle" font-size="26" fill="var(--sub)" style="text-decoration:none">PixiJS</text></a>
-  <a href="https://www.babylonjs.com" target="_blank" rel="noopener noreferrer" aria-label="Babylon.js" style="text-decoration:none"><title>Babylon.js</title><image href="/images/engines/babylonjs-wm.svg" x="155" y="262" width="150" height="75" preserveAspectRatio="xMidYMid meet"/><text x="230" y="378" text-anchor="middle" font-size="18" fill="var(--sub)" style="text-decoration:none">Babylon.js</text></a>
-  <a href="https://tonejs.github.io" target="_blank" rel="noopener noreferrer" aria-label="Tone.js" style="text-decoration:none"><title>Tone.js</title><image href="/images/engines/tonejs.png" x="466" y="272" width="68" height="68" preserveAspectRatio="xMidYMid meet" clip-path="inset(0 round 10px)"/><text x="500" y="378" text-anchor="middle" font-size="18" fill="var(--sub)" style="text-decoration:none">Tone.js</text></a>
-  <a href="https://brm.io/matter-js/" target="_blank" rel="noopener noreferrer" aria-label="Matter.js" style="text-decoration:none"><title>Matter.js</title><svg x="685" y="234" width="150" height="150" viewBox="0 0 24 24"><path d="M19.494 9.614c-.152 0-.265.046-.333.121a.412.412 0 0 0-.114.296c0 .314.14.469.416.469.167 0 .288-.038.364-.114a.416.416 0 0 0 .11-.302c0-.314-.137-.47-.417-.47h-.023zm-17.341.038-1.078 1.866L0 13.383h2.85v-1.9l-.058-.722Zm18.086.015v3.394l.25-.461.022.007a2.232 2.232 0 0 0 .73.224.31.31 0 0 0 .179-.053c.049-.03.068-.065.068-.125 0-.065-.027-.114-.099-.155a1.298 1.298 0 0 0-.17-.091 2.811 2.811 0 0 1-.738-.39c-.151-.129-.227-.322-.227-.567a.757.757 0 0 1 .303-.625 1.196 1.196 0 0 1 .753-.227c.295 0 .53.076.704.212a.844.844 0 0 1 .302.587v.022l-.726.14-.008-.03c-.011-.114-.038-.185-.087-.238a.299.299 0 0 0-.223-.08.227.227 0 0 0-.163.057c-.045.042-.068.087-.068.129 0 .049.008.079.019.102a.254.254 0 0 0 .05.068l.075.064a.802.802 0 0 0 .094.053l.13.05c.04.026.147.075.313.15v-.01a1.392 1.392 0 0 1 .44.275c.116.114.177.28.177.489 0 .211-.098.4-.291.567a1.022 1.022 0 0 1-.492.227H24V9.667Zm-10.08.292-.726.215-.03.504-.333.045-.072.503h.39v1.124c0 .386.049.662.15.832.107.17.322.254.655.254a1.43 1.43 0 0 0 .704-.197l-.136-.446a1.574 1.574 0 0 1-.288.049c-.113 0-.196-.034-.242-.102-.05-.065-.072-.186-.072-.356v-1.162h.59l.091-.556h-.68zm1.903 0-.726.215-.03.504-.333.045-.076.503h.394v1.124c0 .386.049.662.15.832.103.17.323.254.655.254a1.415 1.415 0 0 0 .7-.197l-.136-.446a1.574 1.574 0 0 1-.287.049c-.114 0-.193-.034-.242-.102-.046-.065-.069-.186-.069-.356v-1.162h.59l.091-.556h-.68zm-7.862.67a.848.848 0 0 0-.677.332h-.02l-.071-.31-.598.076.053.757v1.891h.772v-2.001a.39.39 0 0 1 .306-.148c.182 0 .277.114.277.33v1.82h.768v-2.002a.378.378 0 0 1 .31-.148c.178 0 .265.114.265.33v1.82h.78v-1.783c0-.643-.262-.965-.78-.965a.897.897 0 0 0-.727.33c-.12-.22-.333-.33-.628-.33Zm3.61 0a2.244 2.244 0 0 0-.564.086 2.126 2.126 0 0 0-.473.174l.215.477a2.584 2.584 0 0 1 .666-.151c.137 0 .227.03.273.083.049.05.072.133.072.242v.2l-.44.076a1.389 1.389 0 0 0-.665.273c-.151.132-.227.33-.227.594 0 .503.242.757.726.757a.908.908 0 0 0 .742-.379h.019a.957.957 0 0 0 .386.379l.435-.413a.757.757 0 0 1-.167-.25 1.07 1.07 0 0 1-.034-.302v-.95a1.62 1.62 0 0 0-.03-.34.742.742 0 0 0-.113-.277.518.518 0 0 0-.292-.211 1.472 1.472 0 0 0-.492-.069zm6.337 0c-.39.007-.68.136-.881.382a1.612 1.612 0 0 0-.303 1.033c0 .93.393 1.392 1.173 1.392a2.005 2.005 0 0 0 1.003-.273l-.16-.472a2.085 2.085 0 0 1-.688.147c-.19 0-.318-.05-.393-.147a.757.757 0 0 1-.114-.45h1.04l.36-.05c0-.212-.004-.39-.015-.53-.03-.352-.114-.605-.242-.756-.16-.186-.405-.277-.742-.277zm2.683 0a.598.598 0 0 0-.378.155.866.866 0 0 0-.254.423h-.019l-.094-.556-.583.076.057.749v1.9h.768v-1.514c0-.19.053-.33.159-.428a.522.522 0 0 1 .355-.147.984.984 0 0 1 .273.049l.178-.605a.946.946 0 0 0-.432-.099h-.026zm3.05.018-.772.08v2.395a1.513 1.513 0 0 1-.053.507c-.034.087-.133.19-.295.31l.423.447a1.892 1.892 0 0 0 .56-.466 1.06 1.06 0 0 0 .137-.598zm1.43 0a1.162 1.162 0 0 0-.727.224.692.692 0 0 0-.28.575c0 .242.076.408.216.526a2.747 2.747 0 0 0 .719.386 1.699 1.699 0 0 1 .182.102c.079.045.12.113.12.189a.19.19 0 0 1-.09.174.367.367 0 0 1-.208.05 2.126 2.126 0 0 1-.73-.205l-.25.45c.329.19.654.288.983.288a1.135 1.135 0 0 0 .769-.235c.185-.163.272-.337.272-.533a.61.61 0 0 0-.163-.454 1.29 1.29 0 0 0-.416-.258 3.746 3.746 0 0 1-.325-.147l-.114-.05a1.022 1.022 0 0 1-.113-.06l-.08-.068a.31.31 0 0 1-.06-.08.375.375 0 0 1-.015-.125.22.22 0 0 1 .075-.166.284.284 0 0 1 .197-.072c.106 0 .19.038.253.099a.439.439 0 0 1 .103.242l.62-.118a.795.795 0 0 0-.265-.53 1.014 1.014 0 0 0-.673-.204Zm-7.204.58h.022c.118 0 .193.037.227.113.034.075.05.212.05.4h-.613a.829.829 0 0 1 .083-.381c.049-.084.125-.125.23-.133zm-6.103 1.01v.472a.47.47 0 0 1-.341.144c-.178 0-.265-.083-.265-.25 0-.113.05-.189.14-.242a1.4 1.4 0 0 1 .466-.125zm-4.295.128v1.007h.48v-.174zm14.094.064a.488.488 0 0 0-.454.489.488.488 0 0 0 .492.488.488.488 0 0 0 .484-.492.488.488 0 0 0-.488-.485.488.488 0 0 0-.037 0zm2.437.742v.257h.704a2.176 2.176 0 0 1-.704-.257z" fill="#4B5562"/></svg><text x="760" y="378" text-anchor="middle" font-size="18" fill="var(--sub)" style="text-decoration:none">Matter.js</text></a>
+  <a href="https://vite.dev" target="_blank" rel="noopener noreferrer" aria-label="Vite" style="text-decoration:none"><title>Vite</title><image href="/images/engines/vite.svg" x="152" y="62.5" width="96" height="95" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://threejs.org" target="_blank" rel="noopener noreferrer" aria-label="Three.js" style="text-decoration:none"><title>Three.js</title><image href="/images/engines/threejs-wm.png" x="385" y="79.5" width="230" height="61" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://pixijs.com" target="_blank" rel="noopener noreferrer" aria-label="PixiJS" style="text-decoration:none"><title>PixiJS</title><image href="/images/engines/pixijs.svg" x="680" y="63" width="240" height="94" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://www.babylonjs.com" target="_blank" rel="noopener noreferrer" aria-label="Babylon.js" style="text-decoration:none"><title>Babylon.js</title><image href="/images/engines/babylonjs-wm.svg" x="147.5" y="262" width="165" height="56" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://tonejs.github.io" target="_blank" rel="noopener noreferrer" aria-label="Tone.js" style="text-decoration:none"><title>Tone.js</title><image href="/images/engines/tonejs.png" x="466" y="256" width="68" height="68" preserveAspectRatio="xMidYMid meet" clip-path="inset(0 round 10px)"/><text x="500" y="362" text-anchor="middle" font-size="20" fill="var(--sub)" style="text-decoration:none">Tone.js</text></a>
+  <a href="https://brm.io/matter-js/" target="_blank" rel="noopener noreferrer" aria-label="Matter.js" style="text-decoration:none"><title>Matter.js</title><svg x="705" y="215" width="150" height="150" viewBox="0 0 24 24"><path d="M19.494 9.614c-.152 0-.265.046-.333.121a.412.412 0 0 0-.114.296c0 .314.14.469.416.469.167 0 .288-.038.364-.114a.416.416 0 0 0 .11-.302c0-.314-.137-.47-.417-.47h-.023zm-17.341.038-1.078 1.866L0 13.383h2.85v-1.9l-.058-.722Zm18.086.015v3.394l.25-.461.022.007a2.232 2.232 0 0 0 .73.224.31.31 0 0 0 .179-.053c.049-.03.068-.065.068-.125 0-.065-.027-.114-.099-.155a1.298 1.298 0 0 0-.17-.091 2.811 2.811 0 0 1-.738-.39c-.151-.129-.227-.322-.227-.567a.757.757 0 0 1 .303-.625 1.196 1.196 0 0 1 .753-.227c.295 0 .53.076.704.212a.844.844 0 0 1 .302.587v.022l-.726.14-.008-.03c-.011-.114-.038-.185-.087-.238a.299.299 0 0 0-.223-.08.227.227 0 0 0-.163.057c-.045.042-.068.087-.068.129 0 .049.008.079.019.102a.254.254 0 0 0 .05.068l.075.064a.802.802 0 0 0 .094.053l.13.05c.04.026.147.075.313.15v-.01a1.392 1.392 0 0 1 .44.275c.116.114.177.28.177.489 0 .211-.098.4-.291.567a1.022 1.022 0 0 1-.492.227H24V9.667Zm-10.08.292-.726.215-.03.504-.333.045-.072.503h.39v1.124c0 .386.049.662.15.832.107.17.322.254.655.254a1.43 1.43 0 0 0 .704-.197l-.136-.446a1.574 1.574 0 0 1-.288.049c-.113 0-.196-.034-.242-.102-.05-.065-.072-.186-.072-.356v-1.162h.59l.091-.556h-.68zm1.903 0-.726.215-.03.504-.333.045-.076.503h.394v1.124c0 .386.049.662.15.832.103.17.323.254.655.254a1.415 1.415 0 0 0 .7-.197l-.136-.446a1.574 1.574 0 0 1-.287.049c-.114 0-.193-.034-.242-.102-.046-.065-.069-.186-.069-.356v-1.162h.59l.091-.556h-.68zm-7.862.67a.848.848 0 0 0-.677.332h-.02l-.071-.31-.598.076.053.757v1.891h.772v-2.001a.39.39 0 0 1 .306-.148c.182 0 .277.114.277.33v1.82h.768v-2.002a.378.378 0 0 1 .31-.148c.178 0 .265.114.265.33v1.82h.78v-1.783c0-.643-.262-.965-.78-.965a.897.897 0 0 0-.727.33c-.12-.22-.333-.33-.628-.33Zm3.61 0a2.244 2.244 0 0 0-.564.086 2.126 2.126 0 0 0-.473.174l.215.477a2.584 2.584 0 0 1 .666-.151c.137 0 .227.03.273.083.049.05.072.133.072.242v.2l-.44.076a1.389 1.389 0 0 0-.665.273c-.151.132-.227.33-.227.594 0 .503.242.757.726.757a.908.908 0 0 0 .742-.379h.019a.957.957 0 0 0 .386.379l.435-.413a.757.757 0 0 1-.167-.25 1.07 1.07 0 0 1-.034-.302v-.95a1.62 1.62 0 0 0-.03-.34.742.742 0 0 0-.113-.277.518.518 0 0 0-.292-.211 1.472 1.472 0 0 0-.492-.069zm6.337 0c-.39.007-.68.136-.881.382a1.612 1.612 0 0 0-.303 1.033c0 .93.393 1.392 1.173 1.392a2.005 2.005 0 0 0 1.003-.273l-.16-.472a2.085 2.085 0 0 1-.688.147c-.19 0-.318-.05-.393-.147a.757.757 0 0 1-.114-.45h1.04l.36-.05c0-.212-.004-.39-.015-.53-.03-.352-.114-.605-.242-.756-.16-.186-.405-.277-.742-.277zm2.683 0a.598.598 0 0 0-.378.155.866.866 0 0 0-.254.423h-.019l-.094-.556-.583.076.057.749v1.9h.768v-1.514c0-.19.053-.33.159-.428a.522.522 0 0 1 .355-.147.984.984 0 0 1 .273.049l.178-.605a.946.946 0 0 0-.432-.099h-.026zm3.05.018-.772.08v2.395a1.513 1.513 0 0 1-.053.507c-.034.087-.133.19-.295.31l.423.447a1.892 1.892 0 0 0 .56-.466 1.06 1.06 0 0 0 .137-.598zm1.43 0a1.162 1.162 0 0 0-.727.224.692.692 0 0 0-.28.575c0 .242.076.408.216.526a2.747 2.747 0 0 0 .719.386 1.699 1.699 0 0 1 .182.102c.079.045.12.113.12.189a.19.19 0 0 1-.09.174.367.367 0 0 1-.208.05 2.126 2.126 0 0 1-.73-.205l-.25.45c.329.19.654.288.983.288a1.135 1.135 0 0 0 .769-.235c.185-.163.272-.337.272-.533a.61.61 0 0 0-.163-.454 1.29 1.29 0 0 0-.416-.258 3.746 3.746 0 0 1-.325-.147l-.114-.05a1.022 1.022 0 0 1-.113-.06l-.08-.068a.31.31 0 0 1-.06-.08.375.375 0 0 1-.015-.125.22.22 0 0 1 .075-.166.284.284 0 0 1 .197-.072c.106 0 .19.038.253.099a.439.439 0 0 1 .103.242l.62-.118a.795.795 0 0 0-.265-.53 1.014 1.014 0 0 0-.673-.204Zm-7.204.58h.022c.118 0 .193.037.227.113.034.075.05.212.05.4h-.613a.829.829 0 0 1 .083-.381c.049-.084.125-.125.23-.133zm-6.103 1.01v.472a.47.47 0 0 1-.341.144c-.178 0-.265-.083-.265-.25 0-.113.05-.189.14-.242a1.4 1.4 0 0 1 .466-.125zm-4.295.128v1.007h.48v-.174zm14.094.064a.488.488 0 0 0-.454.489.488.488 0 0 0 .492.488.488.488 0 0 0 .484-.492.488.488 0 0 0-.488-.485.488.488 0 0 0-.037 0zm2.437.742v.257h.704a2.176 2.176 0 0 1-.704-.257z" fill="#4B5562"/></svg></a>
 </svg>
 ```
 
 # 推しポイント
 
-!fl~今回は
+!fl~今回の
 
 **圧倒的な開発体験と、十分なクオリティ**
 
@@ -236,257 +238,312 @@ date: 2026-09-20
 
 クオリティ
 - パフォーマンス
-- 見た目
+- グラフィック
 
 # 比較対象
+!fl~今回の
 
-- Unity
-- Phaser
-- DXライブラリ
-- 今回の
-
-// ネイティブとブラウザ、エンジンとライブラリの二軸四象限にまとめる(位置は気にせずもはや表みたいな感じではいい)
+```embed_svg
+<svg viewBox="0 0 1000 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
+  <a href="https://unity.com" target="_blank" rel="noopener noreferrer" aria-label="Unity" style="text-decoration:none"><title>Unity</title><image href="/images/engines/unity-wm.svg" x="225" y="100" width="550" height="200" preserveAspectRatio="xMidYMid meet"/></a>
+</svg>
+```
 
 # 快適な環境
 🌊solo
+
+# 環境構築~初回起動
 !fl~快適な環境
 
-# 環境構築
 - Unity
   - UnityHub, UnityEngine, VisualStudio
+  - Create Project, Resolving Packages...
   - 2時間ぐらい
-  - (もっと軽いエンジンもあるよ！)
-- Phaser
-  - pnpm, VSCode, `pnpm create @phaserjs/game@latest`
-  - 5~10分
-- DXライブラリ
-  - VisualStudio, DxLib_VC3_25a.zip
-  - 1時間
 - 今回の
   - pnpm, VSCode, package.json + `pnpm i`
+  - `pnpm run dev`, localhostを開く
   - 5~30分
+
 
 # Package Manager
 🌊default
 !fl~快適な環境
 
+Unity
+- UPM — GUI か manifest.json 手編集。
+- NuGetForUnity — Editor メニューから。
+- (Asset Store — ブラウザで購入 → My Assets から Import)
+- →いずれも導入後、Editorが固まる
+
+今回の
+- `pnpm add <package>` 一発
+- CLI が一次導線 = CI にもそのまま書ける
+
+# Dev Loop
+🌊default
+!fl~快適な環境
+
 - Unity
-  - UnityPackage Manager
-- Phaser
-  - pnpm
-- DXライブラリ
-  - 
-  - 1時間
+  - エディタに戻る → 再コンパイル + ドメインリロード
+  - 数秒〜数十秒
 - 今回の
-  - pnpm
+  - 保存した瞬間、Vite が変更されたモジュールだけ差し替え (HMR)
+  - 数ms
 
-## 速度
-
-
-# Vite
+# CI・CD
 🌊default
 !fl~快適な環境
 
-## 起動速度
+- Unity
+  - スクリプトに対しては簡単に可能
+  - 最近ようやくコマンド1発でビルドできるようになった。
+    - ライセンス認証+Dockerまたはオンプレ環境が必要。
+    - キャッシュも効かせて時間も20分~数時間ぐらいかかる。
 
-## ホットリロード、反映されるまで
+- 今回の
+  - 本家本元。皆様ご存知の通り。
 
-## Build
 
+# 補足: もっと早いエンジンもあるよ！
 
-# 構築速度 / CI・CD
-🌊default
-!fl~快適な環境
+```embed_svg
+<svg viewBox="0 0 1000 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">
+  <a href="https://godotengine.org" target="_blank" rel="noopener noreferrer" aria-label="Godot Engine" style="text-decoration:none"><title>Godot Engine</title><image href="/images/engines/godot-wm.svg" x="81" y="26" width="408" height="88" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://bevy.org" target="_blank" rel="noopener noreferrer" aria-label="Bevy" style="text-decoration:none"><title>Bevy</title><image href="/images/engines/bevy-wm.svg" x="549" y="26" width="352" height="88" preserveAspectRatio="xMidYMid meet"/></a>
+</svg>
+```
 
-## 構築速度
+- インストール~初回起動
+  - 30分~1時間
+- ビルド/CDも早くGithub Actionsとかでも現実的
 
-## CI/CD
-
+"今回の"も間違いなく最強の一角
 
 # 豊富な資産
 🌊solo
-!fl~豊富な資産
 
 
-# 最大と言ってもいいんじゃないか？
+# 数字で見る
 🌊default
 !fl~豊富な資産
 
-## TypeScript
-### JavaScript
+| | Unity | three.js | PixiJS | Babylon.js | 3つ合計 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Stack Overflow | 76,787 | 20,869 | 1,033 | 465 | 22,367 |
+| Reddit | 402,474 | 28,918 | 804 | 1,127 | 30,849 |
+| Qiita | 18,850 | 1,128 | 17 | 155 | 1,300 |
+| Zenn | 4,456 | 491 | 61 | 210 | 762 |
+| GitHub リポジトリ | 38,286 | 20,477 | 1,493 | 696 | 22,666 |
 
-## C
-### C++
-### C#
+まぁ負け
 
-## Qiita, Zenn比較
-
-
-# 最前線であり、活発
+# パッケージ数
 🌊default
 !fl~豊富な資産
 
-## 純粋に比較していいのか？
-### 資産の質
-### ゲームではない資産
-### OSSである
+| レジストリ | 登録数 | 範囲 |
+| --- | ---: | --- |
+| npm | 4,408,253 | JS / TS 全般 |
+| NuGet | 488,198 | .NET 全般 |
+| Unity Asset Store | 124,583 | 92% が有料、非コード資産を含む |
+| OpenUPM | 3,993 | Unity の OSS のみ |
 
+理論上10倍！
 
-# 感覚
+# 文脈を考える
 🌊default
 !fl~豊富な資産
 
-## やや負けてる気はする
-### 純度が違う
+- 量があればいいってもんじゃない
+  - 純粋な質
+  - ゲームとの関係性の深さ
+- 古くなってしまった情報
+- 互いに応用できる部分
 
-## OSSなのは熱い
-### 詰まった時に見にいける
-### Unityは稀に稀によくブラックボックスで終わることがある
-### C++のライブラリをえっちらおっちら繋げに行ったこととか、あります...
+
+# ゲームコンテキストの強いライブラリ
+- @Unity
+
+```embed_html
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.3em 1.3em">
+  <a href="https://madnesslabo.net/utage/" target="_blank" rel="noopener noreferrer" style="text-decoration:none"><img src="/images/engines/utage.png" alt="宴 (Utage)" title="宴 (Utage)" style="height:1.25em;display:block"></a>
+  <a href="https://github.com/dotprologue/ScenarioFlow" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit">ScenarioFlow</a>
+  <a href="https://github.com/Cysharp/R3" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit">R3</a>
+  <a href="https://github.com/Cysharp/UniTask" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit">UniTask</a>
+  <a href="https://dotween.demigiant.com/" target="_blank" rel="noopener noreferrer" style="text-decoration:none"><img src="/images/engines/dotween-wm.png" alt="DOTween" title="DOTween" style="height:1.5em;display:block"></a>
+  <span style="color:var(--sub)">etc...</span>
+</div>
+```
+
+Unity/ゲームとの親和性、組み込みでの完成度が非常に高い。
+
+# ゲームコンテキストの強いライブラリ
+
+- @Web
+
+```embed_html
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.3em 1.3em">
+  <a href="https://tyrano.jp/" target="_blank" rel="noopener noreferrer" style="text-decoration:none"><img src="/images/engines/tyranoscript-wm.png" alt="TyranoScript" title="TyranoScript" style="height:0.9em;display:block"></a>
+  <a href="https://www.inklestudios.com/ink/" target="_blank" rel="noopener noreferrer" style="text-decoration:none"><img src="/images/engines/ink-wm.png" alt="ink" title="ink" style="height:1.1em;display:block"></a>
+  <a href="https://rxjs.dev/" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit">RxJS</a>
+  <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/async_function" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit">標準async/await</a>
+  <a href="https://gsap.com/" target="_blank" rel="noopener noreferrer" style="text-decoration:none"><img src="/images/engines/gsap-wm.svg" alt="GSAP" title="GSAP" style="height:0.8em;display:block"></a>
+</div>
+```
+
+完成度には議論の余地があるが、同様の概念は存在する。
+
+# まぁ〜負け？
+🌊default
+!fl~豊富な資産
+
+結構食いつけてる方だと思う
+- 出てきた年げつも違うし
+- 時代の最前線であり活発
+
+# クオリティ
+🌊solo
+!fl~クオリティ
+
+# パフォーマンス
+計測してきたよ
+
+負荷を上げていって、60fps を保てなくなる手前の数字
+
+| 軸 | 何を増やしたか | Three.js | Unity WebGL | Unity Native |
+| --- | --- | ---: | ---: | ---: |
+| drawcall | 画面に置くオブジェクトの数 | 10,000 | 14,000 | 32,000 |
+| script | 毎フレーム動かす処理の数 | 8,000 | 12,000 | 32,000 |
+| vertex | モデルの細かさ（頂点数） | 500,000 | 750,000 | 500,000 |
+
+# 読み取れること
+!fl~クオリティ
+
+- CPU の仕事（オブジェクト数・毎フレーム処理）は Web が不利
+  - Unity 同士で比べても Web 版は Native の約 1/2
+- GPU の仕事（モデルの細かさ）はほぼ横並び
+  - ブラウザでも直接 GPU を叩くので、ここは差が出ない
+- 崩れ方が違う
+  - Unity WebGL: 限界まで平気 → 超えた瞬間に一気に落ちる
+  - Three.js: 手前からじわじわ重くなる（気づいて調整できる）
+
+# それでも軽いのは Web
+!fl~クオリティ
+
+| | Three.js | Unity WebGL |
+| --- | ---: | ---: |
+| 配信サイズ | 109 KB | 4.3 MB |
+
+約40倍の差
+
+- 「何個置けるか」で勝つのは Unity
+- 「開いた瞬間に動き出す」で勝つのは Web
+
+# グラフィック
+https://bruno-simon.com
+https://activetheory.net
+https://playcanv.as/p/qxGSuzYq/
+
+# 流石にネイティブのが強いね
+🌊default
+
+それはそう
+そもそもブラウザなどという限られた環境、勝ち目はない
+
+## 何を求めているのか
+- 映画クオリティの映像を求めているのか？
+- 10万とかのオブジェクトを動かすのか？
+
+→差は当然あるが、自分の扱う範囲の大半において十分である。
+
+# イマイチな点
+🌊solo
+!fl~イマイチな点
+
+
+# エクスポート
+🌊default
+!fl~イマイチな点
+
+コンシューマー→聞いたことない
+
+```embed_svg
+<svg viewBox="0 0 1000 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">
+  <g stroke="#cf4b4b" transform="translate(0 0)"><path d="M38 38 82 82M82 38 38 82" fill="none" stroke-width="11" stroke-linecap="round"/></g>
+  <a href="https://www.playstation.com" target="_blank" rel="noopener noreferrer" aria-label="PlayStation" style="text-decoration:none"><title>PlayStation</title><image href="/images/engines/playstation.svg" x="230" y="29" width="80" height="62" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://www.xbox.com" target="_blank" rel="noopener noreferrer" aria-label="Xbox" style="text-decoration:none"><title>Xbox</title><image href="/images/engines/xbox-wm.svg" x="480" y="20" width="160" height="80" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://www.nintendo.com/jp/switch/" target="_blank" rel="noopener noreferrer" aria-label="Nintendo Switch" style="text-decoration:none"><title>Nintendo Switch</title><image href="/images/engines/nintendoswitch-wm.svg" x="805" y="15" width="90" height="90" preserveAspectRatio="xMidYMid meet"/></a>
+</svg>
+```
+
+PC/モバイルネイティブ→一応いける、やや苦しい
+
+```embed_svg
+<svg viewBox="0 0 1000 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">
+  <g stroke="#d99a2b" transform="translate(0 0)"><path d="M60 30 86 84 34 84Z" fill="none" stroke-width="10" stroke-linejoin="round"/></g>
+  <a href="https://tauri.app" target="_blank" rel="noopener noreferrer" aria-label="Tauri" style="text-decoration:none"><title>Tauri</title><image href="/images/engines/tauri-wm.svg" x="183" y="32.5" width="174" height="55" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://www.electronjs.org" target="_blank" rel="noopener noreferrer" aria-label="Electron" style="text-decoration:none"><title>Electron</title><image href="/images/engines/electron-wm.svg" x="483" y="21.5" width="154" height="77" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://capacitorjs.com" target="_blank" rel="noopener noreferrer" aria-label="Capacitor" style="text-decoration:none"><title>Capacitor</title><image href="/images/engines/capacitor-wm.png" x="763" y="43.5" width="174" height="33" preserveAspectRatio="xMidYMid meet"/></a>
+</svg>
+```
+
+ブラウザに出すなら圧倒的。
+
+# Webベースの制限
+!fl~イマイチな点
+
+- ワンクリックされるまで音が流せない
+- 課金形態がイマイチ
+- Webとゲームがアンマッチ
+etc...
+
+# 作り込むと辛い
+🌊default
+!fl~イマイチな点
+
+(どんな環境でもそれはそう)
+→比較的向いていない
+
+Unityはなんだかんだ幅が広く深い
+- シェーダー、ライフサイクル、エラーハンドリング
+- 100を目指すとき、10までしかない！みたいなことが往々にある。
+- Unityは40ぐらいまであったり
+  - ただしOSSではないから地獄を見るとかもある
+
+# 就活
+🌊default
+!fl~イマイチな点
+
+ゲーム会社は！Unityや！自作エンジンを！求めている！(らしい)
+あとはチームのスタックとかね...
+
+# まとめ
+🌊solo
+!fl~まとめ
+
+- Unity、強い。やはり最強のエンジン
+- 開発体験はでも圧勝してますよ
+
+# The End.
+🌊solo
+!fl~まとめ
+
+
+
+<!-- ===== 以下、The End 以降の仮スライド (非公開) =====
+     SVG 内のコメントで閉じないよう、途中の「<!-- 続き」行で開き直している。
+     復活させる時はこの行と「<!-- 続き」行・末尾の閉じコメントを消す。
+
+# まだまだある
+🌊solo
+!fl~その他観点
+
+
 
 
 # AIの話
 🌊default
 !fl~豊富な資産
-
-## ゲーム制作におけるコンテキスト
-### ゲームのロジック
-### レンダリングなど、出力部分
-
-
-# エンジンに縛られず、自在に組み替え
-🌊default
-!fl~自在に組み替え
-
-## Three.js
-
-## Tone.js
-
-## 余計なものを入れない
-### シンプル
-
-## ロジック周りもある程度エンジンが絡んでくることが多い
-### Unityをレンダラとして運用
-
-## 良し悪しである
-
-
-# 「乗る」か「組む」か
-🌊default
-!fl~自在に組み替え
-
-```embed_svg
-<svg viewBox="0 0 1000 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
-  <a href="https://threejs.org" target="_blank" rel="noopener noreferrer" aria-label="Three.js" style="text-decoration:none"><title>Three.js</title><image href="/images/engines/threejs-wm.png" x="185" y="80" width="230" height="61" preserveAspectRatio="xMidYMid meet"/><text x="300" y="215" text-anchor="middle" font-size="24" fill="var(--sub)" style="text-decoration:none">Three.js</text></a>
-  <a href="https://pixijs.com" target="_blank" rel="noopener noreferrer" aria-label="PixiJS" style="text-decoration:none"><title>PixiJS</title><image href="/images/engines/pixijs.svg" x="580" y="70" width="240" height="94" preserveAspectRatio="xMidYMid meet"/><text x="700" y="215" text-anchor="middle" font-size="26" fill="var(--sub)" style="text-decoration:none">PixiJS</text></a>
-  <a href="https://www.babylonjs.com" target="_blank" rel="noopener noreferrer" aria-label="Babylon.js" style="text-decoration:none"><title>Babylon.js</title><image href="/images/engines/babylonjs-wm.svg" x="147.5" y="268" width="165" height="56" preserveAspectRatio="xMidYMid meet"/><text x="230" y="378" text-anchor="middle" font-size="18" fill="var(--sub)" style="text-decoration:none">Babylon.js</text></a>
-  <a href="https://tonejs.github.io" target="_blank" rel="noopener noreferrer" aria-label="Tone.js" style="text-decoration:none"><title>Tone.js</title><image href="/images/engines/tonejs.png" x="466" y="272" width="68" height="68" preserveAspectRatio="xMidYMid meet" clip-path="inset(0 round 10px)"/><text x="500" y="378" text-anchor="middle" font-size="18" fill="var(--sub)" style="text-decoration:none">Tone.js</text></a>
-  <a href="https://brm.io/matter-js/" target="_blank" rel="noopener noreferrer" aria-label="Matter.js" style="text-decoration:none"><title>Matter.js</title><svg x="685" y="234" width="150" height="150" viewBox="0 0 24 24"><path d="M19.494 9.614c-.152 0-.265.046-.333.121a.412.412 0 0 0-.114.296c0 .314.14.469.416.469.167 0 .288-.038.364-.114a.416.416 0 0 0 .11-.302c0-.314-.137-.47-.417-.47h-.023zm-17.341.038-1.078 1.866L0 13.383h2.85v-1.9l-.058-.722Zm18.086.015v3.394l.25-.461.022.007a2.232 2.232 0 0 0 .73.224.31.31 0 0 0 .179-.053c.049-.03.068-.065.068-.125 0-.065-.027-.114-.099-.155a1.298 1.298 0 0 0-.17-.091 2.811 2.811 0 0 1-.738-.39c-.151-.129-.227-.322-.227-.567a.757.757 0 0 1 .303-.625 1.196 1.196 0 0 1 .753-.227c.295 0 .53.076.704.212a.844.844 0 0 1 .302.587v.022l-.726.14-.008-.03c-.011-.114-.038-.185-.087-.238a.299.299 0 0 0-.223-.08.227.227 0 0 0-.163.057c-.045.042-.068.087-.068.129 0 .049.008.079.019.102a.254.254 0 0 0 .05.068l.075.064a.802.802 0 0 0 .094.053l.13.05c.04.026.147.075.313.15v-.01a1.392 1.392 0 0 1 .44.275c.116.114.177.28.177.489 0 .211-.098.4-.291.567a1.022 1.022 0 0 1-.492.227H24V9.667Zm-10.08.292-.726.215-.03.504-.333.045-.072.503h.39v1.124c0 .386.049.662.15.832.107.17.322.254.655.254a1.43 1.43 0 0 0 .704-.197l-.136-.446a1.574 1.574 0 0 1-.288.049c-.113 0-.196-.034-.242-.102-.05-.065-.072-.186-.072-.356v-1.162h.59l.091-.556h-.68zm1.903 0-.726.215-.03.504-.333.045-.076.503h.394v1.124c0 .386.049.662.15.832.103.17.323.254.655.254a1.415 1.415 0 0 0 .7-.197l-.136-.446a1.574 1.574 0 0 1-.287.049c-.114 0-.193-.034-.242-.102-.046-.065-.069-.186-.069-.356v-1.162h.59l.091-.556h-.68zm-7.862.67a.848.848 0 0 0-.677.332h-.02l-.071-.31-.598.076.053.757v1.891h.772v-2.001a.39.39 0 0 1 .306-.148c.182 0 .277.114.277.33v1.82h.768v-2.002a.378.378 0 0 1 .31-.148c.178 0 .265.114.265.33v1.82h.78v-1.783c0-.643-.262-.965-.78-.965a.897.897 0 0 0-.727.33c-.12-.22-.333-.33-.628-.33Zm3.61 0a2.244 2.244 0 0 0-.564.086 2.126 2.126 0 0 0-.473.174l.215.477a2.584 2.584 0 0 1 .666-.151c.137 0 .227.03.273.083.049.05.072.133.072.242v.2l-.44.076a1.389 1.389 0 0 0-.665.273c-.151.132-.227.33-.227.594 0 .503.242.757.726.757a.908.908 0 0 0 .742-.379h.019a.957.957 0 0 0 .386.379l.435-.413a.757.757 0 0 1-.167-.25 1.07 1.07 0 0 1-.034-.302v-.95a1.62 1.62 0 0 0-.03-.34.742.742 0 0 0-.113-.277.518.518 0 0 0-.292-.211 1.472 1.472 0 0 0-.492-.069zm6.337 0c-.39.007-.68.136-.881.382a1.612 1.612 0 0 0-.303 1.033c0 .93.393 1.392 1.173 1.392a2.005 2.005 0 0 0 1.003-.273l-.16-.472a2.085 2.085 0 0 1-.688.147c-.19 0-.318-.05-.393-.147a.757.757 0 0 1-.114-.45h1.04l.36-.05c0-.212-.004-.39-.015-.53-.03-.352-.114-.605-.242-.756-.16-.186-.405-.277-.742-.277zm2.683 0a.598.598 0 0 0-.378.155.866.866 0 0 0-.254.423h-.019l-.094-.556-.583.076.057.749v1.9h.768v-1.514c0-.19.053-.33.159-.428a.522.522 0 0 1 .355-.147.984.984 0 0 1 .273.049l.178-.605a.946.946 0 0 0-.432-.099h-.026zm3.05.018-.772.08v2.395a1.513 1.513 0 0 1-.053.507c-.034.087-.133.19-.295.31l.423.447a1.892 1.892 0 0 0 .56-.466 1.06 1.06 0 0 0 .137-.598zm1.43 0a1.162 1.162 0 0 0-.727.224.692.692 0 0 0-.28.575c0 .242.076.408.216.526a2.747 2.747 0 0 0 .719.386 1.699 1.699 0 0 1 .182.102c.079.045.12.113.12.189a.19.19 0 0 1-.09.174.367.367 0 0 1-.208.05 2.126 2.126 0 0 1-.73-.205l-.25.45c.329.19.654.288.983.288a1.135 1.135 0 0 0 .769-.235c.185-.163.272-.337.272-.533a.61.61 0 0 0-.163-.454 1.29 1.29 0 0 0-.416-.258 3.746 3.746 0 0 1-.325-.147l-.114-.05a1.022 1.022 0 0 1-.113-.06l-.08-.068a.31.31 0 0 1-.06-.08.375.375 0 0 1-.015-.125.22.22 0 0 1 .075-.166.284.284 0 0 1 .197-.072c.106 0 .19.038.253.099a.439.439 0 0 1 .103.242l.62-.118a.795.795 0 0 0-.265-.53 1.014 1.014 0 0 0-.673-.204Zm-7.204.58h.022c.118 0 .193.037.227.113.034.075.05.212.05.4h-.613a.829.829 0 0 1 .083-.381c.049-.084.125-.125.23-.133zm-6.103 1.01v.472a.47.47 0 0 1-.341.144c-.178 0-.265-.083-.265-.25 0-.113.05-.189.14-.242a1.4 1.4 0 0 1 .466-.125zm-4.295.128v1.007h.48v-.174zm14.094.064a.488.488 0 0 0-.454.489.488.488 0 0 0 .492.488.488.488 0 0 0 .484-.492.488.488 0 0 0-.488-.485.488.488 0 0 0-.037 0zm2.437.742v.257h.704a2.176 2.176 0 0 1-.704-.257z" fill="#4B5562"/></svg><text x="760" y="378" text-anchor="middle" font-size="18" fill="var(--sub)" style="text-decoration:none">Matter.js</text></a>
-</svg>
-```
-
-
-# 求めるクオリティ
-🌊solo
-!fl~求めるクオリティ
-
-
-# やっぱネイティブなんじゃねーの？
-🌊default
-!fl~求めるクオリティ
-
-## それはそう
-### ゲームエンジン同士のパフォーマンス比較は難しいが
-### そもそもブラウザなどという限られた環境
-### まず勝ち目はない
-#### Unity
-#### Unreal Engine
-
-
-# で、何を求めているのか
-🌊default
-!fl~求めるクオリティ
-
-## Unreal Engineのクオリティの映像を求めているのか？
-### No
-
-## 10万とかのオブジェクトを動かすのか？
-### No
-
-## 差は当然あるが
-### 自分の求めるクオリティには十分である
-
-
-# 実際、これくらい動く
-🌊default
-!fl~求めるクオリティ
-
-```embed_html
-<div style="display:grid;place-items:center;min-height:40cqmin;border:2px dashed var(--sub);color:var(--sub);font-size:1.2rem">
-  デモ差し替え予定
-</div>
-<!-- TODO: 自作ゲームを iframe で埋め込む
-<iframe src="/demo/" style="width:100%;aspect-ratio:16/9;border:0" loading="lazy"></iframe>
--->
-```
-
-
-# その他観点
-🌊solo
-!fl~その他観点
-
-
-# エクスポート
-🌊default
-!fl~その他観点
-
-## コンシューマー
-### 全滅
-
-## PC
-### 一応いける
-
-## モバイル
-### 不可能ではないが苦しい
-
-## Webベースの出力
-### 集金がむずくね？
-### World Wide Webという考え方とゲームがあんマッチ
-### ユーザー体験として手軽なのは間違いない
-### ワンクリックされるまで音が流せない
-
-
-# 作り込むと辛い
-🌊default
-!fl~その他観点
-
-## これはどんなエンジンでもきっとそう
-
-## そういうのに向いていないのは確か
-### Unityエンジン・ライブラリはなんだかんだ幅が広い
-- ロジック、ライフサイクル、エラーハンドリング
-- シェーダーがらみの仕組み
-- 10はあっても、100まで作らなきゃいけない
-- Unityは40ぐらいまであったり
-
-### ブラウザ, jsの限界
-
-
-# チーム
-🌊default
-!fl~その他観点
-
-## 特定の何かをコンテキストとして云々
-### 共通言語
-### 量産体制
-
-## 就活
-### 既存スタック
-
-
-# まだまだある
-🌊default
-!fl~その他観点
 
 ## Guiねーじゃん！
 
@@ -509,16 +566,62 @@ date: 2026-09-20
 - Web で配りたい作品
 - 触っていて気持ちよく作りたい時
 
-
-# ちなみに、このスライドも
-🌊default
-!fl~まとめ
-
-## Vite + unified で組んだ自作のスライドツール
-### 既製品に乗らず
-### 必要な分だけ組む
+# ライブラリか、エンジンか
 
 
-# ありがとうございました
-🌊solo
-!fl~まとめ
+# ライブラリって？
+!fl~今回の
+
+基本全部入ってるエンジンに対して、自分で描画, 音声, アニメーションなど各種ライブラリを組み合わせて作るヤツ。
+
+```embed_svg
+<svg viewBox="0 0 1000 430" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" fill="none" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:auto">
+  <g text-anchor="middle" font-size="26" fill="var(--sub)" stroke="none">
+    <text x="270" y="38">メーカー製PC</text>
+    <text x="730" y="38">自作PC</text>
+  </g>
+
+  <!-- メーカー製PC: 閉じた筐体。中身を知らなくても電源ボタンで動く -->
+<!-- 続き
+  <g stroke="var(--main)" stroke-width="3">
+    <rect x="170" y="66" width="200" height="284" rx="12" fill="var(--overlay)"/>
+    <g stroke="var(--sub)" stroke-width="2">
+      <rect x="192" y="102" width="156" height="14" rx="7"/>
+      <rect x="192" y="136" width="18" height="8" rx="2"/>
+      <rect x="218" y="136" width="18" height="8" rx="2"/>
+      <path d="M220 262h100M220 278h100M220 294h100M220 310h100M220 326h100"/>
+    </g>
+    <circle cx="270" cy="196" r="26" stroke="var(--sub)" stroke-width="2"/>
+    <circle cx="270" cy="196" r="9" fill="var(--brand)" stroke="none"/>
+  </g>
+
+  <!-- 自作PC: サイドパネルを外した状態。パーツを自分で選んで挿していく -->
+<!-- 続き
+  <g stroke="var(--main)" stroke-width="3">
+    <rect x="620" y="66" width="200" height="284" rx="12"/>
+    <rect x="838" y="92" width="20" height="252" rx="6" stroke="var(--sub)" stroke-width="2" transform="rotate(7 848 218)"/>
+    <g stroke="var(--sub)" stroke-width="2">
+      <rect x="638" y="88" width="126" height="150" rx="4"/>
+      <rect x="702" y="98" width="8" height="62" rx="2"/>
+      <rect x="716" y="98" width="8" height="62" rx="2"/>
+      <rect x="730" y="98" width="8" height="62" rx="2"/>
+      <rect x="638" y="296" width="96" height="44" rx="4"/>
+      <circle cx="790" cy="112" r="22"/>
+      <path d="M790 90v44M768 112h44"/>
+    </g>
+    <g stroke="var(--brand)" stroke-width="3">
+      <rect x="654" y="104" width="36" height="36" rx="4"/>
+      <rect x="636" y="250" width="168" height="40" rx="4"/>
+      <circle cx="680" cy="270" r="11"/>
+      <circle cx="754" cy="270" r="11"/>
+    </g>
+  </g>
+
+  <g text-anchor="middle" font-size="30" font-weight="700" fill="var(--brand)" stroke="none">
+    <text x="270" y="404">= ゲームエンジン</text>
+    <text x="730" y="404">= ライブラリ</text>
+  </g>
+</svg>
+```
+
+===== 仮スライドここまで ===== -->
