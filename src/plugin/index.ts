@@ -13,6 +13,7 @@ export function nunPlugin(): Plugin {
   // OGP 絶対 URL 組み立て用に Vite の base を `configResolved` で捕捉する
   let base = '/'
   const siteUrl = (process.env.NUN_SITE_URL ?? 'https://henohenon.github.io').replace(/\/$/, '')
+  const deployDeck = process.env.DEPLOY_DECK  // 指定時は1デッキのみビルド
 
   return {
     name: 'nun',
@@ -23,7 +24,7 @@ export function nunPlugin(): Plugin {
 
     // ----- Build: config + resolveId + load -----
 
-    config: buildConfig,
+    config: () => buildConfig(deployDeck),
     resolveId: buildResolveId,
     async load(id) {
       return buildLoad(id, siteUrl, base)

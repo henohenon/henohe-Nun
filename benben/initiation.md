@@ -23,7 +23,10 @@ date: 2026-05-07
 - [Showcase](#10)
   - [Templates](#11) — [Default](#12) / [Title](#13) / [Me](#14) / [Message](#15) / [Solo](#16) / [Compare](#17)
   - [Basic Markdown](#18) — [Text](#19) / [Lists](#20) / [Tables](#21) / [Code](#22) / [Embed](#23) / [Decoration](#24) / [Nested](#25) / [Math](#26)
-  - [Custom Content](#27) — [nwyt list](#28) / [Footnote](#29) / [Footnote dedicated](#30) / [Background](#31) / [Footer bg](#32) / [Card](#33)
+  - [Custom Content](#27) — [nwyt list](#28) / [Footnote](#29) / [Footnote dedicated](#30) / [Background](#31) / [Footer bg](#32)
+  - [Class](#33) — [image utility](#33) / [scope utils](#34)
+  - [Custom](#35) — [値 ref](#35) / [var inline](#36) / [フォント](#37) / [CSS 変数](#38)
+- [Link card](#39)
 
 
 # へのへ Nun
@@ -565,10 +568,9 @@ scope (section / article) に付ける class。 この slide は `🌊default.ta
 他: `.dark` / `.hierarchy` / `.window` / `.brand-quote` / `.code-bare` / `.no-footer` / `.table-bordered`
 
 
-# Custom — 値 ref + var inline
+# Custom — 値 ref
 🌊default
 !fl~Class
-!color-brand~#ff00ff
 
 **値 reference `!bg~=<key>`**: 別 nwyt の値を mirror。 同 URL の重複記述回避。
 
@@ -577,15 +579,65 @@ scope (section / article) に付ける class。 この slide は `🌊default.ta
 !bg~=fbg     # fbg の URL + class を mirror
 ```
 
-**var inline (escape hatch) `!<prefix>-<name>~<value>`**: CSS 変数を scope に直接 set。 この slide は `!color-brand~#ff00ff` で `--brand` を マゼンタに override。
 
-```md
-!color-brand~#ff00ff
-!color-base~#0a0a0a
-!size-radius~12px
-```
+# var inline
+🌊compare
+!fl~Class
 
-通常は scope class (`!color-brand` の代わりに `.crimson-deck` 等 CSS で定義) を推奨、 var inline は **1 回限り** 例外用 escape hatch。
+## 結果
+🌊default.window
+!brand~#ff00ff
+!radius~2em
+
+### ブランドカラーと角丸が変わっている
+
+`inline code` のスタイルも角丸に連動。
+
+##
+`!<varname>~<value>` で CSS 変数を scope に直接 set する escape hatch。通常は class 推奨、1 回限りの例外用。
+
+````md
+!brand~#ff00ff
+!radius~2em
+````
+
+
+# var inline — フォント
+🌊compare
+!fl~Class
+
+## 結果
+🌊default.window
+!text~Georgia, serif
+!code~"Courier New", monospace
+
+### 見出しも serif になる
+
+`inline code` は Courier New。
+
+##
+フォント変数は `--text`（本文）と `--code`（等幅）。グローバルスコープに書けばデッキ全体に継承される。
+
+````md
+!text~Georgia, serif
+!code~"Courier New", monospace
+````
+
+
+# var inline — CSS 変数
+🌊default
+!fl~Class
+
+| 変数 | 用途 | 例 |
+|---|---|---|
+| `--brand` | アクセント色 | `!brand~#ff0000` |
+| `--base` | 背景色 | `!base~#1a1a2e` |
+| `--main` | 本文色 | `!main~#e0e0e0` |
+| `--sub` | サブテキスト色 | `!sub~#aaaaaa` |
+| `--strong` | 強調色 | `!strong~#ffffff` |
+| `--radius` | 角丸 | `!radius~0` |
+| `--text` | 本文フォント | `!text~Georgia, serif` |
+| `--code` | 等幅フォント | `!code~"Courier New", monospace` |
 
 
 # Link card

@@ -19,5 +19,5 @@ section:has(.no-footer) .fbg-layer {
    (base.css の section > .stage が footer 高分を差し引いているため)。 */
 .no-footer > .stage,
 section:has(.no-footer) > .stage {
-  padding-bottom: var(--slide-pad-bottom);
+  padding-bottom: var(--slide-pad-y);
 }

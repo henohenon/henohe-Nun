@@ -1,6 +1,6 @@
 /* ---- Inline code ---- */
 :not(pre) > code {
-  font-family: var(--font-mono);
+  font-family: var(--code);
   background: var(--muted);
   color: var(--code-accent);
   padding: 0.1em 0.35em;
@@ -28,7 +28,7 @@ figure.code-block > figcaption {
   background: var(--muted);
   border-bottom: 1px solid var(--border);
   border-radius: var(--radius) var(--radius) 0 0;
-  font-family: var(--font-mono);
+  font-family: var(--code);
   font-size: 0.85em;
   min-height: 1.8em;
 }
@@ -45,7 +45,7 @@ figure.code-block button.copy {
   cursor: pointer;
   font-size: 0.8em;
   color: var(--sub);
-  font-family: var(--font-mono);
+  font-family: var(--code);
   transition: background 0.15s, color 0.15s;
 }
 

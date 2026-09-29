@@ -548,21 +548,23 @@ article レベルで使用:
 
 ### var inline (escape hatch — CSS 変数の inline 指定)
 
-`!<prefix>-<name>~<value>` 形式で、 scope の CSS 変数を markdown から直接設定する。 通常は scope class 経由 (上記「クラス名前空間ルール」) を推奨、 var inline は **1 回限り** の例外用 escape hatch。
+`!<varname>~<value>` 形式で、 scope の CSS 変数を markdown から直接設定する。 通常は scope class 経由 (上記「クラス名前空間ルール」) を推奨、 var inline は **1 回限り** の例外用 escape hatch。
+
+キー名にハイフンを含む nwyt prop が対象。`!<varname>~<value>` → `--<varname>: <value>` として scope の style 属性に注入される。
 
 ```Markdown
-!color-brand~#ff0000
-!size-radius~12px
+!brand~#ff0000
+!radius~12px
+!text~"Noto Sans JP", sans-serif
 ```
 
-prefix で top-level namespace の圧迫を回避する設計 (`!brand` `!base` 等の予約語化を避ける)。
-
-対応 prefix:
-
-| prefix | 例 | 効果 |
-|---|---|---|
-| `color-*` | `!color-brand~#ff0000` `!color-base~#0a0a0a` `!color-main~` `!color-sub~` `!color-strong~` `!color-border~` `!color-muted~` `!color-overlay~` | CSS 変数 `--<name>` を scope に override |
-| `size-*` | `!size-radius~12px` | `--radius` 等 |
+| 例 | 効果 |
+|---|---|
+| `!brand~#ff0000` | `--brand` を scope に override |
+| `!base~#0a0a0a` | `--base` を scope に override |
+| `!radius~12px` | `--radius` を scope に override |
+| `!text~"Noto Sans JP"` | `--text`（本文フォント）を scope に override |
+| `!code~"JetBrains Mono"` | `--code`（等幅フォント）を scope に override |
 
 このメカニズムは markdown を CSS の playground 化しないための制約として、 **「通常は class 経由、 var inline は例外」** の階層付けで運用する。
 

@@ -17,7 +17,7 @@ body {
      どちら側のバーにも見切られなくなる。dvh 非対応ブラウザは 100% フォールバック。 */
   height: 100%;
   height: 100dvh;
-  font-family: var(--font-body);
+  font-family: var(--text);
   /* page canvas の base 色 (theme token と連動)。 section / body 自体は
      bg を持たないと dark theme で背景が browser-default (白) のままになる。 */
   background: var(--base);
@@ -59,8 +59,15 @@ section {
      section padding 0 + stage が padding 持つ設計で edge alignment 維持。 */
   grid-template-rows: 1fr auto;
   color: var(--main);
-  font-family: var(--font-body);
+  font-family: var(--text);
   font-size: var(--text-body);
+}
+
+/* article で --text を上書きしたとき font-family を再評価させる。
+   section の font-family は計算済み値として継承されるため、
+   article 自身に var(--text) 宣言がないと上書きが反映されない。 */
+article {
+  font-family: var(--text);
 }
 
 section.active {
@@ -88,14 +95,10 @@ section.active {
 }
 
 /* slide 全体の安全領域 padding。 section.stage のみに適用 (article.stage は
-   section の content area 内なので追加 padding 不要)。 padding を section
-   からここに移譲することで、 footer (section の最終 grid 行) は section 端で
-   edge-to-edge を保つ。 */
+   section の content area 内なので追加 padding 不要)。 bottom は --slide-pad-y
+   から --footer-font-size を引いて上下の視覚バランスを揃える。 */
 section > .stage {
-  padding:
-    var(--slide-pad-top)
-    var(--slide-pad-x)
-    calc(var(--slide-pad-bottom) - var(--footer-font-size) - var(--footer-line-height));
+  padding: var(--slide-pad-y) var(--slide-pad-x) calc(var(--slide-pad-y) - var(--footer-font-size));
 }
 
 /* ---- Slide / Article heading baseline ----
@@ -151,5 +154,5 @@ mark {
   border-radius: 0.15em;
   padding: 0 0.1em;
 }
-code { font-family: var(--font-mono); }
+code { font-family: var(--code); }
 del { text-decoration: line-through; }
