@@ -1,20 +1,34 @@
 # へのへ Nun
 
-Markdown でスライドを書いて HTML / PDF / WebP で出力する、俺俺プレゼンツール。
-- **Web ファースト** — ブラウザでのプレゼンが一級市民。ナビゲーション、自動 fit、OGP 対応
-- **独自 Markdown 拡張記法** — HTML・CSS を意識せずに直感的なDOM構造とデザインを制御を提供
+Markdown でスライドを書いて HTML / PDF で出力・公開する、俺俺スライド置き場。
+中身は純粋な [Marp](https://marp.app/) (marp-cli + 自前テーマ)。
 
 - 名前はうめき声とエジプト神話から。
 
 ![img.png](img.png)
 
-## 仕様
+## 使い方
 
-- [記法](docs/spec/syntax.md) — Markdown記法 + 独自記法（テンプレート、キー指定、装飾ブロック等）
-- [DOM構造・デザイン](docs/spec/structure.md) — heading階層→DOM構造、テンプレート一覧、テーマ
-- [ユーザー要件](docs/spec/requirements.md) — ナビゲーション、出力形式、OGP、ホットリロード
+```bash
+bun install
+bun run dev      # marp -s benben。/ にデッキ一覧、/<deck>.md でプレビュー (?pdf で PDF)
+bun run build    # dist/<deck>.html + 画像・一覧ページ
+bun run pdf      # dist/<deck>.pdf
+bun run deploy   # Cloudflare Pages へ (--deck <name> で推測されにくい URL のプレビュー)
+```
+
+## 書き方
+
+- `benben/<deck>.md` に Marp 標準記法で書く。front-matter に `theme: nun`
+- 画像・SVG は `benben/images/` に置き、相対パス (`images/...`) で参照
+- リンク入りの SVG は `<object data="images/..." type="image/svg+xml"></object>`
+- class: `title` / `solo` / `message` (`<!-- _class: solo -->`)。`header` は右下、`footer` は左下に出る
+- 溢れるスライドは `<style scoped>section { font-size: 28px; }</style>` で縮める
+- デッキを足したら `public/index.html` に 1 行追記
 
 ## ドキュメント
 
-- [技術仕様](docs/spec/technical.md) — パイプライン、Scope構造化、テンプレート、micromark extension等の設計
-- [競合比較・技術選定](docs/comparison.md) — Marp/Slidev/reveal.jsとの比較、技術スタック選定理由（Why）
+- [Marp 移行の設計](docs/superpowers/specs/2026-10-03-marp-migration-design.md)
+- [Marp 移行検討メモ](docs/journal-2026-09-29-marp.md)
+- [競合比較・技術選定](docs/comparison.md)
+- 旧実装 (独自 unified パイプライン) の仕様は [docs/archive/](docs/archive/)、コードはタグ `nun-v1`
