@@ -25,7 +25,8 @@ scripts/deploy.ts           Cloudflare Pages デプロイ
 dist/                       ビルド出力 (git 管理外)
 ```
 
-- 画像を `benben/` 配下に置くのは、dev サーバー (`marp -s benben`) が `benben/` を静的配信するため。md からは今まで通り `/images/...` の絶対パスで参照でき、dev とビルド後の両方で解決する
+- 画像を `benben/` 配下に置くのは、dev サーバー (`marp -s benben`) が `benben/` を静的配信するため
+- 画像は **相対パス** (`images/...`、SVG 内からは `../engines/...` 等) で参照する。絶対パス `/images/...` は PDF 変換 (file://) で解決できないため。相対パスなら dev / `dist/` / PDF のすべてで解決する
 - 一覧ページを `public/` に分けるのは、dev では `/` に Marp のディレクトリ一覧を出したいため (`benben/index.html` があると `/` がそれに置き換わる)
 
 ## コマンド
@@ -33,7 +34,7 @@ dist/                       ビルド出力 (git 管理外)
 | コマンド | 中身 |
 |---|---|
 | `bun run dev` | `marp -s benben` (サーバーモード。`/<deck>.md` を開くと都度変換、`?pdf` 等で各形式) |
-| `bun run build` | `marp -I benben -o dist` → `benben/images` と `public/` を `dist/` へコピー |
+| `bun run build` | `marp -I benben -o dist` → `scripts/copy-static.ts` で `benben/images` と `public/` を `dist/` へコピー (bun shell の `cp` は `public/.` の展開が GNU と異なるため TS で書く) |
 | `bun run pdf` | `marp -I benben -o dist --pdf` |
 | `bun run deploy` | build → `wrangler pages deploy dist`。`--deck <name>` 指定時の推測不能なプレビュー URL は維持 |
 
@@ -63,7 +64,7 @@ dist/                       ビルド出力 (git 管理外)
 
 cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="/images/engines/...">` の外部画像参照を持つ。`![](x.svg)` (= `<img>`) ではリンクも内部画像も効かないため:
 
-1. **第一案**: `benben/images/<deck>/<name>.svg` に書き出し、`<object data="/images/<deck>/<name>.svg" type="image/svg+xml"></object>` で参照する
+1. **第一案**: `benben/images/<deck>/<name>.svg` に書き出し、`<object data="images/<deck>/<name>.svg" type="image/svg+xml"></object>` で参照する
 2. **代替案**: 第一案が Marp のスライド (inline SVG の foreignObject 内) で正しく描画・クリックできなければ、`<svg>` を md に直接書く
 
 フェーズ 1 の最初に第一案を検証して確定する。
