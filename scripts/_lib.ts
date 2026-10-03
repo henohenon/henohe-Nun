@@ -1,14 +1,5 @@
-import type { Browser, Page } from 'playwright'
-import { chromium } from 'playwright'
-import { existsSync, mkdirSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
-import { preview as vitePreview } from 'vite'
-
-export { findDecks } from '../src/plugin/decks.ts'
-
-export function ensureDir(path: string): void {
-  if (!existsSync(path)) mkdirSync(path, { recursive: true })
-}
 
 export function loadEnvFile(path: string): void {
   const content = readFileSync(path, 'utf-8')
@@ -28,82 +19,11 @@ export function loadEnvFile(path: string): void {
   }
 }
 
-export async function ensureBuild(): Promise<void> {
-  if (existsSync('dist/index.html')) return
-  await runCommand('bun', ['run', 'build'])
-}
-
 export function runCommand(cmd: string, args: string[]): Promise<void> {
   return new Promise((resolve, reject) => {
     const proc = spawn(cmd, args, { stdio: 'inherit', shell: true })
     proc.on('exit', code => code === 0 ? resolve() : reject(new Error(`${cmd} ${args.join(' ')} exited ${code}`)))
   })
-}
-
-export interface PreviewServer {
-  baseUrl: string
-  close: () => Promise<void>
-}
-
-export async function startPreview(port = 5176): Promise<PreviewServer> {
-  const base = process.env.NUN_BASE ?? '/henohe-Nun/'
-  const server = await vitePreview({
-    base,
-    preview: { port, strictPort: true },
-    logLevel: 'error',
-  })
-  return {
-    baseUrl: `http://localhost:${port}${base.replace(/\/$/, '')}`,
-    close: () => new Promise<void>((resolve) => server.httpServer.close(() => resolve())),
-  }
-}
-
-export async function launchBrowser(): Promise<Browser> {
-  return chromium.launch()
-}
-
-export async function openDeck(
-  browser: Browser,
-  baseUrl: string,
-  deck: string,
-  viewport: { width: number; height: number },
-): Promise<Page> {
-  const page = await browser.newPage({ viewport })
-  // ビュー遷移が走るとスクショ時に新旧スナップショットが重なって写るので無効化
-  await page.addInitScript(() => {
-    Object.defineProperty(document, 'startViewTransition', { value: undefined, writable: false })
-  })
-  await page.goto(`${baseUrl}/${deck}/`)
-  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {
-    console.warn(`[warn] ${deck}: networkidle timeout (15s), continuing anyway`)
-  })
-  await page.evaluate(() => (document as any).fonts?.ready)
-  // mermaid は client で動的 import → 非同期描画 → 完了で
-  // `document.documentElement.dataset.mermaidReady` を立てる (`src/client/index.ts`)。
-  // mermaid 要素がないデッキでも初期化時点で即 ready が立つので一律待つ形で OK。
-  await page.waitForFunction(() => {
-    return 'mermaidReady' in document.documentElement.dataset
-  }, { timeout: 30000 }).catch(() => {})
-  return page
-}
-
-export async function countSlides(page: Page): Promise<number> {
-  return page.locator('section').count()
-}
-
-export async function gotoSlide(page: Page, n: number): Promise<void> {
-  await page.evaluate((n) => {
-    if (location.hash === '#' + n) {
-      location.hash = '#__nun_pre__'
-    }
-    location.hash = '#' + n
-  }, n)
-  await page.waitForFunction(
-    (n) => document.querySelector('section.active')?.id === String(n),
-    n,
-    { timeout: 5000 },
-  ).catch(() => {})
-  await page.waitForTimeout(150)
 }
 
 export interface ParsedArgs {

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["ESNext", "DOM"],
+    "types": ["node"],
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
@@ -13,5 +14,6 @@
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["scripts"]
+  "include": ["scripts"],
+  "exclude": ["scripts/deck"]
 }
