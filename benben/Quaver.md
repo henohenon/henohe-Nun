@@ -10,9 +10,12 @@ footer: Quaver
 
 <p class="sub">QRコードでなんか音を出すやつ</p>
 
+![henoheno](images/henoheno.svg)
+
 ---
 
 # 経緯
+<style scoped>section { font-size: 24px; }</style>
 ## キッカケ
 - そろそろゲームから広げたかった
 - 紙製品いいな、、、
@@ -34,6 +37,7 @@ footer: Quaver
 ---
 
 # かいはつひわ
+<style scoped>section { font-size: 27px; }</style>
 ## 技術スタックとか
 threejsとtonejs、opencvとかのなんか一般的なスタック
 ## QR overlay AR
@@ -46,6 +50,7 @@ claude design初めて使ってみた。uiのモック生成とかごまかす�
 ---
 
 # 所感
+<style scoped>section { font-size: 27px; }</style>
 ## よかった
 バチ焦りノリ爆速モック開発だったが、一番成果真っ当な気がする。
 やっぱりAIのごまかし性能はすごい。こういう使い方が一番合ってる気がしてきた。

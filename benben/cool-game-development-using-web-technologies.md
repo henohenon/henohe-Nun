@@ -6,6 +6,8 @@ header: 2026/09/20
 # Web技術でイイ感じのゲーム開発
 <!-- _class: title -->
 
+![henoheno](images/henoheno.svg)
+
 ---
 
 # 普段、どんな技術でゲームを作りますか？
@@ -94,6 +96,7 @@ header: 2026/09/20
 ---
 
 # Package Manager
+<style scoped>section { font-size: 34px; }</style>
 
 Unity
 - UPM — GUI か manifest.json 手編集。
@@ -150,6 +153,7 @@ Unity
 ---
 
 # 数字で見る
+<style scoped>section { font-size: 29px; }</style>
 <!-- footer: 豊富な資産 -->
 
 | | Unity | three.js | PixiJS | Babylon.js | 3つ合計 |
@@ -237,6 +241,7 @@ Unity/ゲームとの親和性、組み込みでの完成度が非常に高い�
 ---
 
 # パフォーマンス
+<style scoped>section { font-size: 29px; }</style>
 <!-- footer: "" -->
 
 計測してきたよ
@@ -352,8 +357,10 @@ Unityはなんだかんだ幅が広く深い
 <!-- _class: solo -->
 <!-- footer: まとめ -->
 
+<!--
 - Unity、強い。やはり最強のエンジン
 - 開発体験はでも圧勝してますよ
+-->
 
 ---
 

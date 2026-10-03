@@ -76,6 +76,9 @@ cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="
 - class は **移行するデッキで使っているものだけ**: `title` / `solo` / `message`。`me` / `window` / `compare` / `table-zebra` は移植しない
 - `header` (旧 `!fr`) は右下、`footer` (旧 `!fl`) は左下に配置する
 - シンタックスハイライトは Marp 標準 (highlight.js) にテーマ側で色を当てる
+- 見出し・`.sub`・`.lead` のサイズは section の font-size 基準の em。溢れるスライドは自動縮小 (旧 zoom-fit) の代わりに、md 側で `<style scoped>section { font-size: 28px; }</style>` と書いて全体を縮める
+- 旧 solo は見出し以外を表示しなかったので、solo スライドの本文は HTML コメント (= 発表者メモ) にする
+- `<object ...></object>` を 1 行で書くと `<p>` に包まれるため、テーマは `p:has(> object)` を伸縮させて SVG を残りの高さに収める
 
 ## 移行するデッキ
 
@@ -110,6 +113,8 @@ wasd / Enter / ホイール / 左右クリックの操作、cursor-jack、zoom-f
 
 - **URL の変更**: 旧 `/<deck>/` → 新 `/<deck>.html` (Cloudflare Pages では `/<deck>` でも配信される)。共有済みの cool-game の URL を生かすため、デプロイのフェーズで `public/_redirects` による転送を入れ、旧 URL で開けることを確認する
 - **`<object>` の SVG**: 上記の通りフェーズ 1 で検証。Safari での描画は Marp 自身が experimental 扱いの領域なので、主要ブラウザ (Chromium) で確認できれば可とする
+
+- **画像書き出し**: `marp --images png` では `<object>` の SVG が描画されない (HTML と PDF は描画される)。画像書き出しは今回使わないので許容する
 
 ## フェーズ
 

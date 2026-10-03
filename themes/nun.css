@@ -2,17 +2,167 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap");
 
+/* ---- Tokens (旧 theme.css。cqmin 値は 1280×720 で px 換算) ---- */
 section {
   --base: #ffffff;
   --main: #1a1a1a;
+  --sub: #888888;
+  --strong: #000000;
   --brand: #5932ff;
+  --muted: color-mix(in srgb, var(--base) 96%, var(--main));
+  --fg-mid: color-mix(in srgb, var(--main) 50%, var(--sub));
+  --border: color-mix(in srgb, var(--base) 70%, var(--sub));
+  --code-accent: #d6336c;
+  --text: Inter, "BIZ UDPGothic", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif;
+  --code: "JetBrains Mono", Consolas, Monaco, Menlo, monospace;
+  --radius: 0.4em;
+  --footer-font-size: 29px;
+  --footer-line: 14px;
+
   width: 1280px;
   height: 720px;
+  box-sizing: border-box;
+  /* 下端 = (pad 58 - footer 文字 29) + footer 高さ (29 + 14) */
   padding: 58px 58px 72px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
   background: var(--base);
   color: var(--main);
-  font-family: Inter, "BIZ UDPGothic", sans-serif;
+  font-family: var(--text);
   font-size: 36px;
 }
 
-h1 { color: var(--brand); font-size: 66px; margin: 0 0 0.3em; }
+/* ---- Footer: 下端の黒帯 + 左 footer / 右 header (旧 !fl / !fr) ---- */
+section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--footer-line);
+  background: var(--strong);
+}
+section > header,
+section > footer {
+  position: absolute;
+  top: auto;
+  bottom: var(--footer-line);
+  margin: 0;
+  padding: 0;
+  font-size: var(--footer-font-size);
+  line-height: 1;
+  color: var(--strong);
+}
+section > footer { left: 0.6em; }
+section > header { right: 0.6em; left: auto; }
+
+/* ---- Headings ----
+   section の font-size (36px) 基準の em。溢れるスライドは md 側で
+   `<style scoped>section { font-size: 28px; }</style>` とすれば見出しごと縮む */
+h1, h2, h3, h4, h5, h6 { color: var(--brand); text-wrap: balance; margin: 0; }
+h1 { font-size: 1.83em; line-height: 1.1; margin-block-end: 0.3em; }
+h2 { font-size: 1.3em; line-height: 1.1; margin-block-end: 0.2em; }
+h3 { font-size: 0.97em; line-height: 1.15; margin-block-end: 0.2em; }
+h4, h5, h6 { font-size: 0.8em; margin-block-end: 0.15em; }
+
+/* ---- Body ---- */
+p { line-height: 1.65; margin: 0 0 0.4em; }
+ul, ol { padding-inline-start: 1.4em; margin: 0 0 0.35em; line-height: 1.6; }
+li { margin-block-end: 0.1em; }
+a { color: var(--brand); text-decoration: underline; }
+mark { background: color-mix(in srgb, var(--brand) 30%, transparent); color: inherit; border-radius: 0.15em; padding: 0 0.1em; }
+blockquote { margin: 0; border-left: 4px solid var(--border); padding-inline-start: 0.75em; color: var(--fg-mid); font-style: italic; }
+hr { border: none; border-top: 1px solid var(--border); margin-block: 0.5em; }
+img { max-width: 100%; }
+/* `<object ...></object>` を 1 行で書くと markdown-it は段落内のインライン HTML として扱い <p> で包む。
+   その段落ごと残りの高さを分け合い、SVG 側の preserveAspectRatio で収める */
+p:has(> object) { flex: 1 1 0; min-height: 0; margin: 0; }
+object { display: block; width: 100%; height: 100%; }
+
+/* ---- Table ---- */
+table {
+  --table-border-color: color-mix(in srgb, var(--main) 30%, var(--base));
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin-block-end: 0.4em;
+  border: 1px solid var(--table-border-color);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+th, td {
+  border: 0;
+  border-right: 1px solid var(--table-border-color);
+  border-bottom: 1px solid var(--table-border-color);
+  padding: 0.3em 0.6em;
+  text-align: left;
+}
+th[align="center"], td[align="center"] { text-align: center; }
+th[align="right"], td[align="right"] { text-align: right; }
+th:last-child, td:last-child { border-right: 0; }
+tr:last-child > th, tr:last-child > td { border-bottom: 0; }
+th { background: var(--muted); font-weight: 600; }
+
+/* ---- Code ---- */
+:not(pre) > code {
+  font-family: var(--code);
+  background: var(--muted);
+  color: var(--code-accent);
+  padding: 0.1em 0.35em;
+  border-radius: 0.2em;
+  font-size: 0.88em;
+}
+pre {
+  margin: 0 0 0.4em;
+  padding: 0.75em 1em;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+  font-family: var(--code);
+  font-size: 0.75em;
+  line-height: 1.5;
+  overflow: hidden;
+}
+pre code { font-family: inherit; }
+/* highlight.js (Marp 標準) の配色。GitHub light 相当 */
+.hljs-comment, .hljs-quote { color: #6a737d; font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-type { color: #d73a49; }
+.hljs-string, .hljs-regexp, .hljs-addition { color: #032f62; }
+.hljs-number, .hljs-literal, .hljs-variable, .hljs-template-variable { color: #005cc5; }
+.hljs-title, .hljs-section, .hljs-function .hljs-title { color: #6f42c1; }
+.hljs-attr, .hljs-attribute, .hljs-name, .hljs-tag { color: #22863a; }
+.hljs-built_in, .hljs-symbol { color: #e36209; }
+.hljs-deletion { color: #b31d28; }
+
+/* ---- Template: title ---- */
+section.title { justify-content: center; }
+section.title > h1 { color: var(--strong); line-height: 1.05; max-width: 65%; position: relative; z-index: 1; }
+section.title > .sub { font-size: 0.8em; color: var(--fg-mid); margin-block-start: 0.5em; max-width: 65%; line-height: 1.4; position: relative; z-index: 1; }
+section.title img[alt="henoheno"] {
+  position: absolute;
+  right: -10px;
+  /* 旧版はフッター (29 + 14px) を除いた領域 677px の 3% 上に置いていた */
+  bottom: calc(var(--footer-font-size) + var(--footer-line) + 20px);
+  width: 80%;
+  height: auto;
+  transform: translate(0%, 30%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- Template: solo ---- */
+section.solo { justify-content: center; align-items: center; }
+section.solo > h1 { margin: 0; text-align: center; max-width: 80%; }
+
+/* ---- Template: message ---- */
+section.message > h1 + * { margin-block-start: auto; }
+section.message > :not(h1, .lead, header, footer) { align-self: center; text-align: center; max-width: 80%; }
+section.message > .lead {
+  margin-block-start: auto;
+  text-align: center;
+  font-size: 1.3em;
+  color: var(--strong);
+  letter-spacing: 0.05em;
+  padding-block-end: 0.4em;
+}
