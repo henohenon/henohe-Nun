@@ -1,17 +1,16 @@
-~~~meta
-title: Quaver
+---
+theme: nun
 description: QRコードから音声とエフェクトがでるやつ
-date: 2026-05-11
-~~~
-
-!fl~Quaver
-!fr~2026/05/11
-!fbg.at-b.lg.ty-8%.tx-20%.op-30~[](/images/quaver/quaver-mark.svg)
+header: 2026/05/11
+footer: Quaver
+---
 
 # Quaver
-🌊title
-!sub~QRコードでなんか音を出すやつ
-!bg.op-100~=fbg
+<!-- _class: title -->
+
+<p class="sub">QRコードでなんか音を出すやつ</p>
+
+---
 
 # 経緯
 ## キッカケ
@@ -26,11 +25,13 @@ date: 2026-05-11
 
 ## QRローダー
 
-!card[dotvoice](https://aidn.jp/dotvoice/)
+[dotvoice](https://aidn.jp/dotvoice/)
 
 コレとかみてて思いついた。今日の1時ぐらいから稼働開始。
 クソ雑な仕様書aiに書かせてclaude codeに投げた。
 なんか比較的それっぽくなった！
+
+---
 
 # かいはつひわ
 ## 技術スタックとか
@@ -41,6 +42,8 @@ threejsとtonejs、opencvとかのなんか一般的なスタック
 ## ロゴ
 claude design初めて使ってみた。uiのモック生成とかごまかす性能はありそうだったがあんまりいい感じはしなかった
 いくつかの元ネタを元に自分で修正した。Qと♪と~を組み合わせてカワイイをイメージした。
+
+---
 
 # 所感
 ## よかった

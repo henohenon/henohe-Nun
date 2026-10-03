@@ -1,0 +1,18 @@
+/* @theme nun */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap");
+
+section {
+  --base: #ffffff;
+  --main: #1a1a1a;
+  --brand: #5932ff;
+  width: 1280px;
+  height: 720px;
+  padding: 58px 58px 72px;
+  background: var(--base);
+  color: var(--main);
+  font-family: Inter, "BIZ UDPGothic", sans-serif;
+  font-size: 36px;
+}
+
+h1 { color: var(--brand); font-size: 66px; margin: 0 0 0.3em; }

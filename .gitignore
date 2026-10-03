@@ -1,13 +1,9 @@
 node_modules
 dist
-.astro
 .DS_Store
 *.log
 .claude/
 .idea/
 .tmp/
-public/thumbs/
-public/fonts/
 benben/private/*
-src/assets/**/private/*
 .env.deploy
