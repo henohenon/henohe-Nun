@@ -1,10 +1,13 @@
 # deck 用 SVG 生成スクリプト
 
-`benben/cool-game-development-using-web-technologies.md` の embed_svg ブロックを作るためのもの。
-出力した SVG を md の ```embed_svg に貼り付けて使う (md 側は生成済み SVG が埋まっているので、
-並べ直したい時だけ実行すればよい)。
+`benben/cool-game-development-using-web-technologies.md` で使う SVG のたたき台を作るためのもの。
+SVG は `benben/images/cool-game/` に置き、md からは `<object data="images/cool-game/<名前>.svg">` で参照する。
 
-リポジトリルートから実行すること (`public/images/engines/` を相対パスで読む)。
+デッキで使っている `logo-map-*.svg` / `lib-row.svg` は、生成後に手で配置を調整してある。
+再実行すると調整が消えるので、出力先はスクラッチの場所にして差分を見ながら取り込むこと。
+
+リポジトリルートから実行すること (`benben/images/engines/` を相対パスで読む)。
+SVG 内の画像は `../engines/` で参照するので、出力 SVG は `benben/images/<deck>/` に置く前提。
 
 ## gen-logo-map.ts — ロゴごった煮ページ
 
@@ -27,5 +30,5 @@ Three.js / PixiJS を上段、Babylon.js / Tone.js / Matter.js を下段に整�
 
 ## ロゴ素材
 
-`public/images/engines/`。名前入りロゴ (ワードマーク) を優先し、無いものは simple-icons の
+`benben/images/engines/`。名前入りロゴ (ワードマーク) を優先し、無いものは simple-icons の
 アイコン (`t: 'si'`) か、デッキのフォントで組んだ文字 (`t: 'text'`) で代用している。
