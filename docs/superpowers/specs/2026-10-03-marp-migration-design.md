@@ -7,7 +7,7 @@
 - **純粋な Marp で作る**。marp-cli + 自前テーマ CSS + `--html` のみ。独自 engine / markdown-it プラグイン / 記法の糖衣は書かない
 - md は Marp 標準記法で書く。Nun 記法 (🌊 / nwyt / `~~~meta` / `:::` / `==mark==` / `embed_*` 等) は全廃
 - 素の Marp で足りないと感じたら、その時に改めて拡張を検討する (今回の範囲外)
-- Marp の外で作るのは **一覧ページ (手書き HTML)、ビルド後の処理 (ファイルコピーと旧 URL の転送ページ)、CI** だけ
+- Marp の外で作るのは **一覧ページ (手書き HTML)、ビルド後の処理 (ファイルコピー、旧 URL の転送ページ、画面に合わせる処理の差し込み)、CI** だけ
 
 ## ディレクトリ構成 (移行後)
 
@@ -21,7 +21,7 @@ public/
 themes/
   nun.css                   Marp テーマ (@theme nun)
 marp.config.ts              marp-cli 設定 (html: true, themeSet 等)
-scripts/postbuild.ts        ビルド後の静的ファイルコピーと旧 URL の転送ページ生成
+scripts/postbuild.ts        ビルド後の静的ファイルコピー、旧 URL の転送ページ生成、画面に合わせる処理の差し込み
 .github/workflows/deploy.yml  GitHub Pages への公開 (main への push で実行)
 dist/                       ビルド出力 (git 管理外)
 ```
@@ -32,11 +32,11 @@ dist/                       ビルド出力 (git 管理外)
 
 ## コマンド
 
-| コマンド       | 中身                                                                                                                                                                                                                 |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vp run dev`   | `marp -s benben` (サーバーモード。`/<deck>.md` を開くと都度変換、`?pdf` 等で各形式)                                                                                                                                  |
-| `vp run build` | `marp -I benben -o dist` → `scripts/postbuild.ts` で `benben/images` と `public/` を `dist/` へコピーし、旧 URL 用の転送ページを生成 (シェルの `cp` の挙動差に依存しないよう TS で書き、Node 標準の TS 実行で動かす) |
-| `vp run pdf`   | `marp -I benben -o dist --pdf`                                                                                                                                                                                       |
+| コマンド       | 中身                                                                                                                                                                                                                                                                 |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vp run dev`   | `marp -s benben` (サーバーモード。`/<deck>.md` を開くと都度変換、`?pdf` 等で各形式)                                                                                                                                                                                  |
+| `vp run build` | `marp -I benben -o dist` → `scripts/postbuild.ts` で `benben/images` と `public/` を `dist/` へコピーし、旧 URL 用の転送ページを生成し、デッキの HTML に画面に合わせる処理を差し込む (シェルの `cp` の挙動差に依存しないよう TS で書き、Node 標準の TS 実行で動かす) |
+| `vp run pdf`   | `marp -I benben -o dist --pdf`                                                                                                                                                                                                                                       |
 
 - パッケージ管理・Node のバージョン (`.node-version`)・タスク実行・整形 / lint / 型チェック (`vp check`) は Vite+ (`vp`) + pnpm。Vite+ の設定は `vite.config.ts` (lint / fmt のみで、Vite でのビルドはしない)
 - marp-cli の共通オプションは `marp.config.ts` (`defineConfig` で型付き) に書き、コマンドを短く保つ。marp-cli はローカルの TypeScript (v6 まで) で変換して読むので、TypeScript を v7 以上に上げる時は確認する
@@ -47,6 +47,19 @@ dist/                       ビルド出力 (git 管理外)
 - 本番は GitHub Pages (`https://henohenon.github.io/henohe-Nun/`)。`.github/workflows/deploy.yml` が main への push で `vp check` → `vp run build` → `vp run pdf` → `dist/` を公開する
 - PR ではビルドと PDF 生成だけ実行し、公開はしない (マージ前に CI が通ることを確認するため)
 - サイトは `/henohe-Nun/` 配下に置かれるので、一覧ページ・デッキ内の参照はすべて相対パスにする
+
+## 画面に合わせる (2026-11-01 追加)
+
+Marp の HTML は 16:9 固定で、他の比率では黒帯が出る。`scripts/postbuild.ts` がビルド後の `dist/<deck>.html` の `</body>` 直前にスクリプトを差し込み、スライドの枠を画面と同じ縦横比に作り直す。調査の記録は `docs/research/responsive-spike/`。
+
+- 書き換えるのは各スライドの `viewBox`、`foreignObject` の `width` / `height`、`section` の `style.width` / `style.height` だけ (テーマの `width: 1280px` は `!important` なしなのでインラインで上書きできる)。CSS の追加や自動縮小 (fit) はしない
+- 枠 (仮想キャンバス) の大きさは、面積を 1280×720 に揃え、短い辺は 720 を下回らせない。画面への拡大縮小は `viewBox` 任せ
+  - 面積を揃えるので、文字の大きさは画面の広さに比例し、画面の形を変えてもなめらかに変わる
+  - 短い辺の下限は、横長 (スマホ横・超横長) で高さが 720 を割って下が溢れるのを防ぐため。16:9 より横長では高さ 720、9:16 より縦長では幅 720 になる
+  - 16:9 の画面では従来と同じ 1280×720
+- `resize` で作り直す
+- 差し込むのはビルド後の HTML だけなので、PDF と dev サーバー (`vp run dev`) は従来どおり 16:9 固定
+- 既知の溢れ (全 43 枚中): 4:3 で 1 枚 (8px)、タブレット縦で 1 枚 (表)、列の多い表が縦長・正方形で右に切れる。比例のさせ方では直らないので、必要になったら fit か表の扱いを別途考える
 
 ## 記法の書き換え表
 
@@ -78,7 +91,7 @@ cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="
 
 ## テーマ (`themes/nun.css`)
 
-- 固定キャンバス 1280×720 (`@size` 既定)。cqmin / clamp による可変レイアウトは持ち込まない
+- キャンバス 1280×720 (`@size` 既定) で組む。cqmin / clamp による可変レイアウトは持ち込まない (画面の比率への対応は上記「画面に合わせる」で枠ごと作り直す)
 - 旧 `src/styles/` の見た目 (文字組み、色の変数、フッター線、コードブロック、表) を px ベースで移植する
 - class は **移行するデッキで使っているものだけ**: `title` / `solo` / `message`。`me` / `window` / `compare` / `table-zebra` は移植しない
 - `header` (旧 `!fr`) は右下、`footer` (旧 `!fl`) は左下に配置する
@@ -114,7 +127,7 @@ cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="
 
 ## 捨てる機能 (必要になったら再検討)
 
-wasd / Enter / ホイール / 左右クリックの操作、cursor-jack、zoom-fit、レスポンシブ (portrait 切り替え含む)、OGP 画像・サムネイル生成、全スライド WebP、PDF の mutool 圧縮、admonition、コードフェンスのファイル名・行番号・diff・コピーボタン、OGP カード、脚注のツールチップ、mermaid、favicon アニメーション、画像の round / mono / dim。
+wasd / Enter / ホイール / 左右クリックの操作、cursor-jack、zoom-fit、portrait 用の切り替え、OGP 画像・サムネイル生成、全スライド WebP、PDF の mutool 圧縮、admonition、コードフェンスのファイル名・行番号・diff・コピーボタン、OGP カード、脚注のツールチップ、mermaid、favicon アニメーション、画像の round / mono / dim。
 
 ## リスク
 
