@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "marp -s benben",
-    "build": "marp -I benben -o dist && node scripts/postbuild.ts",
+    "build": "marp -I benben -o dist --template bare && node scripts/postbuild.ts",
     "pdf": "marp -I benben -o dist --pdf"
   },
   "devDependencies": {

@@ -7,7 +7,7 @@
 - **純粋な Marp で作る**。marp-cli + 自前テーマ CSS + `--html` のみ。独自 engine / markdown-it プラグイン / 記法の糖衣は書かない
 - md は Marp 標準記法で書く。Nun 記法 (🌊 / nwyt / `~~~meta` / `:::` / `==mark==` / `embed_*` 等) は全廃
 - 素の Marp で足りないと感じたら、その時に改めて拡張を検討する (今回の範囲外)
-- Marp の外で作るのは **一覧ページ (手書き HTML)、ビルド後の処理 (ファイルコピー、旧 URL の転送ページ、画面に合わせる処理の差し込み)、CI** だけ
+- Marp の外で作るのは **一覧ページ (手書き HTML)、ビルド後の処理 (ファイルコピー、旧 URL の転送ページ、画面合わせと操作のスクリプトの差し込み)、CI** だけ
 
 ## ディレクトリ構成 (移行後)
 
@@ -21,7 +21,8 @@ public/
 themes/
   nun.css                   Marp テーマ (@theme nun)
 marp.config.ts              marp-cli 設定 (html: true, themeSet 等)
-scripts/postbuild.ts        ビルド後の静的ファイルコピー、旧 URL の転送ページ生成、画面に合わせる処理の差し込み
+scripts/postbuild.ts        ビルド後の静的ファイルコピー、旧 URL の転送ページ生成、deck-runtime.ts の差し込み
+scripts/deck-runtime.ts     本番 HTML に差し込むブラウザ用スクリプト (画面合わせと操作)
 .github/workflows/deploy.yml  GitHub Pages への公開 (main への push で実行)
 dist/                       ビルド出力 (git 管理外)
 ```
@@ -32,11 +33,11 @@ dist/                       ビルド出力 (git 管理外)
 
 ## コマンド
 
-| コマンド       | 中身                                                                                                                                                                                                                                                                 |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vp run dev`   | `marp -s benben` (サーバーモード。`/<deck>.md` を開くと都度変換、`?pdf` 等で各形式)                                                                                                                                                                                  |
-| `vp run build` | `marp -I benben -o dist` → `scripts/postbuild.ts` で `benben/images` と `public/` を `dist/` へコピーし、旧 URL 用の転送ページを生成し、デッキの HTML に画面に合わせる処理を差し込む (シェルの `cp` の挙動差に依存しないよう TS で書き、Node 標準の TS 実行で動かす) |
-| `vp run pdf`   | `marp -I benben -o dist --pdf`                                                                                                                                                                                                                                       |
+| コマンド       | 中身                                                                                                                                                                                                                                                                                          |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vp run dev`   | `marp -s benben` (サーバーモード。`/<deck>.md` を開くと都度変換、`?pdf` 等で各形式)                                                                                                                                                                                                           |
+| `vp run build` | `marp -I benben -o dist --template bare` → `scripts/postbuild.ts` で `benben/images` と `public/` を `dist/` へコピーし、旧 URL 用の転送ページを生成し、デッキの HTML に `scripts/deck-runtime.ts` を差し込む (シェルの `cp` の挙動差に依存しないよう TS で書き、Node 標準の TS 実行で動かす) |
+| `vp run pdf`   | `marp -I benben -o dist --pdf`                                                                                                                                                                                                                                                                |
 
 - パッケージ管理・Node のバージョン (`.node-version`)・タスク実行・整形 / lint / 型チェック (`vp check`) は Vite+ (`vp`) + pnpm。Vite+ の設定は `vite.config.ts` (lint / fmt のみで、Vite でのビルドはしない)
 - marp-cli の共通オプションは `marp.config.ts` (`defineConfig` で型付き) に書き、コマンドを短く保つ。marp-cli はローカルの TypeScript (v6 まで) で変換して読むので、TypeScript を v7 以上に上げる時は確認する
@@ -48,9 +49,13 @@ dist/                       ビルド出力 (git 管理外)
 - PR ではビルドと PDF 生成だけ実行し、公開はしない (マージ前に CI が通ることを確認するため)
 - サイトは `/henohe-Nun/` 配下に置かれるので、一覧ページ・デッキ内の参照はすべて相対パスにする
 
-## 画面に合わせる (2026-11-01 追加)
+## 本番 HTML の画面合わせと操作 (2026-11-01 追加)
 
-Marp の HTML は 16:9 固定で、他の比率では黒帯が出る。`scripts/postbuild.ts` がビルド後の `dist/<deck>.html` の `</body>` 直前にスクリプトを差し込み、スライドの枠を画面と同じ縦横比に作り直す。調査の記録は `docs/research/responsive-spike/`。
+本番の HTML は `marp --template bare` で出力し、Marp 標準の操作 (bespoke テンプレート: ボタンの帯、キー操作、一覧表示、発表者ビュー、発表者メモ) を持たない。代わりに `scripts/postbuild.ts` が `scripts/deck-runtime.ts` の関数のソースを `dist/<deck>.html` の `</body>` 直前に `<script>` として差し込む。差し込むのはビルド後の HTML だけなので、PDF と dev サーバー (`vp run dev`、bespoke のまま) には効かない。
+
+### 画面に合わせる
+
+Marp の HTML は 16:9 固定で、他の比率では黒帯が出る。スライドの枠を画面と同じ縦横比に作り直す。調査の記録は `docs/research/responsive-spike/`。
 
 - 書き換えるのは各スライドの `viewBox`、`foreignObject` の `width` / `height`、`section` の `style.width` / `style.height` だけ (テーマの `width: 1280px` は `!important` なしなのでインラインで上書きできる)。CSS の追加や自動縮小 (fit) はしない
 - 枠 (仮想キャンバス) の大きさは、面積を 1280×720 に揃え、短い辺は 720 を下回らせない。画面への拡大縮小は `viewBox` 任せ
@@ -58,8 +63,17 @@ Marp の HTML は 16:9 固定で、他の比率では黒帯が出る。`scripts/
   - 短い辺の下限は、横長 (スマホ横・超横長) で高さが 720 を割って下が溢れるのを防ぐため。16:9 より横長では高さ 720、9:16 より縦長では幅 720 になる
   - 16:9 の画面では従来と同じ 1280×720
 - `resize` で作り直す
-- 差し込むのはビルド後の HTML だけなので、PDF と dev サーバー (`vp run dev`) は従来どおり 16:9 固定
 - 既知の溢れ (全 43 枚中): 4:3 で 1 枚 (8px)、タブレット縦で 1 枚 (表)、列の多い表が縦長・正方形で右に切れる。比例のさせ方では直らないので、必要になったら fit か表の扱いを別途考える
+
+### 操作 (旧 Nun の navigation / cursor-jack)
+
+- 1 枚ずつ表示し、`#N` でページを管理する (他のスライドの svg は `display: none`)。切り替えは View Transition (対応ブラウザのみ)
+- 次へ: `→` `↓` `Space` `d` `s`、前へ: `←` `↑` `a` `w`、`Home` / `End` で最初 / 最後、`Enter` でフルスクリーンの切り替え
+- 横に 50px 以上のスワイプ、30px 以上のホイール (300ms は次を受け付けない) で前後へ
+- フルスクリーン中だけ、画面の左半分クリックで前へ・右半分で次へ。リンク等の上では送らない
+- フルスクリーン中だけ、カーソルを半透明の円 (cursor-jack) にする
+- `<object>` の SVG の中の入力はページに伝わらないため、同一オリジンで中の文書に触れる場合は同じ操作を付け、座標をページに直す (file:// で開いた場合は SVG の上だけ操作が効かない)
+- 発表者ビュー・一覧表示・ブラウザの印刷で全スライドを出す機能は持たない (配布は PDF)
 
 ## 記法の書き換え表
 
@@ -127,7 +141,7 @@ cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="
 
 ## 捨てる機能 (必要になったら再検討)
 
-wasd / Enter / ホイール / 左右クリックの操作、cursor-jack、zoom-fit、portrait 用の切り替え、OGP 画像・サムネイル生成、全スライド WebP、PDF の mutool 圧縮、admonition、コードフェンスのファイル名・行番号・diff・コピーボタン、OGP カード、脚注のツールチップ、mermaid、favicon アニメーション、画像の round / mono / dim。
+zoom-fit、portrait 用の切り替え、OGP 画像・サムネイル生成、全スライド WebP、PDF の mutool 圧縮、admonition、コードフェンスのファイル名・行番号・diff・コピーボタン、OGP カード、脚注のツールチップ、mermaid、favicon アニメーション、画像の round / mono / dim。
 
 ## リスク
 
