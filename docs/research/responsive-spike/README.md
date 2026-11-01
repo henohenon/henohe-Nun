@@ -4,7 +4,7 @@ Marp 移行で失われた「画面の形に合わせて組み直される」挙
 
 **ビルド・dev には組み込んでいない** (記録のみ)。本採用する場合は改めて設計する。
 
-## やり方 (`responsive.js`)
+## やり方 (`responsive.ts`)
 
 Marp の各スライドは `<svg viewBox="0 0 1280 720"><foreignObject><section>…` で、中身は普通の HTML。
 
@@ -17,7 +17,7 @@ Marp の各スライドは `<svg viewBox="0 0 1280 720"><foreignObject><section>
 
 ## 試し方
 
-`bun run build` 後、`dist/<deck>.html` の `</body>` 直前に `<script>` で中身を差し込んだコピーを `benben/` に置き、`bun run dev` で配信して開く (画像の相対パスが解決するため)。ハッシュだけ変える遷移では再読み込みされないので、スクリプトを差し替えたら必ずリロードする。
+`bun build docs/research/responsive-spike/responsive.ts --target browser` でブラウザ用の JS に変換し、`bun run build` 後の `dist/<deck>.html` の `</body>` 直前に `<script>` で差し込んだコピーを `benben/` に置き、`bun run dev` で配信して開く (画像の相対パスが解決するため)。ハッシュだけ変える遷移では再読み込みされないので、スクリプトを差し替えたら必ずリロードする。
 
 ## 結果
 
@@ -39,7 +39,7 @@ Marp の各スライドは `<svg viewBox="0 0 1280 720"><foreignObject><section>
 
 ## 本採用時に決めること
 
-- 差し込み方: ビルド後の HTML に差し込む (PDF に影響しないが dev では効かない) か、md に `<script src="responsive.js">` を書く (dev でも効くが、PDF 変換時にも走るのでガードが要るかもしれない)
+- 差し込み方: ビルド後の HTML に差し込む (PDF に影響しないが dev では効かない) か、md に `<script src="responsive.js">` (TS から変換した JS) を書く (dev でも効くが、PDF 変換時にも走るのでガードが要るかもしれない)
 - 発表者ビューでの挙動
 - 縦長での SVG / 表の扱い (割り切るか、縦長用の差し替えを用意するか)
 
