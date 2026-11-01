@@ -51,19 +51,21 @@ push to main --.github/workflows/deploy.yml (build + pdf)--> GitHub Pages
 ## Commands
 
 ```bash
-bun install          # Install dependencies
-bun run dev          # marp -s benben (server mode, http://localhost:8080)
-bun run build        # dist/<deck>.html + static files
-bun run pdf          # dist/<deck>.pdf
+vp install           # Install dependencies (pnpm)
+vp run dev           # marp -s benben (server mode, http://localhost:8080)
+vp run build         # dist/<deck>.html + static files
+vp run pdf           # dist/<deck>.pdf
+vp check             # format, lint, type check (also runs in CI)
 ```
 
-`bun run dev` を起動したら、作業終了時に必ず停止する (port 滞積防止)。
+`vp run dev` を起動したら、作業終了時に必ず停止する (port 滞積防止)。
 
 ## Tech Stack
 
-- **bun** — package manager and runtime
+- **Vite+ (`vp`)** — package management via pnpm, Node version (`.node-version`), task runner, `vp check`. Config is `vite.config.ts` (lint / fmt only; nothing is built with Vite)
+- **pnpm** — package manager (`pnpm-lock.yaml`, `pnpm-workspace.yaml`)
 - **@marp-team/marp-cli** — conversion, dev server, presenter features
-- **tsx** — scripts
+- **Node.js native TypeScript** — scripts run with `node scripts/*.ts` (type stripping; no tsx)
 - **GitHub Actions + GitHub Pages** — hosting
 
 ## Development Philosophy
@@ -78,7 +80,7 @@ Do exactly what was asked. Don't refactor neighboring code. Don't introduce abst
 
 ### Stay Green
 
-Every commit should leave `bun run build` working.
+Every commit should leave `vp check` and `vp run build` passing. Fix check errors instead of excluding files.
 
 ### Ask When Uncertain
 

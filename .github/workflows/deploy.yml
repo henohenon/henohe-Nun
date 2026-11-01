@@ -22,19 +22,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
+      # vp install (pnpm) まで実行される。Node は .node-version に固定
+      - uses: voidzero-dev/setup-vp@v1.22.0
         with:
-          bun-version: latest
+          node-version-file: .node-version
+          cache: true
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      # 整形・lint・型チェック
+      - name: Check
+        run: vp check
 
       - name: Build
-        run: bun run build
+        run: vp run build
 
       # marp-cli の PDF 変換はランナーにプリインストールの Chrome を使う
       - name: Generate PDFs
-        run: bun run pdf
+        run: vp run pdf
 
       - uses: actions/configure-pages@v5
         if: github.event_name != 'pull_request'

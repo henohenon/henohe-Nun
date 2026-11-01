@@ -14,6 +14,5 @@
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["scripts", "marp.config.ts"],
-  "exclude": ["scripts/deck"]
+  "include": ["scripts", "marp.config.ts", "vite.config.ts"]
 }

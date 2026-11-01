@@ -32,39 +32,40 @@ dist/                       ビルド出力 (git 管理外)
 
 ## コマンド
 
-| コマンド | 中身 |
-|---|---|
-| `bun run dev` | `marp -s benben` (サーバーモード。`/<deck>.md` を開くと都度変換、`?pdf` 等で各形式) |
-| `bun run build` | `marp -I benben -o dist` → `scripts/postbuild.ts` で `benben/images` と `public/` を `dist/` へコピーし、旧 URL 用の転送ページを生成 (bun shell の `cp` は `public/.` の展開が GNU と異なるため TS で書く) |
-| `bun run pdf` | `marp -I benben -o dist --pdf` |
+| コマンド       | 中身                                                                                                                                                                                                                 |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vp run dev`   | `marp -s benben` (サーバーモード。`/<deck>.md` を開くと都度変換、`?pdf` 等で各形式)                                                                                                                                  |
+| `vp run build` | `marp -I benben -o dist` → `scripts/postbuild.ts` で `benben/images` と `public/` を `dist/` へコピーし、旧 URL 用の転送ページを生成 (シェルの `cp` の挙動差に依存しないよう TS で書き、Node 標準の TS 実行で動かす) |
+| `vp run pdf`   | `marp -I benben -o dist --pdf`                                                                                                                                                                                       |
 
+- パッケージ管理・Node のバージョン (`.node-version`)・タスク実行・整形 / lint / 型チェック (`vp check`) は Vite+ (`vp`) + pnpm。Vite+ の設定は `vite.config.ts` (lint / fmt のみで、Vite でのビルドはしない)
 - marp-cli の共通オプションは `marp.config.ts` (`defineConfig` で型付き) に書き、コマンドを短く保つ。marp-cli はローカルの TypeScript (v6 まで) で変換して読むので、TypeScript を v7 以上に上げる時は確認する
 - 出力は `dist/<deck>.html` (フラット)。旧 Nun の `dist/<deck>/index.html` とは URL が変わる (後述のリスク)
 
 ## 公開
 
-- 本番は GitHub Pages (`https://henohenon.github.io/henohe-Nun/`)。`.github/workflows/deploy.yml` が main への push で `bun run build` → `bun run pdf` → `dist/` を公開する
+- 本番は GitHub Pages (`https://henohenon.github.io/henohe-Nun/`)。`.github/workflows/deploy.yml` が main への push で `vp check` → `vp run build` → `vp run pdf` → `dist/` を公開する
 - PR ではビルドと PDF 生成だけ実行し、公開はしない (マージ前に CI が通ることを確認するため)
 - サイトは `/henohe-Nun/` 配下に置かれるので、一覧ページ・デッキ内の参照はすべて相対パスにする
 
 ## 記法の書き換え表
 
-| 旧 Nun | Marp |
-|---|---|
-| `#` によるページ区切り (空の `#` を含む) | `---` で区切る。`headingDivider` は使わない。空の `#` は削除 |
-| スライド内の `##` / `###` | そのまま (1 枚の中の見出しとして描画される) |
-| `~~~meta` (title / description / date) | front-matter。`title` は省略可 (最初の見出しから自動で入る)。`description` は必要なら書く。`date` は捨てる |
-| デッキ全体の `!fr~` | front-matter の `header:` (テーマで右下に配置) |
-| `!fl~` | `<!-- _footer: ... -->`。章の頭で以降に引き継ぐ場合は `<!-- footer: ... -->` |
-| `🌊default` | 何も書かない (テーマの既定) |
-| `🌊title` / `🌊solo` / `🌊message` | `<!-- _class: title -->` 等 |
-| `!sub~` / `!lead~` | HTML を直接書く (`<p class="sub">` / `<p class="lead">`) |
-| `==mark==` | `<mark>` |
-| `embed_html` | フェンスを外して HTML を直接書く |
-| `embed_svg` | 外部ファイル化して `<object>` で参照 (下記) |
-| `!card[タイトル](url)` | 普通のリンク `[タイトル](url)` |
-| `!fbg~` / `!bg.*~=fbg` | 削除 |
-| HTML コメントで隠した非公開スライド | Marp では発表者メモとして出力されるため、md から外して `docs/drafts/` に退避 |
+| 旧 Nun                                   | Marp                                                                                                       |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `#` によるページ区切り (空の `#` を含む) | `---` で区切る。`headingDivider` は使わない。空の `#` は削除                                               |
+| スライド内の `##` / `###`                | そのまま (1 枚の中の見出しとして描画される)                                                                |
+| `~~~meta` (title / description / date)   | front-matter。`title` は省略可 (最初の見出しから自動で入る)。`description` は必要なら書く。`date` は捨てる |
+| デッキ全体の `!fr~`                      | front-matter の `header:` (テーマで右下に配置)                                                             |
+| `!fl~`                                   | `<!-- _footer: ... -->`。章の頭で以降に引き継ぐ場合は `<!-- footer: ... -->`                               |
+| `🌊default`                              | 何も書かない (テーマの既定)                                                                                |
+| `🌊title` / `🌊solo` / `🌊message`       | `<!-- _class: title -->` 等                                                                                |
+| `!sub~` / `!lead~`                       | HTML を直接書く (`<p class="sub">` / `<p class="lead">`)                                                   |
+| `==mark==`                               | `<mark>`                                                                                                   |
+| `embed_html`                             | フェンスを外して HTML を直接書く                                                                           |
+| `embed_svg`                              | 外部ファイル化して `<object>` で参照 (下記)                                                                |
+| `!card[タイトル](url)`                   | 普通のリンク `[タイトル](url)`                                                                             |
+| `!fbg~` / `!bg.*~=fbg`                   | 削除                                                                                                       |
+| HTML コメントで隠した非公開スライド      | Marp では発表者メモとして出力されるため、md から外して `docs/drafts/` に退避                               |
 
 ### SVG の置き方
 
@@ -88,17 +89,17 @@ cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="
 
 ## 移行するデッキ
 
-| デッキ | 扱い |
-|---|---|
-| `cool-game-development-using-web-technologies.md` | 移行する (本番の LT) |
-| `Quaver.md` | 移行する |
-| `initiation.md` / `fonts.md` / `mobile-test.md` | 削除 (旧実装のタグに残る) |
+| デッキ                                            | 扱い                      |
+| ------------------------------------------------- | ------------------------- |
+| `cool-game-development-using-web-technologies.md` | 移行する (本番の LT)      |
+| `Quaver.md`                                       | 移行する                  |
+| `initiation.md` / `fonts.md` / `mobile-test.md`   | 削除 (旧実装のタグに残る) |
 
 書き換えは手作業 (AI 含む) の一回きり。移行スクリプトは作らない。
 
 ## 削除するもの
 
-- `src/` 全体、`vite.config.ts`、`uno.config.ts` (`tsconfig.json` と `tsx` は `scripts/` の TS 用に残す)
+- `src/` 全体、`vite.config.ts`、`uno.config.ts` (`tsconfig.json` は `scripts/` と設定ファイルの TS 用に残す)
 - 依存: vite、unified / micromark / remark / rehype 系、hastscript、shiki、mermaid、mathjax、unocss、open-graph-scraper、playwright、sharp、pdf-lib
 - `scripts/` のうち `capture.ts` / `pdf.ts` / `render-mermaid.ts` / `svg-to-png.ts` / `test-playwright.ts`
 - 旧 spec (`docs/spec/*`、`docs/dev-plan.md`、`docs/design*.md`、`docs/refactor-*.md`) は `docs/archive/` へ移動
