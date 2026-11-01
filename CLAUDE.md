@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Nun is a personal slide repository built on pure Marp (marp-cli + a custom theme + `--html`). Markdown decks in `benben/*.md` are converted by marp-cli into HTML / PDF and published to Cloudflare Pages. Named after the Egyptian god of primordial waters.
+Nun is a personal slide repository built on pure Marp (marp-cli + a custom theme + `--html`). Markdown decks in `benben/*.md` are converted by marp-cli into HTML / PDF and published to GitHub Pages (`https://henohenon.github.io/henohe-Nun/`) by GitHub Actions. Named after the Egyptian god of primordial waters.
 
 The old implementation (a custom Vite + unified pipeline with heading-hierarchy templates and the nwyt syntax) was retired in the Marp migration. Its specs are in `docs/archive/` and its code is at tag `nun-v1`. Do not reintroduce its patterns.
 
@@ -24,14 +24,16 @@ Read the relevant spec before changing anything. The spec is the source of truth
 
 ```
 benben/*.md --marp -I benben -o dist--> dist/<deck>.html
-benben/images/, public/ --scripts/copy-static.ts--> dist/
-dist/ --wrangler pages deploy--> Cloudflare Pages
+benben/images/, public/ --scripts/postbuild.ts--> dist/  (+ redirect pages for old /<deck>/ URLs)
+push to main --.github/workflows/deploy.yml (build + pdf)--> GitHub Pages
 ```
 
 - `marp.config.mjs` — shared marp-cli options (`html`, `themeSet`, `allowLocalFiles`); dev / build / pdf all read it
 - `themes/nun.css` — the only theme (`@theme nun`), fixed 1280×720
-- `public/index.html` — hand-written deck list; `public/_redirects` — old `/<deck>/` URLs
-- `scripts/deploy.ts` — build + `wrangler pages deploy`; `--deck <name>` builds one deck to a timestamp branch
+- `public/index.html` — hand-written deck list (links to `<deck>.html` and `<deck>.pdf`)
+- `scripts/postbuild.ts` — copies `benben/images` and `public/` into `dist/`, writes `dist/<deck>/index.html` redirect pages (keeps `#N`)
+- `.github/workflows/deploy.yml` — PRs only build; pushes to main build and deploy
+- The site lives under `/henohe-Nun/`, so every link and asset path must be relative
 - `scripts/deck/` — logo SVG generators (output is a starting point; deck SVGs were hand-adjusted afterwards)
 
 ## Writing Decks
@@ -44,6 +46,7 @@ dist/ --wrangler pages deploy--> Cloudflare Pages
 - Overflowing slides: `<style scoped>section { font-size: 28px; }</style>` (headings are em-based and shrink with it)
 - Non-directive HTML comments become presenter notes
 - After adding a deck, add a line to `public/index.html`
+- `benben/private/` is gitignored and must never be committed (the repo is public)
 
 ## Commands
 
@@ -52,7 +55,6 @@ bun install          # Install dependencies
 bun run dev          # marp -s benben (server mode, http://localhost:8080)
 bun run build        # dist/<deck>.html + static files
 bun run pdf          # dist/<deck>.pdf
-bun run deploy       # Cloudflare Pages (needs .env.deploy)
 ```
 
 `bun run dev` を起動したら、作業終了時に必ず停止する (port 滞積防止)。
@@ -62,7 +64,7 @@ bun run deploy       # Cloudflare Pages (needs .env.deploy)
 - **bun** — package manager and runtime
 - **@marp-team/marp-cli** — conversion, dev server, presenter features
 - **tsx** — scripts
-- **wrangler** — Cloudflare Pages deploy
+- **GitHub Actions + GitHub Pages** — hosting
 
 ## Development Philosophy
 

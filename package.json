@@ -4,15 +4,13 @@
   "type": "module",
   "scripts": {
     "dev": "marp -s benben",
-    "build": "marp -I benben -o dist && tsx scripts/copy-static.ts",
-    "pdf": "marp -I benben -o dist --pdf",
-    "deploy": "tsx scripts/deploy.ts"
+    "build": "marp -I benben -o dist && tsx scripts/postbuild.ts",
+    "pdf": "marp -I benben -o dist --pdf"
   },
   "devDependencies": {
     "@marp-team/marp-cli": "^4.5.1",
     "@types/node": "^25.6.0",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.3",
-    "wrangler": "^4.101.0"
+    "typescript": "^6.0.3"
   }
 }

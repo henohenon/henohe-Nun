@@ -7,7 +7,7 @@
 - **純粋な Marp で作る**。marp-cli + 自前テーマ CSS + `--html` のみ。独自 engine / markdown-it プラグイン / 記法の糖衣は書かない
 - md は Marp 標準記法で書く。Nun 記法 (🌊 / nwyt / `~~~meta` / `:::` / `==mark==` / `embed_*` 等) は全廃
 - 素の Marp で足りないと感じたら、その時に改めて拡張を検討する (今回の範囲外)
-- Marp の外で作るのは **一覧ページ (手書き HTML) とビルド時のファイルコピー、デプロイ** だけ
+- Marp の外で作るのは **一覧ページ (手書き HTML)、ビルド後の処理 (ファイルコピーと旧 URL の転送ページ)、CI** だけ
 
 ## ディレクトリ構成 (移行後)
 
@@ -21,7 +21,8 @@ public/
 themes/
   nun.css                   Marp テーマ (@theme nun)
 marp.config.mjs             marp-cli 設定 (html: true, themeSet 等)
-scripts/deploy.ts           Cloudflare Pages デプロイ
+scripts/postbuild.ts        ビルド後の静的ファイルコピーと旧 URL の転送ページ生成
+.github/workflows/deploy.yml  GitHub Pages への公開 (main への push で実行)
 dist/                       ビルド出力 (git 管理外)
 ```
 
@@ -34,12 +35,17 @@ dist/                       ビルド出力 (git 管理外)
 | コマンド | 中身 |
 |---|---|
 | `bun run dev` | `marp -s benben` (サーバーモード。`/<deck>.md` を開くと都度変換、`?pdf` 等で各形式) |
-| `bun run build` | `marp -I benben -o dist` → `scripts/copy-static.ts` で `benben/images` と `public/` を `dist/` へコピー (bun shell の `cp` は `public/.` の展開が GNU と異なるため TS で書く) |
+| `bun run build` | `marp -I benben -o dist` → `scripts/postbuild.ts` で `benben/images` と `public/` を `dist/` へコピーし、旧 URL 用の転送ページを生成 (bun shell の `cp` は `public/.` の展開が GNU と異なるため TS で書く) |
 | `bun run pdf` | `marp -I benben -o dist --pdf` |
-| `bun run deploy` | build → `wrangler pages deploy dist`。`--deck <name>` 指定時の推測不能なプレビュー URL は維持 |
 
 - marp-cli の共通オプションは `marp.config.mjs` に書き、コマンドを短く保つ
 - 出力は `dist/<deck>.html` (フラット)。旧 Nun の `dist/<deck>/index.html` とは URL が変わる (後述のリスク)
+
+## 公開
+
+- 本番は GitHub Pages (`https://henohenon.github.io/henohe-Nun/`)。`.github/workflows/deploy.yml` が main への push で `bun run build` → `bun run pdf` → `dist/` を公開する
+- PR ではビルドと PDF 生成だけ実行し、公開はしない (マージ前に CI が通ることを確認するため)
+- サイトは `/henohe-Nun/` 配下に置かれるので、一覧ページ・デッキ内の参照はすべて相対パスにする
 
 ## 記法の書き換え表
 
@@ -102,7 +108,7 @@ cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="
 
 ## 一覧ページ
 
-- `public/index.html` を手書き。デッキ名と `/<deck>.html` へのリンクを並べるだけ (サムネイルなし)
+- `public/index.html` を手書き。デッキ名、`<deck>.html` と `<deck>.pdf` へのリンクを並べるだけ (サムネイルなし)
 - デッキを追加したら 1 行追記する運用
 
 ## 捨てる機能 (必要になったら再検討)
@@ -111,7 +117,7 @@ wasd / Enter / ホイール / 左右クリックの操作、cursor-jack、zoom-f
 
 ## リスク
 
-- **URL の変更**: 旧 `/<deck>/` → 新 `/<deck>.html` (Cloudflare Pages では `/<deck>` でも配信される)。共有済みの cool-game の URL を生かすため、デプロイのフェーズで `public/_redirects` による転送を入れ、旧 URL で開けることを確認する
+- **URL の変更**: 旧 `/henohe-Nun/<deck>/` → 新 `/henohe-Nun/<deck>.html`。GitHub Pages はリダイレクト設定を持てないので、`scripts/postbuild.ts` が `dist/<deck>/index.html` に転送ページ (`location.replace` で `#N` を引き継ぎ、meta refresh を併記) を生成する。旧 PDF の URL (`/<deck>/slide.pdf`) は引き継がない
 - **`<object>` の SVG**: 上記の通りフェーズ 1 で検証。Safari での描画は Marp 自身が experimental 扱いの領域なので、主要ブラウザ (Chromium) で確認できれば可とする
 
 - **画像書き出し**: `marp --images png` では `<object>` の SVG が描画されない (HTML と PDF は描画される)。画像書き出しは今回使わないので許容する
@@ -124,5 +130,5 @@ wasd / Enter / ホイール / 左右クリックの操作、cursor-jack、zoom-f
 1. **骨格**: marp-cli 導入、`marp.config.mjs`、最小テーマ、`<object>` SVG の検証。`src/` と旧依存を削除し、`package.json` の scripts を差し替える。Quaver を Marp 記法に書き換えて dev / build が通る
 2. **cool-game 移行**: 書き換え表に従って移行。SVG を外部ファイル化し、`scripts/deck/` の出力先を変更。非公開スライドを退避
 3. **テーマ**: 旧デザインを `nun.css` に移植し、cool-game の見た目を旧版と同等にする
-4. **サイト化**: `public/index.html`、ビルド時のコピー、`_redirects`、`deploy.ts` の簡素化、PDF コマンド。本番デプロイして旧 URL を確認
+4. **サイト化**: `public/index.html`、ビルド後の処理 (コピー・転送ページ)、PDF コマンド、GitHub Pages の CI を marp-cli 版に書き直す。旧 Cloudflare 用のデプロイスクリプトは削除
 5. **ドキュメント**: `CLAUDE.md` / `README.md` を新構成に書き直す。不要になった spike (`docs/research/marp-spike/`) は記録として残す

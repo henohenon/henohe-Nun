@@ -1,6 +1,6 @@
 # へのへ Nun
 
-Markdown でスライドを書いて HTML / PDF で出力・公開する、俺俺スライド置き場。
+Markdown でスライドを書いて HTML / PDF で出力し、GitHub Pages で公開する俺俺スライド置き場。
 中身は純粋な [Marp](https://marp.app/) (marp-cli + 自前テーマ)。
 
 - 名前はうめき声とエジプト神話から。
@@ -14,7 +14,6 @@ bun install
 bun run dev      # marp -s benben。/ にデッキ一覧、/<deck>.md でプレビュー (?pdf で PDF)
 bun run build    # dist/<deck>.html + 画像・一覧ページ
 bun run pdf      # dist/<deck>.pdf
-bun run deploy   # Cloudflare Pages へ (--deck <name> で推測されにくい URL のプレビュー)
 ```
 
 ## 書き方
@@ -25,6 +24,7 @@ bun run deploy   # Cloudflare Pages へ (--deck <name> で推測されにくい 
 - class: `title` / `solo` / `message` (`<!-- _class: solo -->`)。`header` は右下、`footer` は左下に出る
 - 溢れるスライドは `<style scoped>section { font-size: 28px; }</style>` で縮める
 - デッキを足したら `public/index.html` に 1 行追記
+- main に push すると GitHub Actions がビルドして https://henohenon.github.io/henohe-Nun/ に公開
 
 ## ドキュメント
 
