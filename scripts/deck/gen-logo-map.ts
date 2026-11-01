@@ -2,7 +2,7 @@
 // 名前入りロゴ (ワードマーク) を優先、無いものだけ simple-icons のアイコンを使う。
 // 配置は seed 固定の乱数 + 衝突判定でパッキング (大きいものから置く)。
 import fs from 'node:fs'
-const DIR = 'public/images/engines'
+const DIR = 'benben/images/engines'
 const pathOf = slug => fs.readFileSync(`${DIR}/${slug}.svg`, 'utf8').match(/ d="([^"]+)"/)[1]
 
 const W = 1000, H = 699, MARGIN = 7
@@ -89,14 +89,14 @@ const render = it => {
   if (it.t === 'si') {
     body = `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="0 0 24 24"><path d="${pathOf(it.slug)}" fill="${it.color}"/></svg>`
   } else if (it.t === 'crop') {
-    body = `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="${it.vb}"><image href="/images/engines/${it.file}" x="0" y="0" width="${it.iw}" height="${it.ih}"/></svg>`
+    body = `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="${it.vb}"><image href="../engines/${it.file}" x="0" y="0" width="${it.iw}" height="${it.ih}"/></svg>`
   } else if (it.t === 'chip') {
-    body = `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${it.bg}"/><image href="/images/engines/${it.file}" x="${round(it.x + w * 0.06)}" y="${round(it.y + h * 0.16)}" width="${round(w * 0.88)}" height="${round(h * 0.68)}" preserveAspectRatio="xMidYMid meet"/></g>`
+    body = `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${it.bg}"/><image href="../engines/${it.file}" x="${round(it.x + w * 0.06)}" y="${round(it.y + h * 0.16)}" width="${round(w * 0.88)}" height="${round(h * 0.68)}" preserveAspectRatio="xMidYMid meet"/></g>`
   } else if (it.t === 'text') {
     // 公式ロゴが無いツールは、デッキのフォントで組んだワードマークで代用
     body = `<text x="${round(it.x + w / 2)}" y="${round(it.y + h / 2)}" text-anchor="middle" dominant-baseline="central" font-size="${round(h)}" font-weight="700" fill="${it.color}">${it.label}</text>`
   } else {
-    body = `<image href="/images/engines/${it.file}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    body = `<image href="../engines/${it.file}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
   }
   const g = `<g transform="rotate(${round(it.rot)} ${round(it.x + w / 2)} ${round(it.y + h / 2)})">${body}</g>`
   return `  <a href="${it.url}" target="_blank" rel="noopener noreferrer" aria-label="${it.name}" style="text-decoration:none"><title>${it.name}</title>${g}</a>`

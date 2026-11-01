@@ -1,19 +1,21 @@
-~~~meta
-title: Quaver
+---
+theme: nun
 description: QRコードから音声とエフェクトがでるやつ
-date: 2026-05-11
-~~~
-
-!fl~Quaver
-!fr~2026/05/11
-!fbg.at-b.lg.ty-8%.tx-20%.op-30~[](/images/quaver/quaver-mark.svg)
+header: 2026/05/11
+footer: Quaver
+---
 
 # Quaver
-🌊title
-!sub~QRコードでなんか音を出すやつ
-!bg.op-100~=fbg
+<!-- _class: title -->
+
+<p class="sub">QRコードでなんか音を出すやつ</p>
+
+![henoheno](images/henoheno.svg)
+
+---
 
 # 経緯
+<style scoped>section { font-size: 24px; }</style>
 ## キッカケ
 - そろそろゲームから広げたかった
 - 紙製品いいな、、、
@@ -26,13 +28,16 @@ date: 2026-05-11
 
 ## QRローダー
 
-!card[dotvoice](https://aidn.jp/dotvoice/)
+[dotvoice](https://aidn.jp/dotvoice/)
 
 コレとかみてて思いついた。今日の1時ぐらいから稼働開始。
 クソ雑な仕様書aiに書かせてclaude codeに投げた。
 なんか比較的それっぽくなった！
 
+---
+
 # かいはつひわ
+<style scoped>section { font-size: 27px; }</style>
 ## 技術スタックとか
 threejsとtonejs、opencvとかのなんか一般的なスタック
 ## QR overlay AR
@@ -42,7 +47,10 @@ threejsとtonejs、opencvとかのなんか一般的なスタック
 claude design初めて使ってみた。uiのモック生成とかごまかす性能はありそうだったがあんまりいい感じはしなかった
 いくつかの元ネタを元に自分で修正した。Qと♪と~を組み合わせてカワイイをイメージした。
 
+---
+
 # 所感
+<style scoped>section { font-size: 27px; }</style>
 ## よかった
 バチ焦りノリ爆速モック開発だったが、一番成果真っ当な気がする。
 やっぱりAIのごまかし性能はすごい。こういう使い方が一番合ってる気がしてきた。

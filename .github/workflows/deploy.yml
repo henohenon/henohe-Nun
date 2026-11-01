@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # PR ではビルドだけ確認する (デプロイはしない)
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -11,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -20,10 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -31,29 +29,24 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Install MuPDF tools
-        run: sudo apt-get update && sudo apt-get install -y mupdf-tools
-
-      - name: Install Playwright Chromium
-        run: bunx playwright install --with-deps chromium
-
       - name: Build
         run: bun run build
 
-      - name: Generate OGP thumbnails
-        run: bun run capture --thumb
-
+      # marp-cli の PDF 変換はランナーにプリインストールの Chrome を使う
       - name: Generate PDFs
         run: bun run pdf
 
       - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request'
 
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
           path: ./dist
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
