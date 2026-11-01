@@ -1,0 +1,6 @@
+<svg viewBox="0 0 1000 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">
+  <g stroke="#cf4b4b" transform="translate(0 0)"><path d="M38 38 82 82M82 38 38 82" fill="none" stroke-width="11" stroke-linecap="round"/></g>
+  <a href="https://www.playstation.com" target="_blank" rel="noopener noreferrer" aria-label="PlayStation" style="text-decoration:none"><title>PlayStation</title><image href="../engines/playstation.svg" x="230" y="29" width="80" height="62" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://www.xbox.com" target="_blank" rel="noopener noreferrer" aria-label="Xbox" style="text-decoration:none"><title>Xbox</title><image href="../engines/xbox-wm.svg" x="480" y="20" width="160" height="80" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://www.nintendo.com/jp/switch/" target="_blank" rel="noopener noreferrer" aria-label="Nintendo Switch" style="text-decoration:none"><title>Nintendo Switch</title><image href="../engines/nintendoswitch-wm.svg" x="805" y="15" width="90" height="90" preserveAspectRatio="xMidYMid meet"/></a>
+</svg>

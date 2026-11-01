@@ -1,0 +1,6 @@
+<svg viewBox="0 0 1000 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">
+  <g stroke="#d99a2b" transform="translate(0 0)"><path d="M60 30 86 84 34 84Z" fill="none" stroke-width="10" stroke-linejoin="round"/></g>
+  <a href="https://tauri.app" target="_blank" rel="noopener noreferrer" aria-label="Tauri" style="text-decoration:none"><title>Tauri</title><image href="../engines/tauri-wm.svg" x="183" y="32.5" width="174" height="55" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://www.electronjs.org" target="_blank" rel="noopener noreferrer" aria-label="Electron" style="text-decoration:none"><title>Electron</title><image href="../engines/electron-wm.svg" x="483" y="21.5" width="154" height="77" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://capacitorjs.com" target="_blank" rel="noopener noreferrer" aria-label="Capacitor" style="text-decoration:none"><title>Capacitor</title><image href="../engines/capacitor-wm.png" x="763" y="43.5" width="174" height="33" preserveAspectRatio="xMidYMid meet"/></a>
+</svg>

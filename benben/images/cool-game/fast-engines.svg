@@ -1,0 +1,4 @@
+<svg viewBox="0 0 1000 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">
+  <a href="https://godotengine.org" target="_blank" rel="noopener noreferrer" aria-label="Godot Engine" style="text-decoration:none"><title>Godot Engine</title><image href="../engines/godot-wm.svg" x="81" y="26" width="408" height="88" preserveAspectRatio="xMidYMid meet"/></a>
+  <a href="https://bevy.org" target="_blank" rel="noopener noreferrer" aria-label="Bevy" style="text-decoration:none"><title>Bevy</title><image href="../engines/bevy-wm.svg" x="549" y="26" width="352" height="88" preserveAspectRatio="xMidYMid meet"/></a>
+</svg>

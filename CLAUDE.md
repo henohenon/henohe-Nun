@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Nun is a Markdown-to-slide presentation tool built on Vite + unified. Markdown files in `benben/**/*.md` are transformed through a unified pipeline into HTML slide decks. Named after the Egyptian god of primordial waters.
+Nun is a personal slide repository built on pure Marp (marp-cli + a custom theme + `--html`). Markdown decks in `benben/*.md` are converted by marp-cli into HTML / PDF and published to GitHub Pages (`https://henohenon.github.io/henohe-Nun/`) by GitHub Actions. Named after the Egyptian god of primordial waters.
 
-**Current state**: Pre-implementation (regenerate branch). Specs are complete; source code implementation is in progress following `docs/dev-plan.md`.
+The old implementation (a custom Vite + unified pipeline with heading-hierarchy templates and the nwyt syntax) was retired in the Marp migration. Its specs are in `docs/archive/` and its code is at tag `nun-v1`. Do not reintroduce its patterns.
 
 ## Language
 
@@ -14,55 +14,47 @@ Communicate with the user in Japanese. All discussion, commit messages, and comm
 
 ## Specs
 
-Read the relevant spec before implementing any feature. The spec is the source of truth.
+Read the relevant spec before changing anything. The spec is the source of truth.
 
-- `docs/spec/syntax.md` — Markdown syntax and custom extensions (templates, nwyt, admonitions, code blocks, footnotes)
-- `docs/spec/structure.md` — Heading-to-DOM mapping, template catalog, theme system, footer
-- `docs/spec/requirements.md` — Navigation, output formats, OGP, HMR
-- `docs/spec/technical.md` — Pipeline design, Scope structure, micromark extensions, template application, Vite plugin (**primary implementation reference**)
-- `docs/comparison.md` — Competitor analysis and tech stack rationale
+- `docs/superpowers/specs/2026-10-03-marp-migration-design.md` — current design: directory layout, commands, syntax rules, theme, risks
+- `docs/journal-2026-09-29-marp.md` — why Nun moved to Marp
+- `docs/comparison.md` — competitor analysis (partly superseded by the journal above)
 
 ## Architecture
 
 ```
-md -> micromark+extensions -> mdast -> remark plugins -> hast (flat)
-   -> rehype plugins -> Scope extraction -> template application -> fn resolution
-   -> page shell -> rehype-stringify -> HTML
+benben/*.md --marp -I benben -o dist--> dist/<deck>.html
+benben/images/, public/ --scripts/postbuild.ts--> dist/  (+ redirect pages for old /<deck>/ URLs)
+push to main --.github/workflows/deploy.yml (build + pdf)--> GitHub Pages
 ```
 
-### Core Concepts
+- `marp.config.ts` — shared marp-cli options (typed with `defineConfig`; marp-cli transpiles it with the local TypeScript, which must stay <= v6) (`html`, `themeSet`, `allowLocalFiles`); dev / build / pdf all read it
+- `themes/nun.css` — the only theme (`@theme nun`), fixed 1280×720
+- `public/index.html` — hand-written deck list (links to `<deck>.html` and `<deck>.pdf`)
+- `scripts/postbuild.ts` — copies `benben/images` and `public/` into `dist/`, writes `dist/<deck>/index.html` redirect pages (keeps `#N`)
+- `.github/workflows/deploy.yml` — PRs only build; pushes to main build and deploy
+- The site lives under `/henohe-Nun/`, so every link and asset path must be relative
+- `scripts/deck/` — logo SVG generators (output is a starting point; deck SVGs were hand-adjusted afterwards)
 
-- **Scope**: Intermediate structure between flat hast and structured output. h1 creates sections, h2+ creates articles within sections. Templates are functions `(Scope) -> Element`.
-- **vfile.data**: Templates and nwyt props are extracted from mdast with position info, stored in vfile.data, then matched to Scopes by line range during extraction.
-- **Global scope**: Content before the first h1 provides defaults. Template names are ignored globally; only classes and nwyt props inherit to all scopes.
+## Writing Decks
 
-### Custom Syntax (micromark extensions)
-
-| Syntax | Level | Purpose |
-|--------|-------|---------|
-| `🌊template.class` | flow | Template + class assignment |
-| `!key~value` | flow | Nwyt prop (consumed as scope metadata) |
-| `!key[value](url)` | text | Nwyt content (stays in output) |
-| `:::type` | flow | Admonition blocks |
-
-### Vite Plugin
-
-- **Dev**: Middleware intercepts requests -> pipeline.process -> server.transformIndexHtml
-- **Build**: config (rollupOptions.input) + resolveId + load -> Vite resolves CSS/JS paths
-- Both modes use source paths (`/src/styles/index.css`, `/src/client/index.ts`); Vite handles resolution and bundling
-
-## Naming Conventions
-
-- **Article** (not Section) for h2+ scopes: `Article`, `RawArticle`, `ResolvedArticle`
-- **Nwyt** (not tilde) for the `!key` syntax family
-- Egyptian mythology naming theme: "Nun" (primordial waters), "nwyt" (water swell)
+- Marp standard syntax only. No custom engine, markdown-it plugins, or syntax sugar. If something feels missing, ask before extending
+- front-matter: `theme: nun`; `header:` is drawn bottom-right, `footer:` bottom-left
+- Slide classes: `title` (with `![henoheno](images/henoheno.svg)`), `solo`, `message` (`<p class="lead">` at the end)
+- Images use relative paths (`images/...`), never `/images/...` (absolute paths break PDF conversion)
+- SVGs with links or nested images go in `benben/images/<deck>/` and are referenced with `<object data="images/<deck>/<name>.svg" type="image/svg+xml"></object>`. SVGs inside `<object>` cannot use page CSS variables
+- Overflowing slides: `<style scoped>section { font-size: 28px; }</style>` (headings are em-based and shrink with it)
+- Non-directive HTML comments become presenter notes
+- After adding a deck, add a line to `public/index.html`
+- `benben/private/` is gitignored and must never be committed (the repo is public)
 
 ## Commands
 
 ```bash
 bun install          # Install dependencies
-bun run dev          # Dev server with HMR
-bun run build        # Production build
+bun run dev          # marp -s benben (server mode, http://localhost:8080)
+bun run build        # dist/<deck>.html + static files
+bun run pdf          # dist/<deck>.pdf
 ```
 
 `bun run dev` を起動したら、作業終了時に必ず停止する (port 滞積防止)。
@@ -70,38 +62,23 @@ bun run build        # Production build
 ## Tech Stack
 
 - **bun** — package manager and runtime
-- **Vite** — build tooling and HMR
-- **unified** — micromark -> mdast -> hast -> Scope -> hast -> stringify
-- **hastscript** `h()` — template rendering (not JSX)
-- **UnoCSS** + CSS variables — styling
-- **vanilla TS** — client scripts (navigation, zoom-fit, tooltip, copy)
-- **Playwright + mutool** — PDF/WebP output (separate command)
+- **@marp-team/marp-cli** — conversion, dev server, presenter features
+- **tsx** — scripts
+- **GitHub Actions + GitHub Pages** — hosting
 
 ## Development Philosophy
 
 ### Think Before You Code
 
-Read the spec for any feature before touching code. If the spec doesn't cover a case, ask — don't guess. When the spec and the code disagree, the spec wins until explicitly changed.
-
-### Consistency Over Cleverness
-
-Use the same pattern for the same concept everywhere. If the codebase uses `h()` for element construction, don't introduce JSX. If types use `Article`, don't call it `Section`. Predictability matters more than elegance.
+Read the spec before touching anything. If the spec doesn't cover a case, ask — don't guess. When the spec and the code disagree, the spec wins until explicitly changed.
 
 ### Minimal, Intentional Changes
 
-Do exactly what was asked. Don't add docstrings to unchanged functions. Don't refactor neighboring code. Don't introduce abstractions for hypothetical future needs. Three similar lines are better than a premature helper function.
+Do exactly what was asked. Don't refactor neighboring code. Don't introduce abstractions for hypothetical future needs.
 
-### Build Incrementally, Stay Green
+### Stay Green
 
-Follow `docs/dev-plan.md` phases in order. Each phase should end with something that builds and runs. Never leave the project in a broken state between commits.
-
-### Clean Slate, No Legacy Baggage
-
-This is a ground-up rewrite. Don't carry over patterns from the old implementation. Every design decision should be justified by current requirements, not historical accident.
-
-### Precision Over Brevity
-
-Don't sacrifice correctness to save tokens or lines of code. If a type needs five fields, give it five fields. If an error case exists, handle it. But don't handle error cases that can't happen.
+Every commit should leave `bun run build` working.
 
 ### Ask When Uncertain
 

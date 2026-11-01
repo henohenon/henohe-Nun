@@ -1,6 +1,6 @@
 // 「今回は」ページ用: 使うライブラリのロゴを 2 段で整列する SVG を生成
 import fs from 'node:fs'
-const DIR = 'public/images/engines'
+const DIR = 'benben/images/engines'
 const pathOf = slug => fs.readFileSync(`${DIR}/${slug}.svg`, 'utf8').match(/ d="([^"]+)"/)[1]
 
 // row1 = 主役 (描画)、row2 = 必要な分だけ足す部品
@@ -17,9 +17,9 @@ const render = it => {
   const x = it.cx - it.w / 2
   const mark = it.t === 'si'
     ? `<svg x="${x}" y="${it.y}" width="${it.w}" height="${it.h}" viewBox="0 0 24 24"><path d="${pathOf(it.slug)}" fill="${it.color}"/></svg>`
-    : `<image href="/images/engines/${it.file}" x="${x}" y="${it.y}" width="${it.w}" height="${it.h}" preserveAspectRatio="xMidYMid meet"${it.round ? ` clip-path="inset(0 round ${it.round}px)"` : ''}/>`
+    : `<image href="../engines/${it.file}" x="${x}" y="${it.y}" width="${it.w}" height="${it.h}" preserveAspectRatio="xMidYMid meet"${it.round ? ` clip-path="inset(0 round ${it.round}px)"` : ''}/>`
   // `a` 配下なので base の underline を打ち消す
-  const label = `<text x="${it.cx}" y="${it.ly}" text-anchor="middle" font-size="${it.fs}" fill="var(--sub)" style="text-decoration:none">${it.label}</text>`
+  const label = `<text x="${it.cx}" y="${it.ly}" text-anchor="middle" font-size="${it.fs}" fill="#888888" style="text-decoration:none">${it.label}</text>`
   return `  <a href="${it.url}" target="_blank" rel="noopener noreferrer" aria-label="${it.label}" style="text-decoration:none"><title>${it.label}</title>${mark}${label}</a>`
 }
 
