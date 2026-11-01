@@ -75,6 +75,12 @@ Marp の HTML は 16:9 固定で、他の比率では黒帯が出る。スライ
 - `<object>` の SVG の中の入力はページに伝わらないため、同一オリジンで中の文書に触れる場合は同じ操作を付け、座標をページに直す (file:// で開いた場合は SVG の上だけ操作が効かない)
 - 発表者ビュー・一覧表示・ブラウザの印刷で全スライドを出す機能は持たない (配布は PDF)
 
+### favicon (旧 Nun の favicon-anim)
+
+- Marp の HTML には favicon の指定が無い (そのままだとサイト直下の `/favicon.ico` = 別リポジトリのアイコンが出る)。`scripts/postbuild.ts` が `</head>` の直前に `favicon/wave01.png` (`data-anim`) と予備の `favicon/favicon.ico` の link を足す
+- `deck-runtime.ts` が wave01〜04 を 500ms ごとに切り替える。href の書き換えだけでは再取得しないブラウザがあるので link ごと差し替え、タブが隠れている間は止める
+- 一覧ページ (`public/index.html`) は ico のみ (アニメーションなし)
+
 ## 記法の書き換え表
 
 | 旧 Nun                                   | Marp                                                                                                       |
@@ -141,7 +147,7 @@ cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="
 
 ## 捨てる機能 (必要になったら再検討)
 
-zoom-fit、portrait 用の切り替え、OGP 画像・サムネイル生成、全スライド WebP、PDF の mutool 圧縮、admonition、コードフェンスのファイル名・行番号・diff・コピーボタン、OGP カード、脚注のツールチップ、mermaid、favicon アニメーション、画像の round / mono / dim。
+zoom-fit、portrait 用の切り替え、OGP 画像・サムネイル生成、全スライド WebP、PDF の mutool 圧縮、admonition、コードフェンスのファイル名・行番号・diff・コピーボタン、OGP カード、脚注のツールチップ、mermaid、画像の round / mono / dim。
 
 ## リスク
 

@@ -11,9 +11,15 @@ for (const file of readdirSync("benben")) {
   // Node の型除去は型注釈を空白に置き換えるだけなので、関数のソースはそのまま JS として使える
   const html = readFileSync(`dist/${deck}.html`, "utf8");
   const script = `<script>(${deckRuntime.toString()})()</script>`;
+  // Marp の HTML には favicon の指定が無い。wave01.png はアニメーション (deck-runtime.ts) の起点、ico はその予備
+  const icons =
+    '<link rel="icon" type="image/png" sizes="32x32" data-anim href="favicon/wave01.png">' +
+    '<link rel="icon" sizes="48x48" href="favicon/favicon.ico">';
   writeFileSync(
     `dist/${deck}.html`,
-    html.replace(/<\/body>(?![\s\S]*<\/body>)/, `${script}</body>`),
+    html
+      .replace("</head>", `${icons}</head>`)
+      .replace(/<\/body>(?![\s\S]*<\/body>)/, `${script}</body>`),
   );
 
   // 旧構成の URL (/<deck>/) を新しい /<deck>.html へ転送する。#N のスライド位置は引き継ぐ
