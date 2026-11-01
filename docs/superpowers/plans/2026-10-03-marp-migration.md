@@ -25,26 +25,27 @@
 
 ## ファイル構成 (完了時)
 
-| パス | 役割 |
-|---|---|
-| `benben/<deck>.md` | デッキ (Marp 記法) |
-| `benben/images/` | デッキが参照する画像・SVG (旧 `public/images/` から移動) |
-| `public/index.html` | 一覧ページ (手書き) |
-| `public/_redirects` | 旧 URL `/<deck>/` からの転送 |
-| `public/favicon/`, `public/henoheno.svg` | サイト共通ファイル (既存) |
-| `themes/nun.css` | Marp テーマ |
-| `marp.config.mjs` | marp-cli 共通設定 |
-| `scripts/copy-static.ts` | ビルド後の静的ファイルコピー |
-| `scripts/deploy.ts` | Cloudflare Pages デプロイ (簡素化) |
-| `scripts/deck/*.ts` | ロゴ SVG 生成 (出力先・参照パスを変更) |
-| `docs/archive/` | 旧 spec 類 |
-| `docs/drafts/` | cool-game の非公開スライド |
+| パス                                     | 役割                                                     |
+| ---------------------------------------- | -------------------------------------------------------- |
+| `benben/<deck>.md`                       | デッキ (Marp 記法)                                       |
+| `benben/images/`                         | デッキが参照する画像・SVG (旧 `public/images/` から移動) |
+| `public/index.html`                      | 一覧ページ (手書き)                                      |
+| `public/_redirects`                      | 旧 URL `/<deck>/` からの転送                             |
+| `public/favicon/`, `public/henoheno.svg` | サイト共通ファイル (既存)                                |
+| `themes/nun.css`                         | Marp テーマ                                              |
+| `marp.config.mjs`                        | marp-cli 共通設定                                        |
+| `scripts/copy-static.ts`                 | ビルド後の静的ファイルコピー                             |
+| `scripts/deploy.ts`                      | Cloudflare Pages デプロイ (簡素化)                       |
+| `scripts/deck/*.ts`                      | ロゴ SVG 生成 (出力先・参照パスを変更)                   |
+| `docs/archive/`                          | 旧 spec 類                                               |
+| `docs/drafts/`                           | cool-game の非公開スライド                               |
 
 ---
 
 ### Task 1: 旧実装の保存と docs のアーカイブ
 
 **Files:**
+
 - Move: `docs/spec/` → `docs/archive/spec/`、`docs/dev-plan.md` `docs/design.md` `docs/design-rework.md` `docs/refactor-2026-05-07.md` → `docs/archive/`
 
 - [ ] **Step 1: 旧実装にタグを打つ (ローカルのみ)**
@@ -53,6 +54,7 @@
 git tag nun-v1 HEAD
 git tag -l nun-v1
 ```
+
 Expected: `nun-v1`
 
 - [ ] **Step 2: 旧 docs を移動**
@@ -63,6 +65,7 @@ git mv docs/spec docs/archive/spec
 git mv docs/dev-plan.md docs/design.md docs/design-rework.md docs/refactor-2026-05-07.md docs/archive/
 ls docs docs/archive
 ```
+
 Expected: `docs/` に `archive/ comparison.md journal-*.md research/ superpowers/` が残る
 
 - [ ] **Step 3: コミット**
@@ -78,12 +81,14 @@ Marp 移行に伴い、旧 unified パイプラインの仕様を退避。旧実
 ### Task 2: Marp の骨格 (依存差し替え・設定・最小テーマ・Quaver 移行)
 
 **Files:**
+
 - Delete: `src/`、`vite.config.ts`、`uno.config.ts`、`benben/initiation.md`、`benben/fonts.md`、`benben/mobile-test.md`、`scripts/capture.ts`、`scripts/pdf.ts`、`scripts/render-mermaid.ts`、`scripts/svg-to-png.ts`、`scripts/test-playwright.ts`
 - Move: `public/images/` → `benben/images/`
 - Create: `marp.config.mjs`、`themes/nun.css`、`scripts/copy-static.ts`
 - Modify: `package.json`、`tsconfig.json`、`.gitignore`、`benben/Quaver.md`
 
 **Interfaces:**
+
 - Produces: `bun run dev` / `bun run build`、テーマ名 `nun`、`dist/<deck>.html` の出力形
 
 - [ ] **Step 1: 不要ファイルを削除し、画像を移動**
@@ -98,6 +103,7 @@ git mv public/images benben/images
 ```bash
 grep -rln "_lib" scripts
 ```
+
 Expected: `scripts/deploy.ts` のみ。他に無ければ `_lib.ts` は残す (deploy が使う)。
 
 - [ ] **Step 3: 依存を差し替え**
@@ -124,19 +130,19 @@ bun add -d @marp-team/marp-cli
 // marp-cli 共通設定。dev (marp -s) / build / pdf すべてがこのファイルを読む。
 export default {
   html: true,
-  themeSet: './themes',
+  themeSet: "./themes",
   allowLocalFiles: true,
-}
+};
 ```
 
 - [ ] **Step 6: `scripts/copy-static.ts` を作成**
 
 ```ts
-import { cpSync } from 'node:fs'
+import { cpSync } from "node:fs";
 
 // marp -I は md → html の変換のみで画像をコピーしないため、ビルド後に静的ファイルを dist/ へ揃える
-cpSync('benben/images', 'dist/images', { recursive: true })
-cpSync('public', 'dist', { recursive: true })
+cpSync("benben/images", "dist/images", { recursive: true });
+cpSync("public", "dist", { recursive: true });
 ```
 
 - [ ] **Step 7: 最小テーマ `themes/nun.css` を作成** (Task 5 で旧デザインを移植する。ここでは表示できる最低限)
@@ -159,7 +165,11 @@ section {
   font-size: 36px;
 }
 
-h1 { color: var(--brand); font-size: 66px; margin: 0 0 0.3em; }
+h1 {
+  color: var(--brand);
+  font-size: 66px;
+  margin: 0 0 0.3em;
+}
 ```
 
 - [ ] **Step 8: `tsconfig.json` と `.gitignore` を整理**
@@ -173,6 +183,7 @@ cat tsconfig.json .gitignore
 - [ ] **Step 9: Quaver を Marp 記法に書き換え**
 
 `benben/Quaver.md` に spec の書き換え表を適用する。具体的には:
+
 - `~~~meta` ブロック → front-matter (`theme: nun`、`description`、`header: 2026/05/11`、`footer: Quaver`)。`title` と `date` は削除
 - `!fl~Quaver` / `!fr~2026/05/11` → 上記 front-matter に統合
 - `!fbg...~[](...)` 行と `!bg.op-100~=fbg` 行 → 削除
@@ -184,9 +195,10 @@ cat tsconfig.json .gitignore
 
 - [ ] **Step 10: Nun 記法が残っていないことを確認**
 
-```bash
+````bash
 grep -nE '^🌊|^![a-z.]*~|^~~~meta|!card\[|!fn|^:::|```embed_' benben/Quaver.md
-```
+````
+
 Expected: 出力なし
 
 - [ ] **Step 11: build を通す**
@@ -195,6 +207,7 @@ Expected: 出力なし
 bun run build
 ls dist dist/images | head
 ```
+
 Expected: `dist/Quaver.html`、`dist/cool-game-development-using-web-technologies.html` (この時点では崩れていてよい)、`dist/images/`、`dist/favicon/`
 
 - [ ] **Step 12: dev で Quaver を目視確認**
@@ -217,9 +230,11 @@ initiation / fonts / mobile-test は削除 (タグ nun-v1 に残る)。"
 ### Task 3: `<object>` による外部 SVG の検証
 
 **Files:**
+
 - Create (一時): `benben/_object-test.md` (検証後に削除)
 
 **Interfaces:**
+
 - Produces: SVG の置き方の確定 (`<object>` 方式 or 直書き方式)。Task 4 がこれに従う
 
 - [ ] **Step 1: cool-game の 1 つ目の `embed_svg` (Unity ロゴ、リンク入り) をファイル化してテストデッキを作る**
@@ -239,6 +254,7 @@ theme: nun
 - [ ] **Step 2: dev で確認**
 
 `/_object-test.md` を開き、確認する:
+
 1. ロゴ画像が描画される (SVG 内の `../engines/` 参照が解決する)
 2. ロゴをクリックすると `https://unity.com` が新しいタブで開く
 3. `o` キーの一覧表示と、発表者ビュー (`p`) でも描画される
@@ -249,6 +265,7 @@ theme: nun
 bun run build
 npx marp benben/_object-test.md -o dist/_object-test.pdf
 ```
+
 `dist/_object-test.html` をブラウザで開いて 1・2 を確認。PDF はロゴが描画されていることを確認 (リンクは問わない)。
 
 - [ ] **Step 4: 方式を確定し、テストファイルを削除**
@@ -271,11 +288,13 @@ git commit -m "docs(spec): SVG の置き方を検証結果に合わせて確定"
 ### Task 4: cool-game の移行
 
 **Files:**
+
 - Modify: `benben/cool-game-development-using-web-technologies.md`
 - Create: `benben/images/cool-game/*.svg` (Task 3 で `<object>` 方式に決まった場合)、`docs/drafts/cool-game-unused.md`
 - Modify: `scripts/deck/gen-logo-map.ts`、`scripts/deck/gen-lib-row.ts`、`scripts/deck/README.md`
 
 **Interfaces:**
+
 - Consumes: Task 3 で確定した SVG 方式、Task 2 のテーマ名 `nun`
 - Produces: class `title` / `solo` / `message`、`<p class="sub">` / `<p class="lead">`、`header` / `footer` の使い方 (Task 5 のテーマがこれを前提にする)
 
@@ -303,15 +322,17 @@ git commit -m "docs(spec): SVG の置き方を検証結果に合わせて確定"
 
 - [ ] **Step 4: Nun 記法・絶対パスが残っていないことを確認**
 
-```bash
+````bash
 grep -nE '^🌊|^![a-z.]*~|^~~~meta|!card\[|!fn|^:::|```embed_|==[^=]+==|"/images/|\(/images/' benben/*.md
 grep -n '/images/' benben/images/cool-game/*.svg
-```
+````
+
 Expected: どちらも出力なし
 
 - [ ] **Step 5: ジェネレーターの出力先と参照パスを変更**
 
 `scripts/deck/gen-logo-map.ts` と `gen-lib-row.ts` で:
+
 - `const DIR = 'public/images/engines'` → `'benben/images/engines'`
 - `href="/images/engines/${it.file}"` → `href="../engines/${it.file}"` (全箇所)
 
@@ -322,6 +343,7 @@ Expected: どちらも出力なし
 ```bash
 bun run build
 ```
+
 dev で `/cool-game-development-using-web-technologies.md` を開き、全スライドを送って SVG・画像・リンクが出ていることを確認 (見た目の作り込みは Task 5)。
 
 - [ ] **Step 7: コミット**
@@ -339,11 +361,13 @@ embed_svg を benben/images/cool-game/ に外部化、ロゴ生成スクリプ�
 ### Task 5: テーマの移植
 
 **Files:**
+
 - Modify: `themes/nun.css`
 - Create: `benben/images/henoheno.svg`
 - Modify: `benben/cool-game-development-using-web-technologies.md`、`benben/Quaver.md` (title スライドに henoheno を追加)
 
 **Interfaces:**
+
 - Consumes: Task 4 の class / 要素の使い方
 - 旧デザインの出典: タグ `nun-v1` の `src/styles/{theme,base,body,footer,code-block}.css`、`src/styles/templates/{title,solo,message}.css`。旧値は cqmin 基準なので 1280×720 (cqmin = 7.2px) で px に換算済みの値を使う
 
@@ -353,6 +377,7 @@ embed_svg を benben/images/cool-game/ に外部化、ロゴ生成スクリプ�
 grep -c currentColor public/henoheno.svg
 sed 's/currentColor/#5932ff/g' public/henoheno.svg > benben/images/henoheno.svg
 ```
+
 title スライドの末尾に `![henoheno](images/henoheno.svg)` を追加 (cool-game / Quaver とも)。
 
 - [ ] **Step 2: `themes/nun.css` を全面的に書く**
@@ -373,7 +398,9 @@ section {
   --fg-mid: color-mix(in srgb, var(--main) 50%, var(--sub));
   --border: color-mix(in srgb, var(--base) 70%, var(--sub));
   --code-accent: #d6336c;
-  --text: Inter, "BIZ UDPGothic", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif;
+  --text:
+    Inter, "BIZ UDPGothic", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN",
+    sans-serif;
   --code: "JetBrains Mono", Consolas, Monaco, Menlo, monospace;
   --radius: 0.4em;
   --footer-font-size: 29px;
@@ -414,26 +441,92 @@ section > footer {
   line-height: 1;
   color: var(--strong);
 }
-section > footer { left: 0.6em; }
-section > header { right: 0.6em; left: auto; }
+section > footer {
+  left: 0.6em;
+}
+section > header {
+  right: 0.6em;
+  left: auto;
+}
 
 /* ---- Headings ---- */
-h1, h2, h3, h4, h5, h6 { color: var(--brand); text-wrap: balance; margin: 0; }
-h1 { font-size: 66px; line-height: 1.1; margin-block-end: 0.3em; }
-h2 { font-size: 47px; line-height: 1.1; margin-block-end: 0.2em; }
-h3 { font-size: 35px; line-height: 1.15; margin-block-end: 0.2em; }
-h4, h5, h6 { font-size: 29px; margin-block-end: 0.15em; }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--brand);
+  text-wrap: balance;
+  margin: 0;
+}
+h1 {
+  font-size: 66px;
+  line-height: 1.1;
+  margin-block-end: 0.3em;
+}
+h2 {
+  font-size: 47px;
+  line-height: 1.1;
+  margin-block-end: 0.2em;
+}
+h3 {
+  font-size: 35px;
+  line-height: 1.15;
+  margin-block-end: 0.2em;
+}
+h4,
+h5,
+h6 {
+  font-size: 29px;
+  margin-block-end: 0.15em;
+}
 
 /* ---- Body ---- */
-p { line-height: 1.65; margin: 0 0 0.4em; }
-ul, ol { padding-inline-start: 1.4em; margin: 0 0 0.35em; line-height: 1.6; }
-li { margin-block-end: 0.1em; }
-a { color: var(--brand); text-decoration: underline; }
-mark { background: color-mix(in srgb, var(--brand) 30%, transparent); color: inherit; border-radius: 0.15em; padding: 0 0.1em; }
-blockquote { margin: 0; border-left: 4px solid var(--border); padding-inline-start: 0.75em; color: var(--fg-mid); font-style: italic; }
-hr { border: none; border-top: 1px solid var(--border); margin-block: 0.5em; }
-img { max-width: 100%; }
-object { display: block; width: 100%; flex: 1 1 0; min-height: 0; }
+p {
+  line-height: 1.65;
+  margin: 0 0 0.4em;
+}
+ul,
+ol {
+  padding-inline-start: 1.4em;
+  margin: 0 0 0.35em;
+  line-height: 1.6;
+}
+li {
+  margin-block-end: 0.1em;
+}
+a {
+  color: var(--brand);
+  text-decoration: underline;
+}
+mark {
+  background: color-mix(in srgb, var(--brand) 30%, transparent);
+  color: inherit;
+  border-radius: 0.15em;
+  padding: 0 0.1em;
+}
+blockquote {
+  margin: 0;
+  border-left: 4px solid var(--border);
+  padding-inline-start: 0.75em;
+  color: var(--fg-mid);
+  font-style: italic;
+}
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-block: 0.5em;
+}
+img {
+  max-width: 100%;
+}
+object {
+  display: block;
+  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+}
 
 /* ---- Table ---- */
 table {
@@ -446,18 +539,34 @@ table {
   border-radius: var(--radius);
   overflow: hidden;
 }
-th, td {
+th,
+td {
   border: 0;
   border-right: 1px solid var(--table-border-color);
   border-bottom: 1px solid var(--table-border-color);
   padding: 0.3em 0.6em;
   text-align: left;
 }
-th[align="center"], td[align="center"] { text-align: center; }
-th[align="right"], td[align="right"] { text-align: right; }
-th:last-child, td:last-child { border-right: 0; }
-tr:last-child > th, tr:last-child > td { border-bottom: 0; }
-th { background: var(--muted); font-weight: 600; }
+th[align="center"],
+td[align="center"] {
+  text-align: center;
+}
+th[align="right"],
+td[align="right"] {
+  text-align: right;
+}
+th:last-child,
+td:last-child {
+  border-right: 0;
+}
+tr:last-child > th,
+tr:last-child > td {
+  border-bottom: 0;
+}
+th {
+  background: var(--muted);
+  font-weight: 600;
+}
 
 /* ---- Code ---- */
 :not(pre) > code {
@@ -479,21 +588,70 @@ pre {
   line-height: 1.5;
   overflow: hidden;
 }
-pre code { font-family: inherit; }
+pre code {
+  font-family: inherit;
+}
 /* highlight.js (Marp 標準) の配色。GitHub light 相当 */
-.hljs-comment, .hljs-quote { color: #6a737d; font-style: italic; }
-.hljs-keyword, .hljs-selector-tag, .hljs-type { color: #d73a49; }
-.hljs-string, .hljs-regexp, .hljs-addition { color: #032f62; }
-.hljs-number, .hljs-literal, .hljs-variable, .hljs-template-variable { color: #005cc5; }
-.hljs-title, .hljs-section, .hljs-function .hljs-title { color: #6f42c1; }
-.hljs-attr, .hljs-attribute, .hljs-name, .hljs-tag { color: #22863a; }
-.hljs-built_in, .hljs-symbol { color: #e36209; }
-.hljs-deletion { color: #b31d28; }
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type {
+  color: #d73a49;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: #032f62;
+}
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable {
+  color: #005cc5;
+}
+.hljs-title,
+.hljs-section,
+.hljs-function .hljs-title {
+  color: #6f42c1;
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-name,
+.hljs-tag {
+  color: #22863a;
+}
+.hljs-built_in,
+.hljs-symbol {
+  color: #e36209;
+}
+.hljs-deletion {
+  color: #b31d28;
+}
 
 /* ---- Template: title ---- */
-section.title { justify-content: center; }
-section.title > h1 { color: var(--strong); line-height: 1.05; max-width: 65%; position: relative; z-index: 1; }
-section.title > .sub { font-size: 29px; color: var(--fg-mid); margin-block-start: 0.5em; max-width: 65%; line-height: 1.4; position: relative; z-index: 1; }
+section.title {
+  justify-content: center;
+}
+section.title > h1 {
+  color: var(--strong);
+  line-height: 1.05;
+  max-width: 65%;
+  position: relative;
+  z-index: 1;
+}
+section.title > .sub {
+  font-size: 29px;
+  color: var(--fg-mid);
+  margin-block-start: 0.5em;
+  max-width: 65%;
+  line-height: 1.4;
+  position: relative;
+  z-index: 1;
+}
 section.title img[alt="henoheno"] {
   position: absolute;
   right: -10px;
@@ -506,12 +664,25 @@ section.title img[alt="henoheno"] {
 }
 
 /* ---- Template: solo ---- */
-section.solo { justify-content: center; align-items: center; }
-section.solo > h1 { margin: 0; text-align: center; max-width: 80%; }
+section.solo {
+  justify-content: center;
+  align-items: center;
+}
+section.solo > h1 {
+  margin: 0;
+  text-align: center;
+  max-width: 80%;
+}
 
 /* ---- Template: message ---- */
-section.message > h1 + * { margin-block-start: auto; }
-section.message > :not(h1, .lead, header, footer) { align-self: center; text-align: center; max-width: 80%; }
+section.message > h1 + * {
+  margin-block-start: auto;
+}
+section.message > :not(h1, .lead, header, footer) {
+  align-self: center;
+  text-align: center;
+  max-width: 80%;
+}
 section.message > .lead {
   margin-block-start: auto;
   text-align: center;
@@ -544,6 +715,7 @@ git commit -m "feat(theme): 旧デザインを themes/nun.css に移植
 ### Task 6: サイト化 (一覧・転送・デプロイ・PDF)
 
 **Files:**
+
 - Create: `public/index.html`、`public/_redirects`
 - Modify: `scripts/deploy.ts`、`.env.deploy.example`
 
@@ -552,27 +724,54 @@ git commit -m "feat(theme): 旧デザインを themes/nun.css に移植
 ```html
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" sizes="48x48" href="favicon/favicon.ico">
-  <title>Nun - Decks</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
-    ul { list-style: none; padding: 0; }
-    li { display: flex; gap: 0.75rem; padding: 0.4rem 0; border-bottom: 1px solid #eee; }
-    li > a { flex: 1; font-size: 1.05rem; text-decoration: none; color: inherit; }
-    li > a:hover { text-decoration: underline; }
-    time { color: #888; font-size: 0.9rem; }
-  </style>
-</head>
-<body>
-  <h1>Decks</h1>
-  <ul>
-    <li><a href="cool-game-development-using-web-technologies">Web技術でイイ感じのゲーム開発</a><time>2026-09-20</time></li>
-    <li><a href="Quaver">Quaver</a><time>2026-05-11</time></li>
-  </ul>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" sizes="48x48" href="favicon/favicon.ico" />
+    <title>Nun - Decks</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 720px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        color: #1a1a1a;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        display: flex;
+        gap: 0.75rem;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid #eee;
+      }
+      li > a {
+        flex: 1;
+        font-size: 1.05rem;
+        text-decoration: none;
+        color: inherit;
+      }
+      li > a:hover {
+        text-decoration: underline;
+      }
+      time {
+        color: #888;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Decks</h1>
+    <ul>
+      <li>
+        <a href="cool-game-development-using-web-technologies">Web技術でイイ感じのゲーム開発</a
+        ><time>2026-09-20</time>
+      </li>
+      <li><a href="Quaver">Quaver</a><time>2026-05-11</time></li>
+    </ul>
+  </body>
 </html>
 ```
 
@@ -585,6 +784,7 @@ git commit -m "feat(theme): 旧デザインを themes/nun.css に移植
 ### Task 7: ドキュメント更新
 
 **Files:**
+
 - Modify: `CLAUDE.md`、`README.md`
 
 - [ ] **Step 1: `CLAUDE.md` を新構成に書き直す**
@@ -598,6 +798,7 @@ git commit -m "feat(theme): 旧デザインを themes/nun.css に移植
 ```bash
 cat README.md
 ```
+
 で現状を見て、旧パイプライン・記法の説明を Marp 構成とコマンドの説明に置き換える。
 
 - [ ] **Step 3: 旧記法の記述が残っていないか確認**
@@ -605,6 +806,7 @@ cat README.md
 ```bash
 grep -nE 'nwyt|micromark|Scope|🌊|unified|UnoCSS|Vite' CLAUDE.md README.md
 ```
+
 Expected: 出力なし (由来の説明として残す場合を除く)
 
 - [ ] **Step 4: コミット**

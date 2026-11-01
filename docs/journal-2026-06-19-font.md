@@ -12,8 +12,8 @@
 
 1語統一の命名方針。将来2語に拡張する可能性は認識しつつ、現状はこれで行く。
 
-| 旧 | 新 | 理由 |
-|----|-----|------|
+| 旧            | 新       | 理由      |
+| ------------- | -------- | --------- |
 | `--font-body` | `--text` | 1語・自明 |
 | `--font-mono` | `--code` | 1語・自明 |
 
@@ -24,6 +24,7 @@
 新構文なし。既存の仕組みで対応できる。
 
 **section/article 単位**（var inline）：
+
 ```markdown
 !text~"Noto Sans JP", sans-serif
 !code~"JetBrains Mono", monospace
@@ -87,10 +88,10 @@
 
 ### 決定フォント
 
-| 変数 | 値 |
-|------|-----|
+| 変数     | 値                                                                                                   |
+| -------- | ---------------------------------------------------------------------------------------------------- |
 | `--text` | `Inter, "BIZ UDPGothic", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif` |
-| `--code` | `"JetBrains Mono", "Consolas", "Monaco", "Menlo", monospace` |
+| `--code` | `"JetBrains Mono", "Consolas", "Monaco", "Menlo", monospace`                                         |
 
 ### `--text` の選定根拠
 
@@ -101,6 +102,7 @@ CSS font stack はグリフ単位でフォールバックするため、`Inter, 
 - `-apple-system` 以降は macOS/iOS フォールバック
 
 **没になった候補**:
+
 - `Noto Sans JP` 単体: 次点。Latin/Japanese が同一ファミリーでメトリクスが揃うが、Latin が Inter に劣る
 - `Plus Jakarta Sans + Zen Kaku Gothic New`: 個性あり、代替として有効
 - `Poppins`: 日本語グリフなし、混植で OS fallback が露骨に見える
@@ -130,10 +132,10 @@ CSS font stack はグリフ単位でフォールバックするため、`Inter, 
 
 ### PDF とフォントの関係
 
-| 状況 | フォントの挙動 |
-|------|---------------|
-| `bun run dev` / `bun run build` (HTML) | ブラウザがレンダリング時にネットワーク or ローカルサーバーからフォントを取得。Google Fonts はネット接続が必要 |
-| PDF 生成 (Playwright/Chromium) | Chromium が自動でフォントをサブセット埋め込み。生成後の PDF は完全自己完結。ローカルフォント・Google Fonts ともに PDF 内に埋め込まれる |
+| 状況                                   | フォントの挙動                                                                                                                         |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run dev` / `bun run build` (HTML) | ブラウザがレンダリング時にネットワーク or ローカルサーバーからフォントを取得。Google Fonts はネット接続が必要                          |
+| PDF 生成 (Playwright/Chromium)         | Chromium が自動でフォントをサブセット埋め込み。生成後の PDF は完全自己完結。ローカルフォント・Google Fonts ともに PDF 内に埋め込まれる |
 
 ### ローカルフォントのライセンス対応
 

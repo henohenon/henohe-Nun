@@ -6,35 +6,44 @@
 
 ```md
 # Page1
+
 ## Article1
+
 ### Article2
+
 ### Article3
+
 ## Article4
+
 # Page2
 ```
 
 ```html
 <section>
-   <div class="stage">
-      <h1>Page1</h1>
-      <div class="content">
-         <article>
-            <div class="stage">
-               <h2>Article1</h2>
-               <div class="content">
-                  <article><div class="stage"><h3>Article2</h3></div></article>
-                  <article><div class="stage"><h3>Article3</h3></div></article>
-               </div>
-            </div>
-         </article>
-         <article>
-            <div class="stage"><h2>Article4</h2></div>
-         </article>
-      </div>
-   </div>
+  <div class="stage">
+    <h1>Page1</h1>
+    <div class="content">
+      <article>
+        <div class="stage">
+          <h2>Article1</h2>
+          <div class="content">
+            <article>
+              <div class="stage"><h3>Article2</h3></div>
+            </article>
+            <article>
+              <div class="stage"><h3>Article3</h3></div>
+            </article>
+          </div>
+        </div>
+      </article>
+      <article>
+        <div class="stage"><h2>Article4</h2></div>
+      </article>
+    </div>
+  </div>
 </section>
 <section>
-   <div class="stage"><h1>Page2</h1></div>
+  <div class="stage"><h1>Page2</h1></div>
 </section>
 ```
 
@@ -45,23 +54,25 @@ heading の前にあるコンテンツは、見出しなしの暗黙的な artic
 
 ```md
 # Page1
+
 ここはh2の前のコンテンツ
+
 ## Article1
 ```
 
 ```html
 <section>
-   <div class="stage">
-      <h1>Page1</h1>
-      <div class="content">
-         <article>
-            <div class="stage">ここはh2の前のコンテンツ</div>
-         </article>
-         <article>
-            <div class="stage"><h2>Article1</h2></div>
-         </article>
-      </div>
-   </div>
+  <div class="stage">
+    <h1>Page1</h1>
+    <div class="content">
+      <article>
+        <div class="stage">ここはh2の前のコンテンツ</div>
+      </article>
+      <article>
+        <div class="stage"><h2>Article1</h2></div>
+      </article>
+    </div>
+  </div>
 </section>
 ```
 
@@ -69,33 +80,38 @@ heading が空白のみの場合でも区切りとして機能する。この場
 
 ```md
 #
+
 装飾だけのページ
+
 ##
+
 見出しなしのarticle
 ```
 
 ```html
 <section>
-   <div class="stage">
-      <div class="content">
-         <article>
-            <div class="stage">装飾だけのページ</div>
-         </article>
-         <article>
-            <div class="stage">見出しなしのarticle</div>
-         </article>
-      </div>
-   </div>
+  <div class="stage">
+    <div class="content">
+      <article>
+        <div class="stage">装飾だけのページ</div>
+      </article>
+      <article>
+        <div class="stage">見出しなしのarticle</div>
+      </article>
+    </div>
+  </div>
 </section>
 ```
 
 ## 自動フィット
+
 section の `.stage > .content` が溢れた場合、CSS `zoom` で自動 fit される。対象は section 直下の `.stage > .content` のみで、ネストした article 内の個別 fit は行わない (article は親 section 側 zoom で間接スケール)。`.content` 自体は `overflow: visible` のまま — `overflow: hidden` を付けると zoom-fit の overflow 検知 (`offsetTop+offsetHeight` ベース) が壊れて縮小発動しなくなるため。zoom 適用後の再レイアウトで収束しない場合があるため、最大10回繰り返し実行する。10回で収束しない場合はその時点の zoom 値をそのまま使用する。
 
 ## テンプレート一覧
+
 - default
-   - titleの下に左寄せbody。通常の
-   - 空白や`🌊`だけなど省略もこれ。
+  - titleの下に左寄せbody。通常の
+  - 空白や`🌊`だけなど省略もこれ。
 - title
   - 中央左にtitle (h1)、その下にsub (`!sub~text` で指定)
   - bodyはなく、代わりに固定画像（`/henoheno.svg`）が1枚表示される（差し替え不可、意図的な固定）
@@ -120,25 +136,30 @@ section の `.stage > .content` が溢れた場合、CSS `zoom` で自動 fit �
   - bodyはなし
 
 ## スライドデザイン
+
 スライド全体の共通デザインとして、白背景+黒フッターがある。各 nwyt prop の解釈レベルは記法仕様を参照。
 
 ### フッター
+
 黒い一本線と、その上の両端のテキストによって構成される。
 両端テキストは、`!fl~<text>`と`!fr~<text>`によって指定できる。
 (このテキストもMarkdown記法が使える。`**b***i*~~d~~`みたいな。)
 
 ### 背景画像指定
+
 nwyt prop で設定可能。レイヤーは下から `!bg` → フッター → `!fbg` の順で重なる。
 
 - `!bg~[alt](url)` — スライド全体の背景画像（最背面）
 - `!fbg~[alt](url)` — フッター部分がマスクされた背景画像。フッター要素を SVG 化し、`mask: url(#footer-mask)` で切り抜く。フッターの線・テキスト形状を通して画像が見える
 
 ### 装飾レイヤーの DOM 配置
+
 `!bg` / `!fbg` / `<footer>` を含む装飾レイヤーは、すべて該当 section の直下の子要素として配置する。`<div class="slide">` 等の wrapper でラップして section の sibling とする構成は採らない。
 
 理由: Nun の pipeline は markdown → document semantic を DOM に投影する設計で、`Scope.nwyts` に保持される装飾 prop は scope (= section) に属する。これを DOM 上でも parent-child 包含関係として表現することで、思想と DOM 構造が一致する。wrapper 案は presentation-first (Keynote / Figma 的) な思想転換が前提となり、Nun の content-first 哲学と乖離するため採用しない。
 
 section 直下の sibling 配置は以下:
+
 - `.bg-layer` (position: absolute, `z-index: -1`) — 最背面の背景画像
 - `.stage` (in-flow grid item, 1fr) — heading + content の layout 容器、 padding を持つ
 - `<footer>` (in-flow grid item, auto) — section 端 (edge-to-edge) に貼る装飾線 + 両端テキスト
@@ -149,14 +170,15 @@ bg / fbg は absolute、 stage / footer は in-flow grid item。 stage が paddi
 bg / fbg の **wrapper (`.bg-layer` / `.fbg-layer`) は section 全体を覆う固定 container** (positioning + (fbg のみ) mask 適用先)。 user が `!bg.<class>~` `!fbg.<class>~` で指定する image utility class は wrapper でなく **inner `<img class="bg-img">` / `<img class="fbg-img">` に付与される**、 つまり class は wrapper 内の img の位置 / サイズ / 効果を制御する。 fbg の場合 mask は wrapper 固定なので、 inner img を `.corner-bl` 等で動かすと mask 領域 (footer 形状) と img 領域 (動いた先) の **交差部分**しか可視にならない (image utility class の振る舞いとしては正、 fbg 全体を動かしたい場合は mask 構築 (`fbg.ts`) の改修が必要)。
 
 ### テーマ
+
 スライドの配色は少数のCSS変数で制御する。
 
-| 変数 | 用途 |
-| --- | --- |
-| `--base` | 背景色 |
-| `--main` | 本文色 |
-| `--sub` | 補助テキスト色 |
-| `--strong` | 強調色 |
-| `--brand` | アクセント色 |
+| 変数       | 用途           |
+| ---------- | -------------- |
+| `--base`   | 背景色         |
+| `--main`   | 本文色         |
+| `--sub`    | 補助テキスト色 |
+| `--strong` | 強調色         |
+| `--brand`  | アクセント色   |
 
 配色プリセット（`.dark` など）やカスタム配色はクラス経由でCSSファイルにて定義する。

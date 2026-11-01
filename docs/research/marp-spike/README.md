@@ -4,14 +4,14 @@
 
 ## ファイル
 
-| ファイル | 内容 |
-|---|---|
-| `engine.mjs` | Marp CLI の functional engine。`!fl`/`!fr` の custom directive、`:::note`、`==mark==`、コードフェンス拡張 (`lang:name` / `diff_` / `embed_html` / `embed_svg`)、`!card`、`!fn`、Nun 行記法の desugar (`🌊` / `!key~` / `~~~meta`) |
-| `nun.css` | Marp テーマ (`@theme nun`)。footer 線 + fl/fr、title / solo / message テンプレート、`@size landscape` / `@size portrait` |
-| `deck-nun.md` | Nun 記法のままのサンプル (desugar 経由で変換) |
-| `deck-marp.md` | 同じ内容を Marp 記法で書いたもの (比較用) |
-| `switch.js` | 縦横比で landscape 版 / portrait 版を切り替えるスクリプト (hash でスライド位置を引き継ぐ) |
-| `ogp-cache.json` | `!card` 用 OGP キャッシュ (事前取得を想定した形) |
+| ファイル         | 内容                                                                                                                                                                                                                              |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `engine.mjs`     | Marp CLI の functional engine。`!fl`/`!fr` の custom directive、`:::note`、`==mark==`、コードフェンス拡張 (`lang:name` / `diff_` / `embed_html` / `embed_svg`)、`!card`、`!fn`、Nun 行記法の desugar (`🌊` / `!key~` / `~~~meta`) |
+| `nun.css`        | Marp テーマ (`@theme nun`)。footer 線 + fl/fr、title / solo / message テンプレート、`@size landscape` / `@size portrait`                                                                                                          |
+| `deck-nun.md`    | Nun 記法のままのサンプル (desugar 経由で変換)                                                                                                                                                                                     |
+| `deck-marp.md`   | 同じ内容を Marp 記法で書いたもの (比較用)                                                                                                                                                                                         |
+| `switch.js`      | 縦横比で landscape 版 / portrait 版を切り替えるスクリプト (hash でスライド位置を引き継ぐ)                                                                                                                                         |
+| `ogp-cache.json` | `!card` 用 OGP キャッシュ (事前取得を想定した形)                                                                                                                                                                                  |
 
 ## 実行
 

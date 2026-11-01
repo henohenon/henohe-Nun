@@ -13,7 +13,9 @@ section {
   --fg-mid: color-mix(in srgb, var(--main) 50%, var(--sub));
   --border: color-mix(in srgb, var(--base) 70%, var(--sub));
   --code-accent: #d6336c;
-  --text: Inter, "BIZ UDPGothic", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif;
+  --text:
+    Inter, "BIZ UDPGothic", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN",
+    sans-serif;
   --code: "JetBrains Mono", Consolas, Monaco, Menlo, monospace;
   --radius: 0.4em;
   --footer-font-size: 29px;
@@ -54,31 +56,100 @@ section > footer {
   line-height: 1;
   color: var(--strong);
 }
-section > footer { left: 0.6em; }
-section > header { right: 0.6em; left: auto; }
+section > footer {
+  left: 0.6em;
+}
+section > header {
+  right: 0.6em;
+  left: auto;
+}
 
 /* ---- Headings ----
    section の font-size (36px) 基準の em。溢れるスライドは md 側で
    `<style scoped>section { font-size: 28px; }</style>` とすれば見出しごと縮む */
-h1, h2, h3, h4, h5, h6 { color: var(--brand); text-wrap: balance; margin: 0; }
-h1 { font-size: 1.83em; line-height: 1.1; margin-block-end: 0.3em; }
-h2 { font-size: 1.3em; line-height: 1.1; margin-block-end: 0.2em; }
-h3 { font-size: 0.97em; line-height: 1.15; margin-block-end: 0.2em; }
-h4, h5, h6 { font-size: 0.8em; margin-block-end: 0.15em; }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--brand);
+  text-wrap: balance;
+  margin: 0;
+}
+h1 {
+  font-size: 1.83em;
+  line-height: 1.1;
+  margin-block-end: 0.3em;
+}
+h2 {
+  font-size: 1.3em;
+  line-height: 1.1;
+  margin-block-end: 0.2em;
+}
+h3 {
+  font-size: 0.97em;
+  line-height: 1.15;
+  margin-block-end: 0.2em;
+}
+h4,
+h5,
+h6 {
+  font-size: 0.8em;
+  margin-block-end: 0.15em;
+}
 
 /* ---- Body ---- */
-p { line-height: 1.65; margin: 0 0 0.4em; }
-ul, ol { padding-inline-start: 1.4em; margin: 0 0 0.35em; line-height: 1.6; }
-li { margin-block-end: 0.1em; }
-a { color: var(--brand); text-decoration: underline; }
-mark { background: color-mix(in srgb, var(--brand) 30%, transparent); color: inherit; border-radius: 0.15em; padding: 0 0.1em; }
-blockquote { margin: 0; border-left: 4px solid var(--border); padding-inline-start: 0.75em; color: var(--fg-mid); font-style: italic; }
-hr { border: none; border-top: 1px solid var(--border); margin-block: 0.5em; }
-img { max-width: 100%; }
+p {
+  line-height: 1.65;
+  margin: 0 0 0.4em;
+}
+ul,
+ol {
+  padding-inline-start: 1.4em;
+  margin: 0 0 0.35em;
+  line-height: 1.6;
+}
+li {
+  margin-block-end: 0.1em;
+}
+a {
+  color: var(--brand);
+  text-decoration: underline;
+}
+mark {
+  background: color-mix(in srgb, var(--brand) 30%, transparent);
+  color: inherit;
+  border-radius: 0.15em;
+  padding: 0 0.1em;
+}
+blockquote {
+  margin: 0;
+  border-left: 4px solid var(--border);
+  padding-inline-start: 0.75em;
+  color: var(--fg-mid);
+  font-style: italic;
+}
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-block: 0.5em;
+}
+img {
+  max-width: 100%;
+}
 /* `<object ...></object>` を 1 行で書くと markdown-it は段落内のインライン HTML として扱い <p> で包む。
    その段落ごと残りの高さを分け合い、SVG 側の preserveAspectRatio で収める */
-p:has(> object) { flex: 1 1 0; min-height: 0; margin: 0; }
-object { display: block; width: 100%; height: 100%; }
+p:has(> object) {
+  flex: 1 1 0;
+  min-height: 0;
+  margin: 0;
+}
+object {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
 /* ---- Table ---- */
 table {
@@ -91,18 +162,34 @@ table {
   border-radius: var(--radius);
   overflow: hidden;
 }
-th, td {
+th,
+td {
   border: 0;
   border-right: 1px solid var(--table-border-color);
   border-bottom: 1px solid var(--table-border-color);
   padding: 0.3em 0.6em;
   text-align: left;
 }
-th[align="center"], td[align="center"] { text-align: center; }
-th[align="right"], td[align="right"] { text-align: right; }
-th:last-child, td:last-child { border-right: 0; }
-tr:last-child > th, tr:last-child > td { border-bottom: 0; }
-th { background: var(--muted); font-weight: 600; }
+th[align="center"],
+td[align="center"] {
+  text-align: center;
+}
+th[align="right"],
+td[align="right"] {
+  text-align: right;
+}
+th:last-child,
+td:last-child {
+  border-right: 0;
+}
+tr:last-child > th,
+tr:last-child > td {
+  border-bottom: 0;
+}
+th {
+  background: var(--muted);
+  font-weight: 600;
+}
 
 /* ---- Code ---- */
 :not(pre) > code {
@@ -124,21 +211,70 @@ pre {
   line-height: 1.5;
   overflow: hidden;
 }
-pre code { font-family: inherit; }
+pre code {
+  font-family: inherit;
+}
 /* highlight.js (Marp 標準) の配色。GitHub light 相当 */
-.hljs-comment, .hljs-quote { color: #6a737d; font-style: italic; }
-.hljs-keyword, .hljs-selector-tag, .hljs-type { color: #d73a49; }
-.hljs-string, .hljs-regexp, .hljs-addition { color: #032f62; }
-.hljs-number, .hljs-literal, .hljs-variable, .hljs-template-variable { color: #005cc5; }
-.hljs-title, .hljs-section, .hljs-function .hljs-title { color: #6f42c1; }
-.hljs-attr, .hljs-attribute, .hljs-name, .hljs-tag { color: #22863a; }
-.hljs-built_in, .hljs-symbol { color: #e36209; }
-.hljs-deletion { color: #b31d28; }
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type {
+  color: #d73a49;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: #032f62;
+}
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable {
+  color: #005cc5;
+}
+.hljs-title,
+.hljs-section,
+.hljs-function .hljs-title {
+  color: #6f42c1;
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-name,
+.hljs-tag {
+  color: #22863a;
+}
+.hljs-built_in,
+.hljs-symbol {
+  color: #e36209;
+}
+.hljs-deletion {
+  color: #b31d28;
+}
 
 /* ---- Template: title ---- */
-section.title { justify-content: center; }
-section.title > h1 { color: var(--strong); line-height: 1.05; max-width: 65%; position: relative; z-index: 1; }
-section.title > .sub { font-size: 0.8em; color: var(--fg-mid); margin-block-start: 0.5em; max-width: 65%; line-height: 1.4; position: relative; z-index: 1; }
+section.title {
+  justify-content: center;
+}
+section.title > h1 {
+  color: var(--strong);
+  line-height: 1.05;
+  max-width: 65%;
+  position: relative;
+  z-index: 1;
+}
+section.title > .sub {
+  font-size: 0.8em;
+  color: var(--fg-mid);
+  margin-block-start: 0.5em;
+  max-width: 65%;
+  line-height: 1.4;
+  position: relative;
+  z-index: 1;
+}
 section.title img[alt="henoheno"] {
   position: absolute;
   right: -10px;
@@ -152,12 +288,25 @@ section.title img[alt="henoheno"] {
 }
 
 /* ---- Template: solo ---- */
-section.solo { justify-content: center; align-items: center; }
-section.solo > h1 { margin: 0; text-align: center; max-width: 80%; }
+section.solo {
+  justify-content: center;
+  align-items: center;
+}
+section.solo > h1 {
+  margin: 0;
+  text-align: center;
+  max-width: 80%;
+}
 
 /* ---- Template: message ---- */
-section.message > h1 + * { margin-block-start: auto; }
-section.message > :not(h1, .lead, header, footer) { align-self: center; text-align: center; max-width: 80%; }
+section.message > h1 + * {
+  margin-block-start: auto;
+}
+section.message > :not(h1, .lead, header, footer) {
+  align-self: center;
+  text-align: center;
+  max-width: 80%;
+}
 section.message > .lead {
   margin-block-start: auto;
   text-align: center;

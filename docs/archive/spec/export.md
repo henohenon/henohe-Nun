@@ -8,12 +8,12 @@
 
 ## コマンド
 
-| コマンド | 役割 | 出力 |
-|---|---|---|
-| `bun run build` | HTML ビルド (Vite) | `dist/<deck>/index.html` ほか |
-| `bun run capture` | 全デッキ → 全スライド → webp | `dist/captures/<deck>/<n>.webp` |
-| `bun run capture --thumb` | 各デッキ slide#1 → サムネ webp (OGP 用) | `dist/<deck>/thumb.webp` |
-| `bun run pdf` | 各デッキ → PDF (`page.pdf` + `mutool clean`) | `dist/<deck>/slide.pdf` |
+| コマンド                  | 役割                                         | 出力                            |
+| ------------------------- | -------------------------------------------- | ------------------------------- |
+| `bun run build`           | HTML ビルド (Vite)                           | `dist/<deck>/index.html` ほか   |
+| `bun run capture`         | 全デッキ → 全スライド → webp                 | `dist/captures/<deck>/<n>.webp` |
+| `bun run capture --thumb` | 各デッキ slide#1 → サムネ webp (OGP 用)      | `dist/<deck>/thumb.webp`        |
+| `bun run pdf`             | 各デッキ → PDF (`page.pdf` + `mutool clean`) | `dist/<deck>/slide.pdf`         |
 
 `build` だけは Vite の慣例に従い無接頭辞。`capture` / `pdf` は build とは独立した出力工程として並列に置く。
 
@@ -21,19 +21,19 @@
 
 `capture` / `pdf` 両方:
 
-| フラグ | 既定値 | 用途 |
-|---|---|---|
+| フラグ          | 既定値   | 用途               |
+| --------------- | -------- | ------------------ |
 | `--deck <name>` | 全デッキ | 特定デッキだけ処理 |
-| `--width <px>` | `1920` | ビューポート横幅 |
-| `--height <px>` | `1080` | ビューポート縦幅 |
+| `--width <px>`  | `1920`   | ビューポート横幅   |
+| `--height <px>` | `1080`   | ビューポート縦幅   |
 
 `capture` 専用:
 
-| フラグ | 既定値 | 用途 |
-|---|---|---|
-| `--slide <n>` | 全スライド | 1 枚だけキャプチャ |
-| `--thumb` | off | OGP サムネモード (slide#1 → `dist/<deck>/thumb.webp`) |
-| `--quality <n>` | `85` | webp 品質 (0-100) |
+| フラグ          | 既定値     | 用途                                                  |
+| --------------- | ---------- | ----------------------------------------------------- |
+| `--slide <n>`   | 全スライド | 1 枚だけキャプチャ                                    |
+| `--thumb`       | off        | OGP サムネモード (slide#1 → `dist/<deck>/thumb.webp`) |
+| `--quality <n>` | `85`       | webp 品質 (0-100)                                     |
 
 ### 内部フロー
 
@@ -53,13 +53,13 @@
 
 ### WebP 固定 (2026 時点)
 
-| 候補 | 採否 | 理由 |
-|---|---|---|
-| **WebP** | ✅ default | 全ブラウザ標準対応、サイズ/品質/互換のバランス◎ |
-| AVIF | △ 将来 | webp より 20-30% 小さいが**エンコードが 5-10 倍遅い**。CI コスト見合わず |
-| PNG | ✕ | テキスト主体スライドだと webp lossy q85 でも視覚差なし。サイズだけ膨らむ |
-| JPEG | ✕ | 文字エッジが滲む。透過なし |
-| JPEG XL | ✕ | Chrome が 2022 に却下、エコシステムが死んだ |
+| 候補     | 採否       | 理由                                                                     |
+| -------- | ---------- | ------------------------------------------------------------------------ |
+| **WebP** | ✅ default | 全ブラウザ標準対応、サイズ/品質/互換のバランス◎                          |
+| AVIF     | △ 将来     | webp より 20-30% 小さいが**エンコードが 5-10 倍遅い**。CI コスト見合わず |
+| PNG      | ✕          | テキスト主体スライドだと webp lossy q85 でも視覚差なし。サイズだけ膨らむ |
+| JPEG     | ✕          | 文字エッジが滲む。透過なし                                               |
+| JPEG XL  | ✕          | Chrome が 2022 に却下、エコシステムが死んだ                              |
 
 `--format png` 等の切替フラグは置かない (将来 avif 統一の検討余地は残す)。
 
@@ -83,11 +83,11 @@
 
 `pdf` スクリプトはランタイム環境に応じて以下を選ぶ:
 
-| 条件 | 使用ツール | 期待値 | 備考 |
-|---|---|---|---|
+| 条件                    | 使用ツール           | 期待値         | 備考                                |
+| ----------------------- | -------------------- | -------------- | ----------------------------------- |
 | `mutool` が PATH にある | `mutool clean -gggg` | **50-70% off** | 画像/フォント再エンコード込みの本命 |
-| 無い | `pdf-lib` (純 JS) | ~10% off | object stream + dedupe のみ |
-| `--no-compress` 指定 | (圧縮なし) | 0% | 検証用 |
+| 無い                    | `pdf-lib` (純 JS)    | ~10% off       | object stream + dedupe のみ         |
+| `--no-compress` 指定    | (圧縮なし)           | 0%             | 検証用                              |
 
 mutool は OS 依存だが必須ではなく、無くてもスクリプトは動く。CI には install ステップを入れて常に最大圧縮を効かせる。
 
@@ -103,9 +103,18 @@ mutool は OS 依存だが必須ではなく、無くてもスクリプトは動
 `page.pdf()` は表示中の DOM を縦に流し込んで分割する。スライド表示は `.active` クラスで 1 枚ずつ切替なので、PDF 化前に **全 section を強制表示** + **page-break-after** を CSS で注入する。
 
 ```css
-@page { size: 1920px 1080px; margin: 0; }
-section { display: flex !important; opacity: 1 !important; page-break-after: always; }
-section:last-child { page-break-after: auto; }
+@page {
+  size: 1920px 1080px;
+  margin: 0;
+}
+section {
+  display: flex !important;
+  opacity: 1 !important;
+  page-break-after: always;
+}
+section:last-child {
+  page-break-after: auto;
+}
 ```
 
 `zoom-fit` (オーバーフロー縮小) は印刷モードで全 section を回す実装になっているため、PDF 化時もそのまま動く想定。
@@ -145,11 +154,11 @@ bunx playwright install chromium    # 初回のみ Chromium バイナリ取得
 
 mutool は **OS パッケージ**:
 
-| OS | 入手 |
-|---|---|
-| Ubuntu/Debian | `sudo apt-get install mupdf-tools` |
-| macOS | `brew install mupdf-tools` |
-| Windows | https://mupdf.com/releases/ から `mupdf-x.y.z-windows.zip` を取得し PATH に通す |
+| OS            | 入手                                                                            |
+| ------------- | ------------------------------------------------------------------------------- |
+| Ubuntu/Debian | `sudo apt-get install mupdf-tools`                                              |
+| macOS         | `brew install mupdf-tools`                                                      |
+| Windows       | https://mupdf.com/releases/ から `mupdf-x.y.z-windows.zip` を取得し PATH に通す |
 
 ### GitHub Actions
 
