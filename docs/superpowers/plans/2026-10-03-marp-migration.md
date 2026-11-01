@@ -10,6 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-03-marp-migration-design.md`
 
+> **実施時の変更 (2026-11-01)**: 本番は Cloudflare Pages ではなく GitHub Pages (Actions) だったため、Task 6 の `_redirects` / `deploy.ts` / wrangler は採用せず、`scripts/postbuild.ts` (旧 `copy-static.ts`) による転送ページ生成と `.github/workflows/deploy.yml` の書き直しに置き換えた。現行の構成は spec を参照。
+
 ## Global Constraints
 
 - 独自 engine / markdown-it プラグイン / 記法の糖衣は書かない
@@ -576,46 +578,7 @@ git commit -m "feat(theme): 旧デザインを themes/nun.css に移植
 
 (リンクは Cloudflare Pages の拡張子なし URL。ローカルの `dist/` を file:// で開くと辿れないが、本番前提とする)
 
-- [ ] **Step 2: `public/_redirects` を作成**
-
-```
-/cool-game-development-using-web-technologies/ /cool-game-development-using-web-technologies 301
-/Quaver/ /Quaver 301
-```
-
-- [ ] **Step 3: `scripts/deploy.ts` を簡素化**
-
-`NUN_BASE` / `DEPLOY_DECK` の環境変数操作を削除する。`--deck` 指定時は 1 デッキだけビルドする:
-
-```ts
-if (deck) {
-  await runCommand('bunx', ['marp', `benben/${deck}.md`, '-o', `dist/${deck}.html`])
-  await runCommand('bunx', ['tsx', 'scripts/copy-static.ts'])
-} else {
-  await runCommand('bun', ['run', 'build'])
-}
-```
-
-`.env.deploy.example` から `NUN_SITE_URL` の行を削除する。実行前に `rm -rf dist` 相当で古い出力が混ざらないよう、ビルド前に `rmSync('dist', { recursive: true, force: true })` を入れる。
-
-- [ ] **Step 4: build と PDF を確認**
-
-```bash
-bun run build && ls dist
-bun run pdf && ls dist/*.pdf
-```
-Expected: `index.html`、`_redirects`、各デッキの `.html`、各デッキの `.pdf`。PDF を開いて SVG とフッターが描画されていることを確認。
-
-- [ ] **Step 5: コミット**
-
-```bash
-git add -A
-git commit -m "feat: 一覧ページ・旧 URL の転送・デプロイスクリプトを Marp 構成に合わせる"
-```
-
-- [ ] **Step 6: (ユーザー確認後) プレビュー → 本番デプロイ**
-
-ユーザーに確認してから `bun run deploy --deck Quaver` でプレビューを出し、URL で表示を確認。続けて確認を取って `bun run deploy` で本番に上げ、旧 URL `/cool-game-development-using-web-technologies/` が新 URL に転送されることを確認する。
+- [ ] **Step 2〜6 (実施時に変更)**: `scripts/copy-static.ts` を `scripts/postbuild.ts` に改名して旧 URL 用の転送ページ生成を足し、`.github/workflows/deploy.yml` を marp-cli 版 (build → pdf → GitHub Pages、PR ではビルドのみ) に書き直した。`scripts/deploy.ts` / `scripts/_lib.ts` / `public/_redirects` / `.env.deploy.example` / wrangler は削除。
 
 ---
 
