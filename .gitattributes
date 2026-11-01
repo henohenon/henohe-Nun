@@ -1,0 +1,2 @@
+# vp fmt は LF 前提。Windows (core.autocrlf=true) でも作業ツリーを LF にする
+* text=auto eol=lf
