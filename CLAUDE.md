@@ -32,7 +32,7 @@ push to main --.github/workflows/deploy.yml (build + pdf)--> GitHub Pages
 - `themes/nun.css` — the only theme (`@theme nun`), fixed 1280×720
 - `public/index.html` — hand-written deck list (links to `<deck>.html` and `<deck>.pdf`)
 - `scripts/postbuild.ts` — copies `benben/images` and `public/` into `dist/`, injects `deckRuntime()` from `scripts/deck-runtime.ts` (as function source) into each `dist/<deck>.html`, writes `dist/<deck>/index.html` redirect pages (keeps `#N`)
-- `scripts/deck-runtime.ts` — browser code for production HTML only (built with `--template bare`, so no Marp controls / presenter view): reshapes the slide canvas to the screen aspect (area fixed at 1280×720, short side >= 720) and provides the old Nun controls (keys incl. wasd, Enter fullscreen, swipe, wheel, fullscreen side-click, cursor-jack, View Transition). Must be self-contained (no outer references). dev / PDF are unaffected
+- `scripts/deck-runtime.ts` — browser code for production HTML only (built with `--template bare`, so no Marp controls / presenter view): reshapes the slide canvas to the screen aspect (area fixed at 1280×720, short side >= 720) and provides the old Nun controls (keys incl. wasd, Enter fullscreen, swipe, wheel, fullscreen side-click, cursor-jack, View Transition) and the animated wave favicon (postbuild adds the `<link rel="icon">` tags). Must be self-contained (no outer references). dev / PDF are unaffected
 - `.github/workflows/deploy.yml` — PRs only build; pushes to main build and deploy
 - The site lives under `/henohe-Nun/`, so every link and asset path must be relative
 

@@ -181,4 +181,34 @@ export function deckRuntime(): void {
     attach(); // 既に読み込み済みの場合
     obj.addEventListener("load", attach);
   }
+
+  // ---- favicon (旧 Nun の favicon-anim.ts) ----
+  // postbuild.ts が埋め込んだ wave01.png の link を起点に、wave01〜04 を 500ms ごとに切り替える。
+  // href の書き換えだけでは再取得しないブラウザ (Safari 等) があるので、link ごと差し替える。タブが隠れている間は止める
+  const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"][data-anim]');
+  if (icon) {
+    const frames = [1, 2, 3, 4].map((i) => new URL(`wave0${i}.png`, icon.href).href);
+    for (const src of frames) new Image().src = src; // 1 周目から滑らかに切り替わるよう先読み
+    let frame = 0;
+    let timer: number | undefined;
+    const tick = (): void => {
+      frame = (frame + 1) % frames.length;
+      document.querySelector('link[rel="icon"][data-anim]')?.remove();
+      const link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/png";
+      link.dataset.anim = "";
+      link.href = frames[frame];
+      document.head.append(link);
+    };
+    const start = (): void => {
+      timer ??= window.setInterval(tick, 500);
+    };
+    const stop = (): void => {
+      window.clearInterval(timer);
+      timer = undefined;
+    };
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+    if (!document.hidden) start();
+  }
 }
