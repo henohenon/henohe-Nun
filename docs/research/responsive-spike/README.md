@@ -4,6 +4,8 @@ Marp 移行で失われた「画面の形に合わせて組み直される」挙
 
 **ビルド・dev には組み込んでいない** (記録のみ)。本採用する場合は改めて設計する。
 
+fit を入れずに枠の作り直しだけをした場合の問題点は `raw-report.md` にまとめた。
+
 ## やり方 (`responsive.ts`)
 
 Marp の各スライドは `<svg viewBox="0 0 1280 720"><foreignObject><section>…` で、中身は普通の HTML。
