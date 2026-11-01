@@ -15,12 +15,12 @@ The methodology is **CUBE CSS** (Andy Bell, https://cube.fyi/).
 
 The four layers:
 
-| Layer | Meaning | Nun example |
-|-------|---------|-------------|
-| **C**omposition | Skeleton layout for pages and regions | section grid structure, templates |
-| **U**tility | Single-purpose helper classes | `.dark`, `.v` (vertical) |
-| **B**lock | Self-contained components | `.admonition`, `.card`, `figure.code-block` |
-| **E**xception | Context-specific overrides | `.admonition.warning`, `section[data-theme="dark"]` |
+| Layer           | Meaning                               | Nun example                                         |
+| --------------- | ------------------------------------- | --------------------------------------------------- |
+| **C**omposition | Skeleton layout for pages and regions | section grid structure, templates                   |
+| **U**tility     | Single-purpose helper classes         | `.dark`, `.v` (vertical)                            |
+| **B**lock       | Self-contained components             | `.admonition`, `.card`, `figure.code-block`         |
+| **E**xception   | Context-specific overrides            | `.admonition.warning`, `section[data-theme="dark"]` |
 
 The cascade and inheritance are features, not bugs. Work with them. Don't fight them.
 `!important` is a last resort. Avoid designs that endlessly escalate specificity.
@@ -47,7 +47,10 @@ section {
 }
 
 /* Bad: don't express 2D structure with Flex */
-section { display: flex; flex-direction: column; }
+section {
+  display: flex;
+  flex-direction: column;
+}
 ```
 
 Reference: Rachel Andrew, "Best Practices With CSS Grid Layout" (Smashing Magazine)
@@ -113,25 +116,25 @@ src/styles/
 
 ### 3.1 Color Tokens (Semantic layer)
 
-| Token | Role |
-|-------|------|
-| `--base` | Background color |
-| `--main` | Primary text |
-| `--sub` | Secondary text (captions, metadata) |
-| `--strong` | Emphasis (headings, rules) |
-| `--brand` | Brand accent (links, heading color) |
-| `--muted` | Subtle background (code blocks, admonitions) |
-| `--fg-mid` | Midpoint between `--main` and `--sub` |
-| `--border` | Rules and outlines |
-| `--overlay` | Semi-transparent hover/active layer |
-| `--shadow` | Box shadows |
+| Token       | Role                                         |
+| ----------- | -------------------------------------------- |
+| `--base`    | Background color                             |
+| `--main`    | Primary text                                 |
+| `--sub`     | Secondary text (captions, metadata)          |
+| `--strong`  | Emphasis (headings, rules)                   |
+| `--brand`   | Brand accent (links, heading color)          |
+| `--muted`   | Subtle background (code blocks, admonitions) |
+| `--fg-mid`  | Midpoint between `--main` and `--sub`        |
+| `--border`  | Rules and outlines                           |
+| `--overlay` | Semi-transparent hover/active layer          |
+| `--shadow`  | Box shadows                                  |
 
 **Generate derived tokens with `color-mix()`:**
 
 ```css
---muted:   color-mix(in srgb, var(--base) 94%, var(--main));
---fg-mid:  color-mix(in srgb, var(--main) 50%, var(--sub));
---border:  color-mix(in srgb, var(--base) 70%, var(--sub));
+--muted: color-mix(in srgb, var(--base) 94%, var(--main));
+--fg-mid: color-mix(in srgb, var(--main) 50%, var(--sub));
+--border: color-mix(in srgb, var(--base) 70%, var(--sub));
 ```
 
 Why `color-mix()`: when `--base`/`--main` flip for dark mode, derived colors follow automatically.
@@ -140,10 +143,14 @@ Why `color-mix()`: when `--base`/`--main` flip for dark mode, derived colors fol
 
 ```css
 /* Bad */
-.admonition { background: color-mix(in srgb, #fff 94%, #1a1a1a); }
+.admonition {
+  background: color-mix(in srgb, #fff 94%, #1a1a1a);
+}
 
 /* Good */
-.admonition { background: var(--muted); }
+.admonition {
+  background: var(--muted);
+}
 ```
 
 ### 3.2 Scale Tokens (section scope)
@@ -152,9 +159,9 @@ Defined on `section` and scaled proportionally using `cqmin` + `clamp()`.
 
 ```css
 section {
-  --text-body:        clamp(14px, 5cqmin,   100px);
+  --text-body: clamp(14px, 5cqmin, 100px);
   --slide-title-size: clamp(20px, 9.1cqmin, 180px);
-  --slide-pad-x:      clamp(16px, 8cqmin,   180px);
+  --slide-pad-x: clamp(16px, 8cqmin, 180px);
   /* ... */
 }
 ```
@@ -174,9 +181,9 @@ clamp(MIN, PREFERRED, MAX)
 
 ### 3.3 Typography Tokens
 
-| Token | Value |
-|-------|-------|
-| `--text` | `"IBM Plex Sans JP"`, system fallbacks |
+| Token    | Value                                          |
+| -------- | ---------------------------------------------- |
+| `--text` | `"IBM Plex Sans JP"`, system fallbacks         |
 | `--code` | `"Consolas"`, `"Monaco"`, `"Menlo"`, monospace |
 
 Font sizes are specified via scale tokens. Never write `font-size: 16px` directly.
@@ -216,10 +223,18 @@ section.me {
   grid-template-rows: auto 1fr auto;
 }
 
-section.me > h1     { grid-area: heading; }
-section.me > .icon  { grid-area: icon; }
-section.me > .body  { grid-area: body; }
-section.me > footer { grid-area: footer; }
+section.me > h1 {
+  grid-area: heading;
+}
+section.me > .icon {
+  grid-area: icon;
+}
+section.me > .body {
+  grid-area: body;
+}
+section.me > footer {
+  grid-area: footer;
+}
 ```
 
 The layout structure is legible without reading the selectors.
@@ -249,13 +264,24 @@ Use Flex only when all three conditions are true:
 
 ```css
 /* OK: icon + text side by side */
-.card-url { display: flex; align-items: center; gap: 0.3em; }
+.card-url {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+}
 
 /* OK: wrapping tag list */
-.tag-list { display: flex; flex-wrap: wrap; gap: 0.4em; }
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+}
 
 /* Not OK: section structure (write it in Grid) */
-section { display: flex; flex-direction: column; }
+section {
+  display: flex;
+  flex-direction: column;
+}
 ```
 
 ### 4.5 Footer Placement
@@ -279,6 +305,7 @@ section > footer {
 ```
 
 Benefits:
+
 - Footer is in the layout flow (CUBE-aligned, no `position: absolute` for layout)
 - No `padding-bottom` needed on `.content` to avoid overlap
 - Body and footer never overlap
@@ -302,6 +329,7 @@ Each scope (section or article) wraps its heading and body content in a `<div cl
 ```
 
 Why this two-level wrapper:
+
 - **stage** = the layout container that holds the scope's heading + body. Templates override stage's grid (`grid-template-rows`, `align-content`) to position content per template type (centered for title/solo, top-aligned for default).
 - **content** = the prose container holding paragraphs/lists/tables/cards/etc. (what was historically called `.body`; renamed to avoid confusion with the HTML `<body>` element).
 - Template-specific elements (`.sub`, `.lead`, `.icon`, `.container`, `.henoheno`) live inside the stage as siblings of the heading and content.
@@ -362,22 +390,26 @@ The base form for anything that needs to be "boxed in" (admonitions, cards, code
 
 ```css
 /* size: tracks both width and height (higher computation cost) */
-section    { container-type: size; }  /* baseline for cqmin */
+section {
+  container-type: size;
+} /* baseline for cqmin */
 
 /* inline-size: tracks width only (recommended for most components) */
-.card-wrapper { container-type: inline-size; }
+.card-wrapper {
+  container-type: inline-size;
+}
 ```
 
 ### 6.2 Container Query Units
 
-| Unit | Meaning |
-|------|---------|
-| `cqw` | 1% of the container's width |
-| `cqh` | 1% of the container's height |
-| `cqi` | 1% of the container's inline size |
-| `cqb` | 1% of the container's block size |
+| Unit    | Meaning                               |
+| ------- | ------------------------------------- |
+| `cqw`   | 1% of the container's width           |
+| `cqh`   | 1% of the container's height          |
+| `cqi`   | 1% of the container's inline size     |
+| `cqb`   | 1% of the container's block size      |
 | `cqmin` | 1% of the smaller of inline and block |
-| `cqmax` | 1% of the larger of inline and block |
+| `cqmax` | 1% of the larger of inline and block  |
 
 Nun slides use `cqmin` to maintain proportions regardless of aspect ratio.
 
@@ -398,10 +430,15 @@ Components never contain `@media (prefers-color-scheme: dark)` — slides use ex
 
 ```css
 /* Dark on a single section */
-section.dark { --base: #0f0f10; --main: #e6e6e6; /* ... */ }
+section.dark {
+  --base: #0f0f10;
+  --main: #e6e6e6; /* ... */
+}
 
 /* Dark for the whole deck */
-:root[data-theme="dark"] { --base: #0f0f10; /* ... */ }
+:root[data-theme="dark"] {
+  --base: #0f0f10; /* ... */
+}
 ```
 
 ### 7.2 Dark Mode Checklist
@@ -427,12 +464,18 @@ html {
 }
 
 /* Improve heading text wrapping (progressive enhancement) */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   text-wrap: balance;
 }
 
 /* Form elements inherit the document font */
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font-family: inherit;
   font-size: inherit;
 }
@@ -447,20 +490,20 @@ Browsers without support fall back to normal wrapping — no harm done.
 
 ### 9.1 Class Names
 
-| Pattern | Use | Example |
-|---------|-----|---------|
-| `kebab-case` | Components and elements | `.code-block`, `.card-title` |
-| `.state` | State and variant modifiers | `.dark`, `.masked`, `.v` (vertical) |
-| `data-*` attributes | JS integration | `data-fn`, `data-nwyt`, `data-theme` |
+| Pattern             | Use                         | Example                              |
+| ------------------- | --------------------------- | ------------------------------------ |
+| `kebab-case`        | Components and elements     | `.code-block`, `.card-title`         |
+| `.state`            | State and variant modifiers | `.dark`, `.masked`, `.v` (vertical)  |
+| `data-*` attributes | JS integration              | `data-fn`, `data-nwyt`, `data-theme` |
 
 Template names become classes directly: `section.default`, `section.title`, `section.me`, etc.
 Don't use BEM `__` `--` separators. Flat class names are easier to read when scope depth is shallow.
 
 ### 9.2 CSS Custom Properties
 
-| Pattern | Use | Example |
-|---------|-----|---------|
-| `--name` | Global semantic tokens | `--base`, `--brand`, `--text-body` |
+| Pattern                | Use                       | Example                                      |
+| ---------------------- | ------------------------- | -------------------------------------------- |
+| `--name`               | Global semantic tokens    | `--base`, `--brand`, `--text-body`           |
 | `--component-property` | Component-local variables | `--footer-line-height`, `--footer-font-size` |
 
 No namespace prefix (`--nun-*`). Short names are easier to read when scope is clear.
@@ -469,12 +512,12 @@ No namespace prefix (`--nun-*`). Short names are easier to read when scope is cl
 
 Prefer logical properties over physical ones (for i18n and vertical writing support):
 
-| Physical (avoid) | Logical (prefer) |
-|------------------|------------------|
-| `margin-top` | `margin-block-start` |
-| `margin-bottom` | `margin-block-end` |
+| Physical (avoid)                 | Logical (prefer)                              |
+| -------------------------------- | --------------------------------------------- |
+| `margin-top`                     | `margin-block-start`                          |
+| `margin-bottom`                  | `margin-block-end`                            |
 | `padding-left` / `padding-right` | `padding-inline-start` / `padding-inline-end` |
-| — | `inset: 0` as a shorthand alternative |
+| —                                | `inset: 0` as a shorthand alternative         |
 
 Exception: use physical properties where they are semantically accurate — e.g., coordinate assignment with `position: absolute`.
 
@@ -484,10 +527,16 @@ Exception: use physical properties where they are semantically accurate — e.g.
 
 ```css
 /* Color transitions: 0.15s */
-a.card { transition: background-color 0.15s; }
+a.card {
+  transition: background-color 0.15s;
+}
 
 /* Position / size transitions: 0.2s */
-.tooltip { transition: opacity 0.2s, transform 0.2s; }
+.tooltip {
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
 
 /* Focus indicator (accessibility required) */
 button:focus-visible {
@@ -517,6 +566,7 @@ Scroll regions break the zoom-fit calculation.
 The actual clip boundary is `<section>` itself (`overflow: hidden`), so anything that escapes the slide via `position: absolute` (tooltips, decorations) is still clamped at the slide edge.
 
 Exceptions:
+
 - `pre > code`: horizontal scroll is acceptable (`overflow-x: auto`)
 - `.fn-tooltip`: uses `overflow: hidden` + `max-width` to control variable-length content (the tooltip itself is small enough that hidden clipping is the desired behavior, not a problem)
 
@@ -542,11 +592,13 @@ A `1fr` allocation will still overflow if the content is taller.
 The client JS `fitSlide()` function sets the `zoom` property on `.body`.
 
 **`zoom` characteristics:**
+
 - Affects layout (relationships with surrounding elements change)
 - Does not change the `cqmin` baseline (`section` remains the reference after scaling)
 - Different from `transform: scale` (`scale` does not affect layout)
 
 **Interaction with `zoom`:**
+
 - `em`-relative font sizes combined with `zoom` can cause double-scaling
 - **Keep all font sizes in `clamp(px, cqmin, px)` tokens — don't rely on `em` inheritance**
 

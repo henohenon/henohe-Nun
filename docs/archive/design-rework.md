@@ -12,45 +12,45 @@
 
 ### Critical — このまま見せられない
 
-| # | 課題 | 影響スライド | 根本原因の仮説 |
-|---|---|---|---|
-| C1 | **zoom-fit が機能していない/効きすぎ** — コンテンツが次の見出しに被る/切れる | 7, 8, 9 | client/index.ts の zoom-fit ロジック、または body の grid 設計 |
-| C2 | **me テンプレ アイコン 404** | 4 | `/images/icon.png` 不存在 |
-| C3 | **縦型カード (`.v`) が空プレースホルダ** | 12 | OGP fetch が dev/preview で機能していない可能性 |
-| C4 | **横型カードのレイアウト分離** — title/desc/url が別枠に見える | 12 | `card.css` の枠/余白設計 |
-| C5 | **solo テンプレでタイトル上端** — 中央配置されていない | 6, 13 | `templates/solo.css` の vertical alignment |
-| C6 | **title テンプレで「中央左」が達成できていない** | 1, 3 | `align-content: center` が `grid-template-rows: auto 1fr` と干渉 |
-| C7 | **footer テキストの clipping** | 全スライド | `footer.css` または SVG の overflow |
+| #   | 課題                                                                         | 影響スライド | 根本原因の仮説                                                   |
+| --- | ---------------------------------------------------------------------------- | ------------ | ---------------------------------------------------------------- |
+| C1  | **zoom-fit が機能していない/効きすぎ** — コンテンツが次の見出しに被る/切れる | 7, 8, 9      | client/index.ts の zoom-fit ロジック、または body の grid 設計   |
+| C2  | **me テンプレ アイコン 404**                                                 | 4            | `/images/icon.png` 不存在                                        |
+| C3  | **縦型カード (`.v`) が空プレースホルダ**                                     | 12           | OGP fetch が dev/preview で機能していない可能性                  |
+| C4  | **横型カードのレイアウト分離** — title/desc/url が別枠に見える               | 12           | `card.css` の枠/余白設計                                         |
+| C5  | **solo テンプレでタイトル上端** — 中央配置されていない                       | 6, 13        | `templates/solo.css` の vertical alignment                       |
+| C6  | **title テンプレで「中央左」が達成できていない**                             | 1, 3         | `align-content: center` が `grid-template-rows: auto 1fr` と干渉 |
+| C7  | **footer テキストの clipping**                                               | 全スライド   | `footer.css` または SVG の overflow                              |
 
 ### Important — 品質
 
-| # | 課題 | 場所 |
-|---|---|---|
-| I1 | **見出し色が全部 brand (#5932ff)** — 階層感ゼロ。h1 のみブランド、h2/h3 はトーン落とすべき | `templates/default.css` |
-| I2 | **h2/h3 のサイズ差が小さい** (6cqmin vs 5cqmin) | `templates/default.css` |
-| I3 | **admonition の整列がバラバラ** — アイコン (●) と本文インデントが揃わない、タイトル/本文の余白が大きすぎる | `admonition.css` |
-| I4 | **コードブロック本文がほぼ不可視** — ヘッダーだけ見えて中身見えない | `code-block.css` + zoom-fit |
-| I5 | **table が地味** — 罫線控えめ、ストライピング無し、padding 窮屈 | `templates/default.css` (`.body table`) |
-| I6 | **脚注定義 [^N] が赤・モノスペース** — 浮いてる。本文の脚注参照 sup⁽¹⁾ も地味 | `footnote.css` |
+| #   | 課題                                                                                                       | 場所                                    |
+| --- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| I1  | **見出し色が全部 brand (#5932ff)** — 階層感ゼロ。h1 のみブランド、h2/h3 はトーン落とすべき                 | `templates/default.css`                 |
+| I2  | **h2/h3 のサイズ差が小さい** (6cqmin vs 5cqmin)                                                            | `templates/default.css`                 |
+| I3  | **admonition の整列がバラバラ** — アイコン (●) と本文インデントが揃わない、タイトル/本文の余白が大きすぎる | `admonition.css`                        |
+| I4  | **コードブロック本文がほぼ不可視** — ヘッダーだけ見えて中身見えない                                        | `code-block.css` + zoom-fit             |
+| I5  | **table が地味** — 罫線控えめ、ストライピング無し、padding 窮屈                                            | `templates/default.css` (`.body table`) |
+| I6  | **脚注定義 [^N] が赤・モノスペース** — 浮いてる。本文の脚注参照 sup⁽¹⁾ も地味                              | `footnote.css`                          |
 
 ### Polish — 細部
 
-| # | 課題 |
-|---|---|
-| P1 | blockquote の縦罫線が控えめすぎ |
-| P2 | ハイライト (`==`) の黄色がブランド (紫) と不調和 |
-| P3 | nwyt (sub, lead) の余白設計 |
-| P4 | ダークテーマ未検証 |
-| P5 | table cell padding 窮屈 |
-| P6 | リスト・ネストの余白 |
+| #   | 課題                                             |
+| --- | ------------------------------------------------ |
+| P1  | blockquote の縦罫線が控えめすぎ                  |
+| P2  | ハイライト (`==`) の黄色がブランド (紫) と不調和 |
+| P3  | nwyt (sub, lead) の余白設計                      |
+| P4  | ダークテーマ未検証                               |
+| P5  | table cell padding 窮屈                          |
+| P6  | リスト・ネストの余白                             |
 
 ### Spec gap — 機能 / 仕様とのズレ
 
-| # | 課題 |
-|---|---|
-| S1 | title テンプレの「固定画像」(右下に薄く) が意図通りか不明 |
-| S2 | mermaid (slide 8 embed_mermaid) が描画されているか不明 (本体見えないので) |
-| S3 | OGP meta タグに `thumb.webp` が組み込まれているか未確認 |
+| #   | 課題                                                                      |
+| --- | ------------------------------------------------------------------------- |
+| S1  | title テンプレの「固定画像」(右下に薄く) が意図通りか不明                 |
+| S2  | mermaid (slide 8 embed_mermaid) が描画されているか不明 (本体見えないので) |
+| S3  | OGP meta タグに `thumb.webp` が組み込まれているか未確認                   |
 
 ---
 
@@ -106,6 +106,7 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 ## 直近セッションの状況メモ (2026-05-06)
 
 前セッションで片付いたもの (時系列):
+
 - テンプレ範囲を nwyt と統一 + sample.md 移行 (`a3608d1` `271f5b4`)
 - OGP meta 一式 (`a75153e` `569571a` `9d37afc` `a90f3b4`) → og:image 1200x630 自動派生 + 絶対 URL 化
 - table 中央寄せ `|:---:|` 対応 (`3fd4631`) + spec 明文化 (`7fcd905`)
@@ -116,6 +117,7 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 - `!fn~[id]` (脚注定義) を section (h1) でも紐付くよう制約撤廃 (`3d25d00`) + spec 整え
 
 このセッションで片付いたもの (時系列):
+
 - 脚注 `!fn[id]` 参照側 adoption agency バグ修正 (`856d4d8`) → tooltip を `<template data-fn>` に詰めて parse 時の adoption agency を回避。fnDef body の block→inline 変換は不要となり丸ごと SSG 出力。client 側で起動時に `template.content` を clone して表示用 div に展開、hover で toggle
 - 脚注 tooltip 配置・装飾改善 + `.head` opt-in 導入 (`df4e58c`) → tooltip を sup 子要素に置いて `position:absolute` 基点を確立、min/max-width 拡張 + shadow 弱化、`section.default > .body { overflow: hidden }` 撤廃で tooltip が body 端を越えてもクリップされない (section 自体の overflow:hidden で slide 外側はクランプ継続)。`!fn.head~[id]` で heading を tooltip に含める opt-in 追加、別ページ section 単位定義のサンプルも追加
 - コードブロック copy / diff / 行番号整理 (`b071062`) → `extractCleanCode` で `.line` 単位 join + `.line-number` / `.diff-marker` 除外、copy ボタンのボーダー削除、diff の `\n` 剥がし & `display:block` 撤廃で非 diff と DOM 構造を統一 (`box-decoration-break: clone` で行幅着色は inline で対応)、`+`/`-`/` ` プレフィックスを `.diff-marker` 化して user-select:none + copy 除外、行番号幅を `--ln-width: <maxDigits>ch` で SSG 時に最大桁数ベースに自動調整、sample.md のコードブロックを基本系/埋め込み系の 2 ページに再編
@@ -124,9 +126,11 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 - card OGP/favicon を `open-graph-scraper` 化 (`a3c4ab0`) → 手書き regex パーサ (`getMetaContent` / `getFavicon` / `decodeEntities` 等) を全撤廃し v6.11.0 に置換。GitHub の favicon 404 解消 (`<link rel="icon" type="image/svg+xml" href="...githubassets.com/...">` を正しく取得)。仕様 (cache / timeout / UA / fallback) は維持
 
 **進行中 (tmp commit `d686295`)**:
+
 - `!bg~` / `!fbg~` バグ調査 + img レイヤー化リファクタ — 確実に動くバグ修正 (`extractImageSrc` 正規表現 / `appendFooter` 早期 return 順 / 2 重 `<use>` 削除) は適用済。`<img class="bg-layer / fbg-layer">` レイヤー化 (CSS 共通: `position:absolute; inset:0; object-fit:cover; pointer-events:none`、section bg-layer のみ `z-index:-1`) も入れたが fbg の visual が確認できてない (CSS mask が拾えてない/section-aspect クロップ揃え未着手)。次セッションで dev server 起動して目視からスタート
 
 **次セッションの候補**:
+
 - 進行中の `!bg~` / `!fbg~` を完成させる (visual 確認 + section-aspect クロップ揃え)
 - footer text clipping (Critical C7) や mobile 1px 白帯など、コンテナ・レイアウト系の残作業
 - テーブルの中央寄せ `|:---:|` `|---:|` 対応
@@ -139,6 +143,7 @@ spec (technical.md:163) は元から「heading 行〜次同レベル heading 行
 dark theme の baseline 整備に着手 (Polish P4 系の続き)。 fbg PDF を 「やらない判断」 として確定 (`project_fbg_pdf_strategy.md` 参照)、 並行して dark capture で複数バグを特定・修正。
 
 このセッションで片付いたもの (時系列):
+
 - fbg PDF 「やらない判断」 確定 (`6eca283`) — 4 アプローチ全敗、 screen 専用装飾と確定。 swap 実装 (`b0670be` `3e27ddd`) は revert (`7721753` `26a8b22`)
 - URL query / capture `--theme dark` 入口 (`153a11e`) — `?theme=dark` で root に `data-theme` を立てる、 capture 側に `--theme dark` flag、 `dist/captures/<deck>/dark/N.webp` に振り分け
 - body bg 修正 (`84ebee3`) — `body { background: var(--base) }` を追加。 元 token は定義のみで誰も使ってなかった、 dark theme 時に背景白のままになっていたため修正
@@ -151,6 +156,7 @@ dark theme の baseline 整備に着手 (Polish P4 系の続き)。 fbg PDF を 
 - shadow を `--main` 連動に戻して 40% へ (`4a35c8c`) — user 指示 「`--main` 連動のまま比率を下げたい」 を受けて theme 連動 (light=黒系 / dark=白系) に復帰、 過去 50% で halo が強すぎた分を 40% まで絞った。 18% / 30% は弱すぎ、 40% で OK 判断 (initiation slide 12 で確認)
 
 **進行中 / 未確定**:
+
 - 全 34 dark スライドの capture は取得済 (shadow 40% 反映後)。 通し目視 audit は 「全体レビュー」 タスク側に移譲
 - `.code-bare` の audit pending list 追加 (`project_class_audit_pending.md` に既存 `.hierarchy`/`.brand-quote`/`.window`/`.v`/`.head` と同列で)
 
@@ -161,6 +167,7 @@ script を `bun run scripts/foo.ts` 直走させると Windows で fd 3/4 継承
 allow に `Bash(bunx tsx *)` と `Bash(rm -f scripts/_debug*)` を narrow pattern で追記。 broad な `bunx *` / `rm *` は引き続き ask 維持。
 
 **bg / fbg 動作確認済 (2026-05-09)**:
+
 - 既知バグ修正済: `extractImageSrc` 正規表現 (`!\[` → `!?\[`)、`appendFooter` 早期 return 順 (bg を fl/fr 不在でも適用)、2 重 `<use>` 削除
 - レイヤー化完了: `<img class="bg-layer">` (section 直下、 absolute z:-1) と `<div class="fbg-layer"> > [<img class="fbg-img">, <svg class="fbg-svg" mask>]` (section 直下、 absolute) の構成で確定 (`53eb5c2`)
 - bg/fbg class propagation 追加 (`0395003`) — `!bg.class~` `!fbg.class~` で nwyt prop の class が img の className に流れる。 `:where(.bg-layer, .fbg-img)` で specificity 下げて UnoCSS class 上書き許可、 `nwyt-prop.ts` parser bug (`-` `_` 弾き) も修正
@@ -174,6 +181,7 @@ allow に `Bash(bunx tsx *)` と `Bash(rm -f scripts/_debug*)` を narrow patter
 design.md ↔ 実装ドリフト 3 件の整理から開始、 そのまま **stage wrapper 構造改革** に発展。 DOM 構造を `<section.X> > [<div.stage> > [<h1>, <div.content>], <footer>]` に再設計し、 footer を absolute から grid item に移行、 旧 `.body` を `.content` に rename した。
 
 このセッションで片付いたもの (時系列):
+
 - 画像 class 指定 `!.class[alt](url)` 構文追加 (`d11f902` `ffd2c11`) — 既存 nwyt content の自然な拡張として key 省略 + class のみで `<img class="..." src=u alt=v>` を吐く。 UnoCSS が markdown source の class を scan するので utility 直書き OK (rounded-lg / opacity-50 / grayscale / hue-rotate-180 等で検証)
 - bg/fbg の class propagation (`0395003`) — `!bg.class~[]()` `!fbg.class~[]()` で nwyt prop の class が `<img class="bg-layer ...">` に流れる。 並行して 2 件の前提整備 — `nwyt-prop.ts` classRest が `[a-zA-Z0-9]` のみで `-` `_` 弾いてた parser bug 修正、 `.bg-layer { object-position: center }` → `:where(.bg-layer, .fbg-img)` で specificity 下げて UnoCSS class 上書きを許可
 - shadow 40% 確定 (`4a35c8c`) — `--main` 連動のまま 50% → 40% に絞る。 black 基準路線 (`7e98af4` `393f22c`) は user 意図と外れていたので revert
@@ -193,6 +201,7 @@ design.md ↔ 実装ドリフト 3 件の整理から開始、 そのまま **st
   - title の henoheno に `z-index: -1` を付与 (`f1082b2`、 layer 順序: bg < henoheno < (h1/sub) < footer < fbg)
 
 **残課題**:
+
 - design.md §4.5 (footer placement) / §11 (overflow management) を stage refactor 後の実装に合わせて更新 (済、 `660e206`)
 - structure.md の DOM 構造記述を `section > [stage > [h, content], footer]` に更新 (済、 `660e206`)
 - title の固定画像 (henoheno) 位置/サイズの spec 明文化 (Spec S1) (済、 `3f784e1`)
@@ -204,6 +213,7 @@ design.md ↔ 実装ドリフト 3 件の整理から開始、 そのまま **st
 user から 「mobile で calc 効いてない」 報告を受け、 mobile-test deck を新設して isolated test (T1-T13) で iOS Safari の SVG 制約を切り分けた。 結果以下の特性が判明:
 
 **iOS Safari (= iPhone Chrome、 engine 強制 WebKit) の SVG 制約**:
+
 - ✗ CSS `x` / `y` property を SVG geometry 要素 (`<text>` / `<rect>` / `<use>`) に適用しても **機能しない**
 - ✗ CSS `translate` / `transform` の `%` を SVG 要素に対して計算する route (`transform-box: view-box` 明示しても) **機能しない**
 - ✗ SVG attribute (`x` / `y` / `dx` / `dy`) の `calc()` は **どんな単位 (var / em / cqmin / literal px) を入れても機能しない**
@@ -211,11 +221,13 @@ user から 「mobile で calc 効いてない」 報告を受け、 mobile-test
 - ✓ SVG attribute `transform="translate(X Y)"` は user units (calc 抜き literal) で機能する
 
 **確定した fix 群** (全部静的、 JS 不使用):
+
 - `61a0495` footer fl/fr text を CSS positioning から SVG attribute (`x="0.6em"` / `x="100%" dx="-0.6em"` / `y="1em"` / `text-anchor="end"` 等の literal) に書き換え
 - `d9f34c4` section の `height: 100vh` → `100vh; 100dvh;` で URL バー込みでなく visible viewport に追随
 - `40a4ba0` (= `52393de` 等価) fbg mask の `<use>` 位置決めを **nested svg + 負 em literal** で表現: `<svg y="100%" overflow="visible"><use href="#shape" y="-1.2em" /></svg>`。 calc も var() も使わない構造で iOS 対応。 1.2em (body 基準) ≈ 6cqmin ≈ footer height で近似
 
 **この調査用に追加された資産**:
+
 - `benben/mobile-test.md` — 3 slide 構成の diagnostic deck
   - slide 1: cqmin / calc / color-mix / @supports の bar 比較
   - slide 2: SVG text 位置決め T1-T6 (CSS x / CSS translate / SVG attribute)
@@ -229,6 +241,7 @@ user から 「mobile で calc 効いてない」 報告を受け、 mobile-test
 iPhone landscape で content cutoff (slide 2 で T5/T6 が footer 下に押し出される、 一般 slide も似た症状) への対処として zoom-fit の改善着手。 user と算法整理 + 4 つの改善 step を提案、 順次 commit して iPhone で iter 検証する流れで進めた。
 
 **zoom-fit の現状理解** (整理):
+
 - target = `:scope > .stage > .content` の direct children を見る
 - 計測: 各 child の `offsetTop + offsetHeight` を max 取って container.offsetTop を引いたもの = 必要 height
 - container.offsetWidth/Height は section の dvh から footer / heading / stage padding を引いた 1fr 値
@@ -236,21 +249,25 @@ iPhone landscape で content cutoff (slide 2 で T5/T6 が footer 下に押し�
 - 再帰最大 10 iter (CSS zoom が children サイズも変えるので)
 
 **呼び出し起点 (改修前)**:
+
 - 初期表示 / hashchange / window.resize / beforeprint
 
 **抜けてた起点 (= 仮説 bug source)**:
+
 - font load 完了後の再 fit (webfont 確定で text 幅変わる)
 - image load 完了後の再 fit (`<img>` 0×0 → 実 size grow)
 - ResizeObserver による精密検出 (window.resize は viewport settle 前の race あり)
 - DOM 動的変化 (Nun は SSG 中心なので skip)
 
 **4 step 改善計画**:
+
 1. **scrollHeight 切替** (`1f0296a`) — 計測を `child.offsetTop + offsetHeight` per から `container.scrollHeight` 直読みに変更。 last child の margin-block-end 漏れ解消。 軽微効果だが概念クリーン
 2. **ResizeObserver** (`9eeb40d`) — `window.resize` listener を `ResizeObserver` で section 自体を watch する形に置換。 rotation / URL バー collapse の race 回避目的
 3. **font load 完了 trigger** (`97c821e`) — `document.fonts.ready.then(() => sections.forEach(fitSlide))` で webfont 確定後に全 slide 再 fit
 4. **image load 完了 trigger** (未実装) — 各 `<img>` の `load` / `error` event で section 再 fit
 
 **検証結果**:
+
 - step 1 (scrollHeight): user 「よかろ」 = 視認問題なし
 - step 2 (ResizeObserver): user 「はい」 = 視認問題なし
 - step 3 (font load): user **「ダメみたい」** + IMG_1904 (slide 3 portrait)
@@ -259,6 +276,7 @@ iPhone landscape で content cutoff (slide 2 で T5/T6 が footer 下に押し�
   - debug 機構を追加 (`14f4f37`、 `?debug` URL query で on-screen overlay + console.log) → iPhone 実値計測待ち
 
 **中断時点の状況**:
+
 - working tree clean、 `14f4f37` (debug overlay) が HEAD
 - iPhone Chrome で `https://henohenon.github.io/henohe-Nun/mobile-test/?debug` 開いて画面上端の overlay 数値 (offsetW/H、 scrollW/H、 scale、 zoom の iter ごと推移) を screenshot で投げてもらえれば真因切り分け再開可
 - 仮説候補 (再確認):
@@ -267,6 +285,7 @@ iPhone landscape で content cutoff (slide 2 で T5/T6 が footer 下に押し�
   - step 3 の font.ready trigger 自体が問題 (例: ready resolve 時の DOM state で scrollHeight 異常値)
 
 **次セッションでやること**:
+
 - iPhone から debug overlay screenshot もらって 数値解析
 - 真因確定後、 各 step の revert / 改修判断 (revert step 3 → step 2 まで戻る or zoom-fit 再帰条件の修正 or 全 revert + 別 approach)
 - 解決後、 image load step (step 4) の追加検討
@@ -301,14 +320,22 @@ user 報告: 「fbg が、 動いてないっ」 (2026-05-11、 commit `a6c7060`
 build した `dist/Quaver/index.html` で DOM 構造を確認 → 想定通り出力されている:
 
 ```html
-<footer><svg class="footer-svg"><g id="footer-shapes-1">
-  <rect class="footer-rule"></rect>
-  <text class="footer-fl" ...>Quaver</text>
-  <text class="footer-fr" ...>2026/05/11</text>
-</g></svg></footer>
+<footer>
+  <svg class="footer-svg">
+    <g id="footer-shapes-1">
+      <rect class="footer-rule"></rect>
+      <text class="footer-fl" ...>Quaver</text>
+      <text class="footer-fr" ...>2026/05/11</text>
+    </g>
+  </svg>
+</footer>
 <div class="fbg-layer">
-  <img class="fbg-img" src="/.../quaver-mark.svg" alt="fbg"
-       style="mask-image: url(#footer-mask-1); ...">
+  <img
+    class="fbg-img"
+    src="/.../quaver-mark.svg"
+    alt="fbg"
+    style="mask-image: url(#footer-mask-1); ..."
+  />
   <svg class="fbg-svg">
     <mask id="footer-mask-1">
       <svg y="100%" overflow="visible">
@@ -322,10 +349,12 @@ build した `dist/Quaver/index.html` で DOM 構造を確認 → 想定通り�
 **仮説** (未検証): `.fbg-layer` の `bottom: -10%` で box 全体が section 下端から 10% はみ出した結果、 mask 内 `<svg y="100%">` 由来の coordinate origin (box 下端) も section の外側に移動 → `<use y="-1.2em">` で持ち上がっても **mask shape が section visible 領域の下端ギリギリより外側に来ている**可能性。 結果 fbg-img が mask alpha=black (透過) の領域だけになり全消失する。
 
 別の可能性:
+
 - iOS 以外の Chrome / Firefox でも全消失なのか、 mobile だけなのか未確認
 - mask 自体は機能してて、 単に「縮小されすぎて見えてない」 だけかもしれない (80cqmin box 内に 1.2em の footer 形状 → 視認できないサイズ)
 
 **ユーザーへの確認待ち** (`1503329582298693642` で投げて未回答):
+
 1. 「全く見えない」 vs 「画像見えるが footer 形状で抜かれてない」 どちら?
 2. 修正方針:
    - A) `bottom: 0` にして box を section 内に収める (画像下端 = section 下端、 -10% はみ出し諦め)
@@ -333,11 +362,13 @@ build した `dist/Quaver/index.html` で DOM 構造を確認 → 想定通り�
    - C) fbg は元の section 全体覆い設計に戻す、 bg だけ 80cqmin / bottom -10%
 
 **中断時点の状況**:
+
 - working tree clean、 `a6c7060` が HEAD で push 済
 - user は `https://henohenon.github.io/henohe-Nun/Quaver/` で見え方確認できる状態
 - 次セッションは user の 1/2 回答待ち、 その後 A/B/C いずれかで `src/styles/background.css` と (B の場合) `src/rehype/decorations/fbg.ts` の mask 構造を再調整
 
 **今回 commit 群** (`c87d183` → `a6c7060` の 8 commit):
+
 - `c87d183` feat: add quaver
 - `36b4a5a` fix(quaver): card 表記を修正
 - `f0dff1e` feat(footer): fl/fr 両方無くても footer を描画
@@ -356,26 +387,27 @@ iOS Safari の SVG attribute calc 全滅対応で導入した nested svg + 負 e
 
 ### 検討した分岐手段
 
-| 手段 | 仕組み | iOS calc 問題に効くか | コスト |
-|---|---|---|---|
-| **CSS `@media` / `@supports`** | 1 HTML、 device 別に CSS 切替 | △ (DOM 構造分岐不可、 値のみ) | ゼロ |
-| **`<picture>` / `<source media>` 系** | HTML native の media 分岐 | ✗ (画像 / video 専用、 任意 DOM 不可) | ゼロ |
-| **build 時 UA 分割** (Astro adapter / Next.js middleware) | 2 種 HTML 出力、 edge で振り分け | ✓ | output 2 倍 + hosting 依存 |
-| **runtime JS DOM swap** | 1 HTML load 時に書換 | ✓ | 容量微増、 SSG 思想逸脱 |
+| 手段                                                      | 仕組み                           | iOS calc 問題に効くか                 | コスト                     |
+| --------------------------------------------------------- | -------------------------------- | ------------------------------------- | -------------------------- |
+| **CSS `@media` / `@supports`**                            | 1 HTML、 device 別に CSS 切替    | △ (DOM 構造分岐不可、 値のみ)         | ゼロ                       |
+| **`<picture>` / `<source media>` 系**                     | HTML native の media 分岐        | ✗ (画像 / video 専用、 任意 DOM 不可) | ゼロ                       |
+| **build 時 UA 分割** (Astro adapter / Next.js middleware) | 2 種 HTML 出力、 edge で振り分け | ✓                                     | output 2 倍 + hosting 依存 |
+| **runtime JS DOM swap**                                   | 1 HTML load 時に書換             | ✓                                     | 容量微増、 SSG 思想逸脱    |
 
 lib 候補も列挙: modernizr (specific bug 検出は自作) / WURFL・DeviceAtlas (enterprise 向け重量級) / bowser・ua-parser-js (軽量 UA parser、 build 時利用) / Astro `client:media` (hydration 分岐、 DOM 分岐ではない)。 **mobile 分岐は枯れた問題で、 「新 framework 導入で解決」 みたいな魔法は無い**、 全部上記 4 種の組合せ。
 
 ### Nun の具体的選択肢 3 案
 
-| 案 | 内容 | 結論 |
-|---|---|---|
-| **A: ship 両方 + CSS で hide** | desktop 用 `<g class="shape-modern"><use y="calc(100% - 1.2em)"></g>` と iOS 用 `<g class="shape-ios"><svg y="100%"><use y="-1.2em"></svg></g>` を両方出力、 `@supports (-webkit-touch-callout: none) { .shape-modern { display:none } }` で切替 | **却下**。 SVG bloat ~100 bytes は微小だが、 complexity が template / CSS / 読む人の認知の 3 箇所に分散し、 hack の局所性 (現状 1-2 ファイル閉込め) を捨てる trade。 `@supports` での iOS 検出は将来 Safari の他 OS 対応で脆い |
-| **B: build 時 2 出力 + edge UA 振り分け** | vite plugin で `index.html` と `ios.html` 出力、 hosting (CF Workers / Netlify Edge / Vercel Edge) で UA 振り分け | **採用候補、 ただし保留**。 GitHub Pages では実現不可、 CF Pages 等への移行が前提。 移行は domain 購入と pair でやらないと hosting 名分散 (`*.pages.dev`) が残る |
-| **C: universal hack 維持 (現状)** | nested svg + 負 em hack を全 device に配り続ける | **採用 (短期)**。 hack 箇所は `fbg.ts:50-71` と footer 系の 1-2 ファイル、 コメント + memory `project_ios_svg_constraints.md` で documentation 化済、 触らない限り顔出さない |
+| 案                                        | 内容                                                                                                                                                                                                                                             | 結論                                                                                                                                                                                                                           |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **A: ship 両方 + CSS で hide**            | desktop 用 `<g class="shape-modern"><use y="calc(100% - 1.2em)"></g>` と iOS 用 `<g class="shape-ios"><svg y="100%"><use y="-1.2em"></svg></g>` を両方出力、 `@supports (-webkit-touch-callout: none) { .shape-modern { display:none } }` で切替 | **却下**。 SVG bloat ~100 bytes は微小だが、 complexity が template / CSS / 読む人の認知の 3 箇所に分散し、 hack の局所性 (現状 1-2 ファイル閉込め) を捨てる trade。 `@supports` での iOS 検出は将来 Safari の他 OS 対応で脆い |
+| **B: build 時 2 出力 + edge UA 振り分け** | vite plugin で `index.html` と `ios.html` 出力、 hosting (CF Workers / Netlify Edge / Vercel Edge) で UA 振り分け                                                                                                                                | **採用候補、 ただし保留**。 GitHub Pages では実現不可、 CF Pages 等への移行が前提。 移行は domain 購入と pair でやらないと hosting 名分散 (`*.pages.dev`) が残る                                                               |
+| **C: universal hack 維持 (現状)**         | nested svg + 負 em hack を全 device に配り続ける                                                                                                                                                                                                 | **採用 (短期)**。 hack 箇所は `fbg.ts:50-71` と footer 系の 1-2 ファイル、 コメント + memory `project_ios_svg_constraints.md` で documentation 化済、 触らない限り顔出さない                                                   |
 
 ### 棚上げの決定要因 (ドメイン分散 / 収入源)
 
 案 B の前提となる CF Pages 移行 + domain 購入について user 発言:
+
 - 現状 GitHub Pages に Nun + portfolio + 他 product 全集約 (`henohenon.github.io/*`)
 - 「cfpages に全移行したい気持ちもあるが、 まだドメイン買ってない」
 - 「ドメイン分散がなぁ ~ 自分のドメイン買えよって話なんですけれども」 = 自覚あり、 ただ動機が SVG hack cleanup 単独では弱い
@@ -397,18 +429,19 @@ mobile 分岐棚上げに続き、 util class 整備に着手。 当初テーマ
 
 ### 4 mechanism × 統一命名規則
 
-| mechanism | syntax | target | 命名規則 |
-|---|---|---|---|
-| img-direct | `!.<class>[alt](url)` | `<img>` 直接 | simple short 名 (image utility namespace) |
-| bg/fbg | `!bg.<class>~` `!fbg.<class>~` | `<div.bg-layer>` `<div.fbg-layer>` | 同上 (img-direct と共通) |
-| scope | `🌊<name>.<class>` | section / article | semantic descriptive (`.hierarchy` `.window` 等) |
-| var inline | `!<prefix>-<name>~<value>` | scope の CSS var | category prefix (`color-*` `size-*`) |
+| mechanism  | syntax                         | target                             | 命名規則                                         |
+| ---------- | ------------------------------ | ---------------------------------- | ------------------------------------------------ |
+| img-direct | `!.<class>[alt](url)`          | `<img>` 直接                       | simple short 名 (image utility namespace)        |
+| bg/fbg     | `!bg.<class>~` `!fbg.<class>~` | `<div.bg-layer>` `<div.fbg-layer>` | 同上 (img-direct と共通)                         |
+| scope      | `🌊<name>.<class>`             | section / article                  | semantic descriptive (`.hierarchy` `.window` 等) |
+| var inline | `!<prefix>-<name>~<value>`     | scope の CSS var                   | category prefix (`color-*` `size-*`)             |
 
 ### 画像 class 統一 namespace (核心決定)
 
 img-direct / bg / fbg / icon の全 image-mechanism で **同一 class が同一概念**。 `!.cover[](url)` `!bg.cover~[](url)` `!icon.round~[](url)` で同名・同動作。 当初 `.full` (img) と `.cover` (bg) で別名問題が出ていたが user 指摘で統一。
 
 5 サブカテゴリ構成:
+
 - **Layout** (相互排他): `.cover` / `.at-{tl,t,tr,l,c,r,bl,b,br}` (cover = 全面、 at-* = 9 セル grid。 inset 0/auto pattern + margin auto で位置決め、 transform は使わないので UnoCSS `translate-*` で微調整可)
 - **Size** (相互排他): `.sm` / `.md` / `.lg` / `.xl` (40 / 60 / 80 / 100 cqmin)
 - **Shape**: `.round` / `.circle`
@@ -448,12 +481,12 @@ one-off customization 用の escape hatch として **`!<varname>~<value>`** を
 
 ### 実装順 (Nun 流: spec → 実装)
 
-| step | 内容 | 規模 |
-|---|---|---|
-| **1** | `docs/spec/syntax.md` 更新 — 名前空間ルール sub-section + image utility class 一覧 + var inline syntax 明文化 | 中 |
-| **2** | 画像 class 統一実装 — 新 `src/styles/utils/image.css` + 既存 `background.css` リファクタ + img-direct / bg / fbg / icon の selector 統一 | 大 |
-| **3** | scope class 3 個実装 — `src/styles/utils/no-footer.css` + `src/styles/utils/table.css` | 小 |
-| **4** | var inline parser 実装 — nwyt parser に `!<prefix>-<name>~<value>` 認識追加、 CSS var として section style に流す | 中-大 |
+| step  | 内容                                                                                                                                     | 規模  |
+| ----- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| **1** | `docs/spec/syntax.md` 更新 — 名前空間ルール sub-section + image utility class 一覧 + var inline syntax 明文化                            | 中    |
+| **2** | 画像 class 統一実装 — 新 `src/styles/utils/image.css` + 既存 `background.css` リファクタ + img-direct / bg / fbg / icon の selector 統一 | 大    |
+| **3** | scope class 3 個実装 — `src/styles/utils/no-footer.css` + `src/styles/utils/table.css`                                                   | 小    |
+| **4** | var inline parser 実装 — nwyt parser に `!<prefix>-<name>~<value>` 認識追加、 CSS var として section style に流す                        | 中-大 |
 
 各 step 独立 commit、 `benben/Quaver.md` 等で動作確認。
 

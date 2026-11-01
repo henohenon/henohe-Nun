@@ -1,1 +1,6 @@
-{"https://vite.dev":{"title":"Vite | Next Generation Frontend Tooling","description":"Get ready for a development environment that can finally catch up with you."}}
+{
+  "https://vite.dev": {
+    "title": "Vite | Next Generation Frontend Tooling",
+    "description": "Get ready for a development environment that can finally catch up with you."
+  }
+}

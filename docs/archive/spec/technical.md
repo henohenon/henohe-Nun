@@ -29,47 +29,47 @@ HTML
 ### パイプライン構成
 
 ```ts
-import { unified } from 'unified'
-import remarkParse from 'remark-parse'
-import remarkGfm from 'remark-gfm'
-import remarkMath from 'remark-math'
-import remarkBreaks from 'remark-breaks'
-import remarkMark from 'remark-mark'
-import remarkRehype from 'remark-rehype'
-import rehypeKatex from 'rehype-katex'
-import rehypeShiki from '@shikijs/rehype'
-import rehypeStringify from 'rehype-stringify'
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import remarkBreaks from "remark-breaks";
+import remarkMark from "remark-mark";
+import remarkRehype from "remark-rehype";
+import rehypeKatex from "rehype-katex";
+import rehypeShiki from "@shikijs/rehype";
+import rehypeStringify from "rehype-stringify";
 
 // custom plugins
-import { remarkNunSyntax } from './remark-nun-syntax'   // micromark ext 登録
-import { remarkNunMeta } from './remark-nun-meta'        // ~~~meta 抽出
-import { remarkNunExtract } from './remark-nun-extract'  // template/nwyt prop mdast ノード → vfile.data に移動＆ツリーから削除
-import { rehypeNunCodePre } from './rehype-nun-code-pre'  // diff_*/embed_* 前処理（shiki 前）
-import { rehypeNunCodeBlock } from './rehype-nun-code'   // embed SSR, diff スタイル, header（shiki 後）
-import { rehypeNunCard } from './rehype-nun-card'        // !card OGP fetch (async)
-import { rehypeNunFnRef } from './rehype-nun-fn-ref'     // !fn[id] → sup placeholder
-import { rehypeNunStructure } from './rehype-nun-structure' // Scope抽出 → テンプレート適用 → fn解決 → shell
+import { remarkNunSyntax } from "./remark-nun-syntax"; // micromark ext 登録
+import { remarkNunMeta } from "./remark-nun-meta"; // ~~~meta 抽出
+import { remarkNunExtract } from "./remark-nun-extract"; // template/nwyt prop mdast ノード → vfile.data に移動＆ツリーから削除
+import { rehypeNunCodePre } from "./rehype-nun-code-pre"; // diff_*/embed_* 前処理（shiki 前）
+import { rehypeNunCodeBlock } from "./rehype-nun-code"; // embed SSR, diff スタイル, header（shiki 後）
+import { rehypeNunCard } from "./rehype-nun-card"; // !card OGP fetch (async)
+import { rehypeNunFnRef } from "./rehype-nun-fn-ref"; // !fn[id] → sup placeholder
+import { rehypeNunStructure } from "./rehype-nun-structure"; // Scope抽出 → テンプレート適用 → fn解決 → shell
 
 const processor = unified()
   .use(remarkParse)
-  .use(remarkNunSyntax)       // micromark extensions を remarkParse に登録（template, nwyt, admonition）
-  .use(remarkGfm)             // strikethrough, table, checklist, autolink
-  .use(remarkMath)            // $...$ / $$...$$
-  .use(remarkBreaks)          // 改行 → <br>
-  .use(remarkMark)            // ==highlight==
-  .use(remarkNunMeta)         // ~~~meta → vfile.data.meta
-  .use(remarkNunExtract)      // nunTemplate/nunNwytProp mdast ノード → vfile.data に移動＆ツリーから削除
+  .use(remarkNunSyntax) // micromark extensions を remarkParse に登録（template, nwyt, admonition）
+  .use(remarkGfm) // strikethrough, table, checklist, autolink
+  .use(remarkMath) // $...$ / $$...$$
+  .use(remarkBreaks) // 改行 → <br>
+  .use(remarkMark) // ==highlight==
+  .use(remarkNunMeta) // ~~~meta → vfile.data.meta
+  .use(remarkNunExtract) // nunTemplate/nunNwytProp mdast ノード → vfile.data に移動＆ツリーから削除
   .use(remarkRehype)
   .use(rehypeKatex)
-  .use(rehypeNunCodePre)      // diff_* → ベース言語に書き換え + diff フラグ保存
-  .use(rehypeShiki, { theme: 'nord', langs: [/* ... */] })  // embed_* は rehypeNunCodePre で退避済み → スキップ
-  .use(rehypeNunCodeBlock)    // embed SSR, diff スタイル, header 追加
-  .use(rehypeNunCard)         // !card → OGP fetch → card 要素 (async)
-  .use(rehypeNunFnRef)        // !fn[id] → <sup data-fn="id">
-  .use(rehypeNunStructure)    // Scope化 → テンプレート → fn解決 → shell
+  .use(rehypeNunCodePre) // diff_* → ベース言語に書き換え + diff フラグ保存
+  .use(rehypeShiki, { theme: "nord", langs: [/* ... */] }) // embed_* は rehypeNunCodePre で退避済み → スキップ
+  .use(rehypeNunCodeBlock) // embed SSR, diff スタイル, header 追加
+  .use(rehypeNunCard) // !card → OGP fetch → card 要素 (async)
+  .use(rehypeNunFnRef) // !fn[id] → <sup data-fn="id">
+  .use(rehypeNunStructure); // Scope化 → テンプレート → fn解決 → shell
 
-const result = await processor.process(markdown)
-const html = String(result)
+const result = await processor.process(markdown);
+const html = String(result);
 ```
 
 ## micromark extensions
@@ -79,24 +79,24 @@ const html = String(result)
 ### remarkNunSyntax（micromark extensions の登録）
 
 ```ts
-import type { Extension as MicromarkExtension } from 'micromark-util-types'
-import type { Extension as FromMarkdownExtension } from 'mdast-util-from-markdown'
+import type { Extension as MicromarkExtension } from "micromark-util-types";
+import type { Extension as FromMarkdownExtension } from "mdast-util-from-markdown";
 
 /** remark plugin: micromark extensions を登録 */
 function remarkNunSyntax() {
-  const data = this.data()
+  const data = this.data();
   // micromark syntax extensions
-  data.micromarkExtensions ??= []
-  data.micromarkExtensions.push(nunTemplateSyntax())
-  data.micromarkExtensions.push(nunNwytPropSyntax())     // flow: !key~value
-  data.micromarkExtensions.push(nunNwytContentSyntax())  // text: !key[value]
-  data.micromarkExtensions.push(nunAdmonitionSyntax())   // flow: ::: admonition
+  data.micromarkExtensions ??= [];
+  data.micromarkExtensions.push(nunTemplateSyntax());
+  data.micromarkExtensions.push(nunNwytPropSyntax()); // flow: !key~value
+  data.micromarkExtensions.push(nunNwytContentSyntax()); // text: !key[value]
+  data.micromarkExtensions.push(nunAdmonitionSyntax()); // flow: ::: admonition
   // mdast-util fromMarkdown extensions
-  data.fromMarkdownExtensions ??= []
-  data.fromMarkdownExtensions.push(nunTemplateFromMarkdown())
-  data.fromMarkdownExtensions.push(nunNwytPropFromMarkdown())
-  data.fromMarkdownExtensions.push(nunNwytContentFromMarkdown())
-  data.fromMarkdownExtensions.push(nunAdmonitionFromMarkdown())
+  data.fromMarkdownExtensions ??= [];
+  data.fromMarkdownExtensions.push(nunTemplateFromMarkdown());
+  data.fromMarkdownExtensions.push(nunNwytPropFromMarkdown());
+  data.fromMarkdownExtensions.push(nunNwytContentFromMarkdown());
+  data.fromMarkdownExtensions.push(nunAdmonitionFromMarkdown());
 }
 ```
 
@@ -177,47 +177,47 @@ position は micromark のトークナイズ時に確定した元テキストの
 hast（フラット）から heading 境界で再帰的に分割して構築する中間データ構造。
 
 ```ts
-type TemplateName = 'default' | 'title' | 'me' | 'message' | 'solo'
+type TemplateName = "default" | "title" | "me" | "message" | "solo";
 
 type NwytProp = {
-  key: string
-  classes: string[]
-  rawValue: string            // raw テキスト。テンプレート適用時に parseNwytValue で key に応じてパース
-  position: Position
-}
+  key: string;
+  classes: string[];
+  rawValue: string; // raw テキスト。テンプレート適用時に parseNwytValue で key に応じてパース
+  position: Position;
+};
 
 type TemplateEntry = {
-  template: TemplateName | undefined  // undefined = クラスのみ指定
-  classes: string[]
-  position: Position
-}
+  template: TemplateName | undefined; // undefined = クラスのみ指定
+  classes: string[];
+  position: Position;
+};
 
 type FootnoteEntry = {
-  position: Position
-}
+  position: Position;
+};
 
 type FootnoteLocation = {
-  page: number        // section のページ番号（1-origin）
-}
+  page: number; // section のページ番号（1-origin）
+};
 
 type VFileData = {
-  templates: TemplateEntry[]
-  nwyts: NwytProp[]
-  footnotes: Record<string, FootnoteEntry>        // 収集フェーズで構築
-  footnoteLocs: Record<string, FootnoteLocation>   // Scope 抽出時に構築
-  meta: Record<string, string>  // ~~~meta の内容
-}
+  templates: TemplateEntry[];
+  nwyts: NwytProp[];
+  footnotes: Record<string, FootnoteEntry>; // 収集フェーズで構築
+  footnoteLocs: Record<string, FootnoteLocation>; // Scope 抽出時に構築
+  meta: Record<string, string>; // ~~~meta の内容
+};
 
 type Scope = {
-  tag: 'section' | 'article'   // h1 -> section, h2+ -> article
-  depth: number                 // heading depth
-  heading: Element | null       // null = implicit article (heading前コンテンツ)
-  template: TemplateName        // default fallback
-  classes: string[]             // template classes
-  nwyts: NwytProp[]             // scoped nwyt props
-  body: (ElementContent | Scope)[]  // hast nodes and child scopes
-  fnDef?: string                // この Scope が脚注定義である場合の id
-}
+  tag: "section" | "article"; // h1 -> section, h2+ -> article
+  depth: number; // heading depth
+  heading: Element | null; // null = implicit article (heading前コンテンツ)
+  template: TemplateName; // default fallback
+  classes: string[]; // template classes
+  nwyts: NwytProp[]; // scoped nwyt props
+  body: (ElementContent | Scope)[]; // hast nodes and child scopes
+  fnDef?: string; // この Scope が脚注定義である場合の id
+};
 ```
 
 ### 構造化ルール
@@ -245,11 +245,11 @@ type Scope = {
 const me = (scope: Scope): Element =>
   h(`${scope.tag}.me`, { className: scope.classes }, [
     scope.heading,
-    h('div.container', [
-      h('div.icon', [resolveNwyt(scope, 'icon')]),
-      h('div.body', renderChildren(scope.body)),
+    h("div.container", [
+      h("div.icon", [resolveNwyt(scope, "icon")]),
+      h("div.body", renderChildren(scope.body)),
     ]),
-  ])
+  ]);
 ```
 
 - ルート要素のタグ名は `scope.tag`（section or article）
@@ -259,20 +259,20 @@ const me = (scope: Scope): Element =>
 
 ### テンプレート一覧
 
-| 名前 | 構造 | body |
-|---|---|---|
-| default | heading + body | あり |
-| title | heading(center) + sub + logo | なし |
-| me | heading + [icon, body] | あり |
+| 名前    | 構造                          | body |
+| ------- | ----------------------------- | ---- |
+| default | heading + body                | あり |
+| title   | heading(center) + sub + logo  | なし |
+| me      | heading + [icon, body]        | あり |
 | message | heading + body(center) + lead | あり |
-| solo | heading(center) | なし |
+| solo    | heading(center)               | なし |
 
 全テンプレートは section（h1）・article（h2+）の両方で使用可能。`scope.tag` に応じてルート要素のタグ名が変わるだけで、構造は同じ。body なしテンプレート（title, solo）では子 Scope は構造化されても表示されない。
 
 ### テンプレート適用（再帰）
 
 ```ts
-type TemplateFn = (scope: Scope) => Element
+type TemplateFn = (scope: Scope) => Element;
 
 const templates: Record<string, TemplateFn> = {
   default: defaultTemplate,
@@ -280,35 +280,33 @@ const templates: Record<string, TemplateFn> = {
   me: meTemplate,
   message: messageTemplate,
   solo: soloTemplate,
-}
+};
 
 /** Scope を再帰的にテンプレート適用して hast に変換 */
 function render(scope: Scope): Element {
-  const templateFn = templates[scope.template]
-  const el = templateFn(scope)
+  const templateFn = templates[scope.template];
+  const el = templateFn(scope);
   // 脚注定義 Scope の場合: heading に [^id] マーク挿入 + 属性付与
   if (scope.fnDef) {
-    addFnMark(el, scope.fnDef)
-    el.properties ??= {}
-    el.properties['dataFnDef'] = scope.fnDef
+    addFnMark(el, scope.fnDef);
+    el.properties ??= {};
+    el.properties["dataFnDef"] = scope.fnDef;
   }
-  return el
+  return el;
 }
 
 /** body 内の要素を処理。子 Scope があれば再帰、hast ノードはそのまま */
 function renderChildren(body: (ElementContent | Scope)[]): (Element | ElementContent)[] {
-  return body.map(child =>
-    isScope(child) ? render(child) : child
-  )
+  return body.map((child) => (isScope(child) ? render(child) : child));
 }
 
 /** nwyt prop を key で検索し、key に応じて rawValue をパースして hast 化 */
 function resolveNwyt(scope: Scope, key: string): Element | null {
-  const nwyt = scope.nwyts.find(n => n.key === key)
-  if (!nwyt) return null
+  const nwyt = scope.nwyts.find((n) => n.key === key);
+  if (!nwyt) return null;
   // key に応じて rawValue の解釈を変える
-  const children = parseNwytValue(nwyt.key, nwyt.rawValue)
-  return h('span', { className: nwyt.classes }, children)
+  const children = parseNwytValue(nwyt.key, nwyt.rawValue);
+  return h("span", { className: nwyt.classes }, children);
 }
 
 /** rawValue を key に応じてパース */
@@ -323,53 +321,53 @@ function parseNwytValue(key: string, raw: string): ElementContent[] {
 
 ```ts
 function defaultTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
+  const children: ElementContent[] = [];
+  if (scope.heading) children.push(scope.heading);
   if (scope.body.length > 0) {
-    children.push(h('div.body', renderChildren(scope.body)))
+    children.push(h("div.body", renderChildren(scope.body)));
   }
-  return h(`${scope.tag}.default`, { className: scope.classes }, children)
+  return h(`${scope.tag}.default`, { className: scope.classes }, children);
 }
 
 function titleTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
-  const sub = resolveNwyt(scope, 'sub')
-  if (sub) children.push(h('div.sub', [sub]))
-  children.push(h('svg.henoheno', { src: '/henoheno.svg', alt: '' }))
+  const children: ElementContent[] = [];
+  if (scope.heading) children.push(scope.heading);
+  const sub = resolveNwyt(scope, "sub");
+  if (sub) children.push(h("div.sub", [sub]));
+  children.push(h("svg.henoheno", { src: "/henoheno.svg", alt: "" }));
   // body なし — 子 Scope は無視される
-  return h(`${scope.tag}.title`, { className: scope.classes }, children)
+  return h(`${scope.tag}.title`, { className: scope.classes }, children);
 }
 
 function meTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
-  const icon = resolveNwyt(scope, 'icon')
+  const children: ElementContent[] = [];
+  if (scope.heading) children.push(scope.heading);
+  const icon = resolveNwyt(scope, "icon");
   children.push(
-    h('div.container', [
-      h('div.icon', icon ? [icon] : []),
-      h('div.body', renderChildren(scope.body)),
-    ])
-  )
-  return h(`${scope.tag}.me`, { className: scope.classes }, children)
+    h("div.container", [
+      h("div.icon", icon ? [icon] : []),
+      h("div.body", renderChildren(scope.body)),
+    ]),
+  );
+  return h(`${scope.tag}.me`, { className: scope.classes }, children);
 }
 
 function messageTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
+  const children: ElementContent[] = [];
+  if (scope.heading) children.push(scope.heading);
   if (scope.body.length > 0) {
-    children.push(h('div.body', renderChildren(scope.body)))
+    children.push(h("div.body", renderChildren(scope.body)));
   }
-  const lead = resolveNwyt(scope, 'lead')
-  if (lead) children.push(h('div.lead', [lead]))
-  return h(`${scope.tag}.message`, { className: scope.classes }, children)
+  const lead = resolveNwyt(scope, "lead");
+  if (lead) children.push(h("div.lead", [lead]));
+  return h(`${scope.tag}.message`, { className: scope.classes }, children);
 }
 
 function soloTemplate(scope: Scope): Element {
-  const children: ElementContent[] = []
-  if (scope.heading) children.push(scope.heading)
+  const children: ElementContent[] = [];
+  if (scope.heading) children.push(scope.heading);
   // body なし — 子 Scope は無視される
-  return h(`${scope.tag}.solo`, { className: scope.classes }, children)
+  return h(`${scope.tag}.solo`, { className: scope.classes }, children);
 }
 ```
 
@@ -379,27 +377,27 @@ function soloTemplate(scope: Scope): Element {
 /** Scope 抽出 → テンプレート適用 → フッター → fn 解決 → シェル */
 function rehypeNunStructure(options: { meta: Meta }) {
   return (tree: Element, file: VFile) => {
-    const data = file.data as VFileData
+    const data = file.data as VFileData;
 
     // 1. フラット hast → Scope ツリー + 脚注位置マップ構築
-    const scopes = extractScopes(tree.children, 1, data)
+    const scopes = extractScopes(tree.children, 1, data);
 
     // 2. 各 Scope を再帰的にテンプレート適用して hast 化
-    const sections = scopes.map(scope => {
-      const el = render(scope)
+    const sections = scopes.map((scope) => {
+      const el = render(scope);
       // 3. section レベルならフッター追加
-      if (scope.tag === 'section') {
-        appendFooter(el, scope, data)
+      if (scope.tag === "section") {
+        appendFooter(el, scope, data);
       }
-      return el
-    })
+      return el;
+    });
 
     // 4. 脚注の一括解決（footnoteLocs を使用）
-    resolveFootnotes(sections, data.footnoteLocs)
+    resolveFootnotes(sections, data.footnoteLocs);
 
     // 5. ページシェルで包む (sections は body 直下、 wrapper div は使わない)
-    return shell(sections, options.meta)
-  }
+    return shell(sections, options.meta);
+  };
 }
 ```
 
@@ -408,11 +406,11 @@ function rehypeNunStructure(options: { meta: Meta }) {
 section（h1）レベルのみ。`!fl`/`!fr` の nwyt prop から生成。
 
 ```ts
-h('footer', [
-  h('span.fl', { className: flValue.classes }, parseNwytValue('fl', flValue.rawValue)),
-  h('hr'),
-  h('span.fr', { className: frValue.classes }, parseNwytValue('fr', frValue.rawValue)),
-])
+h("footer", [
+  h("span.fl", { className: flValue.classes }, parseNwytValue("fl", flValue.rawValue)),
+  h("hr"),
+  h("span.fr", { className: frValue.classes }, parseNwytValue("fr", frValue.rawValue)),
+]);
 ```
 
 - rawValue は `parseNwytValue` で Markdown インラインとしてパースされる（装飾が効く）
@@ -430,10 +428,10 @@ h('footer', [
 
 フッターの HTML 要素とは別に、マスク専用の SVG をインラインで生成する。フッターテキストの Markdown インライン装飾は、簡易的に SVG `<text>` / `<tspan>` 属性にマッピングする:
 
-| Markdown | SVG tspan 属性 |
-|---|---|
-| `**太字**` | `font-weight="bold"` |
-| `*斜体*` | `font-style="italic"` |
+| Markdown       | SVG tspan 属性                   |
+| -------------- | -------------------------------- |
+| `**太字**`     | `font-weight="bold"`             |
+| `*斜体*`       | `font-style="italic"`            |
 | `~~打ち消し~~` | `text-decoration="line-through"` |
 
 フッターの線（`<hr>` 相当）は SVG `<line>` または `<rect>` で描画。フォントサイズ・位置はフッター CSS と同じ定数を共有する。
@@ -496,12 +494,13 @@ footer 構造（!fbg あり）:
 ```ts
 // Scope 抽出時に構築
 type FootnoteLocation = {
-  page: number        // section のページ番号（1-origin）
-}
+  page: number; // section のページ番号（1-origin）
+};
 // vfile.data.footnoteLocs: Record<string, FootnoteLocation>
 ```
 
 `render()` が `scope.fnDef` を検出した場合、以下を自動処理する:
+
 - heading に `[^id]` マーク挿入（`addFnMark`）
   - heading あり → heading の子の先頭に `<span class="fn-def-mark">[^id]</span>` を挿入
   - heading なし（暗黙 article）→ 空の heading 要素を生成し、その子としてマークを挿入
@@ -550,25 +549,26 @@ shiki 処理後のコードブロックを種別ごとに処理する。
 
 ### embed
 
-| 種別 | 処理 |
-|---|---|
-| embed_html | `hast-util-from-html` で hast 化 |
-| embed_svg | 同上 |
-| embed_mermaid | クライアントサイドレンダリング（後述） |
-| embed_math | KaTeX API で HTML レンダリング -> hast 化 |
+| 種別          | 処理                                      |
+| ------------- | ----------------------------------------- |
+| embed_html    | `hast-util-from-html` で hast 化          |
+| embed_svg     | 同上                                      |
+| embed_mermaid | クライアントサイドレンダリング（後述）    |
+| embed_math    | KaTeX API で HTML レンダリング -> hast 化 |
 
 #### embed_mermaid: クライアントサイドレンダリング採用の経緯
 
 当初仕様では「mermaid API で SVG レンダリング → hast 化」(SSR) を想定していた。
 調査の結果、Mermaid の SSR には DOM 環境が必要で、実用的な手段は以下の3択になる：
 
-| 手段 | 問題 |
-|---|---|
+| 手段                      | 問題                                                                    |
+| ------------------------- | ----------------------------------------------------------------------- |
 | `@mermaid-js/mermaid-cli` | 内部で Puppeteer (Chromium バイナリ ~100MB+) を使用。公式ツールだが重い |
-| jsdom + mermaid | 軽量だが全ダイアグラム型の動作は保証されない |
-| Playwright headless | ビルドのたびにブラウザ起動。PDF 出力用途とは分離したい |
+| jsdom + mermaid           | 軽量だが全ダイアグラム型の動作は保証されない                            |
+| Playwright headless       | ビルドのたびにブラウザ起動。PDF 出力用途とは分離したい                  |
 
 **決定**: `<pre class="mermaid">` を出力し、`mermaid` npm パッケージをクライアントで動的 import して非同期レンダリングする。
+
 - ナビゲーション初期化はブロックしない（`initMermaid` は fire-and-forget）
 - レンダリング完了後に現在スライドを `fitSlide` で再調整
 - Mermaid は Vite の code splitting により別チャンクに分離される
@@ -578,13 +578,10 @@ shiki 処理後のコードブロックを種別ごとに処理する。
 rehype-shiki が `<pre><code>` を生成した後、ラッパーを追加:
 
 ```ts
-h('figure.code-block', [
-  h('figcaption', [
-    h('span.lang', name ?? lang),
-    h('button.copy', 'copy'),
-  ]),
-  pre,  // #<n> 指定時は各行に行番号を付与（開始番号 = n）
-])
+h("figure.code-block", [
+  h("figcaption", [h("span.lang", name ?? lang), h("button.copy", "copy")]),
+  pre, // #<n> 指定時は各行に行番号を付与（開始番号 = n）
+]);
 ```
 
 ## `!card` OGP fetch
@@ -603,24 +600,21 @@ OGP キャッシュは dev サーバーのプロセス内メモリに保持（�
 
 ```ts
 const shell = (content: Element, meta: ShellMeta): Element =>
-  h('html', { lang: 'ja' }, [
-    h('head', [
-      h('meta', { charset: 'utf-8' }),
-      h('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1' }),
-      h('title', meta.title),
-      h('meta', { property: 'og:title', content: meta.title }),
-      h('meta', { name: 'description', content: meta.description }),
-      h('meta', { property: 'og:description', content: meta.description }),
-      h('meta', { property: 'og:type', content: 'website' }),
-      h('meta', { property: 'og:url', content: meta.ogUrl }),
-      h('meta', { property: 'og:image', content: meta.ogImage }),
-      h('meta', { name: 'twitter:card', content: 'summary_large_image' }),
+  h("html", { lang: "ja" }, [
+    h("head", [
+      h("meta", { charset: "utf-8" }),
+      h("meta", { name: "viewport", content: "width=device-width, initial-scale=1" }),
+      h("title", meta.title),
+      h("meta", { property: "og:title", content: meta.title }),
+      h("meta", { name: "description", content: meta.description }),
+      h("meta", { property: "og:description", content: meta.description }),
+      h("meta", { property: "og:type", content: "website" }),
+      h("meta", { property: "og:url", content: meta.ogUrl }),
+      h("meta", { property: "og:image", content: meta.ogImage }),
+      h("meta", { name: "twitter:card", content: "summary_large_image" }),
     ]),
-    h('body', [
-      content,
-      h('script', { type: 'module', src: meta.jsPath }),
-    ]),
-  ])
+    h("body", [content, h("script", { type: "module", src: meta.jsPath })]),
+  ]);
 ```
 
 OGP メタは `~~~meta` ブロックの値 + Vite `base` + デッキ名から組み立てる:
@@ -644,13 +638,13 @@ description: 説明文
 
 ## remark plugins（既存）
 
-| plugin | 用途 |
-|---|---|
-| remark-gfm | strikethrough `~~`, table, checklist, autolink（remarkNunSyntax の後に配置し、nwyt の `~` との衝突を回避） |
-| remark-math | `$...$` / `$$...$$` 数式 |
-| remark-breaks | 改行 -> `<br>` |
-| remark-mark | `==highlight==` |
-| ~~remark-directive~~ | 装飾ブロックは自前 micromark extension で実装 (ネスト用に colon 数を増やせる必要があるため) |
+| plugin               | 用途                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------- |
+| remark-gfm           | strikethrough `~~`, table, checklist, autolink（remarkNunSyntax の後に配置し、nwyt の `~` との衝突を回避） |
+| remark-math          | `$...$` / `$$...$$` 数式                                                                                   |
+| remark-breaks        | 改行 -> `<br>`                                                                                             |
+| remark-mark          | `==highlight==`                                                                                            |
+| ~~remark-directive~~ | 装飾ブロックは自前 micromark extension で実装 (ネスト用に colon 数を増やせる必要があるため)                |
 
 ### 装飾ブロック
 
@@ -671,19 +665,19 @@ CSS は `.admonition` / `.admonition-title` / `.admonition-body` で構成。typ
 
 デフォルトは英語。タイトルを変えたい場合は記法で直接指定する（`:::note 補足`）。
 
-| 種類 | デフォルトタイトル |
-|---|---|
-| `note` | Note |
-| `info` | Info |
-| `tip` | Tip |
-| `warning` | Warning |
-| `alert` | Alert |
+| 種類      | デフォルトタイトル |
+| --------- | ------------------ |
+| `note`    | Note               |
+| `info`    | Info               |
+| `tip`     | Tip                |
+| `warning` | Warning            |
+| `alert`   | Alert              |
 
 ## rehype plugins（既存）
 
-| plugin | 用途 |
-|---|---|
-| rehype-katex | 数式レンダリング |
+| plugin       | 用途                    |
+| ------------ | ----------------------- |
+| rehype-katex | 数式レンダリング        |
 | rehype-shiki | コードハイライト + diff |
 
 ## クライアント JS
@@ -706,7 +700,12 @@ section の body 内容が溢れた場合、CSS `zoom` で縮小して収める�
 - 印刷時（`beforeprint`）は全スライドに対して実行（`@media print` で全 section が `display: block` になるため）
 
 ```ts
-function adjustZoom(body: HTMLElement, children: HTMLElement[], iteration: number, currentZoom: number): void {
+function adjustZoom(
+  body: HTMLElement,
+  children: HTMLElement[],
+  iteration: number,
+  currentZoom: number,
+): void {
   if (iteration >= 10) return;
   const csx = Math.max(...children.map((c) => c.offsetLeft + c.offsetWidth - body.offsetLeft), 0);
   const csy = Math.max(...children.map((c) => c.offsetTop + c.offsetHeight - body.offsetTop), 0);
@@ -720,10 +719,10 @@ function adjustZoom(body: HTMLElement, children: HTMLElement[], iteration: numbe
 }
 
 function fitSlide(slide: HTMLElement) {
-  for (const body of slide.querySelectorAll<HTMLElement>(':scope > .body')) {
+  for (const body of slide.querySelectorAll<HTMLElement>(":scope > .body")) {
     const children = Array.from(body.children) as HTMLElement[];
     if (children.length === 0) continue;
-    body.style.zoom = '';
+    body.style.zoom = "";
     adjustZoom(body, children, 0, 1);
   }
 }
@@ -811,16 +810,16 @@ CSS / JS は全デッキ共通で1つ。UnoCSS で処理し、`@apply` による
 ### エントリ（`src/styles/index.css`）
 
 ```css
-@import './base.css';
-@import './theme.css';
-@import './footer.css';
-@import './admonition.css';
-@import './code-block.css';
-@import './templates/default.css';
-@import './templates/title.css';
-@import './templates/me.css';
-@import './templates/message.css';
-@import './templates/solo.css';
+@import "./base.css";
+@import "./theme.css";
+@import "./footer.css";
+@import "./admonition.css";
+@import "./code-block.css";
+@import "./templates/default.css";
+@import "./templates/title.css";
+@import "./templates/me.css";
+@import "./templates/message.css";
+@import "./templates/solo.css";
 ```
 
 ### テーマ（`src/styles/base.css`）

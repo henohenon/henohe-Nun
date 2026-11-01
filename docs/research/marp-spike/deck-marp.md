@@ -7,15 +7,18 @@ fr: 2026/09/20
 ---
 
 # Web技術でイイ感じのゲーム開発
+
 <!-- _class: title -->
 
 henohenon
 
 # 快適な環境
+
 <!-- _class: solo -->
 <!-- _fl: 快適な環境 -->
 
 # Dev Loop
+
 <!-- _fl: 快適な環境 -->
 
 - Unity
@@ -30,17 +33,19 @@ Vite 以外でも HMR はある
 :::
 
 # それでも軽いのは Web
+
 <!-- _fl: クオリティ -->
 
-| | Three.js | Unity WebGL |
-| --- | ---: | ---: |
-| 配信サイズ | 109 KB | 4.3 MB |
+|            | Three.js | Unity WebGL |
+| ---------- | -------: | ----------: |
+| 配信サイズ |   109 KB |      4.3 MB |
 
 ```ts:main.ts
 const scene = new THREE.Scene()
 ```
 
 #
+
 <!-- _fl: 茶番 -->
 
 ```embed_svg
@@ -50,12 +55,15 @@ const scene = new THREE.Scene()
 !card[Vite](https://vite.dev)
 
 # HMR とは
+
 <!-- _fl: 脚注 -->
+
 !fn~[hmr]
 
 Hot Module Replacement。ページを再読み込みせずにモジュールを差し替える。
 
 # こういう時にイイ感じ
+
 <!-- _class: message -->
 <!-- _fl: まとめ -->
 

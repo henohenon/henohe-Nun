@@ -10,10 +10,11 @@ Markdown でスライドを書いて HTML / PDF で出力し、GitHub Pages で�
 ## 使い方
 
 ```bash
-bun install
-bun run dev      # marp -s benben。/ にデッキ一覧、/<deck>.md でプレビュー (?pdf で PDF)
-bun run build    # dist/<deck>.html + 画像・一覧ページ
-bun run pdf      # dist/<deck>.pdf
+vp install
+vp run dev       # marp -s benben。/ にデッキ一覧、/<deck>.md でプレビュー (?pdf で PDF)
+vp run build     # dist/<deck>.html + 画像・一覧ページ
+vp run pdf       # dist/<deck>.pdf
+vp check         # 整形・lint・型チェック
 ```
 
 ## 書き方

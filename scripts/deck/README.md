@@ -12,7 +12,7 @@ SVG 内の画像は `../engines/` で参照するので、出力 SVG は `benben
 ## gen-logo-map.ts — ロゴごった煮ページ
 
 ```bash
-tsx scripts/deck/gen-logo-map.ts <出力パス> [seed]
+node scripts/deck/gen-logo-map.ts <出力パス> [seed]
 ```
 
 - `items` にロゴ (ファイル / URL / 基準幅 / アスペクト比) を定義
@@ -23,7 +23,7 @@ tsx scripts/deck/gen-logo-map.ts <出力パス> [seed]
 ## gen-lib-row.ts — 「今回は」ページ
 
 ```bash
-tsx scripts/deck/gen-lib-row.ts <出力パス>
+node scripts/deck/gen-lib-row.ts <出力パス>
 ```
 
 Three.js / PixiJS を上段、Babylon.js / Tone.js / Matter.js を下段に整列させる。

@@ -1,20 +1,22 @@
-~~~meta
+```meta
 title: Web技術でイイ感じのゲーム開発
 description: Marp spike
-~~~
+```
 
 !fr~2026/09/20
 
-
 # Web技術でイイ感じのゲーム開発
+
 🌊title
 !sub~henohenon
 
 # 快適な環境
+
 🌊solo
 !fl~快適な環境
 
 # Dev Loop
+
 🌊default
 !fl~快適な環境
 
@@ -30,17 +32,19 @@ Vite 以外でも HMR はある
 :::
 
 # それでも軽いのは Web
+
 !fl~クオリティ
 
-| | Three.js | Unity WebGL |
-| --- | ---: | ---: |
-| 配信サイズ | 109 KB | 4.3 MB |
+|            | Three.js | Unity WebGL |
+| ---------- | -------: | ----------: |
+| 配信サイズ |   109 KB |      4.3 MB |
 
 ```ts:main.ts
 const scene = new THREE.Scene()
 ```
 
 #
+
 🌊default
 !fl~茶番
 
@@ -51,17 +55,20 @@ const scene = new THREE.Scene()
 !card[Vite](https://vite.dev)
 
 # HMR とは
+
 !fn~[hmr]
 !fl~脚注
 
 Hot Module Replacement。ページを再読み込みせずにモジュールを差し替える。
 
 # こういう時にイイ感じ
+
 🌊message
 !fl~まとめ
 !lead~最適ではない。でも、悪くない
 
 # 写真
+
 !fl~画像
 
 ![](../../../public/images/tgs.jpg)

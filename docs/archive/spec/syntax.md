@@ -3,11 +3,13 @@
 基本的なmarkdown記法をベースに、てんこ盛りにしつつ、一部独自記法を採用したやつ
 
 **基本方針**
+
 - Markdownとして読めることを優先する。
 - MarkdownやCSS classの記法の延長としての拡張。
 - CSSやHTMLを直接意識せずに書けることを意識。
 
 **独自記法について**
+
 - スライドのデザイン指定、Markdownの機能拡張を行う。
 - Nunから水モチーフのキーワードを使用している`~`, `🌊`。
 
@@ -122,13 +124,13 @@ ___太字斜体___
 :::
 ```
 
-| 種類 | 用途 |
-| --- | --- |
-| `note` | 補足、メモ |
-| `info` | 追加情報 |
-| `tip` | ヒント、推奨 |
-| `warning` | 注意 |
-| `alert` | 強い警告 |
+| 種類      | 用途         |
+| --------- | ------------ |
+| `note`    | 補足、メモ   |
+| `info`    | 追加情報     |
+| `tip`     | ヒント、推奨 |
+| `warning` | 注意         |
+| `alert`   | 強い警告     |
 
 #### タイトル
 
@@ -151,13 +153,13 @@ ___太字斜体___
 装飾ブロック内にはリスト、コードブロック等のブロック要素を含められる。内容は flow content として再帰パースされる。
 装飾ブロックをネストする場合は、外側のコロンを増やして区別する。
 
-````Markdown
+```Markdown
 ::::note 外側
 :::tip 内側
 ネストされた装飾ブロック
 :::
 ::::
-````
+```
 
 ### 引用
 
@@ -176,8 +178,9 @@ ___太字斜体___
 ```
 
 ### コードブロック
+
 左上に言語名(ファイル名)、右上にコピーボタンを持つヘッダー付きの形式。
-（CommonMark 仕様上 `~~~` でもコードフェンスとして使える。`~~~meta` と同様、圧縮などで使い分けると面白い。推奨は `` ``` ``。）
+（CommonMark 仕様上 `~~~` でもコードフェンスとして使える。`~~~meta` と同様、圧縮などで使い分けると面白い。推奨は ` ``` `。）
 
 ````Markdown
 ```js
@@ -185,7 +188,6 @@ const value = 1;
 console.log(value);
 ```
 ````
-
 
 #### ファイル名指定
 
@@ -198,15 +200,14 @@ console.log(value);
 
 以下の拡張記法を使える。
 
-| 記法                         | 用途              |
-|----------------------------|-----------------|
-| `` ```<lang> ``            | 言語指定            |
-| `` ```<lang>:<name> ``     | ファイル名指定         |
-| `` ```<lang>#<n> ``        | 開始行番号指定          |
-| `` ```<lang>:<name>#<n> `` | ファイル名 + 開始行番号指定 |
-| `` ```diff_<lang> ``       | 差分表示            |
-| `` ```embed_<type> ``      | 内容を埋め込み要素として描画  |
-
+| 記法                     | 用途                         |
+| ------------------------ | ---------------------------- |
+| ` ```<lang> `            | 言語指定                     |
+| ` ```<lang>:<name> `     | ファイル名指定               |
+| ` ```<lang>#<n> `        | 開始行番号指定               |
+| ` ```<lang>:<name>#<n> ` | ファイル名 + 開始行番号指定  |
+| ` ```diff_<lang> `       | 差分表示                     |
+| ` ```embed_<type> `      | 内容を埋め込み要素として描画 |
 
 #### 開始行番号指定
 
@@ -229,6 +230,7 @@ console.log(value); // 11
 ````
 
 #### 差分表示
+
 ````Markdown
 ```diff_js
 -const value = 1;
@@ -236,15 +238,17 @@ console.log(value); // 11
 console.log(value);
 ```
 ````
+
 #### 埋め込み表示
+
 `embed_*` を指定した場合は、内容をコードではなく描画・埋め込みとして扱う。
 
-| 記法                     | 用途 |
-|------------------------| --- |
-| `` ```embed_html ``    | HTMLとして埋め込み |
-| `` ```embed_svg ``     | SVGとして描画 |
-| `` ```embed_mermaid `` | Mermaid図として描画 |
-| `` ```embed_math ``    | 数式として描画 |
+| 記法                 | 用途                |
+| -------------------- | ------------------- |
+| ` ```embed_html `    | HTMLとして埋め込み  |
+| ` ```embed_svg `     | SVGとして描画       |
+| ` ```embed_mermaid ` | Mermaid図として描画 |
+| ` ```embed_math `    | 数式として描画      |
 
 ````Markdown
 ```embed_html
@@ -369,11 +373,11 @@ class 名に使える文字は `[a-zA-Z0-9_%-]` のみ。 `%` は image utility 
 
 配置指定。区切り行の `:` の位置で各列のテキスト寄せを決める。
 
-| 区切り | 寄せ |
-| :--- | :--- |
+| 区切り              | 寄せ                |
+| :------------------ | :------------------ |
 | `:---` または `---` | 左寄せ (デフォルト) |
-| `:---:` | 中央寄せ |
-| `---:` | 右寄せ |
+| `:---:`             | 中央寄せ            |
+| `---:`              | 右寄せ              |
 
 ```Markdown
 | left | center | right |
@@ -382,6 +386,7 @@ class 名に使える文字は `[a-zA-Z0-9_%-]` のみ。 `%` は image utility 
 ```
 
 remark-gfm が `<th align="...">` / `<td align="...">` の HTML 属性で出力し、CSS 側がそれに合わせて `text-align` を当てる。
+
 ### エスケープ
 
 Markdown記法として解釈されたくない文字は `\` でエスケープする。
@@ -424,17 +429,21 @@ Markdown記法として解釈されたくない文字は `\` でエスケープ�
 ```
 
 ## テンプレート記法
+
 スライド内部のデザインは後述するテンプレートとそれに対するクラス指定のみで構成される。
 headingタグ階層(以下、階層)のルート要素に指定されたクラスを追加し、それを外部CSSファイルによって解釈する。
 これにより、Markdown記述からDOM構造/CSSを廃す。
 
 ### テンプレート指定
+
 `🌊<template_name>`
 そのheadingタグ階層(以下、階層)のDOM構造/デザインテンプレートを決定する。
 1つの階層につき1つのみ指定可能。(2つ以上ある場合は後勝ち)
 
 (半角英数以外を使うのが頭がおかしいのはわかりつつ、ロマンに耐えきれんかった)
+
 ### クラス指定
+
 `🌊<template_name>.<class_name>`
 その階層にclassを指定し、デザインを変更する。
 複数を繋げて指定可能`🌊default.my-class.another-class`。
@@ -447,36 +456,38 @@ UnoCSSクラスは一応指定できるが、基本非推奨。
 
 クラスは指定する mechanism (= 適用 target) によって 4 つの名前空間に分かれる。
 
-| mechanism | syntax | 適用 target | 命名規則 |
-|---|---|---|---|
-| **img-direct** | `!.<class>[alt](url)` | `<img>` 直接 | simple short 名 (image utility namespace) |
-| **bg/fbg** | `!bg.<class>~[alt](url)` / `!fbg.<class>~[alt](url)` | wrapper 内の `<img.bg-img>` / `<img.fbg-img>` | 同上 (img-direct と共通) |
-| **scope** | `🌊<name>.<class>` | section / article 容器 | semantic descriptive (`.hierarchy` `.window` 等) |
-| **var inline** | `!<prefix>-<name>~<value>` | scope の CSS var を直接 set | category prefix (`color-*` `size-*`) |
+| mechanism      | syntax                                               | 適用 target                                   | 命名規則                                         |
+| -------------- | ---------------------------------------------------- | --------------------------------------------- | ------------------------------------------------ |
+| **img-direct** | `!.<class>[alt](url)`                                | `<img>` 直接                                  | simple short 名 (image utility namespace)        |
+| **bg/fbg**     | `!bg.<class>~[alt](url)` / `!fbg.<class>~[alt](url)` | wrapper 内の `<img.bg-img>` / `<img.fbg-img>` | 同上 (img-direct と共通)                         |
+| **scope**      | `🌊<name>.<class>`                                   | section / article 容器                        | semantic descriptive (`.hierarchy` `.window` 等) |
+| **var inline** | `!<prefix>-<name>~<value>`                           | scope の CSS var を直接 set                   | category prefix (`color-*` `size-*`)             |
 
 #### image utility class (統一 namespace)
 
 img-direct / bg / fbg / icon の全 image-mechanism で **同一 class が同一概念**。 適用先は常に `<img>` 要素 (wrapper の `<div.bg-layer>` 等ではなく、 その中の `<img>` 本体)。 例:
+
 - `!.cover[](url)` → `<img class="cover">` (body 内、 親要素を覆う)
 - `!bg.cover~[](url)` → `<div class="bg-layer"><img class="bg-img cover"></div>` (section 内 inner img を覆う)
 - `!icon.round~[](url)` → me template の icon img が 角丸
 
 **bg/fbg の注意**: class は **wrapper でなく inner img を動かす**。 wrapper (`<div.bg-layer>` / `<div.fbg-layer>`) は section 全体を覆う固定の positioning context (mask 適用先) で位置を変えない。 これにより:
+
 - bg では `.at-bl.sm` で img が section 内 bottom-left の 40cqmin 区画に表示 (期待通り)
 - fbg では mask が wrapper (= section bottom の footer 形状領域) に固定なので、 inner img を `.at-bl.sm` で動かすと **mask 領域と img 領域の交差部分**だけ可視になる (footer の中の特定部分しか塗られない)。 fbg の visible area 自体を動かしたい場合は mask 構築の改修が必要 (現状 scope 外)
 
 `.at-*` は `position: absolute` + `inset` の 0/auto pattern + `margin: auto` で位置決め。 transform を使わないので CSS `translate` プロパティ枠が空いており、 `.tx-*` / `.ty-*` (下記 Nudge) で微調整できる。
 
-| カテゴリ | classes | 効果 |
-|---|---|---|
-| Layout (排他) | `.cover` / `.at-{tl,t,tr,l,c,r,bl,b,br}` | 親要素内での位置 (cover = 全面、 at-* = 9 セル grid) |
-| Nudge (複合可) | `.tx-<n><unit>` / `.ty-<n><unit>` | translate で位置微調整 (`.at-*` 上に乗せる) |
-| Opacity | `.op-<n>` | `opacity: n/100` (n = 0-100 integer、 Tailwind 互換) |
-| Subtract | `.^<class>` | 継承 class list から `<class>` を除去 (global 上書きしたい時) |
-| Size (排他) | `.sm` / `.md` / `.lg` / `.xl` | 40 / 60 / 80 / 100 cqmin |
-| Shape | `.round` / `.circle` | 角丸 / 円形クロップ |
-| Aspect (排他) | `.aspect-{square,video,portrait}` | aspect-ratio 1:1 / 16:9 / 9:16 |
-| Effects (複合可) | `.dim` / `.haze` / `.mono` / `.invert` / `.fade` / `.shadow` / `.frame` / `.tint-brand` / `.flip-{h,v}` | filter / blend / transform 系 |
+| カテゴリ         | classes                                                                                                 | 効果                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Layout (排他)    | `.cover` / `.at-{tl,t,tr,l,c,r,bl,b,br}`                                                                | 親要素内での位置 (cover = 全面、 at-* = 9 セル grid)          |
+| Nudge (複合可)   | `.tx-<n><unit>` / `.ty-<n><unit>`                                                                       | translate で位置微調整 (`.at-*` 上に乗せる)                   |
+| Opacity          | `.op-<n>`                                                                                               | `opacity: n/100` (n = 0-100 integer、 Tailwind 互換)          |
+| Subtract         | `.^<class>`                                                                                             | 継承 class list から `<class>` を除去 (global 上書きしたい時) |
+| Size (排他)      | `.sm` / `.md` / `.lg` / `.xl`                                                                           | 40 / 60 / 80 / 100 cqmin                                      |
+| Shape            | `.round` / `.circle`                                                                                    | 角丸 / 円形クロップ                                           |
+| Aspect (排他)    | `.aspect-{square,video,portrait}`                                                                       | aspect-ratio 1:1 / 16:9 / 9:16                                |
+| Effects (複合可) | `.dim` / `.haze` / `.mono` / `.invert` / `.fade` / `.shadow` / `.frame` / `.tint-brand` / `.flip-{h,v}` | filter / blend / transform 系                                 |
 
 ##### Nudge / Opacity hoist + Subtract 詳細
 
@@ -518,9 +529,11 @@ semantic descriptive な命名、 `🌊<template>.<class>` で適用。
 UnoCSS の単純 numeric (`opacity-30` `w-80` `text-2xl`) は parser 制約 `[a-zA-Z0-9_%-]` を通る。角括弧記法 (`bg-[#5932ff]`)、 高度修飾子 (`lg:hover:foo`)、 fraction (`w-1/2`) は parser reject。 ad-hoc な fine-tuning 用、 通常は image utility / scope class を使う。
 
 ## nwyt（キー指定拡張）
+
 `!key` で始まる記法の総称。prop と content の2種がある。
 
 ### prop（`!key~value`）
+
 heading スコープのプロパティとして消費される（コンテンツに残らない）。
 段落の先頭が `!key~` で始まる場合のみ認識され、その段落全体が nwyt prop として消費される。
 value は Markdown テキスト。画像も `!bg~[alt](url)` のように Markdown 画像記法で指定する。
@@ -530,6 +543,7 @@ nwyt prop はグローバル指定で全 section・全 article に継承され�
 同一スコープに同じ key の prop が複数ある場合は後勝ち。
 
 section テンプレートで使用:
+
 - `!bg~[alt](url)` — 背景画像
   - 値 reference 構文 `!bg~=<key>` で他 nwyt (典型的には fbg) の値を mirror できる (例: `!bg~=fbg` で fbg の URL を bg にも使う、 同 URL を 2 回書かない shortcut)。 chain (=A → =B) は無効 (depth 0)、 自己参照も無効
   - class 継承: `!bg~=fbg` のように bg 自身に class が無い場合、 参照先 (fbg) の class も継承する (= fbg の設定全部を bg にも適用)。 bg 独自 class があれば そちら優先 (`!bg.cover~=fbg` で URL は fbg、 class は `.cover`)
@@ -538,11 +552,13 @@ section テンプレートで使用:
 - `!fr~テキスト` — フッター右テキスト
 
 特定テンプレートで使用:
+
 - `!icon~[alt](url)` — me テンプレートのアイコン画像
 - `!sub~テキスト` — title テンプレートのサブタイトル
 - `!lead~テキスト` — message テンプレートのリードテキスト
 
 article レベルで使用:
+
 - `!fn~[id]` — この scope (section / article) を脚注 id の定義としてマークする
   - `.head` クラス指定 (`!fn.head~[id]`) で tooltip に scope の heading も含める。デフォルトは body のみ
 
@@ -558,46 +574,55 @@ article レベルで使用:
 !text~"Noto Sans JP", sans-serif
 ```
 
-| 例 | 効果 |
-|---|---|
-| `!brand~#ff0000` | `--brand` を scope に override |
-| `!base~#0a0a0a` | `--base` を scope に override |
-| `!radius~12px` | `--radius` を scope に override |
-| `!text~"Noto Sans JP"` | `--text`（本文フォント）を scope に override |
+| 例                       | 効果                                         |
+| ------------------------ | -------------------------------------------- |
+| `!brand~#ff0000`         | `--brand` を scope に override               |
+| `!base~#0a0a0a`          | `--base` を scope に override                |
+| `!radius~12px`           | `--radius` を scope に override              |
+| `!text~"Noto Sans JP"`   | `--text`（本文フォント）を scope に override |
 | `!code~"JetBrains Mono"` | `--code`（等幅フォント）を scope に override |
 
 このメカニズムは markdown を CSS の playground 化しないための制約として、 **「通常は class 経由、 var inline は例外」** の階層付けで運用する。
 
 ### content（`!key[value]`）
+
 コンテンツとして残る（消費されない）。本文中のインラインマーカー。
 prop と同様にクラス指定が可能。`!card.v[alt](url)` のように `.class` を key の後ろに付ける。
 
 #### カード
+
 `!card[<alt>](<url>)` でリンク先のOGP情報を取得し、カード形式で表示する。`[alt]` は OGP 取得失敗時のフォールバックタイトルとして使用する。
 
 取得する情報:
+
 - タイトル（og:title）
 - 説明文（og:description）
 - サムネイル画像（og:image）
 - ファビコン
 
 レイアウト:
+
 - 横型（デフォルト）: 左にサムネイル、右にタイトル・説明・URL
 - 縦型（`.v`）: 上にサムネイル、下にタイトル・説明・URL
 
 #### 脚注参照
+
 `!fn[id]` で本文中に脚注参照マークを配置する。対応する `!fn~[id]` の内容にリンクする。
 
 #### 未知のキー
+
 定義されていないキーを使った場合、ビルド時に warning を出力する。エラーにはならず、nwyt content は `<span>` としてそのまま残り、nwyt prop は無視される。
 
 ## グローバル指定
+
 最初のh1より上で指定したクラスやキー指定は、全体のデフォルト設定となる。
 テンプレート名はグローバルに書いても無視される（各 section/article で個別に指定する）。クラスは全 section・全 article に継承される。`🌊me.dark` をグローバルに書いた場合、`me` は無視され `.dark` のみ全体に継承される。
 `🌊.dark`や`!fl~スライドタイトル`のように使う想定。
 
 ## メタ情報の記述
+
 `key: value`のメタ情報ブロック。
+
 ```Markdown
 ~~~meta
 date: 2024-01-15
