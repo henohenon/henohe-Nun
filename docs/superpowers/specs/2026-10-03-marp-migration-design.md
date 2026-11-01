@@ -20,7 +20,7 @@ public/
   favicon.ico, henoheno.svg 等のサイト共通ファイル
 themes/
   nun.css                   Marp テーマ (@theme nun)
-marp.config.mjs             marp-cli 設定 (html: true, themeSet 等)
+marp.config.ts              marp-cli 設定 (html: true, themeSet 等)
 scripts/postbuild.ts        ビルド後の静的ファイルコピーと旧 URL の転送ページ生成
 .github/workflows/deploy.yml  GitHub Pages への公開 (main への push で実行)
 dist/                       ビルド出力 (git 管理外)
@@ -38,7 +38,7 @@ dist/                       ビルド出力 (git 管理外)
 | `bun run build` | `marp -I benben -o dist` → `scripts/postbuild.ts` で `benben/images` と `public/` を `dist/` へコピーし、旧 URL 用の転送ページを生成 (bun shell の `cp` は `public/.` の展開が GNU と異なるため TS で書く) |
 | `bun run pdf` | `marp -I benben -o dist --pdf` |
 
-- marp-cli の共通オプションは `marp.config.mjs` に書き、コマンドを短く保つ
+- marp-cli の共通オプションは `marp.config.ts` (`defineConfig` で型付き) に書き、コマンドを短く保つ。marp-cli はローカルの TypeScript (v6 まで) で変換して読むので、TypeScript を v7 以上に上げる時は確認する
 - 出力は `dist/<deck>.html` (フラット)。旧 Nun の `dist/<deck>/index.html` とは URL が変わる (後述のリスク)
 
 ## 公開
@@ -127,7 +127,7 @@ wasd / Enter / ホイール / 左右クリックの操作、cursor-jack、zoom-f
 各フェーズの終わりで build と dev が動く状態にする。
 
 0. **保存**: タグ `nun-v1` を打つ。旧 docs を `docs/archive/` へ移動
-1. **骨格**: marp-cli 導入、`marp.config.mjs`、最小テーマ、`<object>` SVG の検証。`src/` と旧依存を削除し、`package.json` の scripts を差し替える。Quaver を Marp 記法に書き換えて dev / build が通る
+1. **骨格**: marp-cli 導入、`marp.config.ts`、最小テーマ、`<object>` SVG の検証。`src/` と旧依存を削除し、`package.json` の scripts を差し替える。Quaver を Marp 記法に書き換えて dev / build が通る
 2. **cool-game 移行**: 書き換え表に従って移行。SVG を外部ファイル化し、`scripts/deck/` の出力先を変更。非公開スライドを退避
 3. **テーマ**: 旧デザインを `nun.css` に移植し、cool-game の見た目を旧版と同等にする
 4. **サイト化**: `public/index.html`、ビルド後の処理 (コピー・転送ページ)、PDF コマンド、GitHub Pages の CI を marp-cli 版に書き直す。旧 Cloudflare 用のデプロイスクリプトは削除

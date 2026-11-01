@@ -28,7 +28,7 @@ benben/images/, public/ --scripts/postbuild.ts--> dist/  (+ redirect pages for o
 push to main --.github/workflows/deploy.yml (build + pdf)--> GitHub Pages
 ```
 
-- `marp.config.mjs` — shared marp-cli options (`html`, `themeSet`, `allowLocalFiles`); dev / build / pdf all read it
+- `marp.config.ts` — shared marp-cli options (typed with `defineConfig`; marp-cli transpiles it with the local TypeScript, which must stay <= v6) (`html`, `themeSet`, `allowLocalFiles`); dev / build / pdf all read it
 - `themes/nun.css` — the only theme (`@theme nun`), fixed 1280×720
 - `public/index.html` — hand-written deck list (links to `<deck>.html` and `<deck>.pdf`)
 - `scripts/postbuild.ts` — copies `benben/images` and `public/` into `dist/`, writes `dist/<deck>/index.html` redirect pages (keeps `#N`)
