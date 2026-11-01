@@ -34,7 +34,6 @@ push to main --.github/workflows/deploy.yml (build + pdf)--> GitHub Pages
 - `scripts/postbuild.ts` — copies `benben/images` and `public/` into `dist/`, writes `dist/<deck>/index.html` redirect pages (keeps `#N`)
 - `.github/workflows/deploy.yml` — PRs only build; pushes to main build and deploy
 - The site lives under `/henohe-Nun/`, so every link and asset path must be relative
-- `scripts/deck/` — logo SVG generators (output is a starting point; deck SVGs were hand-adjusted afterwards)
 
 ## Writing Decks
 
