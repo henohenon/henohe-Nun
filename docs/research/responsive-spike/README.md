@@ -1,0 +1,52 @@
+# Marp 出力のレスポンシブ化 spike (2026-11-01)
+
+Marp 移行で失われた「画面の形に合わせて組み直される」挙動を、Marp の HTML 出力に後からスクリプトを足すだけで取り戻せるかを試した記録。
+
+**ビルド・dev には組み込んでいない** (記録のみ)。本採用する場合は改めて設計する。
+
+## やり方 (`responsive.ts`)
+
+Marp の各スライドは `<svg viewBox="0 0 1280 720"><foreignObject><section>…` で、中身は普通の HTML。
+
+1. 画面の縦横比から仮想キャンバスを決める。**短辺を 720px に固定** (横長 → `720×比率` × 720、縦長 → 720 × `720÷比率`)
+2. 全スライドの `viewBox`、`foreignObject` の `width` / `height`、`section` の `style.width` / `style.height` を書き換える (テーマの `width:1280px` は `!important` なしなのでインラインで上書きできる)
+3. 溢れたら、**section の `font-size` だけ**を二分探索で縮める (上限はテーマ / `<style scoped>` の値、下限は 50%)。見出しは em 基準なので一緒に縮む
+4. `resize` (rAF で間引き) と `document.fonts.ready` で再計算
+
+短辺 720px 固定にすると、テーマの px 値は旧 Nun の cqmin 基準とほぼ同じ意味になる (本文 36px = 短辺の 5%)。画面への拡縮は `viewBox` 任せの一様スケールなので、旧 zoom-fit のように幅と縮小率を同時に動かす不動点反復にならず、収束する。
+
+## 試し方
+
+`bun build docs/research/responsive-spike/responsive.ts --target browser` でブラウザ用の JS に変換し、`bun run build` 後の `dist/<deck>.html` の `</body>` 直前に `<script>` で差し込んだコピーを `benben/` に置き、`bun run dev` で配信して開く (画像の相対パスが解決するため)。ハッシュだけ変える遷移では再読み込みされないので、スクリプトを差し替えたら必ずリロードする。
+
+## 結果
+
+| 確認 | 結果 |
+|---|---|
+| 1280×720 | 従来と同じ |
+| 900×900 / 375×812 | 文章が折り返し直され、画面いっぱいに出る |
+| 再読み込みなしのリサイズ | その場で組み直される |
+| 溢れ | 「読み取れること」(900×900) は 36px → 25.7px で収まる。「数字で見る」の表 (375×812) は横幅に収まるまで縮む (19.4px) |
+| 一覧表示 (`o`) | 壊れない |
+| md に `<script>` を書いた場合 | `html: true` なので dev サーバーでも実行される |
+| 発表者ビュー | 未確認 (別ウィンドウのためブラウザペインで試せなかった) |
+
+## 弱点
+
+- 横長の SVG (`<object>`) は縦長画面でも横長のまま縮むだけ
+- 列の多い表は縦長で列が潰れる (「パフォーマンス」の表は 1 列が 1 文字幅になり、下に伸びた)
+- 判定は「本文の子要素の下端 / 右端が padding の内側か」だけ。下限 50% でも溢れる場合はそのまま
+
+## 本採用時に決めること
+
+- 差し込み方: ビルド後の HTML に差し込む (PDF に影響しないが dev では効かない) か、md に `<script src="responsive.js">` (TS から変換した JS) を書く (dev でも効くが、PDF 変換時にも走るのでガードが要るかもしれない)
+- 発表者ビューでの挙動
+- 縦長での SVG / 表の扱い (割り切るか、縦長用の差し替えを用意するか)
+
+## 既存の取り組み (調査時点)
+
+Marp 向けの既成品は見つからなかった。
+
+- Marp 公式は固定サイズ (16:9 / 4:3、`@size` で追加) の切り替えのみ — [marp-team Discussion #356](https://github.com/orgs/marp-team/discussions/356)
+- 同じ発想の Reveal.js 版 — [aidotse/quarto-pres PR #4](https://github.com/aidotse/quarto-pres/pull/4) (縦長は幅 1080 固定で高さを窓に合わせる。広い図が縦長で小さくなる弱点も同じ)
+- 発表は 16:9、スマホは読み物表示に切り替える — [talkdown](https://github.com/sambhav/talkdown)
