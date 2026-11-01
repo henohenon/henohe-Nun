@@ -103,7 +103,7 @@ cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="
 - 依存: vite、unified / micromark / remark / rehype 系、hastscript、shiki、mermaid、mathjax、unocss、open-graph-scraper、playwright、sharp、pdf-lib
 - `scripts/` のうち `capture.ts` / `pdf.ts` / `render-mermaid.ts` / `svg-to-png.ts` / `test-playwright.ts`
 - 旧 spec (`docs/spec/*`、`docs/dev-plan.md`、`docs/design*.md`、`docs/refactor-*.md`) は `docs/archive/` へ移動
-- `scripts/deck/` (ロゴ生成) は残す。出力先を md への貼り付けから `benben/images/<deck>/` へのファイル書き出しに変える
+- `scripts/deck/` (ロゴ生成) は移行時は残したが、デッキの SVG は生成後に手で調整済みで再生成の出番が無いため 2026-11-01 に削除した (git の履歴に残る)
 
 旧実装は削除前にタグ `nun-v1` で保存する。
 
