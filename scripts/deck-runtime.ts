@@ -60,6 +60,8 @@ export function deckRuntime(): void {
     const go = (): void => {
       svgs.forEach((svg, i) => {
         svg.style.display = i + 1 === page ? "" : "none";
+        // display: none にしても動画の音は止まらないので、離れたスライドの動画は止める
+        if (i + 1 !== page) for (const video of svg.querySelectorAll("video")) video.pause();
       });
     };
     if (document.startViewTransition) document.startViewTransition(go);
@@ -71,6 +73,10 @@ export function deckRuntime(): void {
   const step = (delta: number): void => goTo(current() + delta);
   addEventListener("hashchange", show);
   show();
+  // 動画は再生ボタンを押すとフォーカスを持ち、矢印キーなどをシークに使ってページ送りまで届かなくなるので、フォーカスを外す
+  for (const video of document.querySelectorAll("video")) {
+    video.addEventListener("focus", () => video.blur());
+  }
 
   // ---- cursor-jack ----
   // フルスクリーン中だけ、カーソルを半透明の円にして投影画面で指している場所を見せる
@@ -141,12 +147,12 @@ export function deckRuntime(): void {
       { passive: true },
     );
 
-    // フルスクリーン中だけ、画面の左半分クリックで前へ・右半分で次へ。リンク等の上では送らない。
+    // フルスクリーン中だけ、画面の左半分クリックで前へ・右半分で次へ。リンクや動画等の上では送らない。
     // SVG の文書は別の realm なので instanceof Element では判定できず、closest の有無で見る
     doc.addEventListener("click", (e) => {
       if (!document.fullscreenElement) return;
       const target = e.target as Element | null;
-      if (target?.closest?.("a, button, details, input, select, textarea")) return;
+      if (target?.closest?.("a, button, details, input, select, textarea, video")) return;
       step(toPage(e.clientX, e.clientY)[0] > innerWidth / 2 ? 1 : -1);
     });
 
