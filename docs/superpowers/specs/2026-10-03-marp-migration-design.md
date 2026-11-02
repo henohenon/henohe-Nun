@@ -113,11 +113,13 @@ cool-game の `embed_svg` は内部に `<a href>` のリンクと `<image href="
 
 - キャンバス 1280×720 (`@size` 既定) で組む。cqmin / clamp による可変レイアウトは持ち込まない (画面の比率への対応は上記「画面に合わせる」で枠ごと作り直す)
 - 旧 `src/styles/` の見た目 (文字組み、色の変数、フッター線、コードブロック、表) を px ベースで移植する
-- class は **移行するデッキで使っているものだけ**: `title` / `solo` / `message`。`me` / `window` / `compare` / `table-zebra` は移植しない
+- class は **移行するデッキで使っているものだけ**: `title` / `solo` / `message` (移行後に `big` / `me` を追加)。`window` / `compare` / `table-zebra` は移植しない
 - `header` (旧 `!fr`) は右下、`footer` (旧 `!fl`) は左下に配置する
 - シンタックスハイライトは Marp 標準 (highlight.js) にテーマ側で色を当てる
 - 見出し・`.sub`・`.lead` のサイズは section の font-size 基準の em。溢れるスライドは自動縮小 (旧 zoom-fit) の代わりに、md 側で `<style scoped>section { font-size: 28px; }</style>` と書いて全体を縮める
 - 旧 solo は見出し以外を表示しなかったので、solo スライドの本文は HTML コメント (= 発表者メモ) にする
+- `big` は solo の見出しを特大 (5em) にしたもの。クラスを付けるだけで効き、長い見出しは折り返す (Marp の fit は使わない)。solo と違い、見出しの下に短い本文を置いてよい
+- `me` は自己紹介用。名前 (h1) と本文を左に縦中央で置き、`![icon](images/icon.png)` を右に大きく表示する (旧 `!icon` の代わり)
 - `<object ...></object>` を 1 行で書くと `<p>` に包まれるため、テーマは `p:has(> object)` を伸縮させて SVG を残りの高さに収める
 
 ## 移行するデッキ

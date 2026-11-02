@@ -298,8 +298,45 @@ section.solo > h1 {
   max-width: 80%;
 }
 
+/* ---- Template: big (solo の見出しを特大にしたもの) ---- */
+section.big {
+  justify-content: center;
+  align-items: center;
+}
+section.big > h1 {
+  margin: 0;
+  text-align: center;
+  max-width: 90%;
+  font-size: 5em;
+  line-height: 1.1;
+}
+
+/* ---- Template: me (自己紹介。左に名前と本文、右に ![icon](...) ) ---- */
+section.me {
+  justify-content: center;
+}
+section.me > :not(header, footer) {
+  max-width: 55%;
+}
+section.me img[alt="icon"] {
+  position: absolute;
+  right: 100px;
+  top: 50%;
+  transform: translateY(-55%);
+  height: 500px;
+  max-width: none;
+}
+
 /* ---- Template: message ---- */
 section.message > h1 + * {
+  margin-block-start: auto;
+}
+/* lead がないときは末尾の余白と分け合い、本文を縦中央に置く
+   (Marp はページ番号用に ::after を absolute / none にしているので戻す) */
+section.message:not(:has(> .lead))::after {
+  content: "";
+  display: block;
+  position: static;
   margin-block-start: auto;
 }
 section.message > :not(h1, .lead, header, footer) {
