@@ -40,7 +40,7 @@ push to main --.github/workflows/deploy.yml (build + pdf)--> GitHub Pages
 
 - Marp standard syntax only. No custom engine, markdown-it plugins, or syntax sugar. If something feels missing, ask before extending
 - front-matter: `theme: nun`; `header:` is drawn bottom-right, `footer:` bottom-left
-- Slide classes: `title` (with `![henoheno](images/henoheno.svg)`), `solo`, `message` (`<p class="lead">` at the end)
+- Slide classes: `title` (with `![henoheno](images/henoheno.svg)`), `solo`, `big` (solo with an extra-large heading), `me` (self-intro, with `![icon](images/icon.png)`), `message` (`<p class="lead">` at the end)
 - Images use relative paths (`images/...`), never `/images/...` (absolute paths break PDF conversion)
 - SVGs with links or nested images go in `benben/images/<deck>/` and are referenced with `<object data="images/<deck>/<name>.svg" type="image/svg+xml"></object>`. SVGs inside `<object>` cannot use page CSS variables
 - Overflowing slides: `<style scoped>section { font-size: 28px; }</style>` (headings are em-based and shrink with it)
