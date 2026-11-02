@@ -94,7 +94,7 @@ header: 2026/11/02
 
 ![bg contain opacity:.2](images/toutou-zemi/genbaneko.png)
 
-## 目的がない
+## ターゲットがいない
 
 - VRChat → VRoid Studio / Booth
 - SNS → Picrew / Pixiv
