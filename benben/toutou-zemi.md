@@ -65,7 +65,7 @@ header: 2026/11/02
 
 <!-- _class: message -->
 
-（動画）
+<video src="images/toutou-zemi/chimera-pv.mp4" poster="images/toutou-zemi/chimera-pv.jpg" height="480" controls></video>
 
 ---
 
@@ -73,7 +73,7 @@ header: 2026/11/02
 
 <!-- _class: message -->
 
-（動画）
+<video src="images/toutou-zemi/chimera-pv.mp4" poster="images/toutou-zemi/chimera-pv.jpg" height="360" controls></video>
 
 <p class="lead">ゲームやないか</p>
 
