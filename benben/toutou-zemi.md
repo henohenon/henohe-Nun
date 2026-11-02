@@ -61,6 +61,15 @@ header: 2026/11/02
 
 ---
 
+# モチベーション
+
+- 3Dキャラメイカーや！
+- AIとかも色々学んじゃうぞ～
+- 最近Unityばっかやったしなぁ。
+- ゲーム以外も作るぞ～wktk
+
+---
+
 # 今回作ったもの
 
 <!-- _class: message -->
@@ -69,13 +78,9 @@ header: 2026/11/02
 
 ---
 
-# 今回作ったもの
+# ゲームやな！
 
-<!-- _class: message -->
-
-<video src="images/toutou-zemi/chimera-pv.mp4" poster="images/toutou-zemi/chimera-pv.jpg" height="360" controls></video>
-
-<p class="lead">ゲームやないか</p>
+<!-- _class: big -->
 
 ---
 
@@ -126,6 +131,8 @@ by とうとうゼミキックオフ
 <!-- _class: message -->
 
 ![要求整理がメインテーマ w:1000](images/toutou-zemi/main-theme.png)
+
+；；
 
 ---
 
